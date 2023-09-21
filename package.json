@@ -21,8 +21,10 @@
   },
   "homepage": "https://github.com/grief-matters/whygriefmatters.org#readme",
   "dependencies": {
+    "@astrojs/tailwind": "^5.0.0",
     "@sanity/client": "^6.4.12",
-    "astro": "^3.1.1"
+    "astro": "^3.1.1",
+    "tailwindcss": "^3.3.3"
   },
   "devDependencies": {
     "prettier": "3.0.3",

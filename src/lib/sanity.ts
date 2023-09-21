@@ -1,14 +1,19 @@
 import { createClient } from "@sanity/client";
 
-export const client = createClient({
-  projectId: "your-project-id",
-  dataset: "your-dataset-name",
+const client = createClient({
+  projectId: import.meta.env.SANITY_STUDIO_PROJECT_ID,
+  dataset: import.meta.env.SANITY_STUDIO_DATASET,
   useCdn: true, // set to `false` to bypass the edge cache
-  apiVersion: "2023-05-03", // use current date (YYYY-MM-DD) to target the latest API version
+  apiVersion: import.meta.env.SANITY_STUDIO_API_VERSION, // use current date (YYYY-MM-DD) to target the latest API version
   // token: process.env.SANITY_SECRET_TOKEN // Only if you want to update content with the client
 });
 
 export async function getOrganization() {
-  const org = await client.fetch('*[_type == "organization"]');
-  return org;
+  const orgs = await client.fetch('*[_id == "organization-singleton"]');
+
+  if (Array.isArray(orgs) && orgs.length > 0) {
+    return orgs[0];
+  }
 }
+
+export default client;

@@ -1,18 +1,26 @@
 ---
-// Welcome to Astro! Everything between these triple-dash code fences
-// is your "component frontmatter". It never runs in the browser.
-console.log("This runs in your terminal, not the browser!");
+import { getOrganization } from "@lib/sanity";
+
+const org = await getOrganization();
+console.log("FM: ", org);
 ---
 
 <!-- Below is your "component template." It's just HTML, but with
      some magic sprinkled in to help you build great templates. -->
 <html>
   <body>
-    <h1>Hello, World!</h1>
+    <h1 class="text-2xl text-sky-500 font-bold">{org.name}</h1>
+    <ul>
+      {
+        org.coreValues.map((v: any) => (
+          <li>
+            <>
+              <h2>{v.value}</h2>
+              <p>{v.description}</p>
+            </>
+          </li>
+        ))
+      }
+    </ul>
   </body>
 </html>
-<style>
-  h1 {
-    color: orange;
-  }
-</style>
