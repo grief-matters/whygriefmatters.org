@@ -1,0 +1,30 @@
+{
+  "name": "whygriefmatters.org",
+  "version": "1.0.0",
+  "description": "The source code for the Grief Matters website. The best resources on grief and loss, all in one place.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grief-matters/whygriefmatters.org.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/grief-matters/whygriefmatters.org/issues"
+  },
+  "homepage": "https://github.com/grief-matters/whygriefmatters.org#readme",
+  "dependencies": {
+    "astro": "^3.1.1"
+  },
+  "devDependencies": {
+    "prettier": "3.0.3",
+    "prettier-plugin-astro": "^0.12.0"
+  }
+}
