@@ -1,3 +1,1 @@
-{
-  "prettier.prettierPath": "./packages/compiler/node_modules/prettier/index.cjs"
-}
+{}
