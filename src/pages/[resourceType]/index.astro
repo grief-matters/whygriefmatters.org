@@ -1,0 +1,34 @@
+---
+import { INTERNET_RESOURCE_TYPES } from "@model/common";
+import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+import MainLayout from "@layouts/MainLayout.astro";
+import { getInternetResources } from "@common/client";
+
+export function getStaticPaths() {
+  return [
+    ...INTERNET_RESOURCE_TYPES.map((resourceType) => ({
+      params: { resourceType },
+    })),
+  ];
+}
+
+const { resourceType } = Astro.params;
+
+const resources = await getInternetResources({ resourceType });
+---
+
+<MainLayout>
+  <ResourcePageLayout resourceType={resourceType}>
+    <ul>
+      {
+        resources?.map((resource) => (
+          <li class="p-2">
+            <h3>{resource.title}</h3>
+            <p>{resource.description}</p>
+            <a href={resource.resourceUrl}>{resource.resourceUrl}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </ResourcePageLayout>
+</MainLayout>

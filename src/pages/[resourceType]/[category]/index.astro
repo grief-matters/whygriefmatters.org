@@ -1,0 +1,39 @@
+---
+import { getCategorySlugs, getInternetResources } from "@common/client";
+import MainLayout from "@layouts/MainLayout.astro";
+import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+import { INTERNET_RESOURCE_TYPES } from "@model/common";
+
+export async function getStaticPaths() {
+  const categorySlugs = await getCategorySlugs();
+
+  return [
+    ...INTERNET_RESOURCE_TYPES.flatMap((resourceType) =>
+      categorySlugs.map((category) => ({
+        params: { resourceType, category },
+      })),
+    ),
+  ];
+}
+
+const { resourceType, category } = Astro.params;
+
+const resources = await getInternetResources({ resourceType, category });
+---
+
+<MainLayout>
+  <ResourcePageLayout resourceType={resourceType} category={category}>
+    <div>[[Resources]]</div>
+    <ul>
+      {
+        resources?.map((resource) => (
+          <li class="p-2">
+            <h3>{resource.title}</h3>
+            <p>{resource.description}</p>
+            <a href={resource.resourceUrl}>{resource.resourceUrl}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </ResourcePageLayout>
+</MainLayout>

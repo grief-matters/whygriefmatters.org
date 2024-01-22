@@ -4,9 +4,11 @@
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
     "paths": {
+      "@common/*": ["src/common/*"],
       "@components/*": ["src/components/*"],
       "@layouts/*": ["src/layouts/*"],
-      "@lib/*": ["src/lib/*"]
+      "@model/*": ["src/model/*"],
+      "@ui/*": ["src/ui/*"]
     }
   }
 }

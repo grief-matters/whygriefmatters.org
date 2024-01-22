@@ -1,0 +1,31 @@
+---
+import { getInternetResources, getPopulationSlugs } from "@common/client";
+import MainLayout from "@layouts/MainLayout.astro";
+import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+
+export async function getStaticPaths() {
+  const slugs = await getPopulationSlugs();
+
+  return slugs.map((population) => ({ params: { population } }));
+}
+
+const { population } = Astro.params;
+
+const resources = await getInternetResources({ population });
+---
+
+<MainLayout>
+  <ResourcePageLayout population={population}>
+    <ul>
+      {
+        resources?.map((resource) => (
+          <li class="p-2">
+            <h3>{resource.title}</h3>
+            <p>{resource.description}</p>
+            <a href={resource.resourceUrl}>{resource.resourceUrl}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </ResourcePageLayout>
+</MainLayout>

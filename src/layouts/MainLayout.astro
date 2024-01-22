@@ -1,0 +1,29 @@
+---
+import MainNav from "@ui/MainNav/MainNav.astro";
+import SiteNav from "@ui/SiteNav.astro";
+import SiteNavWebComponent from "@ui/SiteNavWebComponent.astro";
+import SiteWideNav from "@ui/SiteWideNav.astro";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TODO: Page title</title>
+  </head>
+  <body>
+    <header>
+      <!-- <SiteWideNav /> -->
+      <!-- <SiteNav /> -->
+      <!-- <nav
+        class="z-50 relative w-screen flex justify-center items-center bg-sky-800 text-white"
+      >
+        <SiteNavWebComponent title="Apple" />
+        <SiteNavWebComponent title="Orange" />
+        <SiteNavWebComponent title="Pear" />
+      </nav> -->
+      <MainNav />
+    </header>
+    <slot />
+  </body>
+</html>

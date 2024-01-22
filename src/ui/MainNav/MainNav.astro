@@ -1,0 +1,172 @@
+---
+import { getCategories, getFeaturedTopics } from "@common/client";
+import RecursiveCategoryTree from "@ui/RecursiveCategoryTree.astro";
+
+import type { Category } from "@model/category";
+
+export type TreeItem = Category & {
+  children: TreeItem[];
+};
+
+const featuredTopics = await getFeaturedTopics();
+
+const categories = await getCategories();
+const masterCategoryTree: TreeItem[] = buildCategoryTree(categories);
+
+const typesOfLoss = masterCategoryTree.find(
+  (rootCategory) => rootCategory.slug === "types-of-loss",
+);
+
+const supportingTheBereaved = masterCategoryTree.find(
+  (rootCategory) => rootCategory.slug === "supporting-the-bereaved",
+);
+
+function buildCategoryTree(categories: Category[]): TreeItem[] {
+  const categoryMap: Record<string, any> = {};
+
+  // Create a mapping of categories using slug as key
+  categories.forEach((c) => {
+    categoryMap[c.slug] = { ...c, children: [] };
+  });
+
+  // Populate the children arrays
+  categories.forEach((category) => {
+    if (category.parent) {
+      // If the category has a parent, add it as a child to the parent
+      const parentSlug = category.parent.slug;
+      categoryMap[parentSlug].children.push(categoryMap[category.slug]);
+    }
+  });
+
+  // Find top-level categories
+  const rootCategories: TreeItem[] = Object.values(categoryMap).filter(
+    (category) => !category.parent,
+  );
+
+  return rootCategories;
+}
+
+const navMenuContainerClasses =
+  "nav-menu-container hidden absolute left-0 w-full bg-slate-100 text-gray-900";
+
+const navMenuButtonClasses = "nav-menu-button px-5 py-3";
+---
+
+<main-nav>
+  <nav
+    class="z-50 relative w-screen flex justify-center items-center bg-blue-800 text-white"
+  >
+    <div>
+      <button class={navMenuButtonClasses} type="button">
+        Featured Topics
+      </button>
+      <div class={navMenuContainerClasses}>
+        <ul>
+          {
+            featuredTopics.map((topic) => (
+              <li>
+                <a href={topic.slug}>{topic.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <button class={navMenuButtonClasses} type="button">Types of Loss</button>
+      <div class={navMenuContainerClasses}>
+        <div class="grid grid-cols-3">
+          {
+            typesOfLoss?.children.map((c) => (
+              <RecursiveCategoryTree categories={[c]} />
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <button class={navMenuButtonClasses} type="button"
+        >Supporting the Bereaved</button
+      >
+      <div class={navMenuContainerClasses}>
+        <div class="grid grid-cols-2">
+          {
+            supportingTheBereaved?.children
+              .filter((c) => c.children.length > 0)
+              .map((c, i) => (
+                <div class="mb-3">
+                  <RecursiveCategoryTree categories={[c]} />
+                  {i + 1 === c.children.length ? (
+                    <ul class="border-t-2 mt-3 pt-3">
+                      <h3 class="text-xl font-serif font-semibold">
+                        Specific Support Topics
+                      </h3>
+                      <p class="pb-2 italic font-serif text-grey-800">
+                        A selection of more focussed topics offering help with
+                        supporting specific groups
+                      </p>
+                      {supportingTheBereaved?.children
+                        .filter((c) => c.children.length === 0)
+                        .map((c) => (
+                          <li>
+                            <a href={c.slug} class="hover:underline">
+                              {c.title}
+                            </a>
+                          </li>
+                        ))}
+                    </ul>
+                  ) : null}
+                </div>
+              ))
+          }
+        </div>
+      </div>
+    </div>
+  </nav>
+</main-nav>
+
+<script>
+  class MainNav extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      const buttons = this.querySelectorAll(".nav-menu-button");
+      const allMenuContainers = this.querySelectorAll(".nav-menu-container");
+
+      buttons.forEach((button) =>
+        button.addEventListener("click", (event) => {
+          const buttonParent = button.parentElement;
+
+          allMenuContainers.forEach((menuContainer) => {
+            if (menuContainer.parentElement === buttonParent) {
+              menuContainer.classList.toggle("hidden");
+              menuContainer.classList.toggle("flex");
+            } else {
+              menuContainer.classList.remove("flex");
+              menuContainer.classList.add("hidden");
+            }
+          });
+
+          event.stopPropagation();
+        }),
+      );
+
+      document.addEventListener("click", (event: Event) => {
+        const isClickInsideMainNav = this.contains(event.target as Node);
+
+        if (!isClickInsideMainNav) {
+          allMenuContainers.forEach((menuContainer) => {
+            menuContainer.classList.remove("flex");
+            menuContainer.classList.add("hidden");
+          });
+        }
+      });
+    }
+  }
+
+  customElements.define("main-nav", MainNav);
+</script>

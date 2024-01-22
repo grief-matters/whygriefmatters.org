@@ -1,0 +1,38 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<dropdown-nav-panel>
+  <button class="nav-button">{title}</button>
+  <div class="nav-group hidden absolute left-0 w-full bg-red-300 top-5">
+    <ul>
+      <li>
+        <a href="#">{title} 1</a>
+        <a href="#">{title} 2</a>
+        <a href="#">{title} 3</a>
+      </li>
+    </ul>
+  </div>
+</dropdown-nav-panel>
+
+<script>
+  class DropdownNavPanel extends HTMLElement {
+    constructor() {
+      super();
+
+      const button = this.querySelector(".nav-button");
+      const panel = this.querySelector(".nav-group");
+
+      button?.addEventListener("click", () => {
+        panel?.classList.toggle("hidden");
+        panel?.classList.toggle("flex");
+      });
+    }
+  }
+
+  customElements.define("dropdown-nav-panel", DropdownNavPanel);
+</script>

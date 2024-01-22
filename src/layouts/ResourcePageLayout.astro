@@ -1,0 +1,43 @@
+---
+import type { InternetResourceType } from "@model/common";
+import { getCategory, getPopulation } from "@common/client";
+import { startCase } from "lodash";
+import pluralize from "pluralize";
+
+interface Props {
+  resourceType?: InternetResourceType;
+  category?: string;
+  population?: string;
+}
+
+const { resourceType, category, population } = Astro.props;
+
+const categoryTextPrefixMap = {
+  "loss-of-a": "Loss of A ",
+  "supporting-those-who-have-lost": "Supporting Those Who Have Lost A ",
+};
+
+const typeText = resourceType
+  ? startCase(pluralize(resourceType))
+  : "Resources";
+
+const categoryData = category ? await getCategory(category) : null;
+
+const prefix = categoryData?.parent
+  ? ` About ${(categoryTextPrefixMap as any)[categoryData.parent.slug]}`
+  : ` About `;
+
+const categoryText = `${prefix}${categoryData?.title ?? "Grief"}`;
+
+const populationData = population ? await getPopulation(population) : null;
+const populationText = populationData ? ` For ${populationData.name}` : null;
+---
+
+<h1 class="text-lg">
+  <span>{typeText}</span>
+  <span>{categoryText}</span>
+  {populationText && <span>{populationText}</span>}
+</h1>
+<div>
+  <slot />
+</div>

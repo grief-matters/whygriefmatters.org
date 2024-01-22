@@ -1,0 +1,14 @@
+---
+import { toHTML } from "@portabletext/to-html";
+import type { PortableText } from "@model/common";
+
+interface Props {
+  portableText: PortableText;
+}
+
+const { portableText } = Astro.props;
+---
+
+<div>
+  <Fragment set:html={toHTML(portableText)} />
+</div>

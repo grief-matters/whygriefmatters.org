@@ -1,0 +1,48 @@
+---
+import type { Category } from "@model/category";
+import type { TreeItem } from "./MainNav/MainNav.astro";
+
+interface Props {
+  headingLevel?: number;
+  categories: TreeItem[];
+}
+
+type ConfigMap = {
+  ulClasses: string;
+  textClasses: string;
+};
+
+const { headingLevel = 1, categories } = Astro.props;
+
+const classesConfigMap: Record<number, ConfigMap> = {
+  1: {
+    ulClasses: "",
+    textClasses: "text-xl font-serif font-semibold",
+  },
+  2: {
+    ulClasses: "",
+    textClasses: "text-base font-sans font-normal",
+  },
+  3: {
+    ulClasses: "",
+    textClasses: "text-base font-sans font-light text-grey-800 pl-4",
+  },
+};
+---
+
+<ul class={classesConfigMap[headingLevel]?.ulClasses}>
+  {
+    categories.map((c) => (
+      <li>
+        <a class="hover:underline" href={c.slug}>
+          <span class={classesConfigMap[headingLevel]?.textClasses}>
+            {c.title}
+          </span>
+        </a>
+        {c.children.length > 0 && (
+          <Astro.self categories={c.children} headingLevel={headingLevel + 1} />
+        )}
+      </li>
+    ))
+  }
+</ul>

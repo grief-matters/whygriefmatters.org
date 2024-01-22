@@ -22,11 +22,23 @@
   "homepage": "https://github.com/grief-matters/whygriefmatters.org#readme",
   "dependencies": {
     "@astrojs/tailwind": "^5.0.0",
+    "@portabletext/to-html": "^2.0.5",
     "@sanity/client": "^6.4.12",
+    "@sanity/image-url": "^1.0.2",
+    "@types/lodash": "^4.14.202",
+    "@types/pluralize": "^0.0.33",
     "astro": "^3.1.1",
-    "tailwindcss": "^3.3.3"
+    "lodash": "^4.17.21",
+    "pluralize": "^8.0.0",
+    "tailwindcss": "^3.3.3",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@typescript-eslint/parser": "^6.14.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-astro": "^0.31.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "groq": "^3.20.1",
     "prettier": "3.0.3",
     "prettier-plugin-astro": "^0.12.0"
   }
