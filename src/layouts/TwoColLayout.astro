@@ -1,0 +1,12 @@
+---
+interface Props {
+  children: any;
+}
+---
+
+<div class:list={["flex", "justify-between"]}>
+  <slot />
+  <div class="w-1/4">
+    <slot name="aside" />
+  </div>
+</div>

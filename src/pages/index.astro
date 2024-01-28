@@ -1,9 +1,11 @@
 ---
-import { toHTML } from "@portabletext/to-html";
 import { getHomePage, getImageUrl } from "@common/client";
 import type { ResourcePageLink } from "@model/common";
 import MainLayout from "@layouts/MainLayout.astro";
 import RichTextContentBlock from "@ui/richTextContentBlock.astro";
+import FeaturePanel from "@ui/FeaturePanel.astro";
+import Hero from "@ui/Hero.astro";
+import { cvaSchemaStandardVariants } from "@common/cva";
 
 const homePage = await getHomePage();
 
@@ -12,8 +14,6 @@ const heroImg = {
   alt: homePage.heroImage.altText,
 };
 
-const bgVar = `url(${heroImg.url})`;
-
 function getRoute(pageLink: ResourcePageLink): string {
   const slugParts = [pageLink.type, pageLink.category, pageLink.population]
     .filter((part) => Boolean(part))
@@ -21,29 +21,37 @@ function getRoute(pageLink: ResourcePageLink): string {
 
   return `/${slugParts}`;
 }
+
+const coreValuesBgColors = [
+  "bg-sky-700",
+  "bg-sky-600",
+  "bg-sky-500",
+  "bg-sky-400",
+  "bg-sky-300",
+];
 ---
 
 <MainLayout>
-  <section
-    class="relative hero-bg bg-center bg-cover flex items-center text-white"
-  >
-    <div class="p-4">
+  <Hero imageUrl={heroImg.url}>
+    <div class="text-white p-8">
       <h1 class="text-2xl">{homePage?.org.name}</h1>
       <span>{homePage?.org.slogan}</span>
     </div>
-  </section>
+  </Hero>
   <section>
-    <div class="bg-blue-800 p-2">
+    <div class="bg-sky-800 p-2">
       <h2
         class="text-3xl text-center font-serif lowercase ellipsis text-white font-light"
       >
         Our <span class="font-semibold">Mission</span>
       </h2>
     </div>
-    <p class="max-w-prose my-6 m-auto">{homePage?.org.mission}</p>
+    <div class="max-w-prose my-12 m-auto prose font-serif">
+      <RichTextContentBlock portableText={homePage?.org.mission} />
+    </div>
   </section>
 
-  <div class="bg-blue-800 p-2">
+  <div class="bg-blue-800/90 p-2">
     <h2
       class="text-3xl text-center font-serif lowercase ellipsis text-white font-light"
     >
@@ -51,13 +59,22 @@ function getRoute(pageLink: ResourcePageLink): string {
     </h2>
   </div>
 
-  <div class="flex text-white">
+  <div class="flex">
     {
       homePage.org.coreValues.map((coreValue, i) => (
-        <div class={i % 2 === 0 ? "bg-blue-600" : "bg-blue-700"}>
-          <div class="p-3">
-            <h3 class="font-bold">{coreValue.title}</h3>
-            <p>{coreValue.description}</p>
+        <div
+          class:list={[
+            "flex",
+            "flex-1",
+            "text-slate-50",
+            "py-8",
+            "px-8",
+            coreValuesBgColors[i],
+          ]}
+        >
+          <div>
+            <h3 class="font-bold text-xl mb-3">{coreValue.title}</h3>
+            <p class="font-light">{coreValue.description}</p>
           </div>
         </div>
       ))
@@ -65,82 +82,13 @@ function getRoute(pageLink: ResourcePageLink): string {
   </div>
 
   {
-    homePage?.featurePanels.map((featuredContent) => (
-      <>
-        <div class="bg-blue-800 p-2">
-          <h2 class="text-3xl text-bold text-center font-serif lowercase ellipsis text-white font-light">
-            {featuredContent.title}
-          </h2>
-        </div>
-        {featuredContent.description && (
-          <Fragment set:html={toHTML(featuredContent.description)} />
-        )}
-        {featuredContent.content.map((content) => {
-          switch (content.contentType) {
-            case "richTextContentBlock":
-              return (
-                <RichTextContentBlock portableText={content.portableText} />
-              );
-            case "resourceLinks":
-              return (
-                <div>
-                  {content.resources.map((link) => (
-                    <a
-                      class="bg-red-200 m-3"
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      {link.title}
-                    </a>
-                  ))}
-                </div>
-              );
-            case "rowOfThree":
-              return (
-                <div class="flex w-screen">
-                  {content.images.map((image) => (
-                    <div class="flex-1 m-3">
-                      <img
-                        src={getImageUrl(image.image).url()}
-                        alt={image.altText}
-                      />
-                    </div>
-                  ))}
-                </div>
-              );
-            case "resourcePageLinks":
-              return (
-                <div>
-                  {content.links.map((pageLink) => (
-                    <a class="bg-green-200 m-3" href={getRoute(pageLink)}>
-                      {pageLink.label}
-                    </a>
-                  ))}
-                </div>
-              );
-          }
-        })}
-        {featuredContent.featuredContentFooterLink && (
-          <a
-            class="bg-yellow-200 m-3"
-            href={getRoute(featuredContent.featuredContentFooterLink)}
-          >
-            {featuredContent.featuredContentFooterLink.label}
-          </a>
-        )}
-      </>
+    homePage?.featurePanels.map((featuredContent, i) => (
+      <FeaturePanel
+        featuredContent={featuredContent}
+        variant={
+          cvaSchemaStandardVariants[i % cvaSchemaStandardVariants.length]
+        }
+      />
     ))
   }
 </MainLayout>
-
-<style define:vars={{ bgVar }}>
-  .hero-bg {
-    background-image: var(--bgVar);
-    height: 50vh;
-  }
-
-  .ellipsis::after {
-    content: "...";
-  }
-</style>

@@ -18,3 +18,12 @@ export const populationQuery = groq`
   underserved
 }
 `;
+
+export const populationsQuery = groq`
+*[_type == "population"]{
+  name,
+  "slug": slug.current,
+  description,
+  underserved
+}
+`;

@@ -25,3 +25,5 @@ export const zFeaturedContent = z.object({
   content: z.array(zFeaturedContentContent),
   featuredContentFooterLink: zResourcePageLink.optional(),
 });
+
+export type FeaturedContent = z.infer<typeof zFeaturedContent>;

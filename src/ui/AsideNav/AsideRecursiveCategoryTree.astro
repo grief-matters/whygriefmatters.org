@@ -1,0 +1,25 @@
+---
+import type { CategoryTreeItem } from "@common/category";
+
+interface Props {
+  categories: CategoryTreeItem[];
+  getPath(slug: string): string;
+}
+
+const { categories, getPath } = Astro.props;
+---
+
+<ul>
+  {
+    categories.map((c) => (
+      <li>
+        <a href={getPath(c.slug)}>{c.title}</a>
+        {c.children.length > 0 && (
+          <div class="pl-2 text-sm">
+            <Astro.self categories={c.children} getPath={getPath} />
+          </div>
+        )}
+      </li>
+    ))
+  }
+</ul>

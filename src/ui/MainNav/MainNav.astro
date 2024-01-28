@@ -1,17 +1,20 @@
 ---
-import { getCategories, getFeaturedTopics } from "@common/client";
-import RecursiveCategoryTree from "@ui/RecursiveCategoryTree.astro";
-
 import type { Category } from "@model/category";
+import { buildCategoryTree, type CategoryTreeItem } from "@common/category";
 
-export type TreeItem = Category & {
-  children: TreeItem[];
-};
+import { getCategories, getFeaturedTopics } from "@common/client";
+import RecursiveCategoryTree from "@ui/MainNav/RecursiveCategoryTree.astro";
+
+import MainNavLink from "./MainNavLink.astro";
+
+// export type TreeItem = Category & {
+//   children: TreeItem[];
+// };
 
 const featuredTopics = await getFeaturedTopics();
 
 const categories = await getCategories();
-const masterCategoryTree: TreeItem[] = buildCategoryTree(categories);
+const masterCategoryTree: CategoryTreeItem[] = buildCategoryTree(categories);
 
 const typesOfLoss = masterCategoryTree.find(
   (rootCategory) => rootCategory.slug === "types-of-loss",
@@ -21,35 +24,35 @@ const supportingTheBereaved = masterCategoryTree.find(
   (rootCategory) => rootCategory.slug === "supporting-the-bereaved",
 );
 
-function buildCategoryTree(categories: Category[]): TreeItem[] {
-  const categoryMap: Record<string, any> = {};
+// function buildCategoryTree(categories: Category[]): TreeItem[] {
+//   const categoryMap: Record<string, any> = {};
 
-  // Create a mapping of categories using slug as key
-  categories.forEach((c) => {
-    categoryMap[c.slug] = { ...c, children: [] };
-  });
+//   // Create a mapping of categories using slug as key
+//   categories.forEach((c) => {
+//     categoryMap[c.slug] = { ...c, children: [] };
+//   });
 
-  // Populate the children arrays
-  categories.forEach((category) => {
-    if (category.parent) {
-      // If the category has a parent, add it as a child to the parent
-      const parentSlug = category.parent.slug;
-      categoryMap[parentSlug].children.push(categoryMap[category.slug]);
-    }
-  });
+//   // Populate the children arrays
+//   categories.forEach((category) => {
+//     if (category.parent) {
+//       // If the category has a parent, add it as a child to the parent
+//       const parentSlug = category.parent.slug;
+//       categoryMap[parentSlug].children.push(categoryMap[category.slug]);
+//     }
+//   });
 
-  // Find top-level categories
-  const rootCategories: TreeItem[] = Object.values(categoryMap).filter(
-    (category) => !category.parent,
-  );
+//   // Find top-level categories
+//   const rootCategories: TreeItem[] = Object.values(categoryMap).filter(
+//     (category) => !category.parent,
+//   );
 
-  return rootCategories;
-}
+//   return rootCategories;
+// }
 
 const navMenuContainerClasses =
   "nav-menu-container hidden absolute left-0 w-full bg-slate-100 text-gray-900";
 
-const navMenuButtonClasses = "nav-menu-button px-5 py-3";
+const navMenuButtonClasses = "nav-menu-button px-5 py-3 font-medium";
 ---
 
 <main-nav>
@@ -65,7 +68,9 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3";
           {
             featuredTopics.map((topic) => (
               <li>
-                <a href={topic.slug}>{topic.title}</a>
+                <MainNavLink hierarchyLevel={"primary"} href={`/${topic.slug}`}>
+                  {topic.title}
+                </MainNavLink>
               </li>
             ))
           }
@@ -111,7 +116,7 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3";
                         .filter((c) => c.children.length === 0)
                         .map((c) => (
                           <li>
-                            <a href={c.slug} class="hover:underline">
+                            <a href={`/${c.slug}`} class="hover:underline">
                               {c.title}
                             </a>
                           </li>
@@ -123,6 +128,14 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3";
           }
         </div>
       </div>
+    </div>
+
+    <div>
+      <a class={navMenuButtonClasses} href="/about">About Us</a>
+    </div>
+
+    <div>
+      <a class={navMenuButtonClasses} href="/contribute">Contribute</a>
     </div>
   </nav>
 </main-nav>

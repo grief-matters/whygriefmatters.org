@@ -1,0 +1,45 @@
+---
+import MainNavLink, {
+  hierarchyLevelSchema,
+  type MainNavLinkProps,
+} from "./MainNavLink.astro";
+import type { CategoryTreeItem } from "@common/category";
+
+interface Props {
+  categories: CategoryTreeItem[];
+  mainNavLinkProps?: MainNavLinkProps;
+}
+
+const { categories, mainNavLinkProps = { hierarchyLevel: "primary" } } =
+  Astro.props;
+
+const variantsArray = Object.keys(hierarchyLevelSchema);
+const currentIndex = variantsArray.findIndex(
+  (x) => x === mainNavLinkProps.hierarchyLevel,
+);
+const nextIndex = Math.min(currentIndex + 1, variantsArray.length - 1);
+const nextVariant = variantsArray[nextIndex] as any;
+---
+
+<ul>
+  {
+    categories.map((c) => (
+      <li>
+        <MainNavLink
+          hierarchyLevel={mainNavLinkProps.hierarchyLevel}
+          href={`/${c.slug}`}
+        >
+          {c.title}
+        </MainNavLink>
+        {c.children.length > 0 && (
+          <Astro.self
+            categories={c.children}
+            mainNavLinkProps={
+              nextVariant ? { hierarchyLevel: nextVariant } : undefined
+            }
+          />
+        )}
+      </li>
+    ))
+  }
+</ul>

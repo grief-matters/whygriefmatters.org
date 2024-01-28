@@ -1,8 +1,20 @@
 ---
-import { getCategorySlugs, getInternetResources } from "@common/client";
+import { capitalize } from "lodash";
+import pluralize from "pluralize";
+
+import {
+  getCategory,
+  getCategorySlugs,
+  getInternetResources,
+  getPopulations,
+} from "@common/client";
+import { INTERNET_RESOURCE_TYPES } from "@model/common";
+
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import { INTERNET_RESOURCE_TYPES } from "@model/common";
+import TwoColLayout from "@layouts/TwoColLayout.astro";
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import Resource from "@ui/Resource.astro";
 
 export async function getStaticPaths() {
   const categorySlugs = await getCategorySlugs();
@@ -16,24 +28,46 @@ export async function getStaticPaths() {
   ];
 }
 
-const { resourceType, category } = Astro.params;
+const params = Astro.params;
 
-const resources = await getInternetResources({ resourceType, category });
+const populations = await getPopulations();
+const category = await getCategory(params.category);
+const resources = await getInternetResources({
+  resourceType: params.resourceType,
+  categorySlug: params.category,
+});
 ---
 
 <MainLayout>
-  <ResourcePageLayout resourceType={resourceType} category={category}>
-    <div>[[Resources]]</div>
-    <ul>
-      {
-        resources?.map((resource) => (
-          <li class="p-2">
-            <h3>{resource.title}</h3>
-            <p>{resource.description}</p>
-            <a href={resource.resourceUrl}>{resource.resourceUrl}</a>
-          </li>
-        ))
-      }
-    </ul>
+  <ResourcePageLayout resourceType={params.resourceType} category={category}>
+    <TwoColLayout>
+      <ul>
+        {
+          resources?.map((resource) => (
+            <li>
+              <Resource resource={resource} />
+            </li>
+          ))
+        }
+      </ul>
+      <aside slot="aside">
+        <AsideNav
+          title={`${capitalize(pluralize(params.resourceType))} about ${
+            category.title
+          } for...`}
+        >
+          {
+            populations.map((population) => (
+              <a
+                class="block py-1 hover:underline"
+                href={`/${params.resourceType}/${population.slug}`}
+              >
+                {population.name}
+              </a>
+            ))
+          }
+        </AsideNav>
+      </aside>
+    </TwoColLayout>
   </ResourcePageLayout>
 </MainLayout>

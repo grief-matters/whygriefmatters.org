@@ -1,7 +1,9 @@
 import groq from "groq";
 import { z } from "zod";
+import { zInternetResourceType } from "./common";
 
 export const zInternetResource = z.object({
+  type: zInternetResourceType,
   title: z.string(),
   description: z.string().nullable(),
   resourceUrl: z.string().url(),
@@ -19,6 +21,7 @@ export type InternetResource = z.infer<typeof zInternetResource>;
 export const resourceQuery = (filter: string) => groq`
 *[${filter}]
   {
+    "type": _type,
     "title": coalesce(title, name),
     description,
     resourceUrl,
@@ -32,17 +35,21 @@ export const resourceQuery = (filter: string) => groq`
 
 export type GetInternetResourcesQueryParams = {
   resourceType?: string;
-  category?: string;
-  population?: string;
-} & ({ resourceType: string } | { category: string } | { population: string });
+  categorySlug?: string;
+  populationSlug?: string;
+} & (
+  | { resourceType: string }
+  | { categorySlug: string }
+  | { populationSlug: string }
+);
 
 const internetResourceQueryParts: Record<
   keyof GetInternetResourcesQueryParams,
   string
 > = {
   resourceType: `_type == $type`,
-  category: `$category in categories[]->slug.current`,
-  population: `$population in populations[]->slug.current`,
+  categorySlug: `$categorySlug in categories[]->slug.current`,
+  populationSlug: `$populationSlug in populations[]->slug.current`,
 };
 
 export function getInternetResourceQuery(

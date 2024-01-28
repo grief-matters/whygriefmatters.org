@@ -1,12 +1,17 @@
 ---
 import {
+  getCategory,
   getCategorySlugs,
   getInternetResources,
+  getPopulation,
   getPopulationSlugs,
 } from "@common/client";
+
+import { INTERNET_RESOURCE_TYPES } from "@model/common";
+
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import { INTERNET_RESOURCE_TYPES } from "@model/common";
+import Resource from "@ui/Resource.astro";
 
 export async function getStaticPaths() {
   const categorySlugs = await getCategorySlugs();
@@ -23,28 +28,29 @@ export async function getStaticPaths() {
   ];
 }
 
-const { resourceType, category, population } = Astro.params;
+const params = Astro.params;
 
 const resources = await getInternetResources({
-  resourceType,
-  category,
-  population,
+  resourceType: params.resourceType,
+  categorySlug: params.category,
+  populationSlug: params.population,
 });
+
+const category = await getCategory(params.category);
+const population = await getPopulation(params.population);
 ---
 
 <MainLayout>
   <ResourcePageLayout
-    resourceType={resourceType}
+    resourceType={params.resourceType}
     category={category}
     population={population}
   >
     <ul>
       {
         resources?.map((resource) => (
-          <li class="p-2">
-            <h3>{resource.title}</h3>
-            <p>{resource.description}</p>
-            <a href={resource.resourceUrl}>{resource.resourceUrl}</a>
+          <li>
+            <Resource resource={resource} />
           </li>
         ))
       }

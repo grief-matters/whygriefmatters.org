@@ -1,0 +1,63 @@
+---
+import { resourceTypeBgColorMap } from "@common/color-maps";
+import type { InternetResourceType } from "@model/common";
+import type { InternetResource } from "@model/internetResource";
+
+interface Props {
+  resource: InternetResource;
+}
+
+const linkTextMap: Record<InternetResourceType, string> = {
+  app: "Visit this resource",
+  article: "Read article",
+  blog: "Visit this resource",
+  book: "Visit this resource",
+  booklet: "Visit this resource",
+  brochure: "Visit this resource",
+  course: "Visit this resource",
+  forum: "Visit this resource",
+  memorial: "Visit this resource",
+  peerSupport: "Visit this resource",
+  podcast: "Visit this resource",
+  podcastEpisode: "Visit this resource",
+  story: "Read this story",
+  supportGroup: "Visit this resource",
+  therapyResource: "Visit this resource",
+  video: "Visit this resource",
+  webinar: "Visit this resource",
+  website: "Visit this resource",
+};
+
+const { resource } = Astro.props;
+---
+
+<article class:list={["mx-12", "my-6", "pb-3", "max-w-prose"]}>
+  <h3
+    class:list={[
+      "text-xl",
+      "text-bold",
+      "font-serif",
+      "mb-2",
+      "italic",
+      "text-teal-800",
+    ]}
+  >
+    {resource.title}
+  </h3>
+  <p class="leading-relaxed mb-3 font-serif">{resource.description}</p>
+  <a
+    class:list={[
+      resourceTypeBgColorMap[resource.type],
+      "text-white",
+      "font-semibold",
+      "text-sm",
+      "px-3",
+      "py-1",
+      "rounded-full",
+      "capitalize",
+    ]}
+    href={resource.resourceUrl}
+    target="_blank"
+    rel="noopener">{linkTextMap[resource.type]}</a
+  >
+</article>

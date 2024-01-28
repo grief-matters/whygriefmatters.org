@@ -1,0 +1,24 @@
+---
+interface Props {
+  imageUrl: string;
+  children: any;
+}
+
+const { imageUrl } = Astro.props;
+
+const bgVar = `url(${imageUrl})`;
+---
+
+<section class="hero-img flex items-center">
+  <slot />
+</section>
+
+<style define:vars={{ bgVar }}>
+  .hero-img {
+    background-image: var(--bgVar);
+    height: 50vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+</style>

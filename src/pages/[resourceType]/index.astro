@@ -1,8 +1,22 @@
 ---
+import { capitalize } from "lodash";
+import pluralize from "pluralize";
+
 import { INTERNET_RESOURCE_TYPES } from "@model/common";
+
+import {
+  getCategories,
+  getInternetResources,
+  getPopulations,
+} from "@common/client";
+import { buildCategoryTree } from "@common/category";
+
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import MainLayout from "@layouts/MainLayout.astro";
-import { getInternetResources } from "@common/client";
+import TwoColLayout from "@layouts/TwoColLayout.astro";
+import Resource from "@ui/Resource.astro";
+import AsideRecursiveCategoryTree from "@ui/AsideNav/AsideRecursiveCategoryTree.astro";
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
 
 export function getStaticPaths() {
   return [
@@ -14,21 +28,45 @@ export function getStaticPaths() {
 
 const { resourceType } = Astro.params;
 
+const populations = await getPopulations();
 const resources = await getInternetResources({ resourceType });
+const categories = await getCategories();
+
+const categoryTree = buildCategoryTree(categories);
 ---
 
 <MainLayout>
   <ResourcePageLayout resourceType={resourceType}>
-    <ul>
-      {
-        resources?.map((resource) => (
-          <li class="p-2">
-            <h3>{resource.title}</h3>
-            <p>{resource.description}</p>
-            <a href={resource.resourceUrl}>{resource.resourceUrl}</a>
-          </li>
-        ))
-      }
-    </ul>
+    <TwoColLayout>
+      <ul>
+        {
+          resources?.map((resource) => (
+            <li>
+              <Resource resource={resource} />
+            </li>
+          ))
+        }
+      </ul>
+      <aside slot="aside">
+        <AsideNav title={`${capitalize(pluralize(resourceType))} for...`}>
+          {
+            populations.map((pop) => (
+              <a
+                class="block py-1 hover:underline"
+                href={`/${resourceType}/${pop.slug}`}
+              >
+                {pop.name}
+              </a>
+            ))
+          }
+        </AsideNav>
+        <AsideNav title={`${capitalize(pluralize(resourceType))} about...`}>
+          <AsideRecursiveCategoryTree
+            categories={categoryTree}
+            getPath={(slug) => `/${resourceType}/${slug}`}
+          />
+        </AsideNav>
+      </aside>
+    </TwoColLayout>
   </ResourcePageLayout>
 </MainLayout>

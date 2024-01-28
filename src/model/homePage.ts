@@ -1,13 +1,13 @@
 import { z } from "zod";
 import groq from "groq";
-import { zImage } from "./common";
+import { zImage, zPortableText } from "./common";
 import { zFeaturedContent } from "./featuredContent";
 
 export const zHomePage = z.object({
   org: z.object({
     name: z.string(),
     slogan: z.string(),
-    mission: z.string(),
+    mission: zPortableText,
     coreValues: z.array(
       z.object({
         title: z.string(),

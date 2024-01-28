@@ -1,7 +1,19 @@
 ---
-import { getCategorySlugs, getInternetResources } from "@common/client";
+import { INTERNET_RESOURCE_TYPES } from "@model/common";
+
+import {
+  getCategory,
+  getCategorySlugs,
+  getInternetResources,
+  getPopulations,
+} from "@common/client";
+
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+import TwoColLayout from "@layouts/TwoColLayout.astro";
+
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import Resource from "@ui/Resource.astro";
 
 export async function getStaticPaths() {
   const slugs = await getCategorySlugs();
@@ -9,24 +21,48 @@ export async function getStaticPaths() {
   return slugs.map((category) => ({ params: { category } }));
 }
 
-const { category } = Astro.params;
+const params = Astro.params;
 
-const resources = await getInternetResources({ category });
+const category = await getCategory(params.category);
+const populations = await getPopulations();
+const resources = await getInternetResources({ categorySlug: params.category });
 ---
 
 <MainLayout>
   <ResourcePageLayout category={category}>
-    <div>[[Resources]]</div>
-    <ul>
-      {
-        resources?.map((resource) => (
-          <li class="p-2">
-            <h3>{resource.title}</h3>
-            <p>{resource.description}</p>
-            <a href={resource.resourceUrl}>{resource.resourceUrl}</a>
-          </li>
-        ))
-      }
-    </ul>
+    <TwoColLayout>
+      <ul>
+        {
+          resources?.map((resource) => (
+            <li>
+              <Resource resource={resource} />
+            </li>
+          ))
+        }
+      </ul>
+      <aside slot="aside">
+        <AsideNav title={`${category.title} resources for...`}>
+          {
+            populations.map((population) => (
+              <a
+                class="block py-1 hover:underline"
+                href={`/${category.slug}/${population.slug}`}
+              >
+                {population.name}
+              </a>
+            ))
+          }
+        </AsideNav>
+        <AsideNav title={`${category.title} resources by type...`}>
+          {
+            INTERNET_RESOURCE_TYPES.map((type) => (
+              <a class="block" href={`/${type}/${category.slug}`}>
+                {type}
+              </a>
+            ))
+          }
+        </AsideNav>
+      </aside>
+    </TwoColLayout>
   </ResourcePageLayout>
 </MainLayout>

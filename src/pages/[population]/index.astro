@@ -1,7 +1,20 @@
 ---
-import { getInternetResources, getPopulationSlugs } from "@common/client";
+import { INTERNET_RESOURCE_TYPES } from "@model/common";
+
+import { buildCategoryTree } from "@common/category";
+import {
+  getCategories,
+  getInternetResources,
+  getPopulation,
+  getPopulationSlugs,
+} from "@common/client";
+
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+import TwoColLayout from "@layouts/TwoColLayout.astro";
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import AsideRecursiveCategoryTree from "@ui/AsideNav/AsideRecursiveCategoryTree.astro";
+import Resource from "@ui/Resource.astro";
 
 export async function getStaticPaths() {
   const slugs = await getPopulationSlugs();
@@ -9,23 +22,46 @@ export async function getStaticPaths() {
   return slugs.map((population) => ({ params: { population } }));
 }
 
-const { population } = Astro.params;
+const params = Astro.params;
 
-const resources = await getInternetResources({ population });
+const population = await getPopulation(params.population);
+const resources = await getInternetResources({
+  populationSlug: params.population,
+});
+
+const categories = await getCategories();
+const categoryTree = buildCategoryTree(categories);
 ---
 
 <MainLayout>
   <ResourcePageLayout population={population}>
-    <ul>
-      {
-        resources?.map((resource) => (
-          <li class="p-2">
-            <h3>{resource.title}</h3>
-            <p>{resource.description}</p>
-            <a href={resource.resourceUrl}>{resource.resourceUrl}</a>
-          </li>
-        ))
-      }
-    </ul>
+    <TwoColLayout>
+      <ul>
+        {
+          resources?.map((resource) => (
+            <li>
+              <Resource resource={resource} />
+            </li>
+          ))
+        }
+      </ul>
+      <aside slot="aside">
+        <AsideNav title={`Resources for ${population.name} by type...`}>
+          {
+            INTERNET_RESOURCE_TYPES.map((type) => (
+              <a class="block" href={`/${type}/${population.slug}`}>
+                {type}
+              </a>
+            ))
+          }
+        </AsideNav>
+        <AsideNav title={`Resources for ${population.name} by category...`}>
+          <AsideRecursiveCategoryTree
+            categories={categoryTree}
+            getPath={(categorySlug) => `/${categorySlug}/${population.slug}`}
+          />
+        </AsideNav>
+      </aside>
+    </TwoColLayout>
   </ResourcePageLayout>
 </MainLayout>

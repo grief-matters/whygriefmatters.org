@@ -1,36 +1,88 @@
 ---
-import { getInternetResources, getPopulationSlugs } from "@common/client";
+import { capitalize } from "lodash";
+import pluralize from "pluralize";
+
+import { INTERNET_RESOURCE_TYPES } from "@model/common";
+
+import {
+  getCategories,
+  getInternetResources,
+  getPopulation,
+  getPopulationSlugs,
+} from "@common/client";
+import { buildCategoryTree } from "@common/category";
+import { resourceTypeBgColorMap } from "@common/color-maps";
+
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import { INTERNET_RESOURCE_TYPES } from "@model/common";
+import TwoColLayout from "@layouts/TwoColLayout.astro";
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import AsideRecursiveCategoryTree from "@ui/AsideNav/AsideRecursiveCategoryTree.astro";
+import Resource from "@ui/Resource.astro";
 
 export async function getStaticPaths() {
   const slugs = await getPopulationSlugs();
 
   return [
     ...INTERNET_RESOURCE_TYPES.flatMap((resourceType) =>
-      slugs.map((population) => ({ params: { resourceType, population } })),
+      slugs.map((population) => ({
+        params: { resourceType, population },
+      })),
     ),
   ];
 }
 
-const { resourceType, population } = Astro.params;
+const params = Astro.params;
 
-const resources = await getInternetResources({ resourceType, population });
+const categories = await getCategories();
+const population = await getPopulation(params.population);
+const resources = await getInternetResources({
+  resourceType: params.resourceType,
+  populationSlug: params.population,
+});
+
+const categoryTree = buildCategoryTree(categories);
 ---
 
 <MainLayout>
-  <ResourcePageLayout resourceType={resourceType} population={population}>
-    <ul>
-      {
-        resources?.map((resource) => (
-          <li class="p-2">
-            <h3>{resource.title}</h3>
-            <p>{resource.description}</p>
-            <a href={resource.resourceUrl}>{resource.resourceUrl}</a>
-          </li>
-        ))
-      }
-    </ul>
+  <ResourcePageLayout
+    resourceType={params.resourceType}
+    population={population}
+  >
+    <TwoColLayout>
+      <ul>
+        {
+          resources?.map((resource) => (
+            <li>
+              <Resource resource={resource} />
+            </li>
+          ))
+        }
+      </ul>
+      <aside slot="aside">
+        <a
+          href={`/${params.resourceType}`}
+          class:list={[
+            resourceTypeBgColorMap[params.resourceType],
+            "p-2",
+            "mb-3",
+            "inline-block",
+          ]}
+        >
+          {`Back to all ${pluralize(params.resourceType)}`}
+        </a>
+        <AsideNav
+          title={`${capitalize(pluralize(params.resourceType))} for ${
+            population.name
+          } about...`}
+        >
+          <AsideRecursiveCategoryTree
+            categories={categoryTree}
+            getPath={(slug) =>
+              `/${params.resourceType}/${slug}/${population.slug}`}
+          />
+        </AsideNav>
+      </aside>
+    </TwoColLayout>
   </ResourcePageLayout>
 </MainLayout>

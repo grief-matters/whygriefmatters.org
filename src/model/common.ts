@@ -23,7 +23,7 @@ export const INTERNET_RESOURCE_TYPES = [
   "website",
 ] as const;
 
-const zInternetResourceType = z.enum(INTERNET_RESOURCE_TYPES);
+export const zInternetResourceType = z.enum(INTERNET_RESOURCE_TYPES);
 
 export type InternetResourceType = z.infer<typeof zInternetResourceType>;
 

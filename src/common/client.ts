@@ -3,15 +3,14 @@ import imageUrlBuilder from "@sanity/image-url";
 import { homePageQuery, type HomePage, zHomePage } from "@model/homePage";
 import { z } from "zod";
 import {
-  resourceQuery,
   type InternetResource,
-  zInternetResource,
   type GetInternetResourcesQueryParams,
+  zInternetResource,
   getInternetResourceQuery,
 } from "@model/internetResource";
 import {
-  categoryQuery,
   type Category,
+  categoryQuery,
   zCategory,
   zCategoryWithParent,
   getCategoriesQuery,
@@ -21,6 +20,7 @@ import {
   zPopulation,
   type Population,
   populationQuery,
+  populationsQuery,
 } from "@model/population";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
@@ -45,12 +45,6 @@ export async function getHomePage(): Promise<HomePage> {
   return homePage;
 }
 
-export async function getPopulationSlugs(): Promise<string[]> {
-  return await client
-    .fetch(`*[_type == 'population'].slug.current`)
-    .then((result) => z.string().array().parse(result));
-}
-
 export async function getCategorySlugs(): Promise<string[]> {
   return await client
     .fetch(`*[_type == 'category'].slug.current`)
@@ -60,8 +54,12 @@ export async function getCategorySlugs(): Promise<string[]> {
 function createParamsObject(params: GetInternetResourcesQueryParams) {
   return {
     ...(params.resourceType !== undefined && { type: params.resourceType }),
-    ...(params.category !== undefined && { category: params.category }),
-    ...(params.population !== undefined && { population: params.population }),
+    ...(params.categorySlug !== undefined && {
+      categorySlug: params.categorySlug,
+    }),
+    ...(params.populationSlug !== undefined && {
+      populationSlug: params.populationSlug,
+    }),
   };
 }
 
@@ -100,6 +98,13 @@ export async function getFeaturedTopics(): Promise<Omit<Category, "parent">[]> {
   return featuredTopics;
 }
 
+// Populations
+export async function getPopulationSlugs(): Promise<string[]> {
+  return await client
+    .fetch(`*[_type == 'population'].slug.current`)
+    .then((result) => z.string().array().parse(result));
+}
+
 export async function getPopulation(
   populationSlug: string,
 ): Promise<Population> {
@@ -108,4 +113,12 @@ export async function getPopulation(
     .then((result) => zPopulation.parse(result));
 
   return population;
+}
+
+export async function getPopulations(): Promise<Population[]> {
+  const populations = await client
+    .fetch(populationsQuery)
+    .then((result) => zPopulation.array().parse(result));
+
+  return populations;
 }

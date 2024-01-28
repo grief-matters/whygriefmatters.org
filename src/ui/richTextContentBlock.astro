@@ -1,5 +1,5 @@
 ---
-import { toHTML } from "@portabletext/to-html";
+import { defaultComponents, toHTML } from "@portabletext/to-html";
 import type { PortableText } from "@model/common";
 
 interface Props {
@@ -7,8 +7,10 @@ interface Props {
 }
 
 const { portableText } = Astro.props;
+
+const htmlString = toHTML(portableText);
+
+// const modifiedHtml = htmlString.replace(/<p>/g, '<p class="mb-3">');
 ---
 
-<div>
-  <Fragment set:html={toHTML(portableText)} />
-</div>
+<Fragment set:html={htmlString} />

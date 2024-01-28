@@ -1,38 +1,70 @@
 ---
+import { capitalize } from "lodash";
+import pluralize from "pluralize";
+
 import {
+  getCategory,
   getCategorySlugs,
   getInternetResources,
+  getPopulation,
   getPopulationSlugs,
 } from "@common/client";
+
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+import TwoColLayout from "@layouts/TwoColLayout.astro";
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import AsideRecursiveCategoryTree from "@ui/AsideNav/AsideRecursiveCategoryTree.astro";
+import Resource from "@ui/Resource.astro";
+import { INTERNET_RESOURCE_TYPES } from "@model/common";
 
 export async function getStaticPaths() {
   const categorySlugs = await getCategorySlugs();
   const populationSlugs = await getPopulationSlugs();
 
   return categorySlugs.flatMap((category) =>
-    populationSlugs.map((population) => ({ params: { category, population } })),
+    populationSlugs.map((population) => ({
+      params: { category, population },
+    })),
   );
 }
 
-const { category, population } = Astro.params;
+const params = Astro.params;
 
-const resources = await getInternetResources({ category, population });
+const category = await getCategory(params.category);
+const population = await getPopulation(params.population);
+const resources = await getInternetResources({
+  categorySlug: params.category,
+  populationSlug: params.population,
+});
 ---
 
 <MainLayout>
   <ResourcePageLayout category={category} population={population}>
-    <ul>
-      {
-        resources?.map((resource) => (
-          <li class="p-2">
-            <h3>{resource.title}</h3>
-            <p>{resource.description}</p>
-            <a href={resource.resourceUrl}>{resource.resourceUrl}</a>
-          </li>
-        ))
-      }
-    </ul>
+    <TwoColLayout>
+      <ul>
+        {
+          resources?.map((resource) => (
+            <li>
+              <Resource resource={resource} />
+            </li>
+          ))
+        }
+      </ul>
+      <aside slot="aside">
+        <AsideNav title="Select type of resource">
+          {
+            INTERNET_RESOURCE_TYPES.map((type) => (
+              <a
+                class="block"
+                href={`/${type}/${category.slug}/${population.slug}`}
+              >
+                {type}
+              </a>
+            ))
+          }
+        </AsideNav>
+      </aside>
+    </TwoColLayout>
   </ResourcePageLayout>
 </MainLayout>
