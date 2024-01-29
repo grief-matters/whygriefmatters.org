@@ -1,7 +1,8 @@
+import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
-import { homePageQuery, type HomePage, zHomePage } from "@model/homePage";
 import { z } from "zod";
+
 import {
   type InternetResource,
   type GetInternetResourcesQueryParams,
@@ -10,7 +11,7 @@ import {
 } from "@model/internetResource";
 import {
   type Category,
-  categoryQuery,
+  getCategoryQuery,
   zCategory,
   zCategoryWithParent,
   getCategoriesQuery,
@@ -22,7 +23,10 @@ import {
   populationQuery,
   populationsQuery,
 } from "@model/population";
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import { homePageQuery, type HomePage, zHomePage } from "@model/homePage";
+import { getLogosQuery, zLogo, type Logo } from "@model/logo";
+import { zImage, type SanityImage } from "@model/common";
+import groq from "groq";
 
 const client = createClient({
   projectId: import.meta.env.SANITY_STUDIO_PROJECT_ID,
@@ -76,7 +80,7 @@ export async function getInternetResources(
 // Be mindful of the 'withParent' we implemented for the ResourcePageLayout
 export async function getCategory(categorySlug: string): Promise<Category> {
   const category = await client
-    .fetch(categoryQuery, { category: categorySlug })
+    .fetch(getCategoryQuery, { category: categorySlug })
     .then((result) => zCategoryWithParent.parse(result));
 
   return category;
@@ -121,4 +125,25 @@ export async function getPopulations(): Promise<Population[]> {
     .then((result) => zPopulation.array().parse(result));
 
   return populations;
+}
+
+export async function getLogoSet(): Promise<Logo[]> {
+  const logoSet = await client
+    .fetch(getLogosQuery)
+    .then((result) => zLogo.array().parse(result));
+
+  return logoSet;
+}
+
+export async function getFallbackImageCollection(): Promise<SanityImage[]> {
+  const query = groq`
+    *[_type == "imageCollection" && title == "Generic Fallbacks"].images[]{
+      image, 
+      "altText": alt
+    }
+  `;
+
+  return await client
+    .fetch(query)
+    .then((result) => zImage.array().parse(result));
 }

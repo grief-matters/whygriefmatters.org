@@ -37,24 +37,27 @@ const resourceTypeTextColor = resourceType
   : "text-slate-500";
 ---
 
-<h1 class="ml-12 mt-6 font-serif">
-  <div class="text-xl">
-    <span class:list={[resourceTypeTextColor, "font-bold", "lowercase"]}
-      >{typeText}</span
-    >
-    <span class="italic text-slate-500 after:content-['...']">{` about`}</span>
+<div class="container mx-auto">
+  <h1 class="ml-12 mt-6 font-serif">
+    <div class="text-xl">
+      <span class:list={[resourceTypeTextColor, "font-bold", "lowercase"]}
+        >{typeText}</span
+      >
+      <span class="italic text-slate-500 after:content-['...']">{` about`}</span
+      >
+    </div>
+    <div class="ml-4">
+      <span class="text-sky-800 text-4xl">{categoryText}</span>
+    </div>
+    {
+      populationText && (
+        <div class="ml-8">
+          <span class="italic text-slate-500 text-xl before:content-['...']">{`for ${populationText}`}</span>
+        </div>
+      )
+    }
+  </h1>
+  <div>
+    <slot />
   </div>
-  <div class="ml-4">
-    <span class="text-sky-800 text-4xl">{categoryText}</span>
-  </div>
-  {
-    populationText && (
-      <div class="ml-8">
-        <span class="italic text-slate-500 text-xl before:content-['...']">{`for ${populationText}`}</span>
-      </div>
-    )
-  }
-</h1>
-<div>
-  <slot />
 </div>

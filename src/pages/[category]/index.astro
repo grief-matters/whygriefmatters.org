@@ -4,6 +4,8 @@ import { INTERNET_RESOURCE_TYPES } from "@model/common";
 import {
   getCategory,
   getCategorySlugs,
+  getFallbackImageCollection,
+  getImageUrl,
   getInternetResources,
   getPopulations,
 } from "@common/client";
@@ -14,6 +16,9 @@ import TwoColLayout from "@layouts/TwoColLayout.astro";
 
 import AsideNav from "@ui/AsideNav/AsideNav.astro";
 import Resource from "@ui/Resource.astro";
+import ResourceLink from "@ui/ResourceLink.astro";
+import { shuffle, startCase } from "lodash";
+import pluralize from "pluralize";
 
 export async function getStaticPaths() {
   const slugs = await getCategorySlugs();
@@ -23,23 +28,134 @@ export async function getStaticPaths() {
 
 const params = Astro.params;
 
+// TODO - we're overfetching here - as parents will probs have all featured stuff too
 const category = await getCategory(params.category);
+
 const populations = await getPopulations();
 const resources = await getInternetResources({ categorySlug: params.category });
+
+// check the images on all featured - fetch image collection if any are missing
+const isMissingImages =
+  [
+    ...(category.featuredArticles?.filter((a) => a.image === null) ?? []),
+    ...(category.featuredStories?.filter((s) => s.image === null) ?? []),
+  ].length > 0;
+
+if (isMissingImages) {
+  // todo - we're making a big assumption that we have enough images here
+  const fallbackImages = await getFallbackImageCollection();
+  const shuffled = shuffle(fallbackImages);
+
+  category.featuredArticles?.forEach(function (article) {
+    if (article.image) {
+      return;
+    }
+
+    const img = shuffled.pop();
+
+    if (typeof img !== "undefined") {
+      article.image = img;
+    }
+  });
+
+  category.featuredStories?.forEach(function (article) {
+    if (article.image) {
+      return;
+    }
+
+    const img = shuffled.pop();
+
+    if (typeof img !== "undefined") {
+      article.image = img;
+    }
+  });
+}
 ---
 
 <MainLayout>
   <ResourcePageLayout category={category}>
     <TwoColLayout>
-      <ul>
-        {
-          resources?.map((resource) => (
-            <li>
-              <Resource resource={resource} />
-            </li>
-          ))
-        }
-      </ul>
+      <div>
+        <div class="divide-y">
+          {
+            category.featuredStories && (
+              <div class="p-3 text-sky-800 my-6 bg-stone-100">
+                <h2 class="text-center font-serif text-3xl">
+                  Featured Stories
+                </h2>
+                <div class="flex">
+                  {category.featuredStories?.map((story) => (
+                    <div class="p-3 flex-1 flex flex-col gap-3">
+                      {story.image && (
+                        <img
+                          src={getImageUrl(story.image.image)
+                            .width(300)
+                            .height(225)
+                            .url()}
+                          alt={story.image.altText}
+                        />
+                      )}
+                      <h3 class="font-serif italic text-lg">{story.title}</h3>
+                      <p class="font-serif prose text-sky-800 flex-1">
+                        {story.description}
+                      </p>
+                      <div>
+                        <ResourceLink
+                          href={story.resourceUrl}
+                          variant="story"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          }
+          {
+            category.featuredArticles && (
+              <div class="p-3 text-sky-800 my-6 bg-stone-100">
+                <h2 class="text-center font-serif text-3xl">
+                  Featured Articles
+                </h2>
+                <div class="flex">
+                  {category.featuredArticles?.map((article) => (
+                    <div class="p-3 flex-1 flex flex-col gap-3">
+                      {article.image && (
+                        <img
+                          src={getImageUrl(article.image.image)
+                            .width(300)
+                            .height(225)
+                            .url()}
+                          alt={article.image.altText}
+                        />
+                      )}
+                      <h3 class="font-serif italic text-lg">{article.title}</h3>
+                      <p class="font-serif prose text-sky-800 flex-1">
+                        {article.description}
+                      </p>
+                      <div>
+                        <ResourceLink
+                          href={article.resourceUrl}
+                          variant="article"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          }
+        </div>
+        <ul class="mx-12 divide-y">
+          {
+            resources?.map((resource) => (
+              <li class:list={["py-6"]}>
+                <Resource resource={resource} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
       <aside slot="aside">
         <AsideNav title={`${category.title} resources for...`}>
           {
@@ -56,8 +172,11 @@ const resources = await getInternetResources({ categorySlug: params.category });
         <AsideNav title={`${category.title} resources by type...`}>
           {
             INTERNET_RESOURCE_TYPES.map((type) => (
-              <a class="block" href={`/${type}/${category.slug}`}>
-                {type}
+              <a
+                class="block py-1 hover:underline"
+                href={`/${type}/${category.slug}`}
+              >
+                {pluralize(startCase(type))}
               </a>
             ))
           }

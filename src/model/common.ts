@@ -82,6 +82,8 @@ export const zImage = z.object({
   altText: z.string(),
 });
 
+export type SanityImage = z.infer<typeof zImage>;
+
 export const zRowOfThree = z.object({
   images: z.array(zImage),
 });

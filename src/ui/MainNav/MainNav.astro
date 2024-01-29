@@ -1,15 +1,10 @@
 ---
-import type { Category } from "@model/category";
 import { buildCategoryTree, type CategoryTreeItem } from "@common/category";
-
 import { getCategories, getFeaturedTopics } from "@common/client";
+
 import RecursiveCategoryTree from "@ui/MainNav/RecursiveCategoryTree.astro";
 
 import MainNavLink from "./MainNavLink.astro";
-
-// export type TreeItem = Category & {
-//   children: TreeItem[];
-// };
 
 const featuredTopics = await getFeaturedTopics();
 
@@ -24,31 +19,6 @@ const supportingTheBereaved = masterCategoryTree.find(
   (rootCategory) => rootCategory.slug === "supporting-the-bereaved",
 );
 
-// function buildCategoryTree(categories: Category[]): TreeItem[] {
-//   const categoryMap: Record<string, any> = {};
-
-//   // Create a mapping of categories using slug as key
-//   categories.forEach((c) => {
-//     categoryMap[c.slug] = { ...c, children: [] };
-//   });
-
-//   // Populate the children arrays
-//   categories.forEach((category) => {
-//     if (category.parent) {
-//       // If the category has a parent, add it as a child to the parent
-//       const parentSlug = category.parent.slug;
-//       categoryMap[parentSlug].children.push(categoryMap[category.slug]);
-//     }
-//   });
-
-//   // Find top-level categories
-//   const rootCategories: TreeItem[] = Object.values(categoryMap).filter(
-//     (category) => !category.parent,
-//   );
-
-//   return rootCategories;
-// }
-
 const navMenuContainerClasses =
   "nav-menu-container hidden absolute left-0 w-full bg-slate-100 text-gray-900";
 
@@ -57,7 +27,7 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3 font-medium";
 
 <main-nav>
   <nav
-    class="z-50 relative w-screen flex justify-center items-center bg-blue-800 text-white"
+    class="z-50 relative w-screen flex justify-center items-center bg-blue-900 text-slate-50"
   >
     <div>
       <button class={navMenuButtonClasses} type="button">

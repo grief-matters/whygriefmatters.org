@@ -1,5 +1,27 @@
 import type { InternetResourceType } from "@model/common";
 
+export const resourceTypeBorderColorMap: Record<InternetResourceType, string> =
+  {
+    app: "border-blue-300",
+    article: "border-fuchsia-300",
+    blog: "border-blue-300",
+    book: "border-blue-300",
+    booklet: "border-blue-300",
+    brochure: "border-blue-300",
+    course: "border-blue-300",
+    forum: "border-blue-300",
+    memorial: "border-blue-300",
+    peerSupport: "border-blue-300",
+    podcast: "border-blue-300",
+    podcastEpisode: "border-blue-300",
+    story: "border-teal-300",
+    supportGroup: "border-blue-300",
+    therapyResource: "border-blue-300",
+    video: "border-blue-300",
+    webinar: "border-blue-300",
+    website: "border-blue-300",
+  };
+
 export const resourceTypeTextColorMap: Record<InternetResourceType, string> = {
   app: "text-blue-500",
   article: "text-fuchsia-500",
@@ -40,25 +62,4 @@ export const resourceTypeBgColorMap: Record<InternetResourceType, string> = {
   video: "bg-blue-500",
   webinar: "bg-blue-500",
   website: "bg-blue-500",
-};
-
-export const resourceTypeBaseColorMap: Record<InternetResourceType, string> = {
-  app: "blue",
-  article: "blue",
-  blog: "blue",
-  book: "blue",
-  booklet: "blue",
-  brochure: "blue",
-  course: "blue",
-  forum: "blue",
-  memorial: "blue",
-  peerSupport: "blue",
-  podcast: "blue",
-  podcastEpisode: "blue",
-  story: "teal",
-  supportGroup: "blue",
-  therapyResource: "blue",
-  video: "blue",
-  webinar: "blue",
-  website: "",
 };

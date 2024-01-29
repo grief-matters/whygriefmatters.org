@@ -1,5 +1,17 @@
 ---
+import { getImageUrl, getLogoSet } from "@common/client";
 import MainNav from "@ui/MainNav/MainNav.astro";
+
+const logoSet = await getLogoSet();
+
+const rawHeaderLogo = logoSet.find((l) => l.variant === "dark-primary");
+
+const headerLogo = rawHeaderLogo
+  ? {
+      url: getImageUrl(rawHeaderLogo.image).url(),
+      alt: "Why Grief Matter home",
+    }
+  : null;
 ---
 
 <html lang="en">
@@ -8,7 +20,7 @@ import MainNav from "@ui/MainNav/MainNav.astro";
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Why Grief Matters</title>
   </head>
-  <body>
+  <body class="bg-stone-50">
     <header>
       <div class="flex justify-between">
         <button
@@ -25,7 +37,15 @@ import MainNav from "@ui/MainNav/MainNav.astro";
         </a>
       </div>
       <div class="flex justify-between items-center">
-        <a href="/" class="bg-slate-500 h-24 w-48">[[LOGO]]</a>
+        <a href="/" class="block w-56 ml-6 my-3">
+          {
+            headerLogo ? (
+              <img src={headerLogo.url} alt={headerLogo.alt} />
+            ) : (
+              <span>Why Grief Matters</span>
+            )
+          }
+        </a>
         <div class="flex-inline space-x-6 mr-6">
           <input
             class="px-3 py-1 border rounded-full"
@@ -39,15 +59,15 @@ import MainNav from "@ui/MainNav/MainNav.astro";
         </div>
       </div>
       <MainNav />
+      <main>
+        <slot />
+      </main>
     </header>
-    <main>
-      <slot />
-    </main>
   </body>
-</html>
 
-<style>
-  html {
-    font-size: 18px;
-  }
-</style>
+  <style>
+    html {
+      font-size: 18px;
+    }
+  </style>
+</html>

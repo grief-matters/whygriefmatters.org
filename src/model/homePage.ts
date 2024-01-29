@@ -14,6 +14,7 @@ export const zHomePage = z.object({
         description: z.string(),
       }),
     ),
+    logo: zImage,
   }),
   heroImage: zImage,
   featurePanels: z.array(zFeaturedContent),
@@ -27,10 +28,16 @@ export const homePageQuery = groq`
     name,
     slogan,
     mission,
-      coreValues[]{
-        "title": value,
-        description
+    coreValues[]{
+      "title": value,
+      description
+    },
+    "logo": logos[variant == 'light-secondary'][0]{
+      ...logo{
+        image,
+        "altText": alt,
       }
+    }
   },
   "heroImage": {
     "image": heroImage.image,

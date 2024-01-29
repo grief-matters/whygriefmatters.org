@@ -14,6 +14,11 @@ const heroImg = {
   alt: homePage.heroImage.altText,
 };
 
+const logo = {
+  url: getImageUrl(homePage.org.logo.image).url(),
+  alt: homePage.org.logo.altText,
+};
+
 function getRoute(pageLink: ResourcePageLink): string {
   const slugParts = [pageLink.type, pageLink.category, pageLink.population]
     .filter((part) => Boolean(part))
@@ -33,53 +38,70 @@ const coreValuesBgColors = [
 
 <MainLayout>
   <Hero imageUrl={heroImg.url}>
-    <div class="text-white p-8">
-      <h1 class="text-2xl">{homePage?.org.name}</h1>
-      <span>{homePage?.org.slogan}</span>
+    <div class="w-3/4 mx-auto relative py-1">
+      <img class="w-96" src={logo.url} alt={homePage?.org.name} />
+      <span
+        class:list={[
+          "pl-3",
+          "font-serif",
+          "italic",
+          "text-lg",
+          "text-white",
+          "lowercase",
+          `before:content-["..."]`,
+          "absolute",
+          "left-32",
+          "bottom-0",
+        ]}>{homePage?.org.slogan}</span
+      >
     </div>
   </Hero>
   <section>
-    <div class="bg-sky-800 p-2">
-      <h2
-        class="text-3xl text-center font-serif lowercase ellipsis text-white font-light"
-      >
-        Our <span class="font-semibold">Mission</span>
-      </h2>
-    </div>
-    <div class="max-w-prose my-12 m-auto prose font-serif">
+    <h2
+      class="text-4xl text-center font-serif lowercase ellipsis text-blue-900 font-light mt-5 mb-8 after:content-['...']"
+    >
+      Our <span class="font-semibold">Mission</span>
+    </h2>
+    <div
+      class="max-w-prose mb-12 m-auto prose font-serif text-blue-900 first:prose-p:text-xl text-center"
+    >
       <RichTextContentBlock portableText={homePage?.org.mission} />
     </div>
   </section>
 
-  <div class="bg-blue-800/90 p-2">
-    <h2
-      class="text-3xl text-center font-serif lowercase ellipsis text-white font-light"
-    >
-      Our <span class="font-semibold">Values</span>
-    </h2>
-  </div>
+  <section>
+    <div class="bg-sky-800 py-3">
+      <h2
+        class="text-4xl text-center font-serif lowercase ellipsis text-white font-light after:content-['...']"
+      >
+        Our <span class="font-semibold">Values</span>
+      </h2>
+    </div>
 
-  <div class="flex">
-    {
-      homePage.org.coreValues.map((coreValue, i) => (
-        <div
-          class:list={[
-            "flex",
-            "flex-1",
-            "text-slate-50",
-            "py-8",
-            "px-8",
-            coreValuesBgColors[i],
-          ]}
-        >
-          <div>
-            <h3 class="font-bold text-xl mb-3">{coreValue.title}</h3>
-            <p class="font-light">{coreValue.description}</p>
-          </div>
-        </div>
-      ))
-    }
-  </div>
+    <div class="bg-gradient-to-r from-sky-700 from-50% to-sky-400 to-50%">
+      <div class="flex container mx-auto">
+        {
+          homePage.org.coreValues.map((coreValue, i) => (
+            <div
+              class:list={[
+                "flex",
+                "flex-1",
+                "text-slate-50",
+                "py-8",
+                "px-8",
+                coreValuesBgColors[i],
+              ]}
+            >
+              <div>
+                <h3 class="font-bold text-xl mb-3">{coreValue.title}</h3>
+                <p class="font-light">{coreValue.description}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 
   {
     homePage?.featurePanels.map((featuredContent, i) => (
@@ -92,3 +114,9 @@ const coreValuesBgColors = [
     ))
   }
 </MainLayout>
+
+<style>
+  .bg-split {
+    background: linear-gradient();
+  }
+</style>

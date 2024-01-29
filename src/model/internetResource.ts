@@ -1,6 +1,6 @@
 import groq from "groq";
 import { z } from "zod";
-import { zInternetResourceType } from "./common";
+import { zImage, zInternetResourceType } from "./common";
 
 export const zInternetResource = z.object({
   type: zInternetResourceType,
@@ -17,6 +17,18 @@ export const zInternetResource = z.object({
 });
 
 export type InternetResource = z.infer<typeof zInternetResource>;
+
+export const zArticle = zInternetResource.extend({
+  image: zImage.nullable(),
+});
+
+export type Article = z.infer<typeof zArticle>;
+
+export const zStory = zInternetResource.extend({
+  image: zImage.nullable(),
+});
+
+export type Story = z.infer<typeof zStory>;
 
 export const resourceQuery = (filter: string) => groq`
 *[${filter}]
