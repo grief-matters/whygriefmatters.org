@@ -4,7 +4,7 @@ import { getCategories, getFeaturedTopics } from "@common/client";
 
 import RecursiveCategoryTree from "@ui/MainNav/RecursiveCategoryTree.astro";
 
-import MainNavLink from "./MainNavLink.astro";
+import NavLink from "../primitives/NavLink.astro";
 
 const featuredTopics = await getFeaturedTopics();
 
@@ -35,12 +35,13 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3 font-medium";
       </button>
       <div class={navMenuContainerClasses}>
         <ul>
+          <h3 class="text-xl font-serif font-semibold">Featured Topics</h3>
           {
             featuredTopics.map((topic) => (
               <li>
-                <MainNavLink hierarchyLevel={"primary"} href={`/${topic.slug}`}>
+                <NavLink href={`/${topic.slug}`} linkLevel="secondary">
                   {topic.title}
-                </MainNavLink>
+                </NavLink>
               </li>
             ))
           }
@@ -86,9 +87,9 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3 font-medium";
                         .filter((c) => c.children.length === 0)
                         .map((c) => (
                           <li>
-                            <a href={`/${c.slug}`} class="hover:underline">
+                            <NavLink linkLevel="secondary" href={`/${c.slug}`}>
                               {c.title}
-                            </a>
+                            </NavLink>
                           </li>
                         ))}
                     </ul>

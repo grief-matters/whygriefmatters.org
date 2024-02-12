@@ -14,6 +14,7 @@ export const zInternetResource = z.object({
       resourceUrl: z.string().url(),
     })
     .nullable(),
+  populations: z.array(z.string()).nullish(),
 });
 
 export type InternetResource = z.infer<typeof zInternetResource>;
@@ -41,7 +42,8 @@ export const resourceQuery = (filter: string) => groq`
       name,
       directlyQuoted,
       resourceUrl,
-    },  
+    },
+    "populations": populations[]->slug.current
   }
 `;
 

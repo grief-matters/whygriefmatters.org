@@ -17,8 +17,8 @@ import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import TwoColLayout from "@layouts/TwoColLayout.astro";
 import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import AsideRecursiveCategoryTree from "@ui/AsideNav/AsideRecursiveCategoryTree.astro";
 import Resource from "@ui/Resource.astro";
+import RecursiveCategoryTree from "@ui/MainNav/RecursiveCategoryTree.astro";
 
 export async function getStaticPaths() {
   const slugs = await getPopulationSlugs();
@@ -76,7 +76,7 @@ const categoryTree = buildCategoryTree(categories);
             population.name
           } about...`}
         >
-          <AsideRecursiveCategoryTree
+          <RecursiveCategoryTree
             categories={categoryTree}
             getPath={(slug) =>
               `/${params.resourceType}/${slug}/${population.slug}`}

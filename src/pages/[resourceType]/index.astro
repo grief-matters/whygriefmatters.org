@@ -15,8 +15,8 @@ import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import MainLayout from "@layouts/MainLayout.astro";
 import TwoColLayout from "@layouts/TwoColLayout.astro";
 import Resource from "@ui/Resource.astro";
-import AsideRecursiveCategoryTree from "@ui/AsideNav/AsideRecursiveCategoryTree.astro";
 import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import RecursiveCategoryTree from "@ui/MainNav/RecursiveCategoryTree.astro";
 
 export function getStaticPaths() {
   return [
@@ -61,7 +61,7 @@ const categoryTree = buildCategoryTree(categories);
           }
         </AsideNav>
         <AsideNav title={`${capitalize(pluralize(resourceType))} about...`}>
-          <AsideRecursiveCategoryTree
+          <RecursiveCategoryTree
             categories={categoryTree}
             getPath={(slug) => `/${resourceType}/${slug}`}
           />

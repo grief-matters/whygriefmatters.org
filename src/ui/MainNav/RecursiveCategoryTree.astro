@@ -1,42 +1,60 @@
 ---
-import MainNavLink, {
-  hierarchyLevelSchema,
-  type MainNavLinkProps,
-} from "./MainNavLink.astro";
 import type { CategoryTreeItem } from "@common/category";
+import NavLink, {
+  type NavLinkVariantProps,
+} from "@ui/primitives/NavLink.astro";
 
 interface Props {
   categories: CategoryTreeItem[];
-  mainNavLinkProps?: MainNavLinkProps;
+  navLinkVariantProps?: NavLinkVariantProps;
+  getPath?(slug: string): string;
 }
 
-const { categories, mainNavLinkProps = { hierarchyLevel: "primary" } } =
-  Astro.props;
+const {
+  categories,
+  navLinkVariantProps = { navContext: "main", linkLevel: "primary" },
+  getPath,
+} = Astro.props;
 
-const variantsArray = Object.keys(hierarchyLevelSchema);
-const currentIndex = variantsArray.findIndex(
-  (x) => x === mainNavLinkProps.hierarchyLevel,
+type LinkLevel = Extract<
+  NavLinkVariantProps["linkLevel"],
+  string | null | undefined
+>;
+
+const linkLevels: Array<LinkLevel> = [
+  "primary",
+  "secondary",
+  "tertiary",
+  "quaternary",
+];
+
+const currentLinkLevelIndex = linkLevels.findIndex(
+  (x) => x === navLinkVariantProps.linkLevel,
 );
-const nextIndex = Math.min(currentIndex + 1, variantsArray.length - 1);
-const nextVariant = variantsArray[nextIndex] as any;
+
+const nextIndex = Math.min(currentLinkLevelIndex + 1, linkLevels.length - 1);
+const nextVariant = linkLevels[nextIndex];
 ---
 
 <ul>
   {
     categories.map((c) => (
       <li>
-        <MainNavLink
-          hierarchyLevel={mainNavLinkProps.hierarchyLevel}
-          href={`/${c.slug}`}
+        <NavLink
+          href={typeof getPath === "function" ? getPath(c.slug) : `/${c.slug}`}
+          navContext={navLinkVariantProps.navContext}
+          linkLevel={navLinkVariantProps.linkLevel}
         >
           {c.title}
-        </MainNavLink>
+        </NavLink>
         {c.children.length > 0 && (
           <Astro.self
             categories={c.children}
-            mainNavLinkProps={
-              nextVariant ? { hierarchyLevel: nextVariant } : undefined
-            }
+            navLinkVariantProps={{
+              navContext: navLinkVariantProps.navContext,
+              linkLevel: nextVariant,
+            }}
+            getPath={getPath}
           />
         )}
       </li>

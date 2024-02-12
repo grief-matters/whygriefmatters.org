@@ -19,6 +19,7 @@ import Resource from "@ui/Resource.astro";
 import ResourceLink from "@ui/ResourceLink.astro";
 import { shuffle, startCase } from "lodash";
 import pluralize from "pluralize";
+import NavLink from "@ui/primitives/NavLink.astro";
 
 export async function getStaticPaths() {
   const slugs = await getCategorySlugs();
@@ -29,10 +30,18 @@ export async function getStaticPaths() {
 const params = Astro.params;
 
 // TODO - we're overfetching here - as parents will probs have all featured stuff too
-const category = await getCategory(params.category);
-
-const populations = await getPopulations();
 const resources = await getInternetResources({ categorySlug: params.category });
+
+const category = await getCategory(params.category);
+const populations = await getPopulations();
+
+const filteredPopulations = populations.filter((p) =>
+  resources.some((r) => r.populations?.includes(p.slug)),
+);
+
+const filteredTypes = INTERNET_RESOURCE_TYPES.filter((t) =>
+  resources.some((r) => r.type === t),
+);
 
 // check the images on all featured - fetch image collection if any are missing
 const isMissingImages =
@@ -93,6 +102,7 @@ if (isMissingImages) {
                             .height(225)
                             .url()}
                           alt={story.image.altText}
+                          class="max-h-64"
                         />
                       )}
                       <h3 class="font-serif italic text-lg">{story.title}</h3>
@@ -157,30 +167,34 @@ if (isMissingImages) {
         </ul>
       </div>
       <aside slot="aside">
-        <AsideNav title={`${category.title} resources for...`}>
-          {
-            populations.map((population) => (
-              <a
-                class="block py-1 hover:underline"
-                href={`/${category.slug}/${population.slug}`}
-              >
-                {population.name}
-              </a>
-            ))
-          }
-        </AsideNav>
-        <AsideNav title={`${category.title} resources by type...`}>
-          {
-            INTERNET_RESOURCE_TYPES.map((type) => (
-              <a
-                class="block py-1 hover:underline"
-                href={`/${type}/${category.slug}`}
-              >
-                {pluralize(startCase(type))}
-              </a>
-            ))
-          }
-        </AsideNav>
+        {
+          filteredPopulations.length > 0 && (
+            <AsideNav title={`${category.title} resources for...`}>
+              {filteredPopulations.map((population) => (
+                <NavLink
+                  href={`/${category.slug}/${population.slug}`}
+                  navContext="secondary"
+                >
+                  {population.name}
+                </NavLink>
+              ))}
+            </AsideNav>
+          )
+        }
+        {
+          filteredTypes.length > 0 && (
+            <AsideNav title={`${category.title} resources by type...`}>
+              {filteredTypes.map((type) => (
+                <NavLink
+                  href={`/${type}/${category.slug}`}
+                  navContext="secondary"
+                >
+                  {pluralize(startCase(type))}
+                </NavLink>
+              ))}
+            </AsideNav>
+          )
+        }
       </aside>
     </TwoColLayout>
   </ResourcePageLayout>
