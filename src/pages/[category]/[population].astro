@@ -1,4 +1,7 @@
 ---
+import startCase from "lodash/startCase";
+import pluralize from "pluralize";
+
 import {
   getCategory,
   getCategorySlugs,
@@ -6,13 +9,15 @@ import {
   getPopulation,
   getPopulationSlugs,
 } from "@common/client";
+import { filterTypesFromResources } from "@common/resourceType";
 
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import TwoColLayout from "@layouts/TwoColLayout.astro";
+
 import AsideNav from "@ui/AsideNav/AsideNav.astro";
 import Resource from "@ui/Resource.astro";
-import { INTERNET_RESOURCE_TYPES } from "@model/common";
+import NavLink from "@ui/primitives/NavLink.astro";
 
 export async function getStaticPaths() {
   const categorySlugs = await getCategorySlugs();
@@ -27,12 +32,15 @@ export async function getStaticPaths() {
 
 const params = Astro.params;
 
-const category = await getCategory(params.category);
-const population = await getPopulation(params.population);
 const resources = await getInternetResources({
   categorySlug: params.category,
   populationSlug: params.population,
 });
+
+const category = await getCategory(params.category);
+const population = await getPopulation(params.population);
+
+const filteredTypes = filterTypesFromResources(resources);
 ---
 
 <MainLayout>
@@ -48,18 +56,20 @@ const resources = await getInternetResources({
         }
       </ul>
       <aside slot="aside">
-        <AsideNav title="Select type of resource">
-          {
-            INTERNET_RESOURCE_TYPES.map((type) => (
-              <a
-                class="block"
-                href={`/${type}/${category.slug}/${population.slug}`}
-              >
-                {type}
-              </a>
-            ))
-          }
-        </AsideNav>
+        {
+          filteredTypes.length > 0 && (
+            <AsideNav title={`Resources in this category by type...`}>
+              {filteredTypes.map((type) => (
+                <NavLink
+                  href={`/${type}/${category.slug}/${population.slug}`}
+                  navContext="secondary"
+                >
+                  {pluralize(startCase(type))}
+                </NavLink>
+              ))}
+            </AsideNav>
+          )
+        }
       </aside>
     </TwoColLayout>
   </ResourcePageLayout>
