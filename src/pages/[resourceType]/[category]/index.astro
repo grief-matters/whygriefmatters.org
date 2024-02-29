@@ -2,19 +2,23 @@
 import capitalize from "lodash/capitalize";
 import pluralize from "pluralize";
 
+import { INTERNET_RESOURCE_TYPES } from "@model/common";
+
 import {
   getCategory,
   getCategorySlugs,
   getInternetResources,
   getPopulations,
 } from "@common/client";
-import { INTERNET_RESOURCE_TYPES } from "@model/common";
+import { getFilteredPopulationsFromResources } from "@common/population";
 
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import TwoColLayout from "@layouts/TwoColLayout.astro";
+
 import AsideNav from "@ui/AsideNav/AsideNav.astro";
 import Resource from "@ui/Resource.astro";
+import NavLink from "@ui/primitives/NavLink.astro";
 
 export async function getStaticPaths() {
   const categorySlugs = await getCategorySlugs();
@@ -30,12 +34,16 @@ export async function getStaticPaths() {
 
 const params = Astro.params;
 
-const populations = await getPopulations();
-const category = await getCategory(params.category);
 const resources = await getInternetResources({
   resourceType: params.resourceType,
   categorySlug: params.category,
 });
+
+const filteredPopulations =
+  await getFilteredPopulationsFromResources(resources);
+const category = await getCategory(params.category);
+
+const resourceTypeLabel = capitalize(pluralize(params.resourceType));
 ---
 
 <MainLayout>
@@ -51,22 +59,20 @@ const resources = await getInternetResources({
         }
       </ul>
       <aside slot="aside">
-        <AsideNav
-          title={`${capitalize(pluralize(params.resourceType))} about ${
-            category.title
-          } for...`}
-        >
-          {
-            populations.map((population) => (
-              <a
-                class="block py-1 hover:underline"
-                href={`/${params.resourceType}/${population.slug}`}
-              >
-                {population.name}
-              </a>
-            ))
-          }
-        </AsideNav>
+        {
+          filteredPopulations.length > 0 && (
+            <AsideNav title={`${resourceTypeLabel} in this category for...`}>
+              {filteredPopulations.map((population) => (
+                <NavLink
+                  href={`/${params.resourceType}/${category.slug}/${population.slug}`}
+                  navContext="secondary"
+                >
+                  {population.name}
+                </NavLink>
+              ))}
+            </AsideNav>
+          )
+        }
       </aside>
     </TwoColLayout>
   </ResourcePageLayout>

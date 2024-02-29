@@ -1,7 +1,10 @@
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import { z } from "zod";
+import groq from "groq";
+import uniqBy from "lodash/uniqBy";
+
 import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
-import { z } from "zod";
+import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
 import {
   type InternetResource,
@@ -16,6 +19,8 @@ import {
   zCategoryWithParent,
   getCategoriesQuery,
   getFeaturedTopicsQuery,
+  getCategoriesForPopulationQuery,
+  getCategoriesForResourceTypeQuery,
 } from "@model/category";
 import {
   zPopulation,
@@ -26,7 +31,6 @@ import {
 import { homePageQuery, type HomePage, zHomePage } from "@model/homePage";
 import { getLogosQuery, zLogo, type Logo } from "@model/logo";
 import { zImage, type SanityImage } from "@model/common";
-import groq from "groq";
 
 const client = createClient({
   projectId: import.meta.env.SANITY_STUDIO_PROJECT_ID,
@@ -77,7 +81,7 @@ export async function getInternetResources(
   return resources;
 }
 
-// Be mindful of the 'withParent' we implemented for the ResourcePageLayout
+// Categories
 export async function getCategory(categorySlug: string): Promise<Category> {
   const category = await client
     .fetch(getCategoryQuery, { category: categorySlug })
@@ -90,6 +94,34 @@ export async function getCategories(): Promise<Category[]> {
   const categories = await client
     .fetch(getCategoriesQuery)
     .then((result) => zCategoryWithParent.array().parse(result));
+
+  return categories;
+}
+
+export async function getCategoriesForPopulation(
+  populationSlug: string,
+): Promise<Category[]> {
+  const categories = await client
+    .fetch(getCategoriesForPopulationQuery, { populationSlug })
+    .then((result) => {
+      // `any` is ok - because we can't know what the backend will send
+      const uniqueCategories = uniqBy(result, "slug");
+      return zCategoryWithParent.array().parse(uniqueCategories);
+    });
+
+  return categories;
+}
+
+export async function getCategoriesForResourceType(
+  resourceType: string,
+): Promise<Category[]> {
+  const categories = await client
+    .fetch(getCategoriesForResourceTypeQuery, { resourceType })
+    .then((result) => {
+      // `any` is ok - because we can't know what the backend will send
+      const uniqueCategories = uniqBy(result, "slug");
+      return zCategoryWithParent.array().parse(uniqueCategories);
+    });
 
   return categories;
 }

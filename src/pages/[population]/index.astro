@@ -1,20 +1,22 @@
 ---
-import { INTERNET_RESOURCE_TYPES } from "@model/common";
+import startCase from "lodash/startCase";
+import pluralize from "pluralize";
 
-import { buildCategoryTree } from "@common/category";
 import {
-  getCategories,
+  getCategoriesForPopulation,
   getInternetResources,
   getPopulation,
   getPopulationSlugs,
 } from "@common/client";
+import { filterTypesFromResources } from "@common/resourceType";
 
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import TwoColLayout from "@layouts/TwoColLayout.astro";
+
 import AsideNav from "@ui/AsideNav/AsideNav.astro";
 import Resource from "@ui/Resource.astro";
-import RecursiveCategoryTree from "@ui/MainNav/RecursiveCategoryTree.astro";
+import NavLink from "@ui/primitives/NavLink.astro";
 
 export async function getStaticPaths() {
   const slugs = await getPopulationSlugs();
@@ -29,8 +31,8 @@ const resources = await getInternetResources({
   populationSlug: params.population,
 });
 
-const categories = await getCategories();
-const categoryTree = buildCategoryTree(categories);
+const categories = await getCategoriesForPopulation(population.slug);
+const filteredTypes = filterTypesFromResources(resources);
 ---
 
 <MainLayout>
@@ -46,22 +48,34 @@ const categoryTree = buildCategoryTree(categories);
         }
       </ul>
       <aside slot="aside">
-        <AsideNav title={`Resources for ${population.name} by type...`}>
-          {
-            INTERNET_RESOURCE_TYPES.map((type) => (
-              <a class="block" href={`/${type}/${population.slug}`}>
-                {type}
-              </a>
-            ))
-          }
-        </AsideNav>
-        <AsideNav title={`Resources for ${population.name} by category...`}>
-          <RecursiveCategoryTree
-            navLinkVariantProps={{ navContext: "secondary" }}
-            categories={categoryTree}
-            getPath={(categorySlug) => `/${categorySlug}/${population.slug}`}
-          />
-        </AsideNav>
+        {
+          filteredTypes.length > 0 && (
+            <AsideNav title={`Filter by type...`}>
+              {filteredTypes.map((type) => (
+                <NavLink
+                  href={`/${type}/${population.slug}`}
+                  navContext="secondary"
+                >
+                  {pluralize(startCase(type))}
+                </NavLink>
+              ))}
+            </AsideNav>
+          )
+        }
+        {
+          categories.length > 0 && (
+            <AsideNav title={`Resources for ${population.name} by category...`}>
+              {categories.map((category) => (
+                <NavLink
+                  href={`/${category.slug}/${population.slug}`}
+                  navContext="secondary"
+                >
+                  {category.title}
+                </NavLink>
+              ))}
+            </AsideNav>
+          )
+        }
       </aside>
     </TwoColLayout>
   </ResourcePageLayout>

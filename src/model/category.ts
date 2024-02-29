@@ -81,3 +81,30 @@ export const getFeaturedTopicsQuery = groq`
   }
 }
 `;
+
+export const getCategoriesForPopulationQuery = groq`
+array::compact(*[$populationSlug in populations[]->slug.current].categories[]->{
+  title,
+  "slug": slug.current,
+  description,
+  parent->{
+    title,
+    "slug": slug.current,
+    description,
+  }
+})
+`;
+
+// TODO - this query needs work to resolve dupes itself
+export const getCategoriesForResourceTypeQuery = groq`
+array::compact(*[_type == $resourceType].categories[]->{
+  title,
+  "slug": slug.current,
+  description,
+  parent->{
+    title,
+    "slug": slug.current,
+    description,
+  }
+})
+`;

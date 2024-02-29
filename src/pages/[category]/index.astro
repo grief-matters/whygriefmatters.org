@@ -1,13 +1,10 @@
 ---
-import { INTERNET_RESOURCE_TYPES } from "@model/common";
-
 import {
   getCategory,
   getCategorySlugs,
   getFallbackImageCollection,
   getImageUrl,
   getInternetResources,
-  getPopulations,
 } from "@common/client";
 
 import MainLayout from "@layouts/MainLayout.astro";
@@ -21,6 +18,8 @@ import shuffle from "lodash/shuffle";
 import startCase from "lodash/startCase";
 import pluralize from "pluralize";
 import NavLink from "@ui/primitives/NavLink.astro";
+import { filterTypesFromResources } from "@common/resourceType";
+import { getFilteredPopulationsFromResources } from "@common/population";
 
 export async function getStaticPaths() {
   const slugs = await getCategorySlugs();
@@ -30,19 +29,14 @@ export async function getStaticPaths() {
 
 const params = Astro.params;
 
-// TODO - we're overfetching here - as parents will probs have all featured stuff too
 const resources = await getInternetResources({ categorySlug: params.category });
 
 const category = await getCategory(params.category);
-const populations = await getPopulations();
 
-const filteredPopulations = populations.filter((p) =>
-  resources.some((r) => r.populations?.includes(p.slug)),
-);
+const filteredPopulations =
+  await getFilteredPopulationsFromResources(resources);
 
-const filteredTypes = INTERNET_RESOURCE_TYPES.filter((t) =>
-  resources.some((r) => r.type === t),
-);
+const filteredTypes = filterTypesFromResources(resources);
 
 // check the images on all featured - fetch image collection if any are missing
 const isMissingImages =
@@ -52,7 +46,7 @@ const isMissingImages =
   ].length > 0;
 
 if (isMissingImages) {
-  // todo - we're making a big assumption that we have enough images here
+  // TODO - we're making a big assumption that we have enough images here
   const fallbackImages = await getFallbackImageCollection();
   const shuffled = shuffle(fallbackImages);
 
@@ -170,7 +164,7 @@ if (isMissingImages) {
       <aside slot="aside">
         {
           filteredPopulations.length > 0 && (
-            <AsideNav title={`${category.title} resources for...`}>
+            <AsideNav title="Resources in this category for...">
               {filteredPopulations.map((population) => (
                 <NavLink
                   href={`/${category.slug}/${population.slug}`}
@@ -184,7 +178,7 @@ if (isMissingImages) {
         }
         {
           filteredTypes.length > 0 && (
-            <AsideNav title={`${category.title} resources by type...`}>
+            <AsideNav title="Resources in this category by type...">
               {filteredTypes.map((type) => (
                 <NavLink
                   href={`/${type}/${category.slug}`}
