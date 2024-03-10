@@ -1,4 +1,4 @@
-import type { InternetResourceType } from "@model/common";
+import type { InternetResourceType } from "@model/internetResource";
 
 export const resourceTypeBorderColorMap: Record<InternetResourceType, string> =
   {

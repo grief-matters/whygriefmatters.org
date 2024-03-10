@@ -1,8 +1,12 @@
-import { INTERNET_RESOURCE_TYPES } from "@model/common";
-import type { InternetResource } from "@model/internetResource";
+import {
+  type InternetResourcePageListing,
+  internetResourceTypes,
+} from "@model/internetResource";
 
-export function filterTypesFromResources(resources: Array<InternetResource>) {
-  return INTERNET_RESOURCE_TYPES.filter((t) =>
+export function getFilteredTypesFromResources(
+  resources: Array<InternetResourcePageListing>,
+) {
+  return internetResourceTypes.filter((t) =>
     resources.some((r) => r.type === t),
   );
 }

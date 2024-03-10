@@ -1,84 +1,111 @@
 ---
-import capitalize from "lodash/capitalize";
-import pluralize from "pluralize";
-
-import { INTERNET_RESOURCE_TYPES } from "@model/common";
+import type { InternetResourcePageListing } from "@model/internetResource";
+import type { Category } from "@model/category";
+import type { Population } from "@model/population";
 
 import {
-  getCategoriesForResourceType,
-  getInternetResources,
+  getCategoriesByFilter,
+  getPopulations,
+  getResourceTypePagesData,
 } from "@common/client";
-import { getFilteredPopulationsFromResources } from "@common/population";
 
-import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import MainLayout from "@layouts/MainLayout.astro";
-import TwoColLayout from "@layouts/TwoColLayout.astro";
-import Resource from "@ui/Resource.astro";
-import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import NavLink from "@ui/primitives/NavLink.astro";
 
-export function getStaticPaths() {
-  return [
-    ...INTERNET_RESOURCE_TYPES.map((resourceType) => ({
-      params: { resourceType },
-    })),
-  ];
+interface Props {
+  resources: Array<InternetResourcePageListing>;
+  applicablePopulations: Array<Population>;
+  applicableCategories: Array<Category>;
 }
 
-const { resourceType } = Astro.params;
+export async function getStaticPaths() {
+  const resourceTypePagesData = await getResourceTypePagesData();
+  const populations = await getPopulations();
 
-const resources = await getInternetResources({ resourceType });
+  const pathPromises = Object.entries(resourceTypePagesData).map(
+    async ([resourceType, resources]: [
+      string,
+      Array<InternetResourcePageListing>,
+    ]) => {
+      const filteredPopulations = populations.filter((p) =>
+        resources.some((r) => r.populations?.includes(p.slug)),
+      );
 
-const filteredPopulations =
-  await getFilteredPopulationsFromResources(resources);
+      // This is less than ideal as means an additional request for each type
+      const slugsWithTitles = await getCategoriesByFilter({ resourceType });
 
-const categories = await getCategoriesForResourceType(resourceType);
+      return {
+        params: { resourceType },
+        props: {
+          resources,
+          applicablePopulations: filteredPopulations ?? [],
+          applicableCategories: slugsWithTitles ?? [],
+        },
+      };
+    },
+  );
 
-const resourceTypeLabel = capitalize(pluralize(resourceType));
+  const paths = await Promise.all(pathPromises);
+
+  return paths.filter((x) => x.props.resources.length > 0);
+}
+
+const params = Astro.params;
+const props = Astro.props;
 ---
 
 <MainLayout>
-  <ResourcePageLayout resourceType={resourceType}>
-    <TwoColLayout>
-      <ul>
-        {
-          resources?.map((resource) => (
-            <li>
-              <Resource resource={resource} />
-            </li>
-          ))
-        }
-      </ul>
-      <aside slot="aside">
-        {
-          filteredPopulations.length > 0 && (
-            <AsideNav title={`${resourceTypeLabel} for...`}>
-              {filteredPopulations.map((population) => (
-                <NavLink
-                  href={`/${resourceType}/${population.slug}`}
-                  navContext="secondary"
-                >
+  <section>
+    <ul>
+      {
+        props.resources.map((resource) => (
+          <li>
+            <article>
+              <h3>{resource.title}</h3>
+              <time datetime={resource.lastUpdated}>
+                Last updated: [[todo]]
+              </time>
+              <p>{resource.description}</p>
+              <a href={resource.resourceUrl} rel="noopener" target="_blank">
+                Go to resource
+              </a>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+  <aside>
+    {
+      props.applicablePopulations?.length > 0 && (
+        <nav>
+          <h2>Population</h2>
+          <ul>
+            {props.applicablePopulations.map((population) => (
+              <li>
+                <a href={`/${params.resourceType}/${population.slug}`}>
                   {population.name}
-                </NavLink>
-              ))}
-            </AsideNav>
-          )
-        }
-        {
-          categories.length > 0 && (
-            <AsideNav title={`${resourceTypeLabel} by category...`}>
-              {categories.map((category) => (
-                <NavLink
-                  href={`/${resourceType}/${category.slug}`}
-                  navContext="secondary"
-                >
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+    {
+      props.applicableCategories?.length > 0 && (
+        <nav>
+          <h2>Category</h2>
+          <ul>
+            {props.applicableCategories.map((category) => (
+              <li>
+                <a href={`/${params.resourceType}/${category.slug}`}>
                   {category.title}
-                </NavLink>
-              ))}
-            </AsideNav>
-          )
-        }
-      </aside>
-    </TwoColLayout>
-  </ResourcePageLayout>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </aside>
 </MainLayout>

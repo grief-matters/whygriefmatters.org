@@ -1,10 +1,12 @@
 ---
-import type { InternetResourceType } from "@model/common";
 import startCase from "lodash/startCase";
 import pluralize from "pluralize";
-import { resourceTypeTextColorMap } from "@common/color-maps";
+
 import type { Category } from "@model/category";
 import type { Population } from "@model/population";
+import type { InternetResourceType } from "@model/internetResource";
+
+import { resourceTypeTextColorMap } from "@common/color-maps";
 
 interface Props {
   resourceType?: InternetResourceType;
@@ -61,3 +63,4 @@ const resourceTypeTextColor = resourceType
     <slot />
   </div>
 </div>
+ @model/helpers
