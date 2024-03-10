@@ -1,9 +1,11 @@
 import { z } from "zod";
 import groq from "groq";
-import { zImage, zPortableText } from "./common";
-import { zFeaturedContent } from "./featuredContent";
 
-export const zHomePage = z.object({
+import { zFeaturedContent } from "./featuredContent";
+import { zPortableText } from "./portableText";
+import { zImage } from "./image";
+
+export const zHomePageData = z.object({
   org: z.object({
     name: z.string(),
     slogan: z.string(),
@@ -20,9 +22,7 @@ export const zHomePage = z.object({
   featurePanels: z.array(zFeaturedContent),
 });
 
-export type HomePage = z.infer<typeof zHomePage>;
-
-export const homePageQuery = groq`
+export const gHomePageDataQuery = groq`
 *[_id == "homePage-singleton"][0]{
   "org": *[_id == "organization-singleton"][0]{
     name,
@@ -84,3 +84,5 @@ export const homePageQuery = groq`
     }
   }
 `;
+
+export type HomePageData = z.infer<typeof zHomePageData>;

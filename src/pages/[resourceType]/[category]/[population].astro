@@ -1,60 +1,73 @@
 ---
 import {
-  getCategory,
-  getCategorySlugs,
-  getInternetResources,
-  getPopulation,
-  getPopulationSlugs,
-} from "@common/client";
+  type InternetResourcePageListing,
+  internetResourceTypes,
+} from "@model/internetResource";
 
-import { INTERNET_RESOURCE_TYPES } from "@model/common";
+import { getPopulations, getCategoryPagesData } from "@common/client";
 
 import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 
-import Resource from "@ui/Resource.astro";
-
-export async function getStaticPaths() {
-  const categorySlugs = await getCategorySlugs();
-  const populationSlugs = await getPopulationSlugs();
-
-  return [
-    ...INTERNET_RESOURCE_TYPES.flatMap((resourceType) =>
-      categorySlugs.flatMap((category) =>
-        populationSlugs.map((population) => ({
-          params: { resourceType, category, population },
-        })),
-      ),
-    ),
-  ];
+interface Props {
+  resources: Array<InternetResourcePageListing>;
 }
 
-const params = Astro.params;
+export async function getStaticPaths() {
+  const categoryPagesData = await getCategoryPagesData();
+  const populations = await getPopulations();
 
-const resources = await getInternetResources({
-  resourceType: params.resourceType,
-  categorySlug: params.category,
-  populationSlug: params.population,
-});
+  return internetResourceTypes.flatMap((resourceType) =>
+    populations.flatMap((population) =>
+      categoryPagesData
+        .filter(
+          (data) =>
+            data.resources &&
+            data.resources.some(
+              (r) =>
+                r.type === resourceType &&
+                r.populations?.includes(population.slug),
+            ),
+        )
+        .map((data) => ({
+          params: {
+            category: data.slug,
+            resourceType,
+            population: population.slug,
+          },
+          props: {
+            resources: data.resources.filter(
+              (r) =>
+                r.type === resourceType &&
+                r.populations?.includes(population.slug),
+            ),
+          },
+        })),
+    ),
+  );
+}
 
-const category = await getCategory(params.category);
-const population = await getPopulation(params.population);
+const props = Astro.props;
 ---
 
 <MainLayout>
-  <ResourcePageLayout
-    resourceType={params.resourceType}
-    category={category}
-    population={population}
-  >
+  <section>
     <ul>
       {
-        resources?.map((resource) => (
+        props.resources.map((resource) => (
           <li>
-            <Resource resource={resource} />
+            <article>
+              <h3>{resource.title}</h3>
+              <time datetime={resource.lastUpdated}>
+                Last updated: [[todo]]
+              </time>
+              <p>{resource.description}</p>
+              <a href={resource.resourceUrl} rel="noopener" target="_blank">
+                Go to resource
+              </a>
+            </article>
           </li>
         ))
       }
     </ul>
-  </ResourcePageLayout>
+  </section>
 </MainLayout>

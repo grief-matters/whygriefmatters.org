@@ -1,22 +1,26 @@
 ---
-import { getHomePage, getImageUrl } from "@common/client";
-import type { ResourcePageLink } from "@model/common";
+import type { ResourcePageLink } from "@model/featuredContent";
+
+import { getHomePageData, getImageUrl } from "@common/client";
+
 import MainLayout from "@layouts/MainLayout.astro";
+
 import RichTextContentBlock from "@ui/richTextContentBlock.astro";
 import FeaturePanel from "@ui/FeaturePanel.astro";
 import Hero from "@ui/Hero.astro";
+
 import { cvaSchemaStandardVariants } from "@common/cva";
 
-const homePage = await getHomePage();
+const homePageData = await getHomePageData();
 
 const heroImg = {
-  url: getImageUrl(homePage.heroImage.image).url(),
-  alt: homePage.heroImage.altText,
+  url: getImageUrl(homePageData.heroImage.image).url(),
+  alt: homePageData.heroImage.altText,
 };
 
 const logo = {
-  url: getImageUrl(homePage.org.logo.image).url(),
-  alt: homePage.org.logo.altText,
+  url: getImageUrl(homePageData.org.logo.image).url(),
+  alt: homePageData.org.logo.altText,
 };
 
 function getRoute(pageLink: ResourcePageLink): string {
@@ -39,7 +43,7 @@ const coreValuesBgColors = [
 <MainLayout>
   <Hero imageUrl={heroImg.url}>
     <div class="w-3/4 mx-auto relative py-1">
-      <img class="w-96" src={logo.url} alt={homePage?.org.name} />
+      <img class="w-96" src={logo.url} alt={homePageData?.org.name} />
       <span
         class:list={[
           "pl-3",
@@ -52,7 +56,7 @@ const coreValuesBgColors = [
           "absolute",
           "left-32",
           "bottom-0",
-        ]}>{homePage?.org.slogan}</span
+        ]}>{homePageData?.org.slogan}</span
       >
     </div>
   </Hero>
@@ -65,7 +69,7 @@ const coreValuesBgColors = [
     <div
       class="max-w-prose mb-12 m-auto prose font-serif text-blue-900 first:prose-p:text-xl text-center"
     >
-      <RichTextContentBlock portableText={homePage?.org.mission} />
+      <RichTextContentBlock portableText={homePageData?.org.mission} />
     </div>
   </section>
 
@@ -81,7 +85,7 @@ const coreValuesBgColors = [
     <div class="bg-gradient-to-r from-sky-700 from-50% to-sky-400 to-50%">
       <div class="flex container mx-auto">
         {
-          homePage.org.coreValues.map((coreValue, i) => (
+          homePageData.org.coreValues.map((coreValue, i) => (
             <div
               class:list={[
                 "flex",
@@ -104,7 +108,7 @@ const coreValuesBgColors = [
   </section>
 
   {
-    homePage?.featurePanels.map((featuredContent, i) => (
+    homePageData?.featurePanels.map((featuredContent, i) => (
       <FeaturePanel
         featuredContent={featuredContent}
         variant={

@@ -1,12 +1,38 @@
 import { z } from "zod";
-import {
-  zPortableText,
-  zResourceLinks,
-  zResourcePageLink,
-  zResourcePageLinks,
-  zRichTextContentBlock,
-  zRowOfThree,
-} from "./common";
+import { zImage } from "./image";
+import { zInternetResourceType } from "./internetResource";
+import { zRichTextContentBlock, zPortableText } from "./portableText";
+
+export const zResourcePageLink = z
+  .object({
+    label: z.string(),
+    type: zInternetResourceType.nullable(),
+    population: z.string().nullable(),
+    category: z.string().nullable(),
+  })
+  .refine(
+    (val) =>
+      val.type !== null || val.population !== null || val.category !== null,
+  );
+
+export type ResourcePageLink = z.infer<typeof zResourcePageLink>;
+
+export const zRowOfThree = z.object({
+  images: z.array(zImage),
+});
+
+export const zResourcePageLinks = z.object({
+  links: z.array(zResourcePageLink),
+});
+
+export const zResourceLink = z.object({
+  title: z.string(),
+  url: z.string().url(),
+});
+
+export const zResourceLinks = z.object({
+  resources: z.array(zResourceLink),
+});
 
 export const zFeaturedContentContent = z.discriminatedUnion("contentType", [
   zRowOfThree.extend({ contentType: z.literal("rowOfThree") }),
@@ -17,8 +43,6 @@ export const zFeaturedContentContent = z.discriminatedUnion("contentType", [
   zResourceLinks.extend({ contentType: z.literal("resourceLinks") }),
 ]);
 
-export type FeaturedContentContent = z.infer<typeof zFeaturedContentContent>;
-
 export const zFeaturedContent = z.object({
   title: z.string(),
   description: zPortableText.optional(),
@@ -26,4 +50,8 @@ export const zFeaturedContent = z.object({
   featuredContentFooterLink: zResourcePageLink.optional(),
 });
 
+export type FeaturedContentContent = z.infer<typeof zFeaturedContentContent>;
 export type FeaturedContent = z.infer<typeof zFeaturedContent>;
+export type ResourceLinks = z.infer<typeof zResourceLinks>;
+export type ResourcePageLinks = z.infer<typeof zResourcePageLinks>;
+export type RowOfThree = z.infer<typeof zRowOfThree>;

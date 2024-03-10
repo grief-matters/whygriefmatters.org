@@ -2,10 +2,10 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import words from "lodash/words";
 
+import type { FeaturedContent, ResourcePageLink } from "@model/featuredContent";
+
 import { getImageUrl } from "@common/client";
 import type { StandardVariantCvaSchema } from "@common/cva";
-import type { FeaturedContent } from "@model/featuredContent";
-import type { ResourcePageLink } from "@model/common";
 
 import RichTextContentBlock from "./richTextContentBlock.astro";
 

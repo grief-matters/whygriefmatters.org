@@ -1,82 +1,85 @@
 ---
-import startCase from "lodash/startCase";
-import pluralize from "pluralize";
+import uniqBy from "lodash/uniqBy";
 
-import {
-  getCategoriesForPopulation,
-  getInternetResources,
-  getPopulation,
-  getPopulationSlugs,
-} from "@common/client";
-import { filterTypesFromResources } from "@common/resourceType";
+import type {
+  InternetResourcePageListing,
+  InternetResourceType,
+} from "@model/internetResource";
+import type { Category } from "@model/category";
+
+import { getPopulationPagesData } from "@common/client";
 
 import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import TwoColLayout from "@layouts/TwoColLayout.astro";
 
-import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import Resource from "@ui/Resource.astro";
-import NavLink from "@ui/primitives/NavLink.astro";
+interface Props {
+  populationName: string;
+  resources: Array<InternetResourcePageListing>;
+  applicableTypes: Array<InternetResourceType>;
+  applicableCategories: Array<Category>;
+}
 
 export async function getStaticPaths() {
-  const slugs = await getPopulationSlugs();
+  const populationPagesData = await getPopulationPagesData();
 
-  return slugs.map((population) => ({ params: { population } }));
+  return populationPagesData.flatMap((pageData) => {
+    const applicableCategories =
+      uniqBy(
+        pageData.resources?.flatMap((r) => r.categories),
+        "slug",
+      ).filter((x) => x !== null) ?? [];
+
+    return {
+      params: { population: pageData.slug },
+      props: {
+        populationName: pageData.name,
+        resources: pageData.resources ?? [],
+        applicableCategories,
+      },
+    };
+  });
 }
 
 const params = Astro.params;
-
-const population = await getPopulation(params.population);
-const resources = await getInternetResources({
-  populationSlug: params.population,
-});
-
-const categories = await getCategoriesForPopulation(population.slug);
-const filteredTypes = filterTypesFromResources(resources);
+const props = Astro.props;
 ---
 
 <MainLayout>
-  <ResourcePageLayout population={population}>
-    <TwoColLayout>
-      <ul>
-        {
-          resources?.map((resource) => (
-            <li>
-              <Resource resource={resource} />
-            </li>
-          ))
-        }
-      </ul>
-      <aside slot="aside">
-        {
-          filteredTypes.length > 0 && (
-            <AsideNav title={`Filter by type...`}>
-              {filteredTypes.map((type) => (
-                <NavLink
-                  href={`/${type}/${population.slug}`}
-                  navContext="secondary"
-                >
-                  {pluralize(startCase(type))}
-                </NavLink>
-              ))}
-            </AsideNav>
-          )
-        }
-        {
-          categories.length > 0 && (
-            <AsideNav title={`Resources for ${population.name} by category...`}>
-              {categories.map((category) => (
-                <NavLink
-                  href={`/${category.slug}/${population.slug}`}
-                  navContext="secondary"
-                >
+  <section>
+    <ul>
+      {
+        props.resources.map((resource) => (
+          <li>
+            <article>
+              <h3>{resource.title}</h3>
+              <time datetime={resource.lastUpdated}>
+                Last updated: [[todo]]
+              </time>
+              <p>{resource.description}</p>
+              <a href={resource.resourceUrl} rel="noopener" target="_blank">
+                Go to resource
+              </a>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+  <aside>
+    {
+      props.applicableCategories?.length > 0 && (
+        <nav>
+          <h2>Category</h2>
+          <ul>
+            {props.applicableCategories.map((category) => (
+              <li>
+                <a href={`/${category.slug}/${params.population}`}>
                   {category.title}
-                </NavLink>
-              ))}
-            </AsideNav>
-          )
-        }
-      </aside>
-    </TwoColLayout>
-  </ResourcePageLayout>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </aside>
 </MainLayout>

@@ -1,97 +1,78 @@
 ---
-import capitalize from "lodash/capitalize";
-import intersectionBy from "lodash/intersectionBy";
-import pluralize from "pluralize";
-
-import { INTERNET_RESOURCE_TYPES } from "@model/common";
-
 import {
-  getCategoriesForPopulation,
-  getCategoriesForResourceType,
-  getInternetResources,
-  getPopulation,
-  getPopulationSlugs,
+  getCategoriesByFilter,
+  getPopulations,
+  getResourceTypePagesData,
 } from "@common/client";
-
 import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import TwoColLayout from "@layouts/TwoColLayout.astro";
-
-import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import Resource from "@ui/Resource.astro";
-import NavLink from "@ui/primitives/NavLink.astro";
+import type { InternetResourcePageListing } from "@model/internetResource";
 
 export async function getStaticPaths() {
-  const slugs = await getPopulationSlugs();
+  const resourceTypePagesData = await getResourceTypePagesData();
+  const populations = await getPopulations();
 
-  return [
-    ...INTERNET_RESOURCE_TYPES.flatMap((resourceType) =>
-      slugs.map((population) => ({
-        params: { resourceType, population },
-      })),
-    ),
-  ];
+  const pathPromises = Object.entries(resourceTypePagesData).flatMap(
+    ([resourceType, resources]: [string, Array<InternetResourcePageListing>]) =>
+      populations
+        .filter((p) => resources.some((r) => r.populations?.includes(p.slug)))
+        .map(async (p) => ({
+          params: { resourceType, population: p.slug },
+          props: {
+            resources: resources.filter((r) => r.populations?.includes(p.slug)),
+            applicableCategories: await getCategoriesByFilter({
+              populationSlug: p.slug,
+              resourceType,
+            }),
+          },
+        })),
+  );
+
+  return await Promise.all(pathPromises);
 }
 
 const params = Astro.params;
-
-const resources = await getInternetResources({
-  resourceType: params.resourceType,
-  populationSlug: params.population,
-});
-
-// TODO - we're being lazy here, perhaps we need to refactor the queries...
-const categoriesForPopulation = await getCategoriesForPopulation(
-  params.population,
-);
-const categoriesForType = await getCategoriesForResourceType(
-  params.resourceType,
-);
-
-const uniqueCategories = intersectionBy(
-  categoriesForPopulation,
-  categoriesForType,
-  "slug",
-);
-
-const population = await getPopulation(params.population);
-
-const resourceTypeLabel = capitalize(pluralize(params.resourceType));
+const props = Astro.props;
 ---
 
 <MainLayout>
-  <ResourcePageLayout
-    resourceType={params.resourceType}
-    population={population}
-  >
-    <TwoColLayout>
-      <ul>
-        {
-          resources?.map((resource) => (
-            <li>
-              <Resource resource={resource} />
-            </li>
-          ))
-        }
-      </ul>
-      <aside slot="aside">
-        {
-          uniqueCategories.length > 0 && (
-            <AsideNav
-              title={`${resourceTypeLabel} for ${population.name} by category...`}
-            >
-              {uniqueCategories.map((category) => (
-                <NavLink
-                  href={`/${params.resourceType}/${category.slug}/${population.slug}`}
-                  navContext="secondary"
+  <section>
+    <ul>
+      {
+        props.resources.map((resource) => (
+          <li>
+            <article>
+              <h3>{resource.title}</h3>
+              <time datetime={resource.lastUpdated}>
+                Last updated: [[todo]]
+              </time>
+              <p>{resource.description}</p>
+              <a href={resource.resourceUrl} rel="noopener" target="_blank">
+                Go to resource
+              </a>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+  <aside>
+    {
+      props.applicableCategories?.length > 0 && (
+        <nav>
+          <h2>Category</h2>
+          <ul>
+            {props.applicableCategories.map((category) => (
+              <li>
+                <a
+                  href={`/${params.resourceType}/${category.slug}/${params.population}`}
                 >
                   {category.title}
-                </NavLink>
-              ))}
-            </AsideNav>
-          )
-        }
-      </aside>
-    </TwoColLayout>
-  </ResourcePageLayout>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </aside>
 </MainLayout>

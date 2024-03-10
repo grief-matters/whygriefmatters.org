@@ -1,196 +1,143 @@
 ---
-import {
-  getCategory,
-  getCategorySlugs,
-  getFallbackImageCollection,
-  getImageUrl,
-  getInternetResources,
-} from "@common/client";
-
-import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import TwoColLayout from "@layouts/TwoColLayout.astro";
-
-import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import Resource from "@ui/Resource.astro";
-import ResourceLink from "@ui/ResourceLink.astro";
-import shuffle from "lodash/shuffle";
 import startCase from "lodash/startCase";
 import pluralize from "pluralize";
-import NavLink from "@ui/primitives/NavLink.astro";
-import { filterTypesFromResources } from "@common/resourceType";
-import { getFilteredPopulationsFromResources } from "@common/population";
+
+import type {
+  CategoryPageData,
+  CategoryPageFeaturedResource,
+} from "@model/categoryPage";
+import type { Population } from "@model/population";
+import type {
+  InternetResourcePageListing,
+  InternetResourceType,
+} from "@model/internetResource";
+
+import { getCategoryPagesData, getPopulations } from "@common/client";
+import { getFilteredTypesFromResources } from "@common/resourceType";
+
+import MainLayout from "@layouts/MainLayout.astro";
+
+interface Props {
+  title: string;
+  resources: Array<InternetResourcePageListing>;
+  featuredArticles: Array<CategoryPageFeaturedResource> | null;
+  featuredStories: Array<CategoryPageFeaturedResource> | null;
+  applicablePopulations: Array<Population>;
+  applicableTypes: Array<InternetResourceType>;
+}
 
 export async function getStaticPaths() {
-  const slugs = await getCategorySlugs();
+  const categoryPagesData = await getCategoryPagesData();
+  const populations = await getPopulations();
 
-  return slugs.map((category) => ({ params: { category } }));
+  return categoryPagesData.map((data: CategoryPageData) => {
+    const filteredPopulations = populations.filter((p) =>
+      data.resources.some((r) => r.populations?.includes(p.slug)),
+    );
+
+    const filteredTypes = getFilteredTypesFromResources(data.resources);
+
+    return {
+      params: { category: data.slug },
+      props: {
+        title: data.title,
+        resources: data.resources,
+        featuredArticles: data.featuredArticles,
+        featuredStories: data.featuredStories,
+        applicablePopulations: filteredPopulations ?? [],
+        applicableTypes: filteredTypes ?? [],
+      },
+    };
+  });
 }
 
 const params = Astro.params;
-
-const resources = await getInternetResources({ categorySlug: params.category });
-
-const category = await getCategory(params.category);
-
-const filteredPopulations =
-  await getFilteredPopulationsFromResources(resources);
-
-const filteredTypes = filterTypesFromResources(resources);
-
-// check the images on all featured - fetch image collection if any are missing
-const isMissingImages =
-  [
-    ...(category.featuredArticles?.filter((a) => a.image === null) ?? []),
-    ...(category.featuredStories?.filter((s) => s.image === null) ?? []),
-  ].length > 0;
-
-if (isMissingImages) {
-  // TODO - we're making a big assumption that we have enough images here
-  const fallbackImages = await getFallbackImageCollection();
-  const shuffled = shuffle(fallbackImages);
-
-  category.featuredArticles?.forEach(function (article) {
-    if (article.image) {
-      return;
-    }
-
-    const img = shuffled.pop();
-
-    if (typeof img !== "undefined") {
-      article.image = img;
-    }
-  });
-
-  category.featuredStories?.forEach(function (article) {
-    if (article.image) {
-      return;
-    }
-
-    const img = shuffled.pop();
-
-    if (typeof img !== "undefined") {
-      article.image = img;
-    }
-  });
-}
+const props = Astro.props;
 ---
 
 <MainLayout>
-  <ResourcePageLayout category={category}>
-    <TwoColLayout>
-      <div>
-        <div class="divide-y">
+  <div>
+    <div>
+      {
+        props.featuredArticles && (
+          <section>
+            <h2>{"Featured Articles"}</h2>
+            {props.featuredArticles.map((article) => (
+              <article>
+                <h3>{article.title}</h3>
+                <p>{article.description}</p>
+              </article>
+            ))}
+          </section>
+        )
+      }
+      {
+        props.featuredStories && (
+          <section>
+            <h2>{"Featured Stories"}</h2>
+            {props.featuredStories.map((article) => (
+              <article>
+                <h3>{article.title}</h3>
+                <p>{article.description}</p>
+              </article>
+            ))}
+          </section>
+        )
+      }
+      <section>
+        <ul>
           {
-            category.featuredStories && (
-              <div class="p-3 text-sky-800 my-6 bg-stone-100">
-                <h2 class="text-center font-serif text-3xl">
-                  Featured Stories
-                </h2>
-                <div class="flex">
-                  {category.featuredStories?.map((story) => (
-                    <div class="p-3 flex-1 flex flex-col gap-3">
-                      {story.image && (
-                        <img
-                          src={getImageUrl(story.image.image)
-                            .width(300)
-                            .height(225)
-                            .url()}
-                          alt={story.image.altText}
-                          class="max-h-64"
-                        />
-                      )}
-                      <h3 class="font-serif italic text-lg">{story.title}</h3>
-                      <p class="font-serif prose text-sky-800 flex-1">
-                        {story.description}
-                      </p>
-                      <div>
-                        <ResourceLink
-                          href={story.resourceUrl}
-                          variant="story"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )
-          }
-          {
-            category.featuredArticles && (
-              <div class="p-3 text-sky-800 my-6 bg-stone-100">
-                <h2 class="text-center font-serif text-3xl">
-                  Featured Articles
-                </h2>
-                <div class="flex">
-                  {category.featuredArticles?.map((article) => (
-                    <div class="p-3 flex-1 flex flex-col gap-3">
-                      {article.image && (
-                        <img
-                          src={getImageUrl(article.image.image)
-                            .width(300)
-                            .height(225)
-                            .url()}
-                          alt={article.image.altText}
-                        />
-                      )}
-                      <h3 class="font-serif italic text-lg">{article.title}</h3>
-                      <p class="font-serif prose text-sky-800 flex-1">
-                        {article.description}
-                      </p>
-                      <div>
-                        <ResourceLink
-                          href={article.resourceUrl}
-                          variant="article"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )
-          }
-        </div>
-        <ul class="mx-12 divide-y">
-          {
-            resources?.map((resource) => (
-              <li class:list={["py-6"]}>
-                <Resource resource={resource} />
+            props.resources.map((resource) => (
+              <li>
+                <article>
+                  <h3>{resource.title}</h3>
+                  <time datetime={resource.lastUpdated}>
+                    Last updated: [[todo]]
+                  </time>
+                  <p>{resource.description}</p>
+                  <a href={resource.resourceUrl} rel="noopener" target="_blank">
+                    Go to resource
+                  </a>
+                </article>
               </li>
             ))
           }
         </ul>
-      </div>
-      <aside slot="aside">
-        {
-          filteredPopulations.length > 0 && (
-            <AsideNav title="Resources in this category for...">
-              {filteredPopulations.map((population) => (
-                <NavLink
-                  href={`/${category.slug}/${population.slug}`}
-                  navContext="secondary"
-                >
-                  {population.name}
-                </NavLink>
+      </section>
+    </div>
+    <aside>
+      {
+        props.applicablePopulations?.length > 0 && (
+          <nav>
+            <h2>Population</h2>
+            <ul>
+              {props.applicablePopulations.map((population) => (
+                <li>
+                  <a href={`/${params.category}/${population.slug}`}>
+                    {population.name}
+                  </a>
+                </li>
               ))}
-            </AsideNav>
-          )
-        }
-        {
-          filteredTypes.length > 0 && (
-            <AsideNav title="Resources in this category by type...">
-              {filteredTypes.map((type) => (
-                <NavLink
-                  href={`/${type}/${category.slug}`}
-                  navContext="secondary"
-                >
-                  {pluralize(startCase(type))}
-                </NavLink>
+            </ul>
+          </nav>
+        )
+      }
+      {
+        props.applicableTypes?.length > 1 && (
+          <nav>
+            <h2>Type</h2>
+            <ul>
+              {props.applicableTypes.map((type) => (
+                <li>
+                  <a href={`/${type}/${params.category}`}>
+                    {pluralize(startCase(type))}
+                  </a>
+                </li>
               ))}
-            </AsideNav>
-          )
-        }
-      </aside>
-    </TwoColLayout>
-  </ResourcePageLayout>
+            </ul>
+          </nav>
+        )
+      }
+    </aside>
+  </div>
 </MainLayout>
