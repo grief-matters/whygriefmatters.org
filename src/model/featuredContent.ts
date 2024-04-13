@@ -17,17 +17,25 @@ export const zResourcePageLink = z
 
 export type ResourcePageLink = z.infer<typeof zResourcePageLink>;
 
+export const zResourceLink = z.object({
+  title: z.string(),
+  url: z.string().url(),
+});
+
 export const zRowOfThree = z.object({
   images: z.array(zImage),
 });
 
-export const zResourcePageLinks = z.object({
-  links: z.array(zResourcePageLink),
+export const zRowOfThreeFeaturedResources = z.object({
+  resources: z.array(
+    zResourceLink.extend({
+      image: zImage.nullable(),
+    }),
+  ),
 });
 
-export const zResourceLink = z.object({
-  title: z.string(),
-  url: z.string().url(),
+export const zResourcePageLinks = z.object({
+  links: z.array(zResourcePageLink),
 });
 
 export const zResourceLinks = z.object({
@@ -36,6 +44,9 @@ export const zResourceLinks = z.object({
 
 export const zFeaturedContentContent = z.discriminatedUnion("contentType", [
   zRowOfThree.extend({ contentType: z.literal("rowOfThree") }),
+  zRowOfThreeFeaturedResources.extend({
+    contentType: z.literal("rowOfThreeFeaturedResources"),
+  }),
   zRichTextContentBlock.extend({
     contentType: z.literal("richTextContentBlock"),
   }),

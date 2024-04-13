@@ -58,6 +58,17 @@ export const gHomePageDataQuery = groq`
           "altText": alt
         }
       },
+      _type == "rowOfThreeFeaturedResources" => {
+        "contentType": _type,
+        resources[]->{
+          "title": coalesce(title, name),
+          "url": resourceUrl,
+          image{
+            image,
+            "altText": alt
+          }
+        }
+      },
       _type == "resourcePageLinks" => {
         "contentType": _type,
         links[]{

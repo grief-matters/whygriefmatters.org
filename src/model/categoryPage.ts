@@ -5,11 +5,14 @@ import { zImage } from "./image";
 import {
   gPageResourceListingProjection,
   zInternetResourcePageListing,
+  zInternetResourceType,
 } from "./internetResource";
 
 const zFeaturedResource = z.object({
+  type: zInternetResourceType,
   title: z.string(),
   description: z.string().nullable(),
+  lastUpdated: z.string().datetime(),
   resourceUrl: z.string().url(),
   sourceWebsite: z
     .object({
@@ -21,9 +24,11 @@ const zFeaturedResource = z.object({
 });
 
 const gFeaturedResourceProjection = groq`
-  title,
+  "type": _type,
+  "title": coalesce(title, name),
   description,
-  resourceUrl,
+  "lastUpdated": _updatedAt,
+  "resourceUrl": coalesce(resourceUrl, appleUrl, spotifyUrl, playStoreUrl),
   sourceWebsite->{
     name,
     resourceUrl,
