@@ -13,6 +13,7 @@ import { getCategoryPagesData, getPopulations } from "@common/client";
 import { getFilteredTypesFromResources } from "@common/resourceType";
 
 import MainLayout from "@layouts/MainLayout.astro";
+import ResourcePageListing from "@ui/ResourcePageListing.astro";
 
 interface Props {
   title: string;
@@ -27,13 +28,13 @@ export async function getStaticPaths() {
 
   return categoryPagesData.flatMap((data: CategoryPageData) => {
     const filteredPopulations = populations.filter((p) =>
-      data.resources.some((r) => r.populations?.includes(p.slug)),
+      data.resources.some((r) => r.populations?.includes(p.slug))
     );
 
     return filteredPopulations
       .map((population) => {
         const resources = data.resources.filter((r) =>
-          r.populations?.includes(population.slug),
+          r.populations?.includes(population.slug)
         );
 
         const filteredTypes = getFilteredTypesFromResources(data.resources);
@@ -61,17 +62,8 @@ const props = Astro.props;
     <ul>
       {
         props.resources.map((resource) => (
-          <li>
-            <article>
-              <h3>{resource.title}</h3>
-              <time datetime={resource.lastUpdated}>
-                Last updated: [[todo]]
-              </time>
-              <p>{resource.description}</p>
-              <a href={resource.resourceUrl} rel="noopener" target="_blank">
-                Go to resource
-              </a>
-            </article>
+          <li class:list={["mb-6"]}>
+            <ResourcePageListing resource={resource} />
           </li>
         ))
       }

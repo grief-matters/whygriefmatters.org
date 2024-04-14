@@ -1,5 +1,6 @@
 ---
 import startCase from "lodash/startCase";
+import shuffle from "lodash/shuffle";
 import pluralize from "pluralize";
 
 import type {
@@ -12,10 +13,18 @@ import type {
   InternetResourceType,
 } from "@model/internetResource";
 
-import { getCategoryPagesData, getPopulations } from "@common/client";
+import {
+  getCategoryPagesData,
+  getFallbackImageCollection,
+  getPopulations,
+} from "@common/client";
 import { getFilteredTypesFromResources } from "@common/resourceType";
 
 import MainLayout from "@layouts/MainLayout.astro";
+
+import ResourcePageListing from "@ui/ResourcePageListing.astro";
+import FeaturedResources from "@ui/FeaturedResources.astro";
+import LowerEmTitle from "@ui/primitives/LowerEmTitle.astro";
 
 interface Props {
   title: string;
@@ -30,20 +39,34 @@ export async function getStaticPaths() {
   const categoryPagesData = await getCategoryPagesData();
   const populations = await getPopulations();
 
+  const fallbackImages = await getFallbackImageCollection();
+
   return categoryPagesData.map((data: CategoryPageData) => {
     const filteredPopulations = populations.filter((p) =>
-      data.resources.some((r) => r.populations?.includes(p.slug)),
+      data.resources.some((r) => r.populations?.includes(p.slug))
     );
 
     const filteredTypes = getFilteredTypesFromResources(data.resources);
+
+    const shuffledImages = shuffle(fallbackImages);
+    const imagePatchedFeaturedArticles = data.featuredArticles?.map((x, i) => ({
+      ...x,
+      image: x.image !== null ? x.image : shuffledImages[i],
+    }));
+
+    const imagePatchedFeaturedStories = data.featuredStories?.map((x, i) => ({
+      ...x,
+      // Pretty crude - we're just offsetting the index by 3 so our images are different
+      image: x.image !== null ? x.image : shuffledImages[i + 3],
+    }));
 
     return {
       params: { category: data.slug },
       props: {
         title: data.title,
         resources: data.resources,
-        featuredArticles: data.featuredArticles,
-        featuredStories: data.featuredStories,
+        featuredArticles: imagePatchedFeaturedArticles,
+        featuredStories: imagePatchedFeaturedStories,
         applicablePopulations: filteredPopulations ?? [],
         applicableTypes: filteredTypes ?? [],
       },
@@ -58,47 +81,41 @@ const props = Astro.props;
 <MainLayout>
   <div>
     <div>
-      {
-        props.featuredArticles && (
-          <section>
-            <h2>{"Featured Articles"}</h2>
-            {props.featuredArticles.map((article) => (
-              <article>
-                <h3>{article.title}</h3>
-                <p>{article.description}</p>
-              </article>
-            ))}
-          </section>
-        )
-      }
-      {
-        props.featuredStories && (
-          <section>
-            <h2>{"Featured Stories"}</h2>
-            {props.featuredStories.map((article) => (
-              <article>
-                <h3>{article.title}</h3>
-                <p>{article.description}</p>
-              </article>
-            ))}
-          </section>
-        )
-      }
+      <div class="bg-slate-200 divide-y p-3">
+        {
+          props.featuredStories && (
+            <div class="pb-3">
+              <LowerEmTitle
+                as="h2"
+                title={"Featured Stories"}
+                sizeVariant="text-2xl"
+                class="text-center text-sky-800 py-3"
+              />
+              <FeaturedResources featuredResources={props.featuredStories} />
+            </div>
+          )
+        }
+        {
+          props.featuredArticles && (
+            <div>
+              <LowerEmTitle
+                as="h2"
+                title={"Featured Articles"}
+                sizeVariant="text-2xl"
+                class="text-center text-sky-800 py-3"
+              />
+              <FeaturedResources featuredResources={props.featuredArticles} />
+            </div>
+          )
+        }
+      </div>
+
       <section>
-        <ul>
+        <ul class="divide-y p-3">
           {
             props.resources.map((resource) => (
-              <li>
-                <article>
-                  <h3>{resource.title}</h3>
-                  <time datetime={resource.lastUpdated}>
-                    Last updated: [[todo]]
-                  </time>
-                  <p>{resource.description}</p>
-                  <a href={resource.resourceUrl} rel="noopener" target="_blank">
-                    Go to resource
-                  </a>
-                </article>
+              <li class:list={["py-6"]}>
+                <ResourcePageListing resource={resource} />
               </li>
             ))
           }
@@ -141,3 +158,31 @@ const props = Astro.props;
     </aside>
   </div>
 </MainLayout>
+
+<style>
+  .dot {
+    width: 0.85em;
+    height: 0.85em;
+    /* border-radius: 50%; */
+  }
+</style>
+
+<script>
+  document.querySelector("#controls")?.addEventListener("click", (event) => {
+    const targetEl = event.target as Element;
+    if (targetEl) {
+      const attr = targetEl.getAttribute("href");
+      if (attr) {
+        const slide = document.querySelector(attr);
+
+        if (slide) {
+          event.preventDefault();
+          slide.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+          });
+        }
+      }
+    }
+  });
+</script>

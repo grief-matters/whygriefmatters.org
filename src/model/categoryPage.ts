@@ -21,6 +21,7 @@ const zFeaturedResource = z.object({
     })
     .nullable(),
   image: zImage.nullable(),
+  hasSpanishVersion: z.boolean().nullish(),
 });
 
 const gFeaturedResourceProjection = groq`
@@ -36,7 +37,8 @@ const gFeaturedResourceProjection = groq`
   image{
     image,
     "altText": alt
-  }
+  },
+  hasSpanishVersion,
 `;
 
 export const zCategoryPageData = z.object({

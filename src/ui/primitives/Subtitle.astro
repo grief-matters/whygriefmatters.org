@@ -1,0 +1,16 @@
+---
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+type Props<Element extends HTMLTag> = {
+  children: any;
+} & Polymorphic<{ as: Element }>;
+
+const { as: Element = "span", ...attrs } = Astro.props;
+---
+
+<Element
+  class:list={["block", "font-serif text-sm text-slate-500 italic"]}
+  {...attrs}
+>
+  <slot />
+</Element>

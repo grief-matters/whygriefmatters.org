@@ -49,7 +49,7 @@ const { featuredContent, variant = "primary" } = Astro.props;
               <span class="font-semibold">{` ${titlePart}`}</span>
             ) : (
               `${titlePart}`
-            ),
+            )
           )
         }
       </h2>
@@ -68,6 +68,15 @@ const { featuredContent, variant = "primary" } = Astro.props;
             return (
               <div class="max-w-prose my-6 m-auto prose font-serif text-center text-sky-800">
                 <RichTextContentBlock portableText={content.portableText} />
+              </div>
+            );
+
+          case "rowOfThreeFeaturedResources":
+            return (
+              <div class="flex gap-4 my-8">
+                {content.resources.map((resource) => (
+                  <div>TODO: row of three featured</div>
+                ))}
               </div>
             );
 

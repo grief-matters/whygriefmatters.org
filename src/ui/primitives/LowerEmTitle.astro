@@ -1,0 +1,34 @@
+---
+import type { HTMLTag, Polymorphic } from "astro/types";
+import words from "lodash/words";
+
+type Props<Element extends HTMLTag> = {
+  sizeVariant?: "text-lg" | "text-xl" | "text-2xl" | "text-4xl";
+  title: string;
+} & Polymorphic<{ as: Element }>;
+
+const {
+  as: Element = "h1",
+  sizeVariant = "text-4xl",
+  title,
+  ...attrs
+} = Astro.props;
+---
+
+<Element
+  class:list={[
+    "font-serif lowercase after:content-['...'] font-normal",
+    sizeVariant,
+  ]}
+  {...attrs}
+>
+  {
+    words(title).map((titlePart, i) =>
+      i !== 0 ? (
+        <span class="font-semibold">{` ${titlePart}`}</span>
+      ) : (
+        `${titlePart}`
+      )
+    )
+  }
+</Element>
