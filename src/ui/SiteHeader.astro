@@ -1,0 +1,71 @@
+---
+import { getImageUrl, getLogoSet } from "@common/client";
+import CollapsibleContent from "./Collapsible/CollapsibleContent.astro";
+import MainNavNew from "./MainNav/MainNavNew.astro";
+
+const logoSet = await getLogoSet();
+
+const rawLightLogo = logoSet?.find((l) => l.variant === "light-secondary");
+const lightHeaderLogo = rawLightLogo
+  ? {
+      url: getImageUrl(rawLightLogo.image).url(),
+      alt: "Why Grief Matter home",
+    }
+  : null;
+---
+
+<header
+  id="site-header"
+  class:list={[
+    "sticky top-0 focus-within:top-0",
+    "flex items-center justify-between",
+    "bg-blue-900",
+    "transition-[top] ease-in-out delay-300 duration-500",
+  ]}
+>
+  <a href="/" class="block h-20 p-3">
+    {
+      lightHeaderLogo ? (
+        <img
+          src={lightHeaderLogo.url}
+          alt={lightHeaderLogo.alt}
+          class="h-full"
+        />
+      ) : (
+        <span>Why Grief Matters</span>
+      )
+    }
+  </a>
+  <MainNavNew />
+</header>
+
+<style>
+  header.scroll-down {
+    top: -100%;
+  }
+</style>
+
+<script>
+  import throttle from "lodash/throttle";
+
+  const header = document.querySelector("#site-header");
+
+  let lastScrollPosition = 0;
+
+  function handleScroll() {
+    const headerFocussed = header?.contains(document.activeElement);
+    const scrollingDown = lastScrollPosition < scrollY;
+
+    if (!headerFocussed && scrollingDown) {
+      header?.classList.add("scroll-down");
+    } else {
+      header?.classList.remove("scroll-down");
+    }
+
+    lastScrollPosition = scrollY;
+  }
+
+  const throttledScrollHandler = throttle(handleScroll, 250);
+
+  window.addEventListener("scroll", throttledScrollHandler);
+</script>

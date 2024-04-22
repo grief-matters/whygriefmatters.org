@@ -12,11 +12,11 @@ const categories = await getCategories();
 const masterCategoryTree: CategoryTreeItem[] = buildCategoryTree(categories);
 
 const typesOfLoss = masterCategoryTree.find(
-  (rootCategory) => rootCategory.slug === "types-of-loss",
+  (rootCategory) => rootCategory.slug === "types-of-loss"
 );
 
 const supportingTheBereaved = masterCategoryTree.find(
-  (rootCategory) => rootCategory.slug === "supporting-the-bereaved",
+  (rootCategory) => rootCategory.slug === "supporting-the-bereaved"
 );
 
 const navMenuContainerClasses =
@@ -31,7 +31,7 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3 font-medium";
   >
     <div>
       <button class={navMenuButtonClasses} type="button">
-        Featured Topics
+        {"Featured Topics"}
       </button>
       <div class={navMenuContainerClasses}>
         <ul>
@@ -136,7 +136,7 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3 font-medium";
           });
 
           event.stopPropagation();
-        }),
+        })
       );
 
       document.addEventListener("click", (event: Event) => {

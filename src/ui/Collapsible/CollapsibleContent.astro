@@ -1,0 +1,102 @@
+---
+interface Props {
+  // children: any[];
+  id: string;
+  elementDisplayClass?: "block" | "flex";
+  elementContainerClassList?: Array<string>;
+  contentContainerClassList?: Array<string>;
+  buttonClassList?: Array<string>;
+  showOverlay?: boolean;
+}
+
+const {
+  elementDisplayClass = "block",
+  elementContainerClassList,
+  buttonClassList,
+  contentContainerClassList,
+  id,
+} = Astro.props;
+
+const buttonId = `${id}-button`;
+const containerId = `${id}-container`;
+---
+
+<collapsible-content
+  data-display={elementDisplayClass}
+  data-button-id={buttonId}
+  data-container-id={containerId}
+  class:list={[elementDisplayClass, elementContainerClassList]}
+>
+  {/* This button toggles show/hide */}
+  <button id={buttonId} type="button">
+    <div class:list={["pointer-events-none", buttonClassList]}>
+      <slot name="button" />
+    </div>
+  </button>
+
+  {/* This is the outermost container that manages visibility of the panel */}
+  <div id={containerId} class:list={["hidden", contentContainerClassList]}>
+    <slot name="content" />
+  </div>
+</collapsible-content>
+
+<script>
+  class CollapsibleContent extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      const buttonId = this.dataset.buttonId;
+      const containerId = this.dataset.containerId;
+
+      const openButton = this.querySelector(`#${buttonId}`);
+      const container = this.querySelector(`#${containerId}`);
+
+      const contentArea = this.querySelector(
+        ".collapsible-content-content-area"
+      );
+      const closeButton = this.querySelector(
+        ".collapsible-content-close-button"
+      );
+      const displayClass = this.dataset.display ?? "block";
+
+      const toggleOpen = () => {
+        container?.classList.toggle("hidden");
+        container?.classList.toggle(displayClass);
+      };
+
+      const close = () => {
+        container?.classList.remove(displayClass);
+        container?.classList.add("hidden");
+      };
+
+      openButton?.addEventListener("click", (e) => {
+        toggleOpen();
+      });
+
+      closeButton?.addEventListener("click", (e) => {
+        close();
+        e.stopPropagation();
+      });
+
+      this.addEventListener("click", (e) => {
+        if ((e.target as Element).id === buttonId) {
+          return;
+        }
+
+        if (!contentArea?.contains(e.target as Node)) {
+          close();
+        }
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!this.contains(event.target as Node)) {
+          close();
+        }
+      });
+    }
+  }
+
+  customElements.define("collapsible-content", CollapsibleContent);
+</script>

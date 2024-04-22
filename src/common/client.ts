@@ -39,6 +39,11 @@ import {
   type PopulationsPageData,
 } from "@model/populationPage";
 import { zImage, type SanityImage } from "@model/image";
+import {
+  gCrisisResourcesQuery,
+  type CrisisResource,
+  zCrisisResource,
+} from "@model/crisisResource";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -119,6 +124,19 @@ export async function getCategoriesByFilter(
   const unique = uniqBy(categories, "slug");
 
   return zCategory.array().parse(unique);
+}
+
+/**
+ * Gets the entire collection of crisis resources
+ *
+ * @returns
+ */
+export async function getCrisisResources(): Promise<CrisisResource[]> {
+  const crisisResources = await client
+    .fetch(gCrisisResourcesQuery)
+    .then((result) => zCrisisResource.array().parse(result));
+
+  return crisisResources;
 }
 
 /**

@@ -41,7 +41,59 @@ const coreValuesBgColors = [
 ---
 
 <MainLayout>
-  <Hero imageUrl={heroImg.url}>
+  <div><p class="font-serif font-thin">Some content</p></div>
+  <div><p class="font-serif font-bold">Some content</p></div>
+  <div><p class="font-bold">content</p></div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <div>content</div>
+  <!-- <Hero imageUrl={heroImg.url}>
     <div class="w-3/4 mx-auto relative py-1">
       <img class="w-96" src={logo.url} alt={homePageData?.org.name} />
       <span
@@ -62,12 +114,15 @@ const coreValuesBgColors = [
   </Hero>
   <section>
     <h2
-      class="text-4xl text-center font-serif lowercase ellipsis text-blue-900 font-light mt-5 mb-8 after:content-['...']"
+      class="text-3xl text-center font-serif lowercase ellipsis text-blue-900 font-light mt-5 mb-5 after:content-['...']"
     >
       Our <span class="font-semibold">Mission</span>
     </h2>
     <div
-      class="max-w-prose mb-12 m-auto prose font-serif text-blue-900 first:prose-p:text-xl text-center"
+      class:list={[
+        "px-3",
+        "prose font-serif text-blue-900 first:prose-p:text-lg text-center",
+      ]}
     >
       <RichTextContentBlock portableText={homePageData?.org.mission} />
     </div>
@@ -83,7 +138,7 @@ const coreValuesBgColors = [
     </div>
 
     <div class="bg-gradient-to-r from-sky-700 from-50% to-sky-400 to-50%">
-      <div class="flex container mx-auto">
+      <div class="flex flex-col">
         {
           homePageData.org.coreValues.map((coreValue, i) => (
             <div
@@ -116,7 +171,7 @@ const coreValuesBgColors = [
         }
       />
     ))
-  }
+  } -->
 </MainLayout>
 
 <style>

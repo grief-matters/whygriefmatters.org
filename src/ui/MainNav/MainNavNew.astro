@@ -1,0 +1,314 @@
+---
+import { buildCategoryTree, type CategoryTreeItem } from "@common/category";
+import { getCategories, getFeaturedTopics } from "@common/client";
+
+import MainNavRecursiveCategoryTree from "@ui/MainNav/MainNavRecursiveCategoryTree.astro";
+
+import NavLink from "../primitives/NavLink.astro";
+import CollapsibleContent from "@ui/Collapsible/CollapsibleContent.astro";
+import MainNavButton from "./MainNavButton.astro";
+import MainNavLink from "./MainNavLink.astro";
+
+const featuredTopics = await getFeaturedTopics();
+
+const categories = await getCategories();
+const masterCategoryTree: CategoryTreeItem[] = buildCategoryTree(categories);
+
+const typesOfLoss = masterCategoryTree.find(
+  (rootCategory) => rootCategory.slug === "types-of-loss"
+);
+
+const supportingTheBereaved = masterCategoryTree.find(
+  (rootCategory) => rootCategory.slug === "supporting-the-bereaved"
+);
+
+const navMenuContainerClasses = [
+  "absolute left-0 w-full bg-blue-900 text-stone-50 px-5 pb-4",
+];
+
+const navMenuButtonClassList = [
+  // "flex",
+  "text-stone-50 text-2xl font-serif font-semibold block text-left py-1",
+];
+
+const secondaryLinkClassList = [
+  "mb-3",
+  "text-stone-50 font-serif",
+  "underline underline-offset-4 decoration-dotted decoration-slate-50/25",
+];
+
+const tertiaryLinkClassList = [
+  "mb-3",
+  "text-stone-50 font-serif",
+  "underline underline-offset-4 decoration-dotted decoration-slate-50/25",
+];
+---
+
+<nav class="z-40">
+  <!-- 
+    Requirements:
+    - There should be a hamburger button for mobile - but should be possible to hide the button and always show content at specific sizes
+    - The button should 'toggle' hidden class
+    -  
+   -->
+  <CollapsibleContent id="hamburger-menu">
+    <Fragment slot="button">
+      <div class="flex text-stone-50 items-center justify-center h-20 pr-3">
+        <span class="sr-only">
+          {"Menu"}
+        </span>
+        <svg
+          class="h-10 w-10 p-1"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 4L20 4M4 12L20 12M4 20L20 20"></path>
+        </svg>
+      </div>
+    </Fragment>
+    <Fragment slot="content">
+      <!-- aria properties only needed in 'modal' mode -->
+      <div
+        class="relative"
+        aria-labelledby="slide-over-title"
+        role="dialog"
+        aria-modal="true"
+      >
+        <!--
+          Background backdrop, show/hide based on slide-over state.
+      
+          Entering: "ease-in-out duration-500"
+            From: "opacity-0"
+            To: "opacity-100"
+          Leaving: "ease-in-out duration-500"
+            From: "opacity-100"
+            To: "opacity-0"
+        -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity">
+        </div>
+
+        <div class="fixed inset-0 overflow-hidden">
+          <div class="absolute inset-0 overflow-hidden">
+            <div
+              class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10"
+            >
+              <!--
+                Slide-over panel, show/hide based on slide-over state.
+      
+                Entering: "transform transition ease-in-out duration-500 sm:duration-700"
+                  From: "translate-x-full"
+                  To: "translate-x-0"
+                Leaving: "transform transition ease-in-out duration-500 sm:duration-700"
+                  From: "translate-x-0"
+                  To: "translate-x-full"
+              -->
+              <div
+                class="collapsible-content-content-area pointer-events-auto w-screen max-w-md flex flex-col bg-blue-900"
+              >
+                <!--
+                  Close button, show/hide based on slide-over state.
+      
+                  Entering: "ease-in-out duration-500"
+                    From: "opacity-0"
+                    To: "opacity-100"
+                  Leaving: "ease-in-out duration-500"
+                    From: "opacity-100"
+                    To: "opacity-0"
+                -->
+                <div
+                  class:list={["h-20 shrink-0 flex justify-end items-center"]}
+                >
+                  <button
+                    type="button"
+                    class:list={[
+                      "collapsible-content-close-button",
+                      "flex items-center space-x-1 p-3",
+                      "rounded-md focus:outline-none focus:ring-2 focus:ring-white",
+                      "text-stone-50",
+                    ]}
+                  >
+                    <span class:list={["block", "font-serif italic text-2xl"]}>
+                      {"Close"}
+                    </span>
+                    <svg
+                      class="h-8 w-8 p-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M4 4L20 20M20 4L4 20"></path>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="grow overflow-y-scroll shadow-xl">
+                  <div class="relative px-6 py-3">
+                    <CollapsibleContent
+                      id="featured-topics-collapsible"
+                      buttonClassList={navMenuButtonClassList}
+                    >
+                      <Fragment slot="button">
+                        <span>
+                          {"Featured Topics"}
+                        </span>
+                        <svg
+                          class="inline-block h-10 w-10 px-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="3"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M4 8L12 16L20 8"></path>
+                        </svg>
+                      </Fragment>
+                      <div
+                        class="collapsible-content-content-area"
+                        slot="content"
+                      >
+                        <ul class="mb-3">
+                          {
+                            featuredTopics.map((topic) => (
+                              <li>
+                                <MainNavLink
+                                  href={`/${topic.slug}`}
+                                  label={topic.title}
+                                  variant="secondary"
+                                />
+                              </li>
+                            ))
+                          }
+                        </ul>
+                      </div>
+                    </CollapsibleContent>
+                    <CollapsibleContent
+                      id="types-of-loss-collapsible"
+                      buttonClassList={navMenuButtonClassList}
+                    >
+                      <Fragment slot="button">
+                        <span>
+                          {"Types of Loss"}
+                        </span>
+                        <svg
+                          class="inline-block h-10 w-10 px-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="3"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M4 8L12 16L20 8"></path>
+                        </svg>
+                      </Fragment>
+                      <div
+                        class="collapsible-content-content-area"
+                        slot="content"
+                      >
+                        {
+                          typesOfLoss?.children.map((c) => (
+                            <MainNavRecursiveCategoryTree categories={[c]} />
+                          ))
+                        }
+                      </div>
+                    </CollapsibleContent>
+                    <CollapsibleContent
+                      id="supporting-the-bereaved-collapsible"
+                      buttonClassList={navMenuButtonClassList}
+                    >
+                      <Fragment slot="button">
+                        <span>
+                          {"Supporting the Bereaved"}
+                        </span>
+                        <svg
+                          class="inline-block h-10 w-10 px-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="3"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M4 8L12 16L20 8"></path>
+                        </svg>
+                      </Fragment>
+                      <div
+                        class="collapsible-content-content-area"
+                        slot="content"
+                      >
+                        {
+                          supportingTheBereaved?.children
+                            .filter((c) => c.children.length > 0)
+                            .map((c, i) => (
+                              <div class="mb-3">
+                                <MainNavRecursiveCategoryTree
+                                  categories={[c]}
+                                />
+                                {i + 1 === c.children.length ? (
+                                  <ul class="border-t-2 mt-6 pt-6">
+                                    <h3
+                                      class:list={[
+                                        "text-xl font-semibold",
+                                        "mb-2",
+                                        "text-stone-50 font-serif",
+                                      ]}
+                                    >
+                                      Specific Support Topics
+                                    </h3>
+                                    <p
+                                      class:list={[
+                                        "text-2xl font-light text-stone-50 font-serif italic",
+                                        "pb-6",
+                                      ]}
+                                    >
+                                      A selection of topics focussing on
+                                      providing specific support.
+                                    </p>
+                                    {supportingTheBereaved?.children
+                                      .filter((c) => c.children.length === 0)
+                                      .map((c) => (
+                                        <li>
+                                          <MainNavLink
+                                            href={`/${c.slug}`}
+                                            label={c.title}
+                                            variant="secondary"
+                                          />
+                                        </li>
+                                      ))}
+                                  </ul>
+                                ) : null}
+                              </div>
+                            ))
+                        }
+                      </div>
+                    </CollapsibleContent>
+                    <a href="#" class:list={navMenuButtonClassList}>About Us</a>
+                    <a href="#" class:list={navMenuButtonClassList}>Donate</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Fragment>
+  </CollapsibleContent>
+</nav>
