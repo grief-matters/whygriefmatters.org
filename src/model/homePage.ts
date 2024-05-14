@@ -4,6 +4,7 @@ import groq from "groq";
 import { zFeaturedContent } from "./featuredContent";
 import { zPortableText } from "./portableText";
 import { zImage } from "./image";
+import { gFeaturedResourceProjection } from "./featuredResource";
 
 export const zHomePageData = z.object({
   org: z.object({
@@ -61,12 +62,7 @@ export const gHomePageDataQuery = groq`
       _type == "rowOfThreeFeaturedResources" => {
         "contentType": _type,
         resources[]->{
-          "title": coalesce(title, name),
-          "url": resourceUrl,
-          image{
-            image,
-            "altText": alt
-          }
+          ${gFeaturedResourceProjection}
         }
       },
       _type == "resourcePageLinks" => {
@@ -82,7 +78,8 @@ export const gHomePageDataQuery = groq`
         "contentType": _type,
         resources[]->{
           "title": coalesce(title, name),
-          "url": resourceUrl
+          "url": resourceUrl,
+          "type": _type
         }
       }
     },

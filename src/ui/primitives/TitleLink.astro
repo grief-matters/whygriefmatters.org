@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import { wgmDesignSystem as ds } from "@common/design-system";
 
 interface Props extends HTMLAttributes<"a"> {
   label: string;
@@ -11,11 +12,11 @@ const { label, ...attrs } = Astro.props;
 <a {...attrs}>
   <h3
     class:list={[
-      "underline underline-offset-2",
-      "text-sky-800 decoration-sky-800/30 hover:decoration-sky-900",
-      "transition-decoration duration-300",
       "text-xl font-medium font-serif",
-      "text-sky-800",
+      ds.typography.color?.primary.default,
+      ds.decoration.underline,
+      ds.decoration.transition,
+      ds.decoration.color?.primary.hoverable,
     ]}
   >
     {label}

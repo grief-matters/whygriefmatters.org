@@ -1,0 +1,33 @@
+---
+interface Props {}
+---
+
+<mobile-carousel>
+  <div class="w-full overflow-hidden">
+    <div
+      class:list={[
+        "items-container",
+        "flex",
+        "overflow-x-auto snap-mandatory snap-x scroll-smooth",
+      ]}
+    >
+      <slot name="items" />
+    </div>
+    <div class="controls flex justify-center space-x-2 pt-3">
+      <slot name="controls" />
+    </div>
+  </div>
+</mobile-carousel>
+
+<script>
+  class MobileCarousel extends HTMLElement {
+    // TODO - this code is intended to manage 'scrollInToView' code - but previous implementation wasn't working
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {}
+  }
+
+  customElements.define("mobile-carousel", MobileCarousel);
+</script>

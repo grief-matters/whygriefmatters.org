@@ -2,10 +2,8 @@
 import "../styles/main.css";
 
 import { getImageUrl, getLogoSet } from "@common/client";
-import MainNav from "@ui/MainNav/MainNav.astro";
-import Collapsible from "@ui/Collapsible/CollapsibleContent.astro";
-import WhatDoYouNeed from "@ui/WhatDoYouNeed/WhatDoYouNeed.astro";
-import MainNavNew from "@ui/MainNav/MainNavNew.astro";
+import { wgmDesignSystem as ds } from "@common/design-system";
+import SiteFooter from "@ui/SiteFooter.astro";
 import SiteHeader from "@ui/SiteHeader.astro";
 
 const logoSet = await getLogoSet();
@@ -35,7 +33,13 @@ const lightHeaderLogo = rawLightLogo
     <title>Why Grief Matters</title>
   </head>
 
-  <body class="bg-stone-50 min-h-full p-0 m-0">
+  <body
+    class:list={[
+      "min-h-full p-0 m-0",
+      ds.typography.color?.primary.default,
+      ds.background.color?.primary.contrast,
+    ]}
+  >
     <SiteHeader />
     <!-- <header>
       <a
@@ -107,10 +111,10 @@ const lightHeaderLogo = rawLightLogo
     <main>
       <slot />
     </main>
+    <SiteFooter />
   </body>
 
   <style>
-    /* Let's bring this back later if required */
     html {
       font-size: 18px;
     }

@@ -27,8 +27,13 @@ const navMenuContainerClasses = [
 ];
 
 const navMenuButtonClassList = [
-  // "flex",
-  "text-stone-50 text-2xl font-serif font-semibold block text-left py-1",
+  "flex",
+  // "items-center",
+  "w-full",
+  "items-start justify-between",
+  "text-stone-50",
+  "text-2xl lg:text-lg text-left py-1",
+  "font-serif lg:font-sans font-semibold",
 ];
 
 const secondaryLinkClassList = [
@@ -44,14 +49,14 @@ const tertiaryLinkClassList = [
 ];
 ---
 
-<nav class="z-40">
+<nav class="z-50">
   <!-- 
     Requirements:
     - There should be a hamburger button for mobile - but should be possible to hide the button and always show content at specific sizes
     - The button should 'toggle' hidden class
     -  
    -->
-  <CollapsibleContent id="hamburger-menu">
+  <CollapsibleContent id="hamburger-menu" disableAtBreakpoint="lg">
     <Fragment slot="button">
       <div class="flex text-stone-50 items-center justify-center h-20 pr-3">
         <span class="sr-only">
@@ -90,39 +95,58 @@ const tertiaryLinkClassList = [
             From: "opacity-100"
             To: "opacity-0"
         -->
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity">
+        <div
+          class:list={[
+            "fixed inset-0 bg-slate-950 bg-opacity-75 transition-opacity",
+            "lg:hidden",
+          ]}
+        >
         </div>
 
-        <div class="fixed inset-0 overflow-hidden">
-          <div class="absolute inset-0 overflow-hidden">
+        <!-- Start of Main Nav -->
+        <div class:list={["fixed inset-0 lg:static", "overflow-hidden"]}>
+          <div class:list={["absolute inset-0 lg:static", "overflow-hidden"]}>
             <div
-              class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10"
+              class:list={[
+                "pointer-events-none",
+                "fixed inset-y-0 right-0 lg:static",
+                "flex max-w-full pl-10 lg:pl-0",
+              ]}
             >
               <!--
-                Slide-over panel, show/hide based on slide-over state.
-      
-                Entering: "transform transition ease-in-out duration-500 sm:duration-700"
-                  From: "translate-x-full"
-                  To: "translate-x-0"
-                Leaving: "transform transition ease-in-out duration-500 sm:duration-700"
-                  From: "translate-x-0"
-                  To: "translate-x-full"
-              -->
+                  Slide-over panel, show/hide based on slide-over state.
+        
+                  Entering: "transform transition ease-in-out duration-500 sm:duration-700"
+                    From: "translate-x-full"
+                    To: "translate-x-0"
+                  Leaving: "transform transition ease-in-out duration-500 sm:duration-700"
+                    From: "translate-x-0"
+                    To: "translate-x-full"
+                -->
               <div
-                class="collapsible-content-content-area pointer-events-auto w-screen max-w-md flex flex-col bg-blue-900"
+                class:list={[
+                  "collapsible-content-content-area",
+                  "pointer-events-auto",
+                  "w-screen max-w-md lg:max-w-none",
+                  "flex flex-col lg:block",
+                  "bg-blue-900",
+                ]}
               >
                 <!--
-                  Close button, show/hide based on slide-over state.
-      
-                  Entering: "ease-in-out duration-500"
-                    From: "opacity-0"
-                    To: "opacity-100"
-                  Leaving: "ease-in-out duration-500"
-                    From: "opacity-100"
-                    To: "opacity-0"
-                -->
+                    Close button, show/hide based on slide-over state.
+        
+                    Entering: "ease-in-out duration-500"
+                      From: "opacity-0"
+                      To: "opacity-100"
+                    Leaving: "ease-in-out duration-500"
+                      From: "opacity-100"
+                      To: "opacity-0"
+                  -->
                 <div
-                  class:list={["h-20 shrink-0 flex justify-end items-center"]}
+                  class:list={[
+                    "h-20 lg:h-0",
+                    "shrink-0 flex justify-end items-center",
+                  ]}
                 >
                   <button
                     type="button"
@@ -152,29 +176,21 @@ const tertiaryLinkClassList = [
                   </button>
                 </div>
 
-                <div class="grow overflow-y-scroll shadow-xl">
-                  <div class="relative px-6 py-3">
+                <div
+                  class="grow overflow-y-scroll shadow-xl lg:max-w-screen-lg lg:mx-auto"
+                >
+                  <div
+                    class:list={[
+                      "relative px-6 py-3 lg:px-auto lg:py-0 lg:flex lg:justify-between",
+                    ]}
+                  >
+                    <!-- Start of Featured Topics -->
                     <CollapsibleContent
                       id="featured-topics-collapsible"
                       buttonClassList={navMenuButtonClassList}
                     >
                       <Fragment slot="button">
-                        <span>
-                          {"Featured Topics"}
-                        </span>
-                        <svg
-                          class="inline-block h-10 w-10 px-2"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="3"
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M4 8L12 16L20 8"></path>
-                        </svg>
+                        <MainNavButton label={"Featured Topics"} />
                       </Fragment>
                       <div
                         class="collapsible-content-content-area"
@@ -200,22 +216,7 @@ const tertiaryLinkClassList = [
                       buttonClassList={navMenuButtonClassList}
                     >
                       <Fragment slot="button">
-                        <span>
-                          {"Types of Loss"}
-                        </span>
-                        <svg
-                          class="inline-block h-10 w-10 px-2"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="3"
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M4 8L12 16L20 8"></path>
-                        </svg>
+                        <MainNavButton label={"Types of Loss"} />
                       </Fragment>
                       <div
                         class="collapsible-content-content-area"
@@ -233,22 +234,7 @@ const tertiaryLinkClassList = [
                       buttonClassList={navMenuButtonClassList}
                     >
                       <Fragment slot="button">
-                        <span>
-                          {"Supporting the Bereaved"}
-                        </span>
-                        <svg
-                          class="inline-block h-10 w-10 px-2"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="3"
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M4 8L12 16L20 8"></path>
-                        </svg>
+                        <MainNavButton label={"Supporting the Bereaved"} />
                       </Fragment>
                       <div
                         class="collapsible-content-content-area"
@@ -300,8 +286,12 @@ const tertiaryLinkClassList = [
                         }
                       </div>
                     </CollapsibleContent>
-                    <a href="#" class:list={navMenuButtonClassList}>About Us</a>
-                    <a href="#" class:list={navMenuButtonClassList}>Donate</a>
+                    <a href="#" class:list={[navMenuButtonClassList, "block"]}
+                      >About Us</a
+                    >
+                    <a href="#" class:list={[navMenuButtonClassList, "block"]}
+                      >Donate</a
+                    >
                   </div>
                 </div>
               </div>

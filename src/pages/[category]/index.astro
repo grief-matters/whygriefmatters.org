@@ -25,6 +25,7 @@ import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageListing from "@ui/ResourcePageListing.astro";
 import FeaturedResources from "@ui/FeaturedResources.astro";
 import LowerEmTitle from "@ui/primitives/LowerEmTitle.astro";
+import MobileCarousel from "@ui/MobileCarousel/MobileCarousel.astro";
 
 interface Props {
   title: string;
@@ -48,25 +49,25 @@ export async function getStaticPaths() {
 
     const filteredTypes = getFilteredTypesFromResources(data.resources);
 
-    const shuffledImages = shuffle(fallbackImages);
-    const imagePatchedFeaturedArticles = data.featuredArticles?.map((x, i) => ({
-      ...x,
-      image: x.image !== null ? x.image : shuffledImages[i],
-    }));
+    // const shuffledImages = shuffle(fallbackImages);
+    // const imagePatchedFeaturedArticles = data.featuredArticles?.map((x, i) => ({
+    //   ...x,
+    //   image: x.image !== null ? x.image : shuffledImages[i],
+    // }));
 
-    const imagePatchedFeaturedStories = data.featuredStories?.map((x, i) => ({
-      ...x,
-      // Pretty crude - we're just offsetting the index by 3 so our images are different
-      image: x.image !== null ? x.image : shuffledImages[i + 3],
-    }));
+    // const imagePatchedFeaturedStories = data.featuredStories?.map((x, i) => ({
+    //   ...x,
+    //   // Pretty crude - we're just offsetting the index by 3 so our images are different
+    //   image: x.image !== null ? x.image : shuffledImages[i + 3],
+    // }));
 
     return {
       params: { category: data.slug },
       props: {
         title: data.title,
         resources: data.resources,
-        featuredArticles: imagePatchedFeaturedArticles,
-        featuredStories: imagePatchedFeaturedStories,
+        featuredArticles: data.featuredArticles,
+        featuredStories: data.featuredStories,
         applicablePopulations: filteredPopulations ?? [],
         applicableTypes: filteredTypes ?? [],
       },

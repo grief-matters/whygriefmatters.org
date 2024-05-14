@@ -2,6 +2,7 @@ import { z } from "zod";
 import { zImage } from "./image";
 import { zInternetResourceType } from "./internetResource";
 import { zRichTextContentBlock, zPortableText } from "./portableText";
+import { zFeaturedResource } from "./featuredResource";
 
 export const zResourcePageLink = z
   .object({
@@ -20,6 +21,7 @@ export type ResourcePageLink = z.infer<typeof zResourcePageLink>;
 export const zResourceLink = z.object({
   title: z.string(),
   url: z.string().url(),
+  type: zInternetResourceType.nullable(),
 });
 
 export const zRowOfThree = z.object({
@@ -27,11 +29,7 @@ export const zRowOfThree = z.object({
 });
 
 export const zRowOfThreeFeaturedResources = z.object({
-  resources: z.array(
-    zResourceLink.extend({
-      image: zImage.nullable(),
-    }),
-  ),
+  resources: z.array(zFeaturedResource),
 });
 
 export const zResourcePageLinks = z.object({

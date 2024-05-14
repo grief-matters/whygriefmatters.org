@@ -1,16 +1,30 @@
 ---
-import { cva, type VariantProps } from "class-variance-authority";
-import words from "lodash/words";
-
 import type { FeaturedContent, ResourcePageLink } from "@model/featuredContent";
 
 import { getImageUrl } from "@common/client";
-import type { StandardVariantCvaSchema } from "@common/cva";
 
 import RichTextContentBlock from "./richTextContentBlock.astro";
+import LowerEmTitle from "./primitives/LowerEmTitle.astro";
+import FeaturedResources from "./FeaturedResources.astro";
+import MobileCarousel from "./MobileCarousel/MobileCarousel.astro";
+import MobileCarouselItem from "./MobileCarousel/MobileCarouselItem.astro";
+import MobileCarouselControl from "./MobileCarousel/MobileCarouselControl.astro";
+import LowerEmLink from "./primitives/LowerEmLink.astro";
+import ResourceLink from "./ResourceLink.astro";
 
-interface Props extends VariantProps<typeof featurePanel> {
+interface Props {
   featuredContent: FeaturedContent;
+  indexInCollection?: number;
+}
+
+function getAdjustedIndex(arrLength: number, index: number) {
+  let adjustedIndex = index % arrLength;
+
+  if (adjustedIndex < 0) {
+    adjustedIndex += arrLength;
+  }
+
+  return adjustedIndex;
 }
 
 function getRoute(pageLink: ResourcePageLink): string {
@@ -21,126 +35,122 @@ function getRoute(pageLink: ResourcePageLink): string {
   return `/${slugParts}`;
 }
 
-const variantSchema: StandardVariantCvaSchema = {
-  variant: {
-    primary: ["bg-rose-50"],
-    secondary: ["bg-violet-50"],
-    tertiary: ["bg-yellow-50"],
-    quaternary: [],
-  },
-};
+// const variantSchema: StandardVariantCvaSchema = {
+//   variant: {
+//     primary: ["bg-rose-50"],
+//     secondary: ["bg-violet-50"],
+//     tertiary: ["bg-yellow-50"],
+//     quaternary: [],
+//   },
+// };
 
-const featurePanel = cva(["py-6"], {
-  variants: variantSchema,
-});
+// const featurePanel = cva(["py-6"], {
+//   variants: variantSchema,
+// });
 
-const { featuredContent, variant = "primary" } = Astro.props;
+const { featuredContent, indexInCollection = 0 } = Astro.props;
+
+const bgClasses = ["bg-stone-50", "bg-stone-100"];
+
+const adjustedIndex = getAdjustedIndex(bgClasses.length, indexInCollection);
+
+const bgClass = bgClasses[adjustedIndex];
+
+const featurePanelId = crypto.randomUUID();
 ---
 
-<section class={featurePanel({ variant })}>
-  <div class="container mx-auto">
-    <div>
-      <h2
-        class="text-sky-800 text-4xl text-center font-serif lowercase after:content-['...'] font-normal"
-      >
-        {
-          words(featuredContent.title).map((titlePart, i, arr) =>
-            i !== 0 ? (
-              <span class="font-semibold">{` ${titlePart}`}</span>
-            ) : (
-              `${titlePart}`
-            )
-          )
-        }
-      </h2>
-    </div>
+<section class:list={["pt-3", bgClass]}>
+  <div class="mx-auto">
+    <LowerEmTitle
+      as="h2"
+      title={featuredContent.title}
+      class:list={[
+        "py-4 px-3",
+        "text-3xl text-center font-serif lowercase font-light",
+      ]}
+    />
     {
       featuredContent.description && (
-        <div class="max-w-prose my-6 m-auto prose font-serif text-center text-sky-800">
-          <RichTextContentBlock portableText={featuredContent.description} />
-        </div>
+        <RichTextContentBlock
+          class:list={["font-serif text-center prose", "px-3 mx-auto mb-6"]}
+          portableText={featuredContent.description}
+        />
       )
     }
     {
-      featuredContent.content.map((content) => {
+      featuredContent.content.map((content, panelIdx) => {
         switch (content.contentType) {
           case "richTextContentBlock":
             return (
-              <div class="max-w-prose my-6 m-auto prose font-serif text-center text-sky-800">
+              <div class="max-w-prose px-3 my-6 m-auto prose font-serif text-center text-sky-800">
                 <RichTextContentBlock portableText={content.portableText} />
               </div>
             );
 
           case "rowOfThreeFeaturedResources":
             return (
-              <div class="flex gap-4 my-8">
-                {content.resources.map((resource) => (
-                  <div>TODO: row of three featured</div>
-                ))}
+              <div class="mb-3">
+                <FeaturedResources featuredResources={content.resources} />
+              </div>
+            );
+
+          case "rowOfThree":
+            return (
+              <div>
+                <MobileCarousel>
+                  <Fragment slot="items">
+                    {content.images.map((image, imgIdx) => (
+                      <MobileCarouselItem
+                        id={`${featurePanelId}-${panelIdx}-${imgIdx}`}
+                      >
+                        <img
+                          src={getImageUrl(image.image)
+                            .width(640)
+                            .height(450)
+                            .url()}
+                          alt={image.altText}
+                        />
+                      </MobileCarouselItem>
+                    ))}
+                  </Fragment>
+                  <Fragment slot="controls">
+                    {Array.from({ length: 3 }, (_, i) => (
+                      <MobileCarouselControl
+                        id={`${featurePanelId}-${panelIdx}-${i}`}
+                      >
+                        {i + 1}
+                      </MobileCarouselControl>
+                    ))}
+                  </Fragment>
+                </MobileCarousel>
               </div>
             );
 
           case "resourceLinks":
             return (
-              <div
-                class:list={["flex", "flex-wrap", "justify-center", "gap-4"]}
-              >
+              <div class:list={["flex flex-wrap justify-center gap-4", "p-3"]}>
                 {content.resources.map((link) => (
-                  <a
-                    class:list={[
-                      "bg-white",
-                      "p-2",
-                      "border-b-4",
-                      "border-b-blue-800/50",
-                      "hover:border-b-blue-800",
-                      "text-blue-800",
-                      "font-serif",
-                      "italic",
-                    ]}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    {link.title}
-                  </a>
+                  <ResourceLink
+                    to={link.url}
+                    label={link.title}
+                    resourceType={link.type ?? undefined}
+                    external
+                  />
                 ))}
               </div>
             );
-          case "rowOfThree":
-            return (
-              <div class="flex gap-4 my-8">
-                {content.images.map((image) => (
-                  <div class="flex-1">
-                    <img
-                      class="aspect-video"
-                      src={getImageUrl(image.image).url()}
-                      alt={image.altText}
-                    />
-                  </div>
-                ))}
-              </div>
-            );
+
           case "resourcePageLinks":
             return (
               <div
                 class:list={["flex", "flex-wrap", "justify-center", "gap-4"]}
               >
                 {content.links.map((pageLink) => (
-                  <a
-                    class:list={[
-                      "bg-white",
-                      "p-2",
-                      "border-b-4",
-                      "border-b-blue-800/50",
-                      "hover:border-b-blue-800",
-                      "text-blue-800",
-                      "font-serif",
-                      "italic",
-                    ]}
-                    href={getRoute(pageLink)}
-                  >
-                    {pageLink.label}
-                  </a>
+                  <ResourceLink
+                    to={getRoute(pageLink)}
+                    label={pageLink.label}
+                    resourceType={pageLink.type ?? undefined}
+                  />
                 ))}
               </div>
             );
@@ -149,27 +159,11 @@ const { featuredContent, variant = "primary" } = Astro.props;
     }
     {
       featuredContent.featuredContentFooterLink && (
-        <div class="mt-8">
-          <a
-            class:list={[
-              "underline",
-              "underline-offset-4",
-              "decoration-2",
-              "decoration-sky-800/40",
-              "hover:decoration-sky-800",
-              "text-2xl",
-              "font-serif",
-              "lowercase",
-              "w-fit",
-              "block",
-              "mx-auto",
-              "after:content-['...']",
-              "text-sky-800",
-            ]}
-            href={getRoute(featuredContent.featuredContentFooterLink)}
-          >
-            {featuredContent.featuredContentFooterLink.label}
-          </a>
+        <div class="w-64 mx-auto py-6 text-center">
+          <LowerEmLink
+            to={getRoute(featuredContent.featuredContentFooterLink)}
+            label={featuredContent.featuredContentFooterLink.label}
+          />
         </div>
       )
     }

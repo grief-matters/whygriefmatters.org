@@ -2,9 +2,9 @@
 import startCase from "lodash/startCase";
 
 import type { InternetResourcePageListing } from "@model/internetResource";
+import { wgmDesignSystem as ds } from "@common/design-system";
 
 import Tag from "@ui/primitives/Tag.astro";
-import { resourceTypeBorderColorMap } from "@common/color-maps";
 import TitleLink from "./primitives/TitleLink.astro";
 import Subtitle from "./primitives/Subtitle.astro";
 
@@ -27,7 +27,7 @@ const date = new Date(props.resource.lastUpdated).toLocaleDateString("en-US", {
       "block uppercase text-xs tracking-superwide leading-none",
       "mb-2 pl-2",
       "border-l-2",
-      resourceTypeBorderColorMap[props.resource.type],
+      ds.border.color?.resourceType?.[props.resource.type].default,
       "text-slate-500",
     ]}>{startCase(props.resource.type)}</span
   >

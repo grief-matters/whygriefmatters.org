@@ -7,6 +7,7 @@ import Tag from "./primitives/Tag.astro";
 import { getImageUrl } from "@common/client";
 import TitleLink from "./primitives/TitleLink.astro";
 import Subtitle from "./primitives/Subtitle.astro";
+import SimpleTextBlock from "./primitives/SimpleTextBlock.astro";
 
 interface Props {
   featuredResource: CategoryPageFeaturedResource;
@@ -60,12 +61,12 @@ const imageUrl =
       <img src={imageUrl} alt={props.featuredResource.image?.altText} />
     </a>
   </div>
-  <p class:list={["mb-2", "prose font-serif"]}>
+  <SimpleTextBlock>
     {
       props.featuredResource.description ||
         "We don't have a description for this resource"
     }
-  </p>
+  </SimpleTextBlock>
   {
     props.featuredResource.hasSpanishVersion && (
       <Tag>{"Available in Spanish"}</Tag>

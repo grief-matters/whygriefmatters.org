@@ -10,6 +10,10 @@ import FeaturePanel from "@ui/FeaturePanel.astro";
 import Hero from "@ui/Hero.astro";
 
 import { cvaSchemaStandardVariants } from "@common/cva";
+import LowerEmTitle from "@ui/primitives/LowerEmTitle.astro";
+import { wgmDesignSystem as ds } from "@common/design-system";
+
+import MobileCarousel from "@ui/MobileCarousel/MobileCarousel.astro";
 
 const homePageData = await getHomePageData();
 
@@ -41,102 +45,45 @@ const coreValuesBgColors = [
 ---
 
 <MainLayout>
-  <div><p class="font-serif font-thin">Some content</p></div>
-  <div><p class="font-serif font-bold">Some content</p></div>
-  <div><p class="font-bold">content</p></div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <div>content</div>
-  <!-- <Hero imageUrl={heroImg.url}>
-    <div class="w-3/4 mx-auto relative py-1">
-      <img class="w-96" src={logo.url} alt={homePageData?.org.name} />
-      <span
-        class:list={[
-          "pl-3",
-          "font-serif",
-          "italic",
-          "text-lg",
-          "text-white",
-          "lowercase",
-          `before:content-["..."]`,
-          "absolute",
-          "left-32",
-          "bottom-0",
-        ]}>{homePageData?.org.slogan}</span
-      >
+  <Hero imageUrl={heroImg.url}>
+    <div class="p-4 flex justify-center items-center flex-col h-full">
+      <div class="">
+        <img src={logo.url} alt={homePageData?.org.name} />
+        <div class:list={["sm:pl-12"]}>
+          <span
+            class:list={[
+              "text-white font-serif italic lowercase",
+              "text-lg",
+              `before:content-["..."]`,
+            ]}>{homePageData?.org.slogan}</span
+          >
+        </div>
+      </div>
     </div>
   </Hero>
-  <section>
-    <h2
-      class="text-3xl text-center font-serif lowercase ellipsis text-blue-900 font-light mt-5 mb-5 after:content-['...']"
-    >
-      Our <span class="font-semibold">Mission</span>
-    </h2>
-    <div
-      class:list={[
-        "px-3",
-        "prose font-serif text-blue-900 first:prose-p:text-lg text-center",
-      ]}
-    >
-      <RichTextContentBlock portableText={homePageData?.org.mission} />
-    </div>
+  <section class="max-w-prose mx-auto pb-6 mt-3 mb-6">
+    <LowerEmTitle
+      as="h2"
+      title="Our Mission"
+      class:list={["py-4", "text-center"]}
+    />
+    <RichTextContentBlock
+      class:list={["px-4", "first:prose-p:text-lg", "font-serif text-center"]}
+      portableText={homePageData?.org.mission}
+    />
   </section>
 
-  <section>
-    <div class="bg-sky-800 py-3">
-      <h2
-        class="text-4xl text-center font-serif lowercase ellipsis text-white font-light after:content-['...']"
-      >
-        Our <span class="font-semibold">Values</span>
-      </h2>
-    </div>
-
+  <section class="">
+    <LowerEmTitle
+      as="h2"
+      title="Our Values"
+      class:list={[
+        "py-4",
+        "text-center",
+        ds.background.color?.primary.default,
+        ds.typography.color?.primary.contrast,
+      ]}
+    />
     <div class="bg-gradient-to-r from-sky-700 from-50% to-sky-400 to-50%">
       <div class="flex flex-col">
         {
@@ -146,14 +93,23 @@ const coreValuesBgColors = [
                 "flex",
                 "flex-1",
                 "text-slate-50",
-                "py-8",
-                "px-8",
+                "p-8",
                 coreValuesBgColors[i],
               ]}
             >
-              <div>
-                <h3 class="font-bold text-xl mb-3">{coreValue.title}</h3>
-                <p class="font-light">{coreValue.description}</p>
+              <div class="text-center">
+                <h3
+                  class:list={[
+                    "mb-4",
+                    "text-3xl font-thin font-serif italic",
+                    "first-letter:font-normal first-letter:text-4xl",
+                  ]}
+                >
+                  {coreValue.title}
+                </h3>
+                <p class="font-light font-serif italic leading-loose mb-3">
+                  {coreValue.description}
+                </p>
               </div>
             </div>
           ))
@@ -164,14 +120,9 @@ const coreValuesBgColors = [
 
   {
     homePageData?.featurePanels.map((featuredContent, i) => (
-      <FeaturePanel
-        featuredContent={featuredContent}
-        variant={
-          cvaSchemaStandardVariants[i % cvaSchemaStandardVariants.length]
-        }
-      />
+      <FeaturePanel featuredContent={featuredContent} indexInCollection={i} />
     ))
-  } -->
+  }
 </MainLayout>
 
 <style>

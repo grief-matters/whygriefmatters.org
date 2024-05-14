@@ -1,0 +1,36 @@
+---
+import { getImageUrl, getLogoSet, getSmallPrint } from "@common/client";
+import RichTextContentBlock from "./richTextContentBlock.astro";
+import { wgmDesignSystem as ds } from "@common/design-system";
+
+const smallPrint = await getSmallPrint();
+const logoSet = await getLogoSet();
+
+const rawLightLogo = logoSet?.find((l) => l.variant === "light-secondary");
+const lightHeaderLogo = rawLightLogo
+  ? {
+      url: getImageUrl(rawLightLogo.image).url(),
+      alt: "Why Grief Matter home",
+    }
+  : null;
+---
+
+<footer class:list={[ds.background.color?.brand.blue, "p-6"]}>
+  <a href="/" class="block w-48 mb-4">
+    {
+      lightHeaderLogo ? (
+        <img
+          src={lightHeaderLogo.url}
+          alt={lightHeaderLogo.alt}
+          class="h-full grayscale"
+        />
+      ) : (
+        <span>Why Grief Matters</span>
+      )
+    }
+  </a>
+  <RichTextContentBlock
+    class:list={["text-xs font-serif !prose-invert"]}
+    portableText={smallPrint}
+  />
+</footer>
