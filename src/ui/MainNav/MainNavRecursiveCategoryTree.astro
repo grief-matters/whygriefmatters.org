@@ -1,8 +1,6 @@
 ---
 import type { CategoryTreeItem } from "@common/category";
-import NavLink, {
-  type NavLinkVariantProps,
-} from "@ui/primitives/NavLink.astro";
+
 import MainNavLink from "./MainNavLink.astro";
 import {
   styleVariants,
@@ -23,11 +21,6 @@ interface Props {
 }
 
 const { categories, startingVariant = "primary", getPath } = Astro.props;
-
-type LinkLevel = Extract<
-  NavLinkVariantProps["linkLevel"],
-  string | null | undefined
->;
 
 // const linkLevels: Array<LinkLevel> = [
 //   "primary",

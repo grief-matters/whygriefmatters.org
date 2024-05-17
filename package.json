@@ -29,7 +29,6 @@
     "@types/lodash": "^4.14.202",
     "@types/pluralize": "^0.0.33",
     "astro": "^4.8.4",
-    "class-variance-authority": "^0.7.0",
     "lodash": "^4.17.21",
     "node-html-parser": "^6.1.13",
     "pluralize": "^8.0.0",

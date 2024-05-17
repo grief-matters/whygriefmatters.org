@@ -29,21 +29,6 @@ type DsColorBrandContext = {
   blue: string;
 };
 
-// These types are not working as we expect... they're pretty gross to be fair
-
-// type DsColorVariantMapping = {
-//   primary: keyof DsColorContextVariants;
-//   secondary: keyof DsColorContextVariants;
-//   neutral: keyof DsColorContextVariants;
-//   brand: keyof DsColorBrandContext;
-//   resourceType: InternetResourceType;
-// };
-
-// export type DsColorVariant = {
-//   [K in keyof DsColorContext]: [K, DsColorVariantMapping[K]];
-// }[keyof DsColorContext];
-
-// Let's just be super explicit instead...
 export type DsColorVariant =
   | ["primary", keyof DsColorContextVariants]
   | ["secondary", keyof DsColorContextVariants]
@@ -64,6 +49,10 @@ export const wgmDesignSystem: DesignSystem = {
       },
       brand: {
         blue: "bg-blue-900",
+      },
+      neutral: {
+        default: "bg-stone-50",
+        contrast: "bg-stone-500",
       },
     },
   },
