@@ -2,14 +2,14 @@
 import type { ResourcePageLink } from "@model/featuredContent";
 
 import { getHomePageData, getImageUrl } from "@common/client";
+import { wgmDesignSystem as ds } from "@common/design-system";
 
 import MainLayout from "@layouts/MainLayout.astro";
 
 import RichTextContentBlock from "@ui/richTextContentBlock.astro";
 import FeaturePanel from "@ui/FeaturePanel.astro";
 import Hero from "@ui/Hero.astro";
-
-import { cvaSchemaStandardVariants } from "@common/cva";
+import LowerEmTitle from "@ui/primitives/LowerEmTitle.astro";
 
 const homePageData = await getHomePageData();
 
@@ -23,14 +23,6 @@ const logo = {
   alt: homePageData.org.logo.altText,
 };
 
-function getRoute(pageLink: ResourcePageLink): string {
-  const slugParts = [pageLink.type, pageLink.category, pageLink.population]
-    .filter((part) => Boolean(part))
-    .join("/");
-
-  return `/${slugParts}`;
-}
-
 const coreValuesBgColors = [
   "bg-sky-700",
   "bg-sky-600",
@@ -42,48 +34,46 @@ const coreValuesBgColors = [
 
 <MainLayout>
   <Hero imageUrl={heroImg.url}>
-    <div class="w-3/4 mx-auto relative py-1">
-      <img class="w-96" src={logo.url} alt={homePageData?.org.name} />
-      <span
-        class:list={[
-          "pl-3",
-          "font-serif",
-          "italic",
-          "text-lg",
-          "text-white",
-          "lowercase",
-          `before:content-["..."]`,
-          "absolute",
-          "left-32",
-          "bottom-0",
-        ]}>{homePageData?.org.slogan}</span
-      >
+    <div class="p-4 flex justify-center items-center flex-col h-full">
+      <div class="">
+        <img src={logo.url} alt={homePageData?.org.name} />
+        <div class:list={["sm:pl-12"]}>
+          <span
+            class:list={[
+              "text-white font-serif italic lowercase",
+              "text-lg",
+              `before:content-["..."]`,
+            ]}>{homePageData?.org.slogan}</span
+          >
+        </div>
+      </div>
     </div>
   </Hero>
-  <section>
-    <h2
-      class="text-4xl text-center font-serif lowercase ellipsis text-blue-900 font-light mt-5 mb-8 after:content-['...']"
-    >
-      Our <span class="font-semibold">Mission</span>
-    </h2>
-    <div
-      class="max-w-prose mb-12 m-auto prose font-serif text-blue-900 first:prose-p:text-xl text-center"
-    >
-      <RichTextContentBlock portableText={homePageData?.org.mission} />
-    </div>
+  <section class="max-w-prose mx-auto pb-6 mt-3 mb-6">
+    <LowerEmTitle
+      as="h2"
+      title="Our Mission"
+      class:list={["py-4", "text-center"]}
+    />
+    <RichTextContentBlock
+      class:list={["px-4", "first:prose-p:text-lg", "font-serif text-center"]}
+      portableText={homePageData?.org.mission}
+    />
   </section>
 
   <section>
-    <div class="bg-sky-800 py-3">
-      <h2
-        class="text-4xl text-center font-serif lowercase ellipsis text-white font-light after:content-['...']"
-      >
-        Our <span class="font-semibold">Values</span>
-      </h2>
-    </div>
-
+    <LowerEmTitle
+      as="h2"
+      title="Our Values"
+      class:list={[
+        "py-4",
+        "text-center",
+        ds.background.color?.primary.default,
+        ds.typography.color?.primary.contrast,
+      ]}
+    />
     <div class="bg-gradient-to-r from-sky-700 from-50% to-sky-400 to-50%">
-      <div class="flex container mx-auto">
+      <div class="flex flex-col">
         {
           homePageData.org.coreValues.map((coreValue, i) => (
             <div
@@ -91,14 +81,23 @@ const coreValuesBgColors = [
                 "flex",
                 "flex-1",
                 "text-slate-50",
-                "py-8",
-                "px-8",
+                "p-8",
                 coreValuesBgColors[i],
               ]}
             >
-              <div>
-                <h3 class="font-bold text-xl mb-3">{coreValue.title}</h3>
-                <p class="font-light">{coreValue.description}</p>
+              <div class="text-center">
+                <h3
+                  class:list={[
+                    "mb-4",
+                    "text-3xl font-thin font-serif italic",
+                    "first-letter:font-normal first-letter:text-4xl",
+                  ]}
+                >
+                  {coreValue.title}
+                </h3>
+                <p class="font-light font-serif italic leading-loose mb-3">
+                  {coreValue.description}
+                </p>
               </div>
             </div>
           ))
@@ -109,18 +108,7 @@ const coreValuesBgColors = [
 
   {
     homePageData?.featurePanels.map((featuredContent, i) => (
-      <FeaturePanel
-        featuredContent={featuredContent}
-        variant={
-          cvaSchemaStandardVariants[i % cvaSchemaStandardVariants.length]
-        }
-      />
+      <FeaturePanel featuredContent={featuredContent} indexInCollection={i} />
     ))
   }
 </MainLayout>
-
-<style>
-  .bg-split {
-    background: linear-gradient();
-  }
-</style>

@@ -1,22 +1,36 @@
 ---
-import { cva, type VariantProps } from "class-variance-authority";
+import { wgmDesignSystem as ds } from "@common/design-system";
+import Link from "@ui/primitives/Link.astro";
+import Subtitle from "@ui/primitives/Subtitle.astro";
 
-interface Props extends VariantProps<typeof tempClasses> {
-  title: string;
+interface Props {
+  title?: string;
+  links: Array<{ to: string; label: string }>;
+  colorVariant?: "primary" | "secondary";
 }
 
-const tempClasses = cva([], {
-  variants: {},
-});
-
-const { title } = Astro.props;
+const { title, links, colorVariant = "primary" } = Astro.props;
 ---
 
-<nav class:list={["p-3"]}>
-  <h2 class:list={["font-semibold"]}>
-    {title}
-  </h2>
-  <div>
-    <slot />
-  </div>
+<nav class:list={["my-3"]}>
+  {
+    title && (
+      <Subtitle as="h3" colorVariant={[colorVariant, "contrast"]}>
+        {title}
+      </Subtitle>
+    )
+  }
+  <ul>
+    {
+      links.map((link) => (
+        <li>
+          <Link
+            to={link.to}
+            label={link.label}
+            colorVariant={[colorVariant, "contrast"]}
+          />
+        </li>
+      ))
+    }
+  </ul>
 </nav>

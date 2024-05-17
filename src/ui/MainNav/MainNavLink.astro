@@ -1,0 +1,31 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { StyleVariant, StyleVariantClassListMap } from "@common/variants";
+
+interface Props extends HTMLAttributes<"a"> {
+  label: string;
+  variant?: StyleVariant;
+}
+
+const { label, variant = "primary", ...attrs } = Astro.props;
+
+const baseClassList = [
+  "inline-block",
+  "mb-1",
+  "text-stone-50 font-serif",
+  "underline underline-offset-4 decoration-slate-50/25",
+];
+
+const styleVariantClassListMap: StyleVariantClassListMap = {
+  primary: ["text-lg font-semibold"],
+  secondary: ["decoration-dotted"],
+  tertiary: ["decoration-dotted"],
+};
+---
+
+<a
+  {...attrs}
+  class:list={[...baseClassList, ...styleVariantClassListMap[variant]]}
+>
+  {label}
+</a>

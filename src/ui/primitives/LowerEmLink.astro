@@ -1,0 +1,25 @@
+---
+import { wgmDesignSystem as ds } from "@common/design-system";
+
+import LowerEmTitle from "./LowerEmTitle.astro";
+
+interface Props {
+  to: string;
+  label: string;
+}
+
+const { to, label } = Astro.props;
+---
+
+<LowerEmTitle
+  as="a"
+  href={to}
+  title={label}
+  sizeVariant="text-xl"
+  class:list={[
+    ds.typography.color?.primary.default,
+    ds.decoration.underline,
+    ds.decoration.transition,
+    ds.decoration.color?.primary.hover,
+  ]}
+/>

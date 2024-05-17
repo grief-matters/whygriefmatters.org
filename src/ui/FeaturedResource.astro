@@ -1,0 +1,75 @@
+---
+import startCase from "lodash/startCase";
+
+import type { CategoryPageFeaturedResource } from "@model/categoryPage";
+
+import Tag from "./primitives/Tag.astro";
+import { getImageUrl } from "@common/client";
+import TitleLink from "./primitives/TitleLink.astro";
+import Subtitle from "./primitives/Subtitle.astro";
+import SimpleTextBlock from "./primitives/SimpleTextBlock.astro";
+
+interface Props {
+  featuredResource: CategoryPageFeaturedResource;
+}
+
+const props = Astro.props;
+
+const date = new Date(props.featuredResource.lastUpdated).toLocaleDateString(
+  "en-US",
+  {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }
+);
+
+const imageUrl =
+  props.featuredResource.image !== null
+    ? getImageUrl(props.featuredResource.image.image)
+        .width(640)
+        .height(450)
+        .url()
+    : null;
+---
+
+<article class="mb-2">
+  <TitleLink
+    label={props.featuredResource.title}
+    href={props.featuredResource.resourceUrl}
+  />
+  {
+    props.featuredResource.sourceWebsite && (
+      <Subtitle class="mt-1">
+        {`From `}
+        <a
+          href={props.featuredResource.sourceWebsite.resourceUrl}
+          rel="noopener"
+          target="_blank"
+          class:list={[
+            "underline underline-offset-2",
+            "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
+          ]}
+        >
+          {props.featuredResource.sourceWebsite.name}
+        </a>
+      </Subtitle>
+    )
+  }
+  <div class="py-2">
+    <a href={props.featuredResource.resourceUrl} rel="noopener" target="_blank">
+      <img src={imageUrl} alt={props.featuredResource.image?.altText} />
+    </a>
+  </div>
+  <SimpleTextBlock>
+    {
+      props.featuredResource.description ||
+        "We don't have a description for this resource"
+    }
+  </SimpleTextBlock>
+  {
+    props.featuredResource.hasSpanishVersion && (
+      <Tag>{"Available in Spanish"}</Tag>
+    )
+  }
+</article>

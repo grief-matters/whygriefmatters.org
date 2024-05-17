@@ -1,0 +1,14 @@
+---
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+---
+
+<div
+  class:list={["carousel-item", "snap-start", "shrink-0 w-full"]}
+  id={`${id}--carousel-item`}
+>
+  <slot />
+</div>

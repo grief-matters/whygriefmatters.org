@@ -1,0 +1,79 @@
+---
+import startCase from "lodash/startCase";
+
+import type { InternetResourcePageListing } from "@model/internetResource";
+import { wgmDesignSystem as ds } from "@common/design-system";
+
+import Tag from "@ui/primitives/Tag.astro";
+import SimpleTextBlock from "@ui/primitives/SimpleTextBlock.astro";
+import TitleLink from "../primitives/TitleLink.astro";
+import Subtitle from "../primitives/Subtitle.astro";
+
+interface Props {
+  resource: InternetResourcePageListing;
+}
+
+const props = Astro.props;
+
+const date = new Date(props.resource.lastUpdated).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
+---
+
+<article>
+  <span
+    class:list={[
+      "block uppercase text-xs tracking-superwide leading-none",
+      "mb-2 pl-2",
+      "border-l-2",
+      ds.border.color?.resourceType?.[props.resource.type].default,
+      "text-slate-500",
+    ]}>{startCase(props.resource.type)}</span
+  >
+  <TitleLink
+    label={props.resource.title}
+    href={props.resource.resourceUrl}
+    rel="noopener"
+    target="_blank"
+  />
+  {
+    props.resource.sourceWebsite && (
+      <Subtitle class="mt-1">
+        {`From `}
+        <a
+          href={props.resource.sourceWebsite.resourceUrl}
+          rel="noopener"
+          target="_blank"
+          class:list={[
+            "underline underline-offset-2",
+            "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
+          ]}
+        >
+          {props.resource.sourceWebsite.name}
+        </a>
+      </Subtitle>
+    )
+  }
+
+  <SimpleTextBlock class:list={["my-1"]}>
+    {
+      props.resource.description ||
+        "We don't have a description for this resource"
+    }
+  </SimpleTextBlock>
+
+  <div class="mb-3">
+    {
+      props.resource.rating && (
+        <Tag>{`Rating: ${props.resource.rating}/10`}</Tag>
+      )
+    }
+    {props.resource.hasSpanishVersion && <Tag>{`Available in Spanish`}</Tag>}
+  </div>
+
+  <Subtitle datetime={props.resource.lastUpdated} as="time">
+    {`Last updated: ${date}`}
+  </Subtitle>
+</article>

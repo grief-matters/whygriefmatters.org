@@ -1,0 +1,238 @@
+import type { InternetResourceType } from "@model/internetResource";
+
+type TwCategoryKey = "background" | "border" | "decoration" | "typography";
+
+interface BaseTwCategory {
+  color?: DsColorContext;
+}
+
+interface TwCategory extends BaseTwCategory {
+  [key: string]: any;
+}
+
+type DsColorContext = {
+  primary: DsColorContextVariants;
+  secondary?: DsColorContextVariants;
+  neutral?: DsColorContextVariants;
+  resourceType?: Record<InternetResourceType, DsColorContextVariants>;
+  brand?: DsColorBrandContext;
+};
+
+type DsColorContextVariants = {
+  default: string;
+  contrast?: string;
+  hover?: string;
+  contrastHover?: string;
+};
+
+type DsColorBrandContext = {
+  blue: string;
+};
+
+// These types are not working as we expect... they're pretty gross to be fair
+
+// type DsColorVariantMapping = {
+//   primary: keyof DsColorContextVariants;
+//   secondary: keyof DsColorContextVariants;
+//   neutral: keyof DsColorContextVariants;
+//   brand: keyof DsColorBrandContext;
+//   resourceType: InternetResourceType;
+// };
+
+// export type DsColorVariant = {
+//   [K in keyof DsColorContext]: [K, DsColorVariantMapping[K]];
+// }[keyof DsColorContext];
+
+// Let's just be super explicit instead...
+export type DsColorVariant =
+  | ["primary", keyof DsColorContextVariants]
+  | ["secondary", keyof DsColorContextVariants]
+  | ["neutral", keyof DsColorContextVariants]
+  | ["brand", keyof DsColorBrandContext]
+  | ["resourceType", InternetResourceType, keyof DsColorContextVariants];
+
+type DesignSystem = Record<TwCategoryKey, TwCategory>;
+
+export const wgmDesignSystem: DesignSystem = {
+  background: {
+    color: {
+      primary: {
+        default: "bg-sky-900",
+      },
+      secondary: {
+        default: "bg-yellow-200",
+      },
+      brand: {
+        blue: "bg-blue-900",
+      },
+    },
+  },
+  border: {
+    color: {
+      primary: {
+        default: "border-sky-700/70",
+        hover: "border-sky-700/30 hover:border-sky-700/70",
+      },
+      resourceType: {
+        app: {
+          default: "border-blue-500",
+          contrast: "",
+          hover: "border-blue-800/30 hover:border-blue-900",
+        },
+        article: {
+          default: "border-fuchsia-500",
+          contrast: "",
+          hover: "border-fuchsia-800/30 hover:border-fuchsia-900",
+        },
+        blog: {
+          default: "border-red-500",
+          contrast: "",
+          hover: "border-red-800/30 hover:border-red-900",
+        },
+        book: {
+          default: "border-orange-500",
+          contrast: "",
+          hover: "border-orange-800/30 hover:border-orange-900",
+        },
+        booklet: {
+          default: "border-amber-500",
+          contrast: "",
+          hover: "border-amber-800/30 hover:border-amber-900",
+        },
+        brochure: {
+          default: "border-yellow-400",
+          contrast: "",
+          hover: "border-yellow-800/30 hover:border-yellow-900",
+        },
+        course: {
+          default: "border-sky-500",
+          contrast: "",
+          hover: "border-sky-800/30 hover:border-sky-900",
+        },
+        forum: {
+          default: "border-fuchsia-500",
+          contrast: "",
+          hover: "border-fuchsia-800/30 hover:border-fuchsia-900",
+        },
+        memorial: {
+          default: "border-indigo-500",
+          contrast: "",
+          hover: "border-indigo-800/30 hover:border-indigo-900",
+        },
+        peerSupport: {
+          default: "border-rose-500",
+          contrast: "",
+          hover: "border-rose-800/30 hover:border-rose-900",
+        },
+        podcast: {
+          default: "border-violet-500",
+          contrast: "",
+          hover: "border-violet-800/30 hover:border-violet-900",
+        },
+        podcastEpisode: {
+          default: "border-violet-500",
+          contrast: "",
+          hover: "border-violet-800/30 hover:border-violet-900",
+        },
+        story: {
+          default: "border-teal-500/70",
+          contrast: "",
+          hover: "border-teal-500/30 hover:border-teal-500/70",
+        },
+        supportGroup: {
+          default: "border-purple-500",
+          contrast: "",
+          hover: "border-purple-800/30 hover:border-purple-900",
+        },
+        therapyResource: {
+          default: "border-cyan-500",
+          contrast: "",
+          hover: "border-cyan-800/30 hover:border-cyan-900",
+        },
+        video: {
+          default: "border-green-500",
+          contrast: "",
+          hover: "border-green-800/30 hover:border-green-900",
+        },
+        webinar: {
+          default: "border-green-500",
+          contrast: "",
+          hover: "border-green-800/30 hover:border-green-900",
+        },
+        website: {
+          default: "border-red-500",
+          contrast: "",
+          hover: "border-red-500/30 hover:border-red-500/70",
+        },
+      },
+    },
+  },
+  decoration: {
+    underline: "underline underline-offset-2",
+    transition: "transition-decoration duration-300",
+    color: {
+      primary: {
+        default: "",
+        contrast: "",
+        hover: "decoration-sky-800/30 hover:decoration-sky-900",
+        contrastHover: "decoration-stone-50/30 hover:decoration-stone-50",
+      },
+      secondary: {
+        default: "",
+        contrast: "",
+        hover: "decoration-sky-800/30 hover:decoration-sky-900",
+        contrastHover: "decoration-sky-800/30 hover:decoration-sky-900",
+      },
+    },
+  },
+  typography: {
+    color: {
+      primary: {
+        default: "text-sky-800",
+        contrast: "text-stone-50",
+      },
+      secondary: {
+        default: "",
+        contrast: "text-blue-900",
+      },
+      neutral: {
+        default: "text-slate-500",
+      },
+      brand: {
+        blue: "text-blue-800",
+      },
+    },
+  },
+};
+
+export function getTextColorClassListFromVariant(variant: DsColorVariant) {
+  const [ctx, x, y] = variant;
+
+  switch (ctx) {
+    case "resourceType":
+      return wgmDesignSystem.typography.color?.resourceType?.[x]?.[y];
+    case "brand":
+      return wgmDesignSystem.typography.color?.[ctx]?.[x];
+    case "primary":
+    case "secondary":
+    case "neutral":
+      return wgmDesignSystem.typography.color?.[ctx]?.[x];
+    default:
+      return wgmDesignSystem.typography.color?.neutral?.default;
+  }
+}
+
+export function getHoverDecorationClassFromTextColorVariant(
+  variant: DsColorVariant,
+) {
+  const [ctx, x, y] = variant;
+
+  if (ctx === "resourceType" || ctx === "brand") {
+    // TODO - we don't care about these right now
+    return "";
+  }
+
+  return x === "contrast"
+    ? wgmDesignSystem.decoration.color?.[ctx]?.contrastHover
+    : wgmDesignSystem.decoration.color?.[ctx]?.hover;
+}

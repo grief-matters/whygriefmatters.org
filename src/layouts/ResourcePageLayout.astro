@@ -1,66 +1,24 @@
 ---
-import startCase from "lodash/startCase";
-import pluralize from "pluralize";
-
-import type { Category } from "@model/category";
-import type { Population } from "@model/population";
-import type { InternetResourceType } from "@model/internetResource";
-
-import { resourceTypeTextColorMap } from "@common/color-maps";
-
-interface Props {
-  resourceType?: InternetResourceType;
-  category?: Category;
-  population?: Population;
-}
-
-const { resourceType, category, population } = Astro.props;
-
-const categoryTextPrefixMap: Record<string, string> = {
-  "loss-of-a": "Loss of A ",
-  "supporting-those-who-have-lost": "Supporting Those Who Have Lost A ",
-};
-
-const typeText = resourceType
-  ? startCase(pluralize(resourceType))
-  : "Resources";
-
-const prefix =
-  typeof category?.parent?.slug !== "undefined"
-    ? `${categoryTextPrefixMap?.[category?.parent?.slug] ?? ""}`
-    : "";
-
-const categoryText = `${prefix}${category?.title ?? "Grief"}`;
-
-const populationText = population ? `${population.name}` : null;
-
-const resourceTypeTextColor = resourceType
-  ? resourceTypeTextColorMap[resourceType]
-  : "text-slate-500";
+const hasFeatured = Astro.slots.has("featured");
+const hasAside = Astro.slots.has("aside");
 ---
 
-<div class="container mx-auto">
-  <h1 class="mt-6 font-serif">
-    <div class="text-xl">
-      <span class:list={[resourceTypeTextColor, "font-bold", "lowercase"]}
-        >{typeText}</span
-      >
-      <span class="italic text-slate-500 after:content-['...']">{` about`}</span
-      >
-    </div>
-    <div class="">
-      <span class="text-sky-800 text-4xl">{categoryText}</span>
-    </div>
-    {
-      populationText && (
-        <div class="ml-8">
-          <span class="italic text-slate-500 text-xl before:content-['...']">{`for ${populationText}`}</span>
-        </div>
-      )
-    }
-  </h1>
-  <div>
-    <slot />
-  </div>
-</div>
- @model/helpers
+{
+  hasFeatured && (
+    <section class="bg-slate-200 divide-y py-3">
+      <slot name="featured" />
+    </section>
+  )
+}
+<section class:list={["flex flex-col-reverse"]}>
+  <section>
+    <slot name="section" />
+  </section>
+  {
+    hasAside && (
+      <aside class="m-3">
+        <slot name="aside" />
+      </aside>
+    )
+  }
+</section>

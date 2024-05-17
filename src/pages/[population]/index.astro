@@ -1,4 +1,6 @@
 ---
+import pluralize from "pluralize";
+import startCase from "lodash/startCase";
 import uniqBy from "lodash/uniqBy";
 
 import type {
@@ -10,6 +12,14 @@ import type { Category } from "@model/category";
 import { getPopulationPagesData } from "@common/client";
 
 import MainLayout from "@layouts/MainLayout.astro";
+import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
+import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
+import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
+import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
+import { getFilteredTypesFromResources } from "@common/resourceType";
 
 interface Props {
   populationName: string;
@@ -25,8 +35,12 @@ export async function getStaticPaths() {
     const applicableCategories =
       uniqBy(
         pageData.resources?.flatMap((r) => r.categories),
-        "slug",
+        "slug"
       ).filter((x) => x !== null) ?? [];
+
+    const applicableTypes = getFilteredTypesFromResources(
+      pageData.resources ?? []
+    );
 
     return {
       params: { population: pageData.slug },
@@ -34,6 +48,7 @@ export async function getStaticPaths() {
         populationName: pageData.name,
         resources: pageData.resources ?? [],
         applicableCategories,
+        applicableTypes,
       },
     };
   });
@@ -44,42 +59,46 @@ const props = Astro.props;
 ---
 
 <MainLayout>
-  <section>
-    <ul>
+  <ResourcePageLayout>
+    <ResourcePageListingsContainer slot="section">
       {
         props.resources.map((resource) => (
-          <li>
-            <article>
-              <h3>{resource.title}</h3>
-              <time datetime={resource.lastUpdated}>
-                Last updated: [[todo]]
-              </time>
-              <p>{resource.description}</p>
-              <a href={resource.resourceUrl} rel="noopener" target="_blank">
-                Go to resource
-              </a>
-            </article>
-          </li>
+          <ResourcePageListingsListItem>
+            <ResourcePageListing resource={resource} />
+          </ResourcePageListingsListItem>
         ))
       }
-    </ul>
-  </section>
-  <aside>
-    {
-      props.applicableCategories?.length > 0 && (
-        <nav>
-          <h2>Category</h2>
-          <ul>
-            {props.applicableCategories.map((category) => (
-              <li>
-                <a href={`/${category.slug}/${params.population}`}>
-                  {category.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )
-    }
-  </aside>
+    </ResourcePageListingsContainer>
+    <AsideNavContainer
+      slot="aside"
+      title="Narrow Your Search"
+      subtitle={`View resources for ${props.populationName}`}
+      colorVariant="secondary"
+    >
+      {
+        props.applicableCategories?.length > 0 && (
+          <AsideNav
+            title="By category..."
+            links={props.applicableCategories.map((category) => ({
+              to: `/${category.slug}/${params.population}`,
+              label: category.title,
+            }))}
+            colorVariant={"secondary"}
+          />
+        )
+      }
+      {
+        props.applicableTypes?.length > 1 && (
+          <AsideNav
+            title="By type..."
+            links={props.applicableTypes.map((type) => ({
+              to: `/${type}/${params.population}`,
+              label: startCase(pluralize(type)),
+            }))}
+            colorVariant={"secondary"}
+          />
+        )
+      }
+    </AsideNavContainer>
+  </ResourcePageLayout>
 </MainLayout>

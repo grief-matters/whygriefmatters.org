@@ -1,0 +1,32 @@
+---
+import { wgmDesignSystem as ds } from "@common/design-system";
+import Subtitle from "@ui/primitives/Subtitle.astro";
+import Title from "@ui/primitives/Title.astro";
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  colorVariant?: "primary" | "secondary";
+}
+
+const { colorVariant: variant = "primary", ...props } = Astro.props;
+---
+
+<div
+  class:list={[
+    "p-3",
+    "rounded shadow",
+    ds.background.color?.[variant]?.default,
+    "[&:not(:last-child)]:mb-3",
+  ]}
+>
+  <Title as="h2" colorVariant={[variant, "contrast"]}>{props.title}</Title>
+  {
+    props.subtitle && (
+      <Subtitle sizeVariant="text-base" colorVariant={[variant, "contrast"]}>
+        {props.subtitle}
+      </Subtitle>
+    )
+  }
+  <slot />
+</div>

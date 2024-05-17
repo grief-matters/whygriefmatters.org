@@ -39,6 +39,16 @@ import {
   type PopulationsPageData,
 } from "@model/populationPage";
 import { zImage, type SanityImage } from "@model/image";
+import {
+  gCrisisResourcesQuery,
+  type CrisisResource,
+  zCrisisResource,
+} from "@model/crisisResource";
+import {
+  zPortableText,
+  type PortableText,
+  type RichTextContentBlock,
+} from "@model/portableText";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -122,6 +132,19 @@ export async function getCategoriesByFilter(
 }
 
 /**
+ * Gets the entire collection of crisis resources
+ *
+ * @returns
+ */
+export async function getCrisisResources(): Promise<CrisisResource[]> {
+  const crisisResources = await client
+    .fetch(gCrisisResourcesQuery)
+    .then((result) => zCrisisResource.array().parse(result));
+
+  return crisisResources;
+}
+
+/**
  * Gets the list of Featured Topics
  *
  * @returns
@@ -198,6 +221,8 @@ export async function getResourceTypePagesData(): Promise<ResourceTypePageData> 
     .fetch(gResourceTypePagesQuery)
     .then((result) => zResourceTypePagesData.parse(result));
 
+  console.log(resourceTypePageData);
+
   return resourceTypePageData;
 }
 
@@ -240,4 +265,16 @@ export async function getFallbackImageCollection(): Promise<SanityImage[]> {
   return await client
     .fetch(query)
     .then((result) => zImage.array().parse(result));
+}
+
+/**
+ * Get legal text for footer
+ * @todo We probably want to give the footer it's own content type in the future
+ */
+export async function getSmallPrint(): Promise<PortableText> {
+  const query = groq`*[_id == "organization-singleton"][0].smallPrint`;
+
+  return await client
+    .fetch(query)
+    .then((result) => zPortableText.parse(result));
 }

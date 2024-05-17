@@ -1,0 +1,47 @@
+---
+import {
+  type DsColorVariant,
+  wgmDesignSystem as ds,
+  getTextColorClassListFromVariant,
+  getHoverDecorationClassFromTextColorVariant,
+} from "@common/design-system";
+import type { TwFontSizeVariant } from "@common/tailwind-helpers";
+
+interface Props {
+  to: string;
+  label: string;
+  external?: boolean;
+  sizeVariant?: TwFontSizeVariant;
+  colorVariant?: DsColorVariant;
+}
+
+const {
+  to,
+  label,
+  external,
+  sizeVariant,
+  colorVariant = ["primary", "default"],
+} = Astro.props;
+
+const externalLinkAttrs = external
+  ? {
+      rel: "noopener",
+      target: "_blank",
+    }
+  : {};
+---
+
+<a
+  {...externalLinkAttrs}
+  href={to}
+  class:list={[
+    "font-serif",
+    sizeVariant,
+    getTextColorClassListFromVariant(colorVariant),
+    getHoverDecorationClassFromTextColorVariant(colorVariant),
+    ds.decoration.underline,
+    ds.decoration.transition,
+  ]}
+>
+  {label}
+</a>

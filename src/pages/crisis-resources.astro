@@ -1,0 +1,52 @@
+---
+import { getCrisisResources } from "@common/client";
+import MainLayout from "@layouts/MainLayout.astro";
+import Subtitle from "@ui/primitives/Subtitle.astro";
+import Title from "@ui/primitives/Title.astro";
+import TitleLink from "@ui/primitives/TitleLink.astro";
+import RichTextContentBlock from "@ui/richTextContentBlock.astro";
+
+const crisisResources = await getCrisisResources();
+---
+
+<MainLayout>
+  <Title sizeVariant="text-2xl" class="p-3">
+    {"Crisis Resources"}
+  </Title>
+  {
+    crisisResources &&
+      crisisResources.map((r) => (
+        <article class="p-3">
+          <TitleLink
+            label={r.title}
+            href={r.resourceUrl}
+            rel="noopener"
+            target="_blank"
+          />
+          {r.sourceWebsite && (
+            <Subtitle class="mt-1">
+              {`From `}
+              <a
+                href={r.sourceWebsite.resourceUrl}
+                rel="noopener"
+                target="_blank"
+                class:list={[
+                  "underline underline-offset-2",
+                  "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
+                ]}
+              >
+                {r.sourceWebsite.name}
+              </a>
+            </Subtitle>
+          )}
+          <div class:list={["prose font-serif"]}>
+            {r.description ? (
+              <RichTextContentBlock portableText={r.description} />
+            ) : (
+              "No description"
+            )}
+          </div>
+        </article>
+      ))
+  }
+</MainLayout>

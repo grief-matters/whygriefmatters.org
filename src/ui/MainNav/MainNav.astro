@@ -2,7 +2,7 @@
 import { buildCategoryTree, type CategoryTreeItem } from "@common/category";
 import { getCategories, getFeaturedTopics } from "@common/client";
 
-import RecursiveCategoryTree from "@ui/MainNav/RecursiveCategoryTree.astro";
+import MainNavRecursiveCategoryTree from "@ui/MainNav/MainNavRecursiveCategoryTree.astro";
 
 import NavLink from "../primitives/NavLink.astro";
 
@@ -12,11 +12,11 @@ const categories = await getCategories();
 const masterCategoryTree: CategoryTreeItem[] = buildCategoryTree(categories);
 
 const typesOfLoss = masterCategoryTree.find(
-  (rootCategory) => rootCategory.slug === "types-of-loss",
+  (rootCategory) => rootCategory.slug === "types-of-loss"
 );
 
 const supportingTheBereaved = masterCategoryTree.find(
-  (rootCategory) => rootCategory.slug === "supporting-the-bereaved",
+  (rootCategory) => rootCategory.slug === "supporting-the-bereaved"
 );
 
 const navMenuContainerClasses =
@@ -31,7 +31,7 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3 font-medium";
   >
     <div>
       <button class={navMenuButtonClasses} type="button">
-        Featured Topics
+        {"Featured Topics"}
       </button>
       <div class={navMenuContainerClasses}>
         <ul>
@@ -55,7 +55,7 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3 font-medium";
         <div class="grid grid-cols-3">
           {
             typesOfLoss?.children.map((c) => (
-              <RecursiveCategoryTree categories={[c]} />
+              <MainNavRecursiveCategoryTree categories={[c]} />
             ))
           }
         </div>
@@ -73,7 +73,7 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3 font-medium";
               .filter((c) => c.children.length > 0)
               .map((c, i) => (
                 <div class="mb-3">
-                  <RecursiveCategoryTree categories={[c]} />
+                  <MainNavRecursiveCategoryTree categories={[c]} />
                   {i + 1 === c.children.length ? (
                     <ul class="border-t-2 mt-3 pt-3">
                       <h3 class="text-xl font-serif font-semibold">
@@ -136,7 +136,7 @@ const navMenuButtonClasses = "nav-menu-button px-5 py-3 font-medium";
           });
 
           event.stopPropagation();
-        }),
+        })
       );
 
       document.addEventListener("click", (event: Event) => {

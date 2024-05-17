@@ -1,0 +1,175 @@
+---
+import {
+  tailwindBreapointToPixelWidthMap,
+  type TailwindBreakpoint,
+} from "@common/tailwind-helpers";
+
+interface Props {
+  // children: any[];
+  id: string;
+  disableAtBreakpoint?: TailwindBreakpoint;
+  elementDisplayClass?: "block" | "flex";
+  elementContainerClassList?: Array<string>;
+  contentContainerClassList?: Array<string>;
+  buttonClassList?: Array<string>;
+  showOverlay?: boolean;
+}
+
+const {
+  elementDisplayClass = "block",
+  disableAtBreakpoint,
+  elementContainerClassList,
+  buttonClassList,
+  contentContainerClassList,
+  id,
+} = Astro.props;
+
+const buttonId = `${id}-button`;
+const containerId = `${id}-container`;
+
+const disableAtBreakpointData = disableAtBreakpoint
+  ? tailwindBreapointToPixelWidthMap[disableAtBreakpoint]
+  : undefined;
+---
+
+<collapsible-content
+  data-display={elementDisplayClass}
+  data-disable-at-breakpoint={disableAtBreakpointData}
+  data-button-id={buttonId}
+  data-container-id={containerId}
+  class:list={[elementDisplayClass, elementContainerClassList]}
+>
+  {/* This button toggles show/hide */}
+  <button id={buttonId} type="button" class:list={buttonClassList}>
+    <div class:list={["pointer-events-none"]}>
+      <slot name="button" />
+    </div>
+  </button>
+
+  {/* This is the outermost container that manages visibility of the panel */}
+  <div id={containerId} class:list={["hidden", contentContainerClassList]}>
+    <slot name="content" />
+  </div>
+</collapsible-content>
+
+<script>
+  class CollapsibleContent extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      let init = false;
+      let enabled = true;
+
+      const buttonId = this.dataset.buttonId;
+      const containerId = this.dataset.containerId;
+      const disableAtBreakpoint = this.dataset.disableAtBreakpoint;
+
+      const openButton = this.querySelector(`#${buttonId}`);
+      const container = this.querySelector(`#${containerId}`);
+
+      const contentArea = this.querySelector(
+        ".collapsible-content-content-area"
+      );
+      const closeButton = this.querySelector(
+        ".collapsible-content-close-button"
+      );
+      const displayClass = this.dataset.display ?? "block";
+
+      const toggleOpen = () => {
+        container?.classList.toggle("hidden");
+        container?.classList.toggle(displayClass);
+      };
+
+      const close = () => {
+        container?.classList.remove(displayClass);
+        container?.classList.add("hidden");
+      };
+
+      const handleCloseButtonClick = (e: Event) => {
+        close();
+        e.stopPropagation();
+      };
+
+      const handleCloseFromOutsideContentAreaClick = (e: Event) => {
+        if ((e.target as Element).id === buttonId) {
+          return;
+        }
+
+        if (!contentArea?.contains(e.target as Node)) {
+          close();
+        }
+      };
+
+      const handleCloseFromDocumentClick = (e: Event) => {
+        if (!this.contains(e.target as Node)) {
+          close();
+        }
+      };
+
+      const addEventListeners = () => {
+        openButton?.addEventListener("click", toggleOpen);
+        closeButton?.addEventListener("click", handleCloseButtonClick);
+
+        this.addEventListener("click", handleCloseFromOutsideContentAreaClick);
+
+        document.addEventListener("click", handleCloseFromDocumentClick);
+      };
+
+      const removeEventListeners = () => {
+        openButton?.removeEventListener("click", toggleOpen);
+        closeButton?.removeEventListener("click", handleCloseButtonClick);
+
+        this.removeEventListener(
+          "click",
+          handleCloseFromOutsideContentAreaClick
+        );
+
+        document.removeEventListener("click", handleCloseFromDocumentClick);
+      };
+
+      const disableCollapsible = () => {
+        removeEventListeners();
+        openButton?.classList.add("hidden");
+        closeButton?.classList.add("hidden");
+        container?.classList.remove("hidden");
+        container?.classList.add(displayClass);
+        enabled = false;
+      };
+
+      const enableCollapsible = () => {
+        addEventListeners();
+        openButton?.classList.remove("hidden");
+        closeButton?.classList.remove("hidden");
+        close();
+        enabled = true;
+      };
+
+      const handleEventListenersAtBreakpoint = () => {
+        const isAboveBreakpoint = window.matchMedia(
+          `(min-width: ${disableAtBreakpoint}px)`
+        ).matches;
+
+        if (isAboveBreakpoint && enabled) {
+          disableCollapsible();
+          return;
+        }
+
+        if (!isAboveBreakpoint && (!init || !enabled)) {
+          enableCollapsible();
+        }
+      };
+
+      if (typeof disableAtBreakpoint === "undefined") {
+        addEventListeners();
+      } else {
+        handleEventListenersAtBreakpoint();
+      }
+
+      window.addEventListener("resize", handleEventListenersAtBreakpoint);
+    }
+  }
+
+  customElements.define("collapsible-content", CollapsibleContent);
+</script>

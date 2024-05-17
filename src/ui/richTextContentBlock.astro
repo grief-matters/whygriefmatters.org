@@ -1,16 +1,17 @@
 ---
 import type { PortableText } from "@model/portableText";
 import { toHTML } from "@portabletext/to-html";
+import type { HTMLTag, Polymorphic } from "astro/types";
 
-interface Props {
+type Props<Element extends HTMLTag> = {
   portableText: PortableText;
-}
+} & Polymorphic<{ as: Element }>;
 
-const { portableText } = Astro.props;
+const { as: Element = "div", portableText, invert, ...attrs } = Astro.props;
 
-const htmlString = toHTML(portableText);
-
-// const modifiedHtml = htmlString.replace(/<p>/g, '<p class="mb-3">');
+const htmlString = toHTML(portableText, { components: { hardBreak: false } });
 ---
 
-<Fragment set:html={htmlString} />
+<Element class:list={["prose prose-wgm"]} {...attrs}>
+  <Fragment set:html={htmlString} />
+</Element>

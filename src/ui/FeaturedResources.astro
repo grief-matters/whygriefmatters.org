@@ -1,0 +1,47 @@
+---
+import type { CategoryPageFeaturedResource } from "@model/categoryPage";
+import FeaturedResource from "./FeaturedResource.astro";
+import { getFallbackImageCollection } from "@common/client";
+import shuffle from "lodash/shuffle";
+import MobileCarousel from "./MobileCarousel/MobileCarousel.astro";
+import MobileCarouselItem from "./MobileCarousel/MobileCarouselItem.astro";
+import MobileCarouselControl from "./MobileCarousel/MobileCarouselControl.astro";
+
+interface Props {
+  featuredResources: Array<CategoryPageFeaturedResource>;
+}
+
+const { featuredResources } = Astro.props;
+
+const fallbackImages = await getFallbackImageCollection();
+const shuffledImages = shuffle(fallbackImages);
+const imagePatchedResources = featuredResources.map((x, i) => ({
+  ...x,
+  image: x.image !== null ? x.image : shuffledImages[i],
+}));
+
+const carouselId = crypto.randomUUID();
+---
+
+<MobileCarousel>
+  <Fragment slot="items">
+    {
+      imagePatchedResources.map((resource, i) => (
+        <MobileCarouselItem id={`${carouselId}-${i}`}>
+          <div class="m-3">
+            <FeaturedResource featuredResource={resource} />
+          </div>
+        </MobileCarouselItem>
+      ))
+    }
+  </Fragment>
+  <Fragment slot="controls">
+    {
+      Array.from({ length: imagePatchedResources.length }, (_, i) => (
+        <MobileCarouselControl id={`${carouselId}-${i}`}>
+          <span>{i + 1}</span>
+        </MobileCarouselControl>
+      ))
+    }
+  </Fragment>
+</MobileCarousel>

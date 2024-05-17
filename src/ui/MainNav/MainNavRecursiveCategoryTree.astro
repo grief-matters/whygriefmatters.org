@@ -1,0 +1,75 @@
+---
+import type { CategoryTreeItem } from "@common/category";
+import NavLink, {
+  type NavLinkVariantProps,
+} from "@ui/primitives/NavLink.astro";
+import MainNavLink from "./MainNavLink.astro";
+import {
+  styleVariants,
+  type StyleVariant,
+  type StyleVariantClassListMap,
+} from "@common/variants";
+
+// interface Props {
+//   categories: CategoryTreeItem[];
+//   navLinkVariantProps?: NavLinkVariantProps;
+//   getPath?(slug: string): string;
+// }
+
+interface Props {
+  categories: CategoryTreeItem[];
+  startingVariant?: StyleVariant;
+  getPath?(slug: string): string;
+}
+
+const { categories, startingVariant = "primary", getPath } = Astro.props;
+
+type LinkLevel = Extract<
+  NavLinkVariantProps["linkLevel"],
+  string | null | undefined
+>;
+
+// const linkLevels: Array<LinkLevel> = [
+//   "primary",
+//   "secondary",
+//   "tertiary",
+//   "quaternary",
+// ];
+
+const currentLinkLevelIndex = styleVariants.findIndex(
+  // (x) => x === navLinkVariantProps.linkLevel
+  (x) => x === startingVariant
+);
+
+const nextIndex = Math.min(currentLinkLevelIndex + 1, styleVariants.length - 1);
+const nextVariant = styleVariants[nextIndex];
+
+const listItemStyleVariantClassListMap: StyleVariantClassListMap = {
+  primary: ["mb-4"],
+  secondary: [],
+  tertiary: ["ml-4"],
+};
+---
+
+<ul>
+  {
+    categories.map((c) => (
+      <li class:list={listItemStyleVariantClassListMap[startingVariant]}>
+        <MainNavLink
+          href={typeof getPath === "function" ? getPath(c.slug) : `/${c.slug}`}
+          label={c.title}
+          variant={startingVariant}
+        >
+          {c.title}
+        </MainNavLink>
+        {c.children.length > 0 && (
+          <Astro.self
+            categories={c.children}
+            startingVariant={nextVariant}
+            getPath={getPath}
+          />
+        )}
+      </li>
+    ))
+  }
+</ul>

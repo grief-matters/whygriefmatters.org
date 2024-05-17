@@ -9,16 +9,12 @@ const { imageUrl } = Astro.props;
 const bgVar = `url(${imageUrl})`;
 ---
 
-<section class="hero-img flex items-center">
+<section class:list={[`hero-img bg-center bg-no-repeat bg-cover `, "h-96"]}>
   <slot />
 </section>
 
 <style define:vars={{ bgVar }}>
   .hero-img {
     background-image: var(--bgVar);
-    height: 50vh;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
   }
 </style>

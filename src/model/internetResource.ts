@@ -37,12 +37,13 @@ export const zInternetResourcePageListing = z.object({
     .nullable(),
   populations: z.array(z.string()).nullable(),
   rating: z.number().nullable(),
+  hasSpanishVersion: z.boolean().nullish(),
   type: zInternetResourceType,
 });
 
 export const gPageResourceListingProjection = groq`
   "type": _type,
-  availableInSpanish,
+  hasSpanishVersion,
   rating,
   "title": coalesce(title, name),
   description,

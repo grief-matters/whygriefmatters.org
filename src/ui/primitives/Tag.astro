@@ -1,0 +1,26 @@
+---
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+type Props<Element extends HTMLTag> = {
+  children: any;
+  bgVariant?: "bg-sky-500" | "bg-sky-600" | "bg-slate-200";
+} & Polymorphic<{ as: Element }>;
+
+const {
+  as: Element = "span",
+  bgVariant = "bg-sky-500",
+  ...attrs
+} = Astro.props;
+---
+
+<Element
+  class:list={[
+    "px-2 py-1 mr-2",
+    "text-xs font-light uppercase text-slate-50",
+    bgVariant,
+    "rounded",
+  ]}
+  {...attrs}
+>
+  <slot />
+</Element>

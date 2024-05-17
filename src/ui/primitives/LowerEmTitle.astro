@@ -1,0 +1,48 @@
+---
+import {
+  getTextColorClassListFromVariant,
+  type DsColorVariant,
+} from "@common/design-system";
+import type { HTMLTag, Polymorphic } from "astro/types";
+import words from "lodash/words";
+
+type Props<Tag extends HTMLTag> = {
+  sizeVariant?: "text-lg" | "text-xl" | "text-2xl" | "text-3xl" | "text-4xl";
+  colorVariant?: DsColorVariant;
+  title: string;
+} & Polymorphic<{ as: Tag }>;
+
+const {
+  as: Tag = "h1",
+  sizeVariant = "text-3xl",
+  colorVariant = ["primary", "default"],
+  title,
+  ...attrs
+} = Astro.props;
+---
+
+<Tag
+  class:list={[
+    "font-serif lowercase font-light",
+    sizeVariant,
+    getTextColorClassListFromVariant(colorVariant),
+  ]}
+  {...attrs}
+>
+  {
+    words(title).map((titlePart, i, arr) => {
+      switch (true) {
+        case i + 1 === arr.length:
+          return (
+            <span class="font-semibold after:content-['...'] after:whitespace-nowrap after:-ml-1.5 after:font-light">
+              {titlePart}
+            </span>
+          );
+        case i > 0:
+          return <span class="font-semibold">{` ${titlePart}`}</span>;
+        default:
+          return titlePart;
+      }
+    })
+  }
+</Tag>

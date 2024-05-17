@@ -1,6 +1,10 @@
 ---
+import "../styles/main.css";
+
 import { getImageUrl, getLogoSet } from "@common/client";
-import MainNav from "@ui/MainNav/MainNav.astro";
+import { wgmDesignSystem as ds } from "@common/design-system";
+import SiteFooter from "@ui/SiteFooter.astro";
+import SiteHeader from "@ui/SiteHeader.astro";
 
 const logoSet = await getLogoSet();
 
@@ -12,6 +16,14 @@ const headerLogo = rawHeaderLogo
       alt: "Why Grief Matter home",
     }
   : null;
+
+const rawLightLogo = logoSet?.find((l) => l.variant === "light-secondary");
+const lightHeaderLogo = rawLightLogo
+  ? {
+      url: getImageUrl(rawLightLogo.image).url(),
+      alt: "Why Grief Matter home",
+    }
+  : null;
 ---
 
 <html lang="en">
@@ -20,21 +32,52 @@ const headerLogo = rawHeaderLogo
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Why Grief Matters</title>
   </head>
-  <body class="bg-stone-50">
-    <header>
-      <div class="flex justify-between">
+
+  <body
+    class:list={[
+      "min-h-full p-0 m-0",
+      ds.typography.color?.primary.default,
+      ds.background.color?.primary.onBase,
+    ]}
+  >
+    <SiteHeader />
+    <!-- <header>
+      <a
+        href="crisis-resources"
+        class:list={[
+          "block w-screen py-2",
+          "text-center text-yellow-200 bg-blue-800 text-lg",
+          "font-serif font-semibold",
+        ]}
+      >
+        Help! I'm in Crisis!
+      </a>
+      <div class="relative z-20">
+        <Collapsible>
+          <div
+            slot="button"
+            class:list={[
+              "w-screen py-2",
+              "bg-yellow-200 text-blue-800 text-lg",
+              "font-serif font-semibold",
+            ]}
+          >
+            What do you need right now?
+          </div>
+          <div slot="content" class="bg-yellow-200 absolute left-0 right-0">
+            <WhatDoYouNeed />
+          </div>
+        </Collapsible>
+        {
+          /*
         <button
           type="button"
           class="bg-yellow-200 flex-grow font-serif text-left py-1 px-4 font-semibold text-blue-800"
         >
           What do you need right now?
         </button>
-        <a
-          href="crisis-resources"
-          class="bg-blue-800 text-yellow-200 font-serif py-1 px-4 font-semibold"
-        >
-          Help! I'm in Crisis
-        </a>
+        */
+        }
       </div>
       <div class="flex justify-between items-center">
         <a href="/" class="block w-56 ml-6 my-3">
@@ -46,6 +89,8 @@ const headerLogo = rawHeaderLogo
             )
           }
         </a>
+        {
+          /*
         <div class="flex-inline space-x-6 mr-6">
           <input
             class="px-3 py-1 border rounded-full"
@@ -57,12 +102,16 @@ const headerLogo = rawHeaderLogo
             >Donate</button
           >
         </div>
+        */
+        }
       </div>
-      <MainNav />
-      <main>
-        <slot />
-      </main>
-    </header>
+      {/* <MainNav /> */}
+      {/* <MainNavNew /> */}
+    </header> -->
+    <main>
+      <slot />
+    </main>
+    <SiteFooter />
   </body>
 
   <style>

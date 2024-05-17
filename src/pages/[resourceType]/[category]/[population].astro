@@ -7,9 +7,21 @@ import {
 import { getPopulations, getCategoryPagesData } from "@common/client";
 
 import MainLayout from "@layouts/MainLayout.astro";
+import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
+import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
+import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
+import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
+import pluralize from "pluralize";
+import startCase from "lodash/startCase";
+import Resource from "@ui/Resource.astro";
+import { getFullCategoryName } from "@common/category";
 
 interface Props {
   resources: Array<InternetResourcePageListing>;
+  categoryTitle: string;
+  parent: any;
 }
 
 export async function getStaticPaths() {
@@ -25,8 +37,8 @@ export async function getStaticPaths() {
             data.resources.some(
               (r) =>
                 r.type === resourceType &&
-                r.populations?.includes(population.slug),
-            ),
+                r.populations?.includes(population.slug)
+            )
         )
         .map((data) => ({
           params: {
@@ -38,36 +50,55 @@ export async function getStaticPaths() {
             resources: data.resources.filter(
               (r) =>
                 r.type === resourceType &&
-                r.populations?.includes(population.slug),
+                r.populations?.includes(population.slug)
             ),
+            categoryTitle: data.title,
+            parent: data.parent,
           },
-        })),
-    ),
+        }))
+    )
   );
 }
 
+const params = Astro.params;
 const props = Astro.props;
+
+const fullCategoryTitle = getFullCategoryName(
+  props.parent?.slug ?? "",
+  props.categoryTitle
+);
 ---
 
 <MainLayout>
-  <section>
-    <ul>
+  <ResourcePageLayout>
+    <ResourcePageListingsContainer slot="section">
       {
         props.resources.map((resource) => (
-          <li>
-            <article>
-              <h3>{resource.title}</h3>
-              <time datetime={resource.lastUpdated}>
-                Last updated: [[todo]]
-              </time>
-              <p>{resource.description}</p>
-              <a href={resource.resourceUrl} rel="noopener" target="_blank">
-                Go to resource
-              </a>
-            </article>
-          </li>
+          <ResourcePageListingsListItem>
+            <ResourcePageListing resource={resource} />
+          </ResourcePageListingsListItem>
         ))
       }
-    </ul>
-  </section>
+    </ResourcePageListingsContainer>
+    <AsideNavContainer
+      slot="aside"
+      title="Related Resources"
+      subtitle="Didn't find what you were looking for?"
+    >
+      <AsideNav
+        links={[
+          {
+            to: `/${params.resourceType}/${params.category}`,
+            label: `See all ${pluralize(
+              startCase(params.resourceType)
+            )} in ${fullCategoryTitle}`,
+          },
+          {
+            to: `/${params.category}`,
+            label: `See all resources in ${fullCategoryTitle}`,
+          },
+        ]}
+      />
+    </AsideNavContainer>
+  </ResourcePageLayout>
 </MainLayout>

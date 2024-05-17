@@ -1,0 +1,139 @@
+---
+import { getCategories } from "@common/client";
+
+const categories = await getCategories();
+
+const grievingOptions = categories
+  .filter((c) => c.parent?.slug === "loss-of-a")
+  .map((c) => ({ value: c.slug, label: c.title }));
+
+const supportingOptions = categories
+  .filter((c) => c.parent?.slug === "supporting-those-who-have-lost")
+  .map((c) => ({ value: c.slug, label: c.title }));
+
+const gOptionsJSON = JSON.stringify(grievingOptions);
+const sOptionsJSON = JSON.stringify(supportingOptions);
+---
+
+<div class="flex justify-center">
+  <form
+    id="what-do-you-need"
+    action="#"
+    class:list={["flex flex-col space-y-4 w-full p-3"]}
+  >
+    <div class:list={["flex items-center space-x-3 justify-end"]}>
+      <label class="text-blue-800 font-serif italic" for="i-am"
+        >{"I am..."}</label
+      >
+      <select id="i-am-select" name="i-am" class="w-2/3 border-0">
+        <option value="">{`-- Select --`}</option>
+        <option value="grieving">Grieving</option>
+        <option value="supporting">Supporting someone with</option>
+      </select>
+    </div>
+
+    <div class:list={["flex items-center space-x-3 justify-end"]}>
+      <label class="text-blue-800 font-serif italic" for="loss-of"
+        >{"The loss of a..."}</label
+      >
+      <select
+        id="loss-of-select"
+        name="loss-of"
+        data-grieving-opts={gOptionsJSON}
+        data-supporting-opts={sOptionsJSON}
+        class="w-2/3 border-0"
+      >
+        <option value="">{`-- Select --`}</option>
+      </select>
+    </div>
+
+    <div class="w-full text-center">
+      <button
+        id="what-do-you-need-submit-button"
+        type="submit"
+        class="px-3 rounded-sm"
+        class:list={[
+          "py-1 px-4 my-3",
+          "bg-emerald-500 text-white disabled:opacity-50",
+          "font-serif font-medium italic text-lg",
+        ]}>Take Me There...</button
+      >
+    </div>
+  </form>
+</div>
+
+<script>
+  const whatDoYouNeedForm = document.querySelector("#what-do-you-need");
+
+  const iIamSelect = document.querySelector("#i-am-select");
+  const lossOfSelect = document.querySelector("#loss-of-select");
+  const submitButton = document.querySelector(
+    "#what-do-you-need-submit-button"
+  );
+
+  function updateSubmitButton() {
+    if (iIamSelect.value.trim() === "" || lossOfSelect.value.trim() === "") {
+      submitButton.disabled = true;
+    } else {
+      submitButton.disabled = false;
+    }
+  }
+
+  function sortOptions(a: any, b: any) {
+    const labelA = a.label.toUpperCase();
+    const labelB = b.label.toUpperCase();
+    if (labelA < labelB) {
+      return -1;
+    }
+    if (labelA > labelB) {
+      return 1;
+    }
+
+    // names must be equal
+    return 0;
+  }
+
+  iIamSelect.addEventListener("change", (event) => {
+    if (lossOfSelect !== null) {
+      lossOfSelect.innerHTML = "";
+
+      if (iIamSelect.value === "grieving") {
+        const options = JSON.parse(lossOfSelect.dataset.grievingOpts);
+
+        lossOfSelect.options.add(new Option(`-- Select --`, ""));
+
+        options?.sort(sortOptions).forEach((o) => {
+          lossOfSelect.options.add(new Option(o.label, o.value));
+        });
+      } else {
+        const options = JSON.parse(lossOfSelect.dataset.supportingOpts);
+
+        lossOfSelect.options.add(new Option(`-- Select --`, ""));
+
+        options?.sort(sortOptions).forEach((o) => {
+          lossOfSelect.options.add(new Option(o.label, o.value));
+        });
+      }
+
+      updateSubmitButton();
+    }
+  });
+
+  lossOfSelect?.addEventListener("change", (event) => {
+    updateSubmitButton();
+  });
+
+  whatDoYouNeedForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const formData = Object.fromEntries(
+      new FormData(event.target as HTMLFormElement)
+    );
+
+    const route = `/${formData["loss-of"]}`;
+
+    window.location.href = route;
+  });
+
+  updateSubmitButton();
+</script>

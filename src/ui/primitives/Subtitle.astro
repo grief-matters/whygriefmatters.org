@@ -1,0 +1,30 @@
+---
+import type { DsColorVariant } from "@common/design-system";
+import { wgmDesignSystem as ds } from "@common/design-system";
+import type { TwFontSizeVariant } from "@common/tailwind-helpers";
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+type AdditionalProps = {
+  sizeVariant?: TwFontSizeVariant;
+  colorVariant?: DsColorVariant;
+};
+
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & AdditionalProps;
+
+const {
+  as: Tag = "span",
+  sizeVariant = "text-sm",
+  colorVariant = ["neutral", "default"],
+  ...attrs
+} = Astro.props;
+
+const cv: DsColorVariant = colorVariant;
+const textColorClass = ds.typography.color?.[cv[0]]?.[cv[1]];
+---
+
+<Tag
+  class:list={["block", "font-serif italic", sizeVariant, textColorClass]}
+  {...attrs}
+>
+  <slot />
+</Tag>
