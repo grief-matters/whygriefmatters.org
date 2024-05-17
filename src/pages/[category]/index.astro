@@ -1,31 +1,30 @@
 ---
 import startCase from "lodash/startCase";
-import shuffle from "lodash/shuffle";
 import pluralize from "pluralize";
 
 import type {
   CategoryPageData,
   CategoryPageFeaturedResource,
 } from "@model/categoryPage";
-import type { Population } from "@model/population";
 import type {
   InternetResourcePageListing,
   InternetResourceType,
 } from "@model/internetResource";
+import type { Population } from "@model/population";
 
-import {
-  getCategoryPagesData,
-  getFallbackImageCollection,
-  getPopulations,
-} from "@common/client";
+import { getCategoryPagesData, getPopulations } from "@common/client";
 import { getFilteredTypesFromResources } from "@common/resourceType";
 
 import MainLayout from "@layouts/MainLayout.astro";
 
-import ResourcePageListing from "@ui/ResourcePageListing.astro";
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
 import FeaturedResources from "@ui/FeaturedResources.astro";
 import LowerEmTitle from "@ui/primitives/LowerEmTitle.astro";
-import MobileCarousel from "@ui/MobileCarousel/MobileCarousel.astro";
+import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
+import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
+import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
+import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 
 interface Props {
   title: string;
@@ -40,26 +39,12 @@ export async function getStaticPaths() {
   const categoryPagesData = await getCategoryPagesData();
   const populations = await getPopulations();
 
-  const fallbackImages = await getFallbackImageCollection();
-
   return categoryPagesData.map((data: CategoryPageData) => {
     const filteredPopulations = populations.filter((p) =>
       data.resources.some((r) => r.populations?.includes(p.slug))
     );
 
     const filteredTypes = getFilteredTypesFromResources(data.resources);
-
-    // const shuffledImages = shuffle(fallbackImages);
-    // const imagePatchedFeaturedArticles = data.featuredArticles?.map((x, i) => ({
-    //   ...x,
-    //   image: x.image !== null ? x.image : shuffledImages[i],
-    // }));
-
-    // const imagePatchedFeaturedStories = data.featuredStories?.map((x, i) => ({
-    //   ...x,
-    //   // Pretty crude - we're just offsetting the index by 3 so our images are different
-    //   image: x.image !== null ? x.image : shuffledImages[i + 3],
-    // }));
 
     return {
       params: { category: data.slug },
@@ -77,113 +62,81 @@ export async function getStaticPaths() {
 
 const params = Astro.params;
 const props = Astro.props;
+
+const showApplicablePopulations = props.applicablePopulations?.length > 0;
+const showApplicableTypes = props.applicableTypes?.length > 1;
+const showNarrowSearchAside = showApplicablePopulations || showApplicableTypes;
 ---
 
 <MainLayout>
-  <div>
-    <div>
-      <div class="bg-slate-200 divide-y p-3">
-        {
-          props.featuredStories && (
-            <div class="pb-3">
-              <LowerEmTitle
-                as="h2"
-                title={"Featured Stories"}
-                sizeVariant="text-2xl"
-                class="text-center text-sky-800 py-3"
-              />
-              <FeaturedResources featuredResources={props.featuredStories} />
-            </div>
-          )
-        }
-        {
-          props.featuredArticles && (
-            <div>
-              <LowerEmTitle
-                as="h2"
-                title={"Featured Articles"}
-                sizeVariant="text-2xl"
-                class="text-center text-sky-800 py-3"
-              />
-              <FeaturedResources featuredResources={props.featuredArticles} />
-            </div>
-          )
-        }
-      </div>
-
-      <section>
-        <ul class="divide-y p-3">
-          {
-            props.resources.map((resource) => (
-              <li class:list={["py-6"]}>
-                <ResourcePageListing resource={resource} />
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-    </div>
-    <aside>
+  <ResourcePageLayout>
+    <Fragment slot="featured">
       {
-        props.applicablePopulations?.length > 0 && (
-          <nav>
-            <h2>Population</h2>
-            <ul>
-              {props.applicablePopulations.map((population) => (
-                <li>
-                  <a href={`/${params.category}/${population.slug}`}>
-                    {population.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        props.featuredStories && (
+          <div class="pb-3">
+            <LowerEmTitle
+              as="h2"
+              title={"Featured Stories"}
+              sizeVariant="text-2xl"
+              class="text-center py-3"
+            />
+            <FeaturedResources featuredResources={props.featuredStories} />
+          </div>
         )
       }
       {
-        props.applicableTypes?.length > 1 && (
-          <nav>
-            <h2>Type</h2>
-            <ul>
-              {props.applicableTypes.map((type) => (
-                <li>
-                  <a href={`/${type}/${params.category}`}>
-                    {pluralize(startCase(type))}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        props.featuredArticles && (
+          <div>
+            <LowerEmTitle
+              as="h2"
+              title={"Featured Articles"}
+              sizeVariant="text-2xl"
+              class="text-center py-3"
+            />
+            <FeaturedResources featuredResources={props.featuredArticles} />
+          </div>
         )
       }
-    </aside>
-  </div>
-</MainLayout>
-
-<style>
-  .dot {
-    width: 0.85em;
-    height: 0.85em;
-    /* border-radius: 50%; */
-  }
-</style>
-
-<script>
-  document.querySelector("#controls")?.addEventListener("click", (event) => {
-    const targetEl = event.target as Element;
-    if (targetEl) {
-      const attr = targetEl.getAttribute("href");
-      if (attr) {
-        const slide = document.querySelector(attr);
-
-        if (slide) {
-          event.preventDefault();
-          slide.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-          });
-        }
+    </Fragment>
+    <ResourcePageListingsContainer slot="section">
+      {
+        props.resources.map((resource) => (
+          <ResourcePageListingsListItem>
+            <ResourcePageListing resource={resource} />
+          </ResourcePageListingsListItem>
+        ))
       }
+    </ResourcePageListingsContainer>
+    {
+      showNarrowSearchAside && (
+        <AsideNavContainer
+          slot="aside"
+          title="Narrow Your Search"
+          subtitle="View resources in this category tailored to you"
+          colorVariant="secondary"
+        >
+          {props.applicablePopulations?.length > 0 && (
+            <AsideNav
+              title="Resources for..."
+              links={props.applicablePopulations.map((population) => ({
+                to: `/${params.category}/${population.slug}`,
+                label: population.name,
+              }))}
+              colorVariant={"secondary"}
+            />
+          )}
+          {props.applicableTypes?.length > 1 && (
+            <AsideNav
+              title="By type..."
+              links={props.applicableTypes.map((type) => ({
+                to: `/${type}/${params.category}`,
+                label: pluralize(startCase(type)),
+              }))}
+              colorVariant={"secondary"}
+            />
+          )}
+        </AsideNavContainer>
+      )
     }
-  });
-</script>
+  </ResourcePageLayout>
+</MainLayout>

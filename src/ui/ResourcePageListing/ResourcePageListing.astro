@@ -5,8 +5,9 @@ import type { InternetResourcePageListing } from "@model/internetResource";
 import { wgmDesignSystem as ds } from "@common/design-system";
 
 import Tag from "@ui/primitives/Tag.astro";
-import TitleLink from "./primitives/TitleLink.astro";
-import Subtitle from "./primitives/Subtitle.astro";
+import SimpleTextBlock from "@ui/primitives/SimpleTextBlock.astro";
+import TitleLink from "../primitives/TitleLink.astro";
+import Subtitle from "../primitives/Subtitle.astro";
 
 interface Props {
   resource: InternetResourcePageListing;
@@ -56,12 +57,13 @@ const date = new Date(props.resource.lastUpdated).toLocaleDateString("en-US", {
     )
   }
 
-  <p class:list={["my-1", "prose font-serif"]}>
+  <SimpleTextBlock class:list={["my-1"]}>
     {
       props.resource.description ||
         "We don't have a description for this resource"
     }
-  </p>
+  </SimpleTextBlock>
+
   <div class="mb-3">
     {
       props.resource.rating && (
@@ -70,10 +72,8 @@ const date = new Date(props.resource.lastUpdated).toLocaleDateString("en-US", {
     }
     {props.resource.hasSpanishVersion && <Tag>{`Available in Spanish`}</Tag>}
   </div>
-  <time
-    datetime={props.resource.lastUpdated}
-    class:list={["block mb-1", "font-serif text-sm text-slate-500 italic"]}
-  >
+
+  <Subtitle datetime={props.resource.lastUpdated} as="time">
     {`Last updated: ${date}`}
-  </time>
+  </Subtitle>
 </article>

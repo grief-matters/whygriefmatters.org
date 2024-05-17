@@ -2,18 +2,14 @@
 import type { ResourcePageLink } from "@model/featuredContent";
 
 import { getHomePageData, getImageUrl } from "@common/client";
+import { wgmDesignSystem as ds } from "@common/design-system";
 
 import MainLayout from "@layouts/MainLayout.astro";
 
 import RichTextContentBlock from "@ui/richTextContentBlock.astro";
 import FeaturePanel from "@ui/FeaturePanel.astro";
 import Hero from "@ui/Hero.astro";
-
-import { cvaSchemaStandardVariants } from "@common/cva";
 import LowerEmTitle from "@ui/primitives/LowerEmTitle.astro";
-import { wgmDesignSystem as ds } from "@common/design-system";
-
-import MobileCarousel from "@ui/MobileCarousel/MobileCarousel.astro";
 
 const homePageData = await getHomePageData();
 
@@ -26,14 +22,6 @@ const logo = {
   url: getImageUrl(homePageData.org.logo.image).url(),
   alt: homePageData.org.logo.altText,
 };
-
-function getRoute(pageLink: ResourcePageLink): string {
-  const slugParts = [pageLink.type, pageLink.category, pageLink.population]
-    .filter((part) => Boolean(part))
-    .join("/");
-
-  return `/${slugParts}`;
-}
 
 const coreValuesBgColors = [
   "bg-sky-700",
@@ -73,7 +61,7 @@ const coreValuesBgColors = [
     />
   </section>
 
-  <section class="">
+  <section>
     <LowerEmTitle
       as="h2"
       title="Our Values"
@@ -124,9 +112,3 @@ const coreValuesBgColors = [
     ))
   }
 </MainLayout>
-
-<style>
-  .bg-split {
-    background: linear-gradient();
-  }
-</style>

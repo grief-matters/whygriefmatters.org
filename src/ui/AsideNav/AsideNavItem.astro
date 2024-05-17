@@ -1,0 +1,28 @@
+---
+import { wgmDesignSystem as ds } from "@common/design-system";
+import Link from "@ui/primitives/Link.astro";
+import type { Code } from "astro:components";
+
+interface Props {
+  to: string;
+  label: string;
+}
+
+const props = Astro.props;
+---
+
+<li>
+  <!-- <a
+    class:list={[
+      "font-serif",
+      ds.decoration.underline,
+      ds.decoration.transition,
+      ds.typography.color?.primary.default,
+      ds.decoration.color?.primary.hover,
+    ]}
+    href={props.to}
+  >
+    {props.label}
+  </a> -->
+  <Link {...props} />
+</li>

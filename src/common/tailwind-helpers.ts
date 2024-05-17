@@ -13,3 +13,11 @@ export const tailwindBreapointToPixelWidthMap: TailwindBreapointToPixelWidthMap 
     xl: 1280,
     "2xl": 1536,
   };
+
+export type TwFontSizeVariant =
+  | "text-xs"
+  | "text-sm"
+  | "text-base"
+  | "text-lg"
+  | "text-xl"
+  | "text-2xl";

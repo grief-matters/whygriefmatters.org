@@ -1,40 +1,66 @@
 import type { InternetResourceType } from "@model/internetResource";
 
-type TailwindCategoryKey =
-  | "background"
-  | "border"
-  | "decoration"
-  | "typography";
+type TwCategoryKey = "background" | "border" | "decoration" | "typography";
 
-type DesignContextProperties = {
-  default: string;
-  contrast: string;
-  hoverable?: string;
-};
+interface BaseTwCategory {
+  color?: DsColorContext;
+}
 
-type DesignContext = {
-  primary: DesignContextProperties;
-  secondary?: DesignContextProperties;
-  brand?: any;
-  resourceType?: Record<InternetResourceType, DesignContextProperties>;
-};
-
-interface TailwindCategoryBase {
+interface TwCategory extends BaseTwCategory {
   [key: string]: any;
 }
 
-interface TailwindCategory extends TailwindCategoryBase {
-  color?: DesignContext;
-}
+type DsColorContext = {
+  primary: DsColorContextVariants;
+  secondary?: DsColorContextVariants;
+  neutral?: DsColorContextVariants;
+  resourceType?: Record<InternetResourceType, DsColorContextVariants>;
+  brand?: DsColorBrandContext;
+};
 
-type DesignSystem = Record<TailwindCategoryKey, TailwindCategory>;
+type DsColorContextVariants = {
+  default: string;
+  contrast?: string;
+  hover?: string;
+  contrastHover?: string;
+};
+
+type DsColorBrandContext = {
+  blue: string;
+};
+
+// These types are not working as we expect... they're pretty gross to be fair
+
+// type DsColorVariantMapping = {
+//   primary: keyof DsColorContextVariants;
+//   secondary: keyof DsColorContextVariants;
+//   neutral: keyof DsColorContextVariants;
+//   brand: keyof DsColorBrandContext;
+//   resourceType: InternetResourceType;
+// };
+
+// export type DsColorVariant = {
+//   [K in keyof DsColorContext]: [K, DsColorVariantMapping[K]];
+// }[keyof DsColorContext];
+
+// Let's just be super explicit instead...
+export type DsColorVariant =
+  | ["primary", keyof DsColorContextVariants]
+  | ["secondary", keyof DsColorContextVariants]
+  | ["neutral", keyof DsColorContextVariants]
+  | ["brand", keyof DsColorBrandContext]
+  | ["resourceType", InternetResourceType, keyof DsColorContextVariants];
+
+type DesignSystem = Record<TwCategoryKey, TwCategory>;
 
 export const wgmDesignSystem: DesignSystem = {
   background: {
     color: {
       primary: {
         default: "bg-sky-900",
-        contrast: "bg-stone-100",
+      },
+      secondary: {
+        default: "bg-yellow-200",
       },
       brand: {
         blue: "bg-blue-900",
@@ -45,99 +71,98 @@ export const wgmDesignSystem: DesignSystem = {
     color: {
       primary: {
         default: "border-sky-700/70",
-        hoverable: "border-sky-700/30 hover:border-sky-700/70",
-        contrast: "",
+        hover: "border-sky-700/30 hover:border-sky-700/70",
       },
       resourceType: {
         app: {
           default: "border-blue-500",
           contrast: "",
-          hoverable: "border-blue-800/30 hover:border-blue-900",
+          hover: "border-blue-800/30 hover:border-blue-900",
         },
         article: {
           default: "border-fuchsia-500",
           contrast: "",
-          hoverable: "border-fuchsia-800/30 hover:border-fuchsia-900",
+          hover: "border-fuchsia-800/30 hover:border-fuchsia-900",
         },
         blog: {
           default: "border-red-500",
           contrast: "",
-          hoverable: "border-red-800/30 hover:border-red-900",
+          hover: "border-red-800/30 hover:border-red-900",
         },
         book: {
           default: "border-orange-500",
           contrast: "",
-          hoverable: "border-orange-800/30 hover:border-orange-900",
+          hover: "border-orange-800/30 hover:border-orange-900",
         },
         booklet: {
           default: "border-amber-500",
           contrast: "",
-          hoverable: "border-amber-800/30 hover:border-amber-900",
+          hover: "border-amber-800/30 hover:border-amber-900",
         },
         brochure: {
           default: "border-yellow-400",
           contrast: "",
-          hoverable: "border-yellow-800/30 hover:border-yellow-900",
+          hover: "border-yellow-800/30 hover:border-yellow-900",
         },
         course: {
           default: "border-sky-500",
           contrast: "",
-          hoverable: "border-sky-800/30 hover:border-sky-900",
+          hover: "border-sky-800/30 hover:border-sky-900",
         },
         forum: {
           default: "border-fuchsia-500",
           contrast: "",
-          hoverable: "border-fuchsia-800/30 hover:border-fuchsia-900",
+          hover: "border-fuchsia-800/30 hover:border-fuchsia-900",
         },
         memorial: {
           default: "border-indigo-500",
           contrast: "",
-          hoverable: "border-indigo-800/30 hover:border-indigo-900",
+          hover: "border-indigo-800/30 hover:border-indigo-900",
         },
         peerSupport: {
           default: "border-rose-500",
           contrast: "",
-          hoverable: "border-rose-800/30 hover:border-rose-900",
+          hover: "border-rose-800/30 hover:border-rose-900",
         },
         podcast: {
           default: "border-violet-500",
           contrast: "",
-          hoverable: "border-violet-800/30 hover:border-violet-900",
+          hover: "border-violet-800/30 hover:border-violet-900",
         },
         podcastEpisode: {
           default: "border-violet-500",
           contrast: "",
-          hoverable: "border-violet-800/30 hover:border-violet-900",
+          hover: "border-violet-800/30 hover:border-violet-900",
         },
         story: {
           default: "border-teal-500/70",
           contrast: "",
-          hoverable: "border-teal-500/30 hover:border-teal-500/70",
+          hover: "border-teal-500/30 hover:border-teal-500/70",
         },
         supportGroup: {
           default: "border-purple-500",
           contrast: "",
-          hoverable: "border-purple-800/30 hover:border-purple-900",
+          hover: "border-purple-800/30 hover:border-purple-900",
         },
         therapyResource: {
           default: "border-cyan-500",
           contrast: "",
-          hoverable: "border-cyan-800/30 hover:border-cyan-900",
+          hover: "border-cyan-800/30 hover:border-cyan-900",
         },
         video: {
           default: "border-green-500",
           contrast: "",
-          hoverable: "border-green-800/30 hover:border-green-900",
+          hover: "border-green-800/30 hover:border-green-900",
         },
         webinar: {
           default: "border-green-500",
           contrast: "",
-          hoverable: "border-green-800/30 hover:border-green-900",
+          hover: "border-green-800/30 hover:border-green-900",
         },
         website: {
           default: "border-red-500",
           contrast: "",
-          hoverable: "border-red-500/30 hover:border-red-500/70",
+          hover: "border-red-500/30 hover:border-red-500/70",
         },
       },
     },
@@ -149,7 +174,14 @@ export const wgmDesignSystem: DesignSystem = {
       primary: {
         default: "",
         contrast: "",
-        hoverable: "decoration-sky-800/30 hover:decoration-sky-900",
+        hover: "decoration-sky-800/30 hover:decoration-sky-900",
+        contrastHover: "decoration-stone-50/30 hover:decoration-stone-50",
+      },
+      secondary: {
+        default: "",
+        contrast: "",
+        hover: "decoration-sky-800/30 hover:decoration-sky-900",
+        contrastHover: "decoration-sky-800/30 hover:decoration-sky-900",
       },
     },
   },
@@ -159,6 +191,48 @@ export const wgmDesignSystem: DesignSystem = {
         default: "text-sky-800",
         contrast: "text-stone-50",
       },
+      secondary: {
+        default: "",
+        contrast: "text-blue-900",
+      },
+      neutral: {
+        default: "text-slate-500",
+      },
+      brand: {
+        blue: "text-blue-800",
+      },
     },
   },
 };
+
+export function getTextColorClassListFromVariant(variant: DsColorVariant) {
+  const [ctx, x, y] = variant;
+
+  switch (ctx) {
+    case "resourceType":
+      return wgmDesignSystem.typography.color?.resourceType?.[x]?.[y];
+    case "brand":
+      return wgmDesignSystem.typography.color?.[ctx]?.[x];
+    case "primary":
+    case "secondary":
+    case "neutral":
+      return wgmDesignSystem.typography.color?.[ctx]?.[x];
+    default:
+      return wgmDesignSystem.typography.color?.neutral?.default;
+  }
+}
+
+export function getHoverDecorationClassFromTextColorVariant(
+  variant: DsColorVariant,
+) {
+  const [ctx, x, y] = variant;
+
+  if (ctx === "resourceType" || ctx === "brand") {
+    // TODO - we don't care about these right now
+    return "";
+  }
+
+  return x === "contrast"
+    ? wgmDesignSystem.decoration.color?.[ctx]?.contrastHover
+    : wgmDesignSystem.decoration.color?.[ctx]?.hover;
+}

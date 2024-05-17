@@ -1,7 +1,6 @@
 ---
 import { wgmDesignSystem as ds } from "@common/design-system";
 import type { InternetResourceType } from "@model/internetResource";
-import type { HTMLAttributes } from "astro/types";
 
 interface Props {
   to: string;
@@ -20,8 +19,8 @@ const externalLinkAttrs = external
   : {};
 
 const borderColorClass = resourceType
-  ? ds.border.color?.resourceType?.[resourceType].hoverable
-  : ds.border.color?.primary.hoverable;
+  ? ds.border.color?.resourceType?.[resourceType].hover
+  : ds.border.color?.primary.hover;
 ---
 
 <a

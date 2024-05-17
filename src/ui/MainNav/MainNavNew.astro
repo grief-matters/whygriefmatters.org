@@ -28,13 +28,13 @@ const navMenuContainerClasses = [
 
 const navMenuButtonClassList = [
   "flex",
-  // "items-center",
-  "w-full",
   "items-start justify-between",
   "text-stone-50",
   "text-2xl lg:text-lg text-left py-1",
   "font-serif lg:font-sans font-semibold",
 ];
+
+const mainNavButtonButtonClassList = ["w-full"];
 
 const secondaryLinkClassList = [
   "mb-3",
@@ -187,11 +187,9 @@ const tertiaryLinkClassList = [
                     <!-- Start of Featured Topics -->
                     <CollapsibleContent
                       id="featured-topics-collapsible"
-                      buttonClassList={navMenuButtonClassList}
+                      buttonClassList={mainNavButtonButtonClassList}
                     >
-                      <Fragment slot="button">
-                        <MainNavButton label={"Featured Topics"} />
-                      </Fragment>
+                      <MainNavButton label="Featured Topics" slot="button" />
                       <div
                         class="collapsible-content-content-area"
                         slot="content"
@@ -213,11 +211,9 @@ const tertiaryLinkClassList = [
                     </CollapsibleContent>
                     <CollapsibleContent
                       id="types-of-loss-collapsible"
-                      buttonClassList={navMenuButtonClassList}
+                      buttonClassList={mainNavButtonButtonClassList}
                     >
-                      <Fragment slot="button">
-                        <MainNavButton label={"Types of Loss"} />
-                      </Fragment>
+                      <MainNavButton label="Types of Loss" slot="button" />
                       <div
                         class="collapsible-content-content-area"
                         slot="content"
@@ -231,11 +227,12 @@ const tertiaryLinkClassList = [
                     </CollapsibleContent>
                     <CollapsibleContent
                       id="supporting-the-bereaved-collapsible"
-                      buttonClassList={navMenuButtonClassList}
+                      buttonClassList={mainNavButtonButtonClassList}
                     >
-                      <Fragment slot="button">
-                        <MainNavButton label={"Supporting the Bereaved"} />
-                      </Fragment>
+                      <MainNavButton
+                        label="Supporting the Bereaved"
+                        slot="button"
+                      />
                       <div
                         class="collapsible-content-content-area"
                         slot="content"

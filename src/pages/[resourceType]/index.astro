@@ -10,7 +10,14 @@ import {
 } from "@common/client";
 
 import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageListing from "@ui/ResourcePageListing.astro";
+import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
+import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
+import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
+import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import pluralize from "pluralize";
+import startCase from "lodash/startCase";
 
 interface Props {
   resources: Array<InternetResourcePageListing>;
@@ -28,7 +35,7 @@ export async function getStaticPaths() {
       Array<InternetResourcePageListing>,
     ]) => {
       const filteredPopulations = populations.filter((p) =>
-        resources.some((r) => r.populations?.includes(p.slug)),
+        resources.some((r) => r.populations?.includes(p.slug))
       );
 
       // This is less than ideal as means an additional request for each type
@@ -42,7 +49,7 @@ export async function getStaticPaths() {
           applicableCategories: slugsWithTitles ?? [],
         },
       };
-    },
+    }
   );
 
   const paths = await Promise.all(pathPromises);
@@ -52,52 +59,50 @@ export async function getStaticPaths() {
 
 const params = Astro.params;
 const props = Astro.props;
+
+const resourceTypeLabel = `${startCase(pluralize(params.resourceType))}`;
 ---
 
 <MainLayout>
-  <section>
-    <ul>
+  <ResourcePageLayout>
+    <ResourcePageListingsContainer slot="section">
       {
         props.resources.map((resource) => (
-          <li class="mb-6">
+          <ResourcePageListingsListItem>
             <ResourcePageListing resource={resource} />
-          </li>
+          </ResourcePageListingsListItem>
         ))
       }
-    </ul>
-  </section>
-  <aside>
-    {
-      props.applicablePopulations?.length > 0 && (
-        <nav>
-          <h2>Population</h2>
-          <ul>
-            {props.applicablePopulations.map((population) => (
-              <li>
-                <a href={`/${params.resourceType}/${population.slug}`}>
-                  {population.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )
-    }
-    {
-      props.applicableCategories?.length > 0 && (
-        <nav>
-          <h2>Category</h2>
-          <ul>
-            {props.applicableCategories.map((category) => (
-              <li>
-                <a href={`/${params.resourceType}/${category.slug}`}>
-                  {category.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )
-    }
-  </aside>
+    </ResourcePageListingsContainer>
+    <AsideNavContainer
+      slot="aside"
+      title="Narrow Your Search"
+      colorVariant="secondary"
+    >
+      {
+        props.applicableCategories?.length > 0 && (
+          <AsideNav
+            title={`${resourceTypeLabel} by category...`}
+            links={props.applicableCategories.map((category) => ({
+              to: `/${params.resourceType}/${category.slug}`,
+              label: category.title,
+            }))}
+            colorVariant={"secondary"}
+          />
+        )
+      }
+      {
+        props.applicablePopulations?.length > 0 && (
+          <AsideNav
+            title={`${resourceTypeLabel} for...`}
+            links={props.applicablePopulations.map((population) => ({
+              to: `/${params.resourceType}/${population.slug}`,
+              label: population.name,
+            }))}
+            colorVariant={"secondary"}
+          />
+        )
+      }
+    </AsideNavContainer>
+  </ResourcePageLayout>
 </MainLayout>

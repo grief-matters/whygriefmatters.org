@@ -1,20 +1,29 @@
 ---
+import {
+  getTextColorClassListFromVariant,
+  type DsColorVariant,
+} from "@common/design-system";
 import type { HTMLTag, Polymorphic } from "astro/types";
 
 type Props<Element extends HTMLTag> = {
   children: any;
   sizeVariant?: "text-lg" | "text-xl" | "text-2xl";
+  colorVariant?: DsColorVariant;
 } & Polymorphic<{ as: Element }>;
 
-const { as: Element = "h1", sizeVariant = "text-xl", ...attrs } = Astro.props;
+const {
+  as: Element = "h1",
+  sizeVariant = "text-xl",
+  colorVariant = ["primary", "default"],
+  ...attrs
+} = Astro.props;
 ---
 
 <Element
   class:list={[
-    "text-sky-800",
     "font-medium font-serif",
-    "text-sky-800",
     sizeVariant,
+    getTextColorClassListFromVariant(colorVariant),
   ]}
   {...attrs}
 >

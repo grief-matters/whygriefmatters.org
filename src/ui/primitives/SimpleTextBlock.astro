@@ -3,11 +3,15 @@ import type { HTMLTag, Polymorphic } from "astro/types";
 
 type Props<Element extends HTMLTag> = {
   children: any;
+  invert?: true;
 } & Polymorphic<{ as: Element }>;
 
-const { as: Element = "p", ...attrs } = Astro.props;
+const { as: Element = "p", invert, ...attrs } = Astro.props;
 ---
 
-<Element class:list={["prose prose-wgm font-serif"]} {...attrs}>
+<Element
+  class:list={["prose prose-wgm font-serif", invert ? "!prose-invert" : ""]}
+  {...attrs}
+>
   <slot />
 </Element>

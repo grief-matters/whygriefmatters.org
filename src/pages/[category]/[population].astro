@@ -12,14 +12,21 @@ import type { Population } from "@model/population";
 import { getCategoryPagesData, getPopulations } from "@common/client";
 import { getFilteredTypesFromResources } from "@common/resourceType";
 
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
 import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageListing from "@ui/ResourcePageListing.astro";
+import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
+import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
+import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
+import { getFullCategoryName } from "@common/category";
 
 interface Props {
-  title: string;
+  categoryTitle: string;
   resources: Array<InternetResourcePageListing>;
   populationData: Population;
   applicableTypes: Array<InternetResourceType>;
+  parentSlug: string;
 }
 
 export async function getStaticPaths() {
@@ -37,12 +44,13 @@ export async function getStaticPaths() {
           r.populations?.includes(population.slug)
         );
 
-        const filteredTypes = getFilteredTypesFromResources(data.resources);
+        const filteredTypes = getFilteredTypesFromResources(resources);
 
         return {
           params: { category: data.slug, population: population.slug },
           props: {
             categoryTitle: data.title,
+            parentSlug: data.parent?.slug ?? "",
             populationData: population,
             resources,
             applicableTypes: filteredTypes ?? [],
@@ -55,36 +63,55 @@ export async function getStaticPaths() {
 
 const params = Astro.params;
 const props = Astro.props;
+
+const fullCategoryTitle = getFullCategoryName(
+  props.parentSlug,
+  props.categoryTitle
+);
 ---
 
 <MainLayout>
-  <section>
-    <ul>
+  <ResourcePageLayout>
+    <ResourcePageListingsContainer slot="section">
       {
         props.resources.map((resource) => (
-          <li class:list={["mb-6"]}>
+          <ResourcePageListingsListItem>
             <ResourcePageListing resource={resource} />
-          </li>
+          </ResourcePageListingsListItem>
         ))
       }
-    </ul>
-    <aside>
+    </ResourcePageListingsContainer>
+    <Fragment slot="aside">
       {
         props.applicableTypes?.length > 1 && (
-          <nav>
-            <h2>Type</h2>
-            <ul>
-              {props.applicableTypes.map((type) => (
-                <li>
-                  <a href={`/${type}/${params.category}/${params.population}`}>
-                    {pluralize(startCase(type))}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <AsideNavContainer
+            title="Narrow Your Search"
+            subtitle={`See resources in ${fullCategoryTitle} for ${props.populationData.name} by type...`}
+            colorVariant="secondary"
+          >
+            <AsideNav
+              links={props.applicableTypes.map((type) => ({
+                to: `/${type}/${params.category}/${params.population}`,
+                label: pluralize(startCase(type)),
+              }))}
+              colorVariant={"secondary"}
+            />
+          </AsideNavContainer>
         )
       }
-    </aside>
-  </section>
+      <AsideNavContainer
+        title="See More Resources"
+        subtitle="Can't find what you're looking for?"
+      >
+        <AsideNav
+          links={[
+            {
+              to: `/${params.category}`,
+              label: `See all resources in ${fullCategoryTitle}`,
+            },
+          ]}
+        />
+      </AsideNavContainer>
+    </Fragment>
+  </ResourcePageLayout>
 </MainLayout>

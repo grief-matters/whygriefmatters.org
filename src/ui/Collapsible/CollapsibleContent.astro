@@ -40,8 +40,8 @@ const disableAtBreakpointData = disableAtBreakpoint
   class:list={[elementDisplayClass, elementContainerClassList]}
 >
   {/* This button toggles show/hide */}
-  <button id={buttonId} type="button">
-    <div class:list={["pointer-events-none", buttonClassList]}>
+  <button id={buttonId} type="button" class:list={buttonClassList}>
+    <div class:list={["pointer-events-none"]}>
       <slot name="button" />
     </div>
   </button>

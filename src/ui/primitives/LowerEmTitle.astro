@@ -1,22 +1,32 @@
 ---
+import {
+  getTextColorClassListFromVariant,
+  type DsColorVariant,
+} from "@common/design-system";
 import type { HTMLTag, Polymorphic } from "astro/types";
 import words from "lodash/words";
 
-type Props<Element extends HTMLTag> = {
+type Props<Tag extends HTMLTag> = {
   sizeVariant?: "text-lg" | "text-xl" | "text-2xl" | "text-3xl" | "text-4xl";
+  colorVariant?: DsColorVariant;
   title: string;
-} & Polymorphic<{ as: Element }>;
+} & Polymorphic<{ as: Tag }>;
 
 const {
-  as: Element = "h1",
+  as: Tag = "h1",
   sizeVariant = "text-3xl",
+  colorVariant = ["primary", "default"],
   title,
   ...attrs
 } = Astro.props;
 ---
 
-<Element
-  class:list={["font-serif lowercase font-light", sizeVariant]}
+<Tag
+  class:list={[
+    "font-serif lowercase font-light",
+    sizeVariant,
+    getTextColorClassListFromVariant(colorVariant),
+  ]}
   {...attrs}
 >
   {
@@ -35,4 +45,4 @@ const {
       }
     })
   }
-</Element>
+</Tag>

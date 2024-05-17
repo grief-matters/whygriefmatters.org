@@ -2,17 +2,26 @@
 const { label } = Astro.props;
 ---
 
-<span class="flex-1 block">
-  {label}
-</span>
-<svg
-  class:list={["flex-none block", "h-10 w-10 lg:h-8 lg:w-8", "px-2"]}
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke-width="2"
-  stroke="currentColor"
-  aria-hidden="true"
+<div
+  class:list={[
+    "flex items-start",
+    "text-stone-50",
+    "text-2xl lg:text-lg text-left py-1",
+    "font-serif lg:font-sans font-semibold",
+  ]}
 >
-  <path stroke-linecap="round" stroke-linejoin="round" d="M4 8L12 16L20 8"
-  ></path>
-</svg>
+  <span class="flex-1 block self-center text-left">
+    {label}
+  </span>
+  <svg
+    class:list={["flex-none block", "h-10 w-10 lg:h-8 lg:w-8", "px-2"]}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke-width="2"
+    stroke="currentColor"
+    aria-hidden="true"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" d="M4 8L12 16L20 8"
+    ></path>
+  </svg>
+</div>

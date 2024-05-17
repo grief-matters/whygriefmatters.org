@@ -6,13 +6,23 @@ import {
 import type { Population } from "@model/population";
 
 import { getPopulations, getCategoryPagesData } from "@common/client";
+import { getFullCategoryName } from "@common/category";
 
 import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageListing from "@ui/ResourcePageListing.astro";
+import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
+import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
+import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
+import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
+import AsideNav from "@ui/AsideNav/AsideNav.astro";
+import startCase from "lodash/startCase";
+import pluralize from "pluralize";
 
 interface Props {
   resources: Array<InternetResourcePageListing>;
   applicablePopulations: Array<Population>;
+  categoryParent: string;
+  categoryTitle: string;
 }
 
 export async function getStaticPaths() {
@@ -25,59 +35,92 @@ export async function getStaticPaths() {
         (categoryPageData) =>
           categoryPageData.resources &&
           categoryPageData.resources.some(
-            (resource) => resource.type === resourceType,
-          ),
+            (resource) => resource.type === resourceType
+          )
       )
       .map((catPage) => {
+        const resourcesFilteredByType = catPage.resources.filter(
+          (r) => r.type === resourceType
+        );
+
         const filteredPopulations = populations.filter((p) =>
-          catPage.resources.some((r) => r.populations?.includes(p.slug)),
+          resourcesFilteredByType.some((r) => r.populations?.includes(p.slug))
         );
 
         return {
           params: { category: catPage.slug, resourceType },
           props: {
-            resources: catPage.resources,
+            resources: resourcesFilteredByType,
             applicablePopulations: filteredPopulations,
+            categoryParent: catPage.parent?.slug ?? "",
+            categoryTitle: catPage.title,
           },
         };
-      }),
+      })
   );
 }
 
 const params = Astro.params;
 const props = Astro.props;
+
+const fullCategoryTitle = getFullCategoryName(
+  props.categoryParent,
+  props.categoryTitle
+);
+
+props.resources.map((r) => console.log(r.populations, r.type));
 ---
 
 <MainLayout>
-  <section>
-    <ul>
+  <ResourcePageLayout>
+    <ResourcePageListingsContainer slot="section">
       {
         props.resources.map((resource) => (
-          <li class="mb-6">
+          <ResourcePageListingsListItem>
             <ResourcePageListing resource={resource} />
-          </li>
+          </ResourcePageListingsListItem>
         ))
       }
-    </ul>
-  </section>
-  <aside>
-    {
-      props.applicablePopulations?.length > 0 && (
-        <nav>
-          <h2>Population</h2>
-          <ul>
-            {props.applicablePopulations.map((population) => (
-              <li>
-                <a
-                  href={`/${params.resourceType}/${params.category}/${population.slug}`}
-                >
-                  {population.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )
-    }
-  </aside>
+    </ResourcePageListingsContainer>
+    <Fragment slot="aside">
+      {
+        props.applicablePopulations?.length > 0 && (
+          <AsideNavContainer
+            title="Narrow Your Search"
+            subtitle={`View ${startCase(
+              pluralize(params.resourceType)
+            )} in ${fullCategoryTitle} for...`}
+            colorVariant="secondary"
+          >
+            {
+              <AsideNav
+                links={props.applicablePopulations.map((population) => ({
+                  to: `/${params.resourceType}/${params.category}/${population.slug}`,
+                  label: population.name,
+                }))}
+                colorVariant={"secondary"}
+              />
+            }
+          </AsideNavContainer>
+        )
+      }
+      <AsideNavContainer
+        title="Related Resources"
+        subtitle="Didn't find what you were looking for?"
+      >
+        <AsideNav
+          links={[
+            {
+              to: `/${params.category}`,
+              label: `See all resources in ${fullCategoryTitle}`,
+            },
+            {
+              to: `/${params.resourceType}`,
+              label: `See all ${pluralize(startCase(params.resourceType))}`,
+            },
+          ]}
+        />
+      </AsideNavContainer>
+    </Fragment>
+  </ResourcePageLayout>
 </MainLayout>
