@@ -40,9 +40,6 @@ export function getFullCategoryName(
   parentSlug: string,
   categoryTitle: string,
 ): string {
-  console.log("parent", parentSlug);
-  console.log("ttile", categoryTitle);
-
   switch (parentSlug) {
     case "loss-of-a":
       return `Loss of a ${startCase(categoryTitle)}`;
