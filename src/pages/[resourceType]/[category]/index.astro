@@ -1,4 +1,7 @@
 ---
+import startCase from "lodash/startCase";
+import pluralize from "pluralize";
+
 import {
   type InternetResourcePageListing,
   internetResourceTypes,
@@ -7,22 +10,24 @@ import type { Population } from "@model/population";
 
 import { getPopulations, getCategoryPagesData } from "@common/client";
 import { getFullCategoryName } from "@common/category";
+import { getResourcePageTitle } from "@common/page";
 
 import MainLayout from "@layouts/MainLayout.astro";
+import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
-import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
 import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import startCase from "lodash/startCase";
-import pluralize from "pluralize";
+import PageHeader from "@ui/PageHeader.astro";
+import type { SanityImage } from "@model/image";
 
 interface Props {
   resources: Array<InternetResourcePageListing>;
   applicablePopulations: Array<Population>;
   categoryParent: string;
   categoryTitle: string;
+  image: SanityImage | null;
 }
 
 export async function getStaticPaths() {
@@ -54,6 +59,7 @@ export async function getStaticPaths() {
             applicablePopulations: filteredPopulations,
             categoryParent: catPage.parent?.slug ?? "",
             categoryTitle: catPage.title,
+            image: catPage.image,
           },
         };
       })
@@ -67,10 +73,20 @@ const fullCategoryTitle = getFullCategoryName(
   props.categoryParent,
   props.categoryTitle
 );
+
+const pageTitle = getResourcePageTitle({
+  resourceType: params.resourceType,
+  categoryName: fullCategoryTitle,
+});
 ---
 
 <MainLayout>
   <ResourcePageLayout>
+    <PageHeader
+      slot="header"
+      pageTitle={pageTitle}
+      image={props.image ? props.image : undefined}
+    />
     <ResourcePageListingsContainer slot="section">
       {
         props.resources.map((resource) => (

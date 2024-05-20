@@ -20,6 +20,8 @@ const date = new Date(props.resource.lastUpdated).toLocaleDateString("en-US", {
   month: "short",
   day: "numeric",
 });
+
+const showTags = props.resource.hasSpanishVersion || props.resource.rating;
 ---
 
 <article>
@@ -64,16 +66,20 @@ const date = new Date(props.resource.lastUpdated).toLocaleDateString("en-US", {
     }
   </SimpleTextBlock>
 
-  <div class="mb-3">
-    {
-      props.resource.rating && (
-        <Tag>{`Rating: ${props.resource.rating}/10`}</Tag>
-      )
-    }
-    {props.resource.hasSpanishVersion && <Tag>{`Available in Spanish`}</Tag>}
-  </div>
-
   <Subtitle datetime={props.resource.lastUpdated} as="time">
     {`Last updated: ${date}`}
   </Subtitle>
+
+  {
+    showTags && (
+      <div class="my-3">
+        {props.resource.rating && (
+          <Tag>{`Rating: ${props.resource.rating}/10`}</Tag>
+        )}
+        {props.resource.hasSpanishVersion && (
+          <Tag>{`Available in Spanish`}</Tag>
+        )}
+      </div>
+    )
+  }
 </article>

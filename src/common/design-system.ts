@@ -19,7 +19,10 @@ type DsColorContext = {
 };
 
 type DsColorContextVariants = {
+  defaultLightest?: string;
+  defaultLighter?: string;
   default: string;
+  defaultDarker?: string;
   contrast?: string;
   hover?: string;
   contrastHover?: string;
@@ -51,8 +54,11 @@ export const wgmDesignSystem: DesignSystem = {
         blue: "bg-blue-900",
       },
       neutral: {
-        default: "bg-stone-50",
-        contrast: "bg-stone-500",
+        defaultLightest: "bg-stone-50",
+        defaultLighter: "bg-stone-100",
+        default: "bg-stone-200",
+        defaultDarker: "bg-stone-300",
+        contrast: "bg-stone-700",
       },
     },
   },
@@ -202,9 +208,10 @@ export function getTextColorClassListFromVariant(variant: DsColorVariant) {
       return wgmDesignSystem.typography.color?.resourceType?.[x]?.[y];
     case "brand":
       return wgmDesignSystem.typography.color?.[ctx]?.[x];
+    case "neutral":
+      return wgmDesignSystem.typography.color?.[ctx]?.[x];
     case "primary":
     case "secondary":
-    case "neutral":
       return wgmDesignSystem.typography.color?.[ctx]?.[x];
     default:
       return wgmDesignSystem.typography.color?.neutral?.default;

@@ -8,8 +8,13 @@ import type {
 } from "@model/internetResource";
 import type { CategoryPageData } from "@model/categoryPage";
 import type { Population } from "@model/population";
+import type { SanityImage } from "@model/image";
 
-import { getCategoryPagesData, getPopulations } from "@common/client";
+import {
+  getCategoryPagesData,
+  getFallbackImageCollection,
+  getPopulations,
+} from "@common/client";
 import { getFilteredTypesFromResources } from "@common/resourceType";
 
 import AsideNav from "@ui/AsideNav/AsideNav.astro";
@@ -20,6 +25,8 @@ import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.ast
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
 import { getFullCategoryName } from "@common/category";
+import PageHeader from "@ui/PageHeader.astro";
+import { getResourcePageTitle } from "@common/page";
 
 interface Props {
   categoryTitle: string;
@@ -27,6 +34,7 @@ interface Props {
   populationData: Population;
   applicableTypes: Array<InternetResourceType>;
   parentSlug: string;
+  image: SanityImage | null;
 }
 
 export async function getStaticPaths() {
@@ -50,6 +58,7 @@ export async function getStaticPaths() {
           params: { category: data.slug, population: population.slug },
           props: {
             categoryTitle: data.title,
+            image: data.image,
             parentSlug: data.parent?.slug ?? "",
             populationData: population,
             resources,
@@ -68,10 +77,20 @@ const fullCategoryTitle = getFullCategoryName(
   props.parentSlug,
   props.categoryTitle
 );
+
+const pageTitle = getResourcePageTitle({
+  categoryName: fullCategoryTitle,
+  populationName: props.populationData.name,
+});
 ---
 
 <MainLayout>
   <ResourcePageLayout>
+    <PageHeader
+      slot="header"
+      pageTitle={pageTitle}
+      image={props.image ? props.image : undefined}
+    />
     <ResourcePageListingsContainer slot="section">
       {
         props.resources.map((resource) => (

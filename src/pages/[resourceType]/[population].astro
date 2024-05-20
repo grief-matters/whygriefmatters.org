@@ -19,6 +19,8 @@ import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
 import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
+import PageHeader from "@ui/PageHeader.astro";
+import { getResourcePageTitle } from "@common/page";
 
 interface Props {
   populationName: string;
@@ -84,10 +86,16 @@ export async function getStaticPaths() {
 
 const params = Astro.params;
 const props = Astro.props;
+
+const pageTitle = getResourcePageTitle({
+  populationName: props.populationName,
+  resourceType: params.resourceType as InternetResourceType,
+});
 ---
 
 <MainLayout>
   <ResourcePageLayout>
+    <PageHeader slot="header" pageTitle={pageTitle} />
     <ResourcePageListingsContainer slot="section">
       {
         props.resources.map((resource) => (

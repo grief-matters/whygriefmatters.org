@@ -53,6 +53,7 @@ export const zCategoryPageData = z.object({
   resources: z.array(zInternetResourcePageListing),
   featuredArticles: z.array(zFeaturedResource).nullable(),
   featuredStories: z.array(zFeaturedResource).nullable(),
+  image: zImage.nullable(),
 });
 
 export const gCategoryPageQuery = groq`
@@ -71,6 +72,10 @@ export const gCategoryPageQuery = groq`
     },
     featuredStories[]->{
       ${gFeaturedResourceProjection}
+    },
+    image{
+      image,
+      "altText": alt
     }
   }
 `;

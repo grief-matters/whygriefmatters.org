@@ -1,0 +1,83 @@
+---
+import { getFallbackImageCollection, getImageUrl } from "@common/client";
+import {
+  wgmDesignSystem as ds,
+  type DsColorVariant,
+} from "@common/design-system";
+import type { PageTitle } from "@common/page";
+import type { SanityImage } from "@model/image";
+
+interface Props {
+  pageTitle: PageTitle;
+  image?: SanityImage;
+  bgVariant?: DsColorVariant;
+}
+
+// TODO - fetch a random image for those that are missing
+const fallbackImages = await getFallbackImageCollection();
+
+const props = Astro.props;
+
+const image =
+  props.image ??
+  fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+
+const imageUrl = image ? getImageUrl(image.image).url() : null;
+
+const bgVar = `url(${imageUrl})`;
+
+// const bgClass = ds.background.color?.[props.bgVariant[0]]?.[props.bgVariant[1]];
+
+const bgClass = props.bgVariant
+  ? ds.background.color?.[props.bgVariant[0]]?.[props.bgVariant[1]]
+  : undefined;
+---
+
+<header class={bgClass}>
+  <div class:list={["page-header-bg", "bg-cover", "h-40"]}></div>
+  <h1 class="-mt-8 mx-3">
+    {
+      props.pageTitle.supTitle && (
+        <span class="block">
+          <span
+            class:list={[
+              "font-serif italic",
+              "box-decoration-clone px-3",
+              ds.background.color?.primary.default,
+              ds.typography.color?.primary.contrast,
+            ]}
+          >
+            {props.pageTitle.supTitle}
+          </span>
+        </span>
+      )
+    }
+
+    <span class="block">
+      <span
+        class:list={[
+          "text-3xl font-serif font-medium",
+          "box-decoration-clone px-3",
+          ds.background.color?.primary.default,
+          ds.typography.color?.primary.contrast,
+        ]}
+      >
+        {props.pageTitle.title}
+      </span>
+    </span>
+
+    {
+      props.pageTitle.subTitle && (
+        <span class="block">
+          <span>{props.pageTitle.subTitle}</span>
+        </span>
+      )
+    }
+  </h1>
+</header>
+
+<style define:vars={{ bgVar }}>
+  .page-header-bg {
+    background-image: var(--bgVar);
+  }
+</style>

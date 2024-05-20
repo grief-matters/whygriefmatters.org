@@ -1,24 +1,32 @@
 ---
 import type { HTMLTag, Polymorphic } from "astro/types";
 
+import type { InternetResourceType } from "@model/internetResource";
+
+import { wgmDesignSystem as ds } from "@common/design-system";
+
 type Props<Element extends HTMLTag> = {
   children: any;
-  bgVariant?: "bg-sky-500" | "bg-sky-600" | "bg-slate-200";
+  resourceType?: InternetResourceType;
 } & Polymorphic<{ as: Element }>;
 
-const {
-  as: Element = "span",
-  bgVariant = "bg-sky-500",
-  ...attrs
-} = Astro.props;
+const { as: Element = "span", resourceType, ...attrs } = Astro.props;
+
+const borderColorClass = resourceType
+  ? ds.border.color?.resourceType?.[resourceType as InternetResourceType]
+      .default
+  : ds.border.color?.primary.default;
 ---
 
 <Element
   class:list={[
-    "px-2 py-1 mr-2",
-    "text-xs font-light uppercase text-slate-50",
-    bgVariant,
-    "rounded",
+    "font-serif italic text-sm",
+    ds.typography.color?.primary.default,
+    "p-1",
+    "bg-white",
+    "border-l-4",
+    borderColorClass,
+    "shadow",
   ]}
   {...attrs}
 >

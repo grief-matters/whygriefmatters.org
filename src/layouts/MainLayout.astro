@@ -14,7 +14,11 @@ import SiteHeader from "@ui/SiteHeader.astro";
   </head>
 
   <body
-    class:list={["min-h-full p-0 m-0", ds.typography.color?.primary.default]}
+    class:list={[
+      "min-h-full p-0 m-0",
+      ds.background.color?.neutral?.defaultLightest,
+      ds.typography.color?.primary.default,
+    ]}
   >
     <SiteHeader />
     <main>
