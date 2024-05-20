@@ -12,8 +12,13 @@ import type {
 } from "@model/internetResource";
 import type { Population } from "@model/population";
 
-import { getCategoryPagesData, getPopulations } from "@common/client";
+import {
+  getCategoryPagesData,
+  getFallbackImageCollection,
+  getPopulations,
+} from "@common/client";
 import { getFilteredTypesFromResources } from "@common/resourceType";
+import { getResourcePageTitle } from "@common/page";
 
 import MainLayout from "@layouts/MainLayout.astro";
 
@@ -25,6 +30,10 @@ import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.ast
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+import PageHeader from "@ui/PageHeader.astro";
+import type { SanityImage } from "@model/image";
+import shuffle from "lodash/shuffle";
+import { getFullCategoryName } from "@common/category";
 
 interface Props {
   title: string;
@@ -33,6 +42,7 @@ interface Props {
   featuredStories: Array<CategoryPageFeaturedResource> | null;
   applicablePopulations: Array<Population>;
   applicableTypes: Array<InternetResourceType>;
+  image: SanityImage | null;
 }
 
 export async function getStaticPaths() {
@@ -46,10 +56,15 @@ export async function getStaticPaths() {
 
     const filteredTypes = getFilteredTypesFromResources(data.resources);
 
+    const fullTitle = data.parent?.slug
+      ? getFullCategoryName(data.parent.slug, data.title)
+      : data.title;
+
     return {
       params: { category: data.slug },
       props: {
-        title: data.title,
+        title: fullTitle,
+        image: data.image,
         resources: data.resources,
         featuredArticles: data.featuredArticles,
         featuredStories: data.featuredStories,
@@ -66,14 +81,24 @@ const props = Astro.props;
 const showApplicablePopulations = props.applicablePopulations?.length > 0;
 const showApplicableTypes = props.applicableTypes?.length > 1;
 const showNarrowSearchAside = showApplicablePopulations || showApplicableTypes;
+
+const pageTitle = getResourcePageTitle({
+  categoryName: props.title,
+});
 ---
 
 <MainLayout>
   <ResourcePageLayout>
+    <PageHeader
+      slot="header"
+      pageTitle={pageTitle}
+      image={props.image ? props.image : undefined}
+      bgVariant={["neutral", "default"]}
+    />
     <Fragment slot="featured">
       {
         props.featuredStories && (
-          <div class="pb-3">
+          <div class="py-3">
             <LowerEmTitle
               as="h2"
               title={"Featured Stories"}
@@ -86,7 +111,7 @@ const showNarrowSearchAside = showApplicablePopulations || showApplicableTypes;
       }
       {
         props.featuredArticles && (
-          <div>
+          <div class="py-3">
             <LowerEmTitle
               as="h2"
               title={"Featured Articles"}

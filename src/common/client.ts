@@ -221,8 +221,6 @@ export async function getResourceTypePagesData(): Promise<ResourceTypePageData> 
     .fetch(gResourceTypePagesQuery)
     .then((result) => zResourceTypePagesData.parse(result));
 
-  console.log(resourceTypePageData);
-
   return resourceTypePageData;
 }
 

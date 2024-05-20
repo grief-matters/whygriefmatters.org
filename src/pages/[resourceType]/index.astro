@@ -1,5 +1,11 @@
 ---
-import type { InternetResourcePageListing } from "@model/internetResource";
+import pluralize from "pluralize";
+import startCase from "lodash/startCase";
+
+import type {
+  InternetResourcePageListing,
+  InternetResourceType,
+} from "@model/internetResource";
 import type { Category } from "@model/category";
 import type { Population } from "@model/population";
 
@@ -16,8 +22,9 @@ import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageLi
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
 import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import pluralize from "pluralize";
-import startCase from "lodash/startCase";
+
+import { getResourcePageTitle } from "@common/page";
+import PageHeader from "@ui/PageHeader.astro";
 
 interface Props {
   resources: Array<InternetResourcePageListing>;
@@ -61,10 +68,15 @@ const params = Astro.params;
 const props = Astro.props;
 
 const resourceTypeLabel = `${startCase(pluralize(params.resourceType))}`;
+
+const pageTitle = getResourcePageTitle({
+  resourceType: params.resourceType as InternetResourceType,
+});
 ---
 
 <MainLayout>
   <ResourcePageLayout>
+    <PageHeader slot="header" pageTitle={pageTitle} />
     <ResourcePageListingsContainer slot="section">
       {
         props.resources.map((resource) => (

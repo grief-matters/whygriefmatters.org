@@ -1,11 +1,24 @@
 ---
+import { wgmDesignSystem as ds } from "@common/design-system";
+
 const hasFeatured = Astro.slots.has("featured");
 const hasAside = Astro.slots.has("aside");
+
+const bgFeaturedColors = [
+  ds.background.color?.neutral?.default,
+  ds.background.color?.neutral?.defaultDarker,
+];
 ---
 
+<slot name="header" />
 {
   hasFeatured && (
-    <section class="bg-slate-200 divide-y py-3">
+    <section
+      class:list={[
+        // "py-3",
+        "[&>*:nth-child(odd)]:bg-stone-200 [&>*:nth-child(even)]:bg-stone-300",
+      ]}
+    >
       <slot name="featured" />
     </section>
   )

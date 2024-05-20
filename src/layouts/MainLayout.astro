@@ -1,29 +1,9 @@
 ---
 import "../styles/main.css";
 
-import { getImageUrl, getLogoSet } from "@common/client";
 import { wgmDesignSystem as ds } from "@common/design-system";
 import SiteFooter from "@ui/SiteFooter.astro";
 import SiteHeader from "@ui/SiteHeader.astro";
-
-const logoSet = await getLogoSet();
-
-const rawHeaderLogo = logoSet.find((l) => l.variant === "dark-primary");
-
-const headerLogo = rawHeaderLogo
-  ? {
-      url: getImageUrl(rawHeaderLogo.image).url(),
-      alt: "Why Grief Matter home",
-    }
-  : null;
-
-const rawLightLogo = logoSet?.find((l) => l.variant === "light-secondary");
-const lightHeaderLogo = rawLightLogo
-  ? {
-      url: getImageUrl(rawLightLogo.image).url(),
-      alt: "Why Grief Matter home",
-    }
-  : null;
 ---
 
 <html lang="en">
@@ -36,87 +16,19 @@ const lightHeaderLogo = rawLightLogo
   <body
     class:list={[
       "min-h-full p-0 m-0",
+      ds.background.color?.neutral?.defaultLightest,
       ds.typography.color?.primary.default,
-      ds.background.color?.primary.onBase,
     ]}
   >
     <SiteHeader />
-    <!-- <header>
-      <a
-        href="crisis-resources"
-        class:list={[
-          "block w-screen py-2",
-          "text-center text-yellow-200 bg-blue-800 text-lg",
-          "font-serif font-semibold",
-        ]}
-      >
-        Help! I'm in Crisis!
-      </a>
-      <div class="relative z-20">
-        <Collapsible>
-          <div
-            slot="button"
-            class:list={[
-              "w-screen py-2",
-              "bg-yellow-200 text-blue-800 text-lg",
-              "font-serif font-semibold",
-            ]}
-          >
-            What do you need right now?
-          </div>
-          <div slot="content" class="bg-yellow-200 absolute left-0 right-0">
-            <WhatDoYouNeed />
-          </div>
-        </Collapsible>
-        {
-          /*
-        <button
-          type="button"
-          class="bg-yellow-200 flex-grow font-serif text-left py-1 px-4 font-semibold text-blue-800"
-        >
-          What do you need right now?
-        </button>
-        */
-        }
-      </div>
-      <div class="flex justify-between items-center">
-        <a href="/" class="block w-56 ml-6 my-3">
-          {
-            headerLogo ? (
-              <img src={headerLogo.url} alt={headerLogo.alt} />
-            ) : (
-              <span>Why Grief Matters</span>
-            )
-          }
-        </a>
-        {
-          /*
-        <div class="flex-inline space-x-6 mr-6">
-          <input
-            class="px-3 py-1 border rounded-full"
-            type="text"
-            placeholder="Search..."
-          />
-          <button
-            class="text-blue-800 font-semibold bg-teal-200 px-6 py-1 rounded-full"
-            >Donate</button
-          >
-        </div>
-        */
-        }
-      </div>
-      {/* <MainNav /> */}
-      {/* <MainNavNew /> */}
-    </header> -->
     <main>
       <slot />
     </main>
     <SiteFooter />
   </body>
-
-  <style>
-    html {
-      font-size: 18px;
-    }
-  </style>
 </html>
+<style>
+  html {
+    font-size: 18px;
+  }
+</style>

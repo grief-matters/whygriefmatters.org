@@ -17,11 +17,16 @@ import pluralize from "pluralize";
 import startCase from "lodash/startCase";
 import Resource from "@ui/Resource.astro";
 import { getFullCategoryName } from "@common/category";
+import PageHeader from "@ui/PageHeader.astro";
+import { getResourcePageTitle } from "@common/page";
+import type { SanityImage } from "@model/image";
 
 interface Props {
   resources: Array<InternetResourcePageListing>;
   categoryTitle: string;
   parent: any;
+  populationName: string;
+  image: SanityImage | null;
 }
 
 export async function getStaticPaths() {
@@ -54,6 +59,8 @@ export async function getStaticPaths() {
             ),
             categoryTitle: data.title,
             parent: data.parent,
+            populationName: population.name,
+            image: data.image,
           },
         }))
     )
@@ -67,10 +74,21 @@ const fullCategoryTitle = getFullCategoryName(
   props.parent?.slug ?? "",
   props.categoryTitle
 );
+
+const pageTitle = getResourcePageTitle({
+  categoryName: fullCategoryTitle,
+  populationName: props.populationName,
+  resourceType: params.resourceType,
+});
 ---
 
 <MainLayout>
   <ResourcePageLayout>
+    <PageHeader
+      slot="header"
+      pageTitle={pageTitle}
+      image={props.image ? props.image : undefined}
+    />
     <ResourcePageListingsContainer slot="section">
       {
         props.resources.map((resource) => (

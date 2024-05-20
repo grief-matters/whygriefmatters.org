@@ -19,7 +19,10 @@ type DsColorContext = {
 };
 
 type DsColorContextVariants = {
+  defaultLightest?: string;
+  defaultLighter?: string;
   default: string;
+  defaultDarker?: string;
   contrast?: string;
   hover?: string;
   contrastHover?: string;
@@ -29,21 +32,6 @@ type DsColorBrandContext = {
   blue: string;
 };
 
-// These types are not working as we expect... they're pretty gross to be fair
-
-// type DsColorVariantMapping = {
-//   primary: keyof DsColorContextVariants;
-//   secondary: keyof DsColorContextVariants;
-//   neutral: keyof DsColorContextVariants;
-//   brand: keyof DsColorBrandContext;
-//   resourceType: InternetResourceType;
-// };
-
-// export type DsColorVariant = {
-//   [K in keyof DsColorContext]: [K, DsColorVariantMapping[K]];
-// }[keyof DsColorContext];
-
-// Let's just be super explicit instead...
 export type DsColorVariant =
   | ["primary", keyof DsColorContextVariants]
   | ["secondary", keyof DsColorContextVariants]
@@ -64,6 +52,13 @@ export const wgmDesignSystem: DesignSystem = {
       },
       brand: {
         blue: "bg-blue-900",
+      },
+      neutral: {
+        defaultLightest: "bg-stone-50",
+        defaultLighter: "bg-stone-100",
+        default: "bg-stone-200",
+        defaultDarker: "bg-stone-300",
+        contrast: "bg-stone-700",
       },
     },
   },
@@ -213,9 +208,10 @@ export function getTextColorClassListFromVariant(variant: DsColorVariant) {
       return wgmDesignSystem.typography.color?.resourceType?.[x]?.[y];
     case "brand":
       return wgmDesignSystem.typography.color?.[ctx]?.[x];
+    case "neutral":
+      return wgmDesignSystem.typography.color?.[ctx]?.[x];
     case "primary":
     case "secondary":
-    case "neutral":
       return wgmDesignSystem.typography.color?.[ctx]?.[x];
     default:
       return wgmDesignSystem.typography.color?.neutral?.default;

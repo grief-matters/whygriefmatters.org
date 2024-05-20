@@ -20,6 +20,8 @@ import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.ast
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
 import { getFilteredTypesFromResources } from "@common/resourceType";
+import PageHeader from "@ui/PageHeader.astro";
+import { getResourcePageTitle } from "@common/page";
 
 interface Props {
   populationName: string;
@@ -56,10 +58,15 @@ export async function getStaticPaths() {
 
 const params = Astro.params;
 const props = Astro.props;
+
+const pageTitle = getResourcePageTitle({
+  populationName: props.populationName,
+});
 ---
 
 <MainLayout>
   <ResourcePageLayout>
+    <PageHeader slot="header" pageTitle={pageTitle} />
     <ResourcePageListingsContainer slot="section">
       {
         props.resources.map((resource) => (
