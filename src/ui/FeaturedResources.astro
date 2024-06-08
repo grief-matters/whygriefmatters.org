@@ -27,10 +27,8 @@ const carouselId = crypto.randomUUID();
   <Fragment slot="items">
     {
       imagePatchedResources.map((resource, i) => (
-        <MobileCarouselItem id={`${carouselId}-${i}`}>
-          <div class="m-3">
-            <FeaturedResource featuredResource={resource} />
-          </div>
+        <MobileCarouselItem id={`${carouselId}-${i}`} as="article" class="p-3">
+          <FeaturedResource featuredResource={resource} />
         </MobileCarouselItem>
       ))
     }

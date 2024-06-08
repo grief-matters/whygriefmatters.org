@@ -2,6 +2,7 @@
 import { getImageUrl, getLogoSet } from "@common/client";
 
 import MainNav from "./MainNav/MainNav.astro";
+import { wgmDesignSystem as ds } from "@common/design-system";
 
 const logoSet = await getLogoSet();
 
@@ -23,19 +24,21 @@ const lightHeaderLogo = rawLightLogo
     "transition-[top] ease-in-out delay-300 duration-500",
   ]}
 >
-  <a href="/" class="block h-20 p-3">
-    {
-      lightHeaderLogo ? (
-        <img
-          src={lightHeaderLogo.url}
-          alt={lightHeaderLogo.alt}
-          class="h-full"
-        />
-      ) : (
-        <span>Why Grief Matters</span>
-      )
-    }
-  </a>
+  <div class="xl:container xl:mx-auto">
+    <a href="/" class="block h-20 lg:h-24 p-3">
+      {
+        lightHeaderLogo ? (
+          <img
+            src={lightHeaderLogo.url}
+            alt={lightHeaderLogo.alt}
+            class="h-full"
+          />
+        ) : (
+          <span>Why Grief Matters</span>
+        )
+      }
+    </a>
+  </div>
   <MainNav />
 </header>
 

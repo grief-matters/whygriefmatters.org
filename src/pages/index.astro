@@ -36,27 +36,34 @@ const coreValuesBgColors = [
   <Hero imageUrl={heroImg.url}>
     <div class="p-4 flex justify-center items-center flex-col h-full">
       <div class="">
-        <img src={logo.url} alt={homePageData?.org.name} />
-        <div class:list={["sm:pl-12"]}>
+        <img class="h-24 lg:h-32" src={logo.url} alt={homePageData?.org.name} />
+        <div class:list={[""]}>
           <span
             class:list={[
               "text-white font-serif italic lowercase",
               "text-lg",
               `before:content-["..."]`,
+              `block text-right`,
+              "indent-20 -mt-3",
+              "lg:indent-32",
             ]}>{homePageData?.org.slogan}</span
           >
         </div>
       </div>
     </div>
   </Hero>
-  <section class="max-w-prose mx-auto pb-6 mt-3 mb-6">
+  <section class="mx-auto pb-6 mt-3 mb-6">
     <LowerEmTitle
       as="h2"
       title="Our Mission"
-      class:list={["py-4", "text-center"]}
+      class:list={["py-4", "text-center", "mx-auto"]}
     />
     <RichTextContentBlock
-      class:list={["px-4", "first:prose-p:text-lg", "font-serif text-center"]}
+      class:list={[
+        "px-4 mx-auto",
+        "first:prose-p:text-lg",
+        "font-serif text-center",
+      ]}
       portableText={homePageData?.org.mission}
     />
   </section>
@@ -73,7 +80,7 @@ const coreValuesBgColors = [
       ]}
     />
     <div class="bg-gradient-to-r from-sky-700 from-50% to-sky-400 to-50%">
-      <div class="flex flex-col">
+      <div class="mx-auto sm:grid sm:grid-cols-2 xl:grid-cols-4 xl:container">
         {
           homePageData.org.coreValues.map((coreValue, i) => (
             <div

@@ -4,16 +4,23 @@ interface Props {}
 
 <mobile-carousel>
   <div class="w-full overflow-hidden">
+    <!-- outer grid here? -->
     <div
       class:list={[
         "items-container",
-        "flex",
+        "flex xl:max-w-screen-xl xl:mx-auto",
         "overflow-x-auto snap-mandatory snap-x scroll-smooth",
       ]}
     >
       <slot name="items" />
     </div>
-    <div class="controls flex justify-center space-x-2 pt-3">
+    <div
+      class:list={[
+        "controls",
+        "flex justify-center space-x-2 pt-3",
+        "lg:hidden",
+      ]}
+    >
       <slot name="controls" />
     </div>
   </div>

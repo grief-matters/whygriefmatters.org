@@ -35,19 +35,6 @@ function getRoute(pageLink: ResourcePageLink): string {
   return `/${slugParts}`;
 }
 
-// const variantSchema: StandardVariantCvaSchema = {
-//   variant: {
-//     primary: ["bg-rose-50"],
-//     secondary: ["bg-violet-50"],
-//     tertiary: ["bg-yellow-50"],
-//     quaternary: [],
-//   },
-// };
-
-// const featurePanel = cva(["py-6"], {
-//   variants: variantSchema,
-// });
-
 const { featuredContent, indexInCollection = 0 } = Astro.props;
 
 const bgClasses = ["bg-stone-50", "bg-stone-100"];

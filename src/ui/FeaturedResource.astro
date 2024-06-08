@@ -33,43 +33,49 @@ const imageUrl =
     : null;
 ---
 
-<article class="mb-2">
-  <TitleLink
-    label={props.featuredResource.title}
-    href={props.featuredResource.resourceUrl}
-  />
-  {
-    props.featuredResource.sourceWebsite && (
-      <Subtitle class="mt-1">
-        {`From `}
-        <a
-          href={props.featuredResource.sourceWebsite.resourceUrl}
-          rel="noopener"
-          target="_blank"
-          class:list={[
-            "underline underline-offset-2",
-            "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
-          ]}
-        >
-          {props.featuredResource.sourceWebsite.name}
-        </a>
-      </Subtitle>
-    )
-  }
+<!-- define the grid here --><!-- <article class:list={["featured-resource", "mb-2"]}> -->
+<div class:list={["flex flex-col h-full"]}>
+  <div>
+    <TitleLink
+      label={props.featuredResource.title}
+      href={props.featuredResource.resourceUrl}
+    />
+    {
+      props.featuredResource.sourceWebsite && (
+        <Subtitle class="mt-1">
+          {`From `}
+          <a
+            href={props.featuredResource.sourceWebsite.resourceUrl}
+            rel="noopener"
+            target="_blank"
+            class:list={[
+              "underline underline-offset-2",
+              "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
+            ]}
+          >
+            {props.featuredResource.sourceWebsite.name}
+          </a>
+        </Subtitle>
+      )
+    }
+  </div>
   <div class="py-2">
     <a href={props.featuredResource.resourceUrl} rel="noopener" target="_blank">
       <img src={imageUrl} alt={props.featuredResource.image?.altText} />
     </a>
   </div>
-  <SimpleTextBlock>
+  <div>
+    <SimpleTextBlock>
+      {
+        props.featuredResource.description ||
+          "We don't have a description for this resource"
+      }
+    </SimpleTextBlock>
     {
-      props.featuredResource.description ||
-        "We don't have a description for this resource"
+      props.featuredResource.hasSpanishVersion && (
+        <Tag>{"Available in Spanish"}</Tag>
+      )
     }
-  </SimpleTextBlock>
-  {
-    props.featuredResource.hasSpanishVersion && (
-      <Tag>{"Available in Spanish"}</Tag>
-    )
-  }
-</article>
+  </div>
+</div>
+<!-- </article> -->
