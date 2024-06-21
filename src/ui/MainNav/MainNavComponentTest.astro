@@ -1,0 +1,43 @@
+---
+const guid = crypto.randomUUID();
+---
+
+<main-nav-collapsible data-random={guid}>
+  <!-- Slot 1 -->
+  <button class="collapsible-button" type="button">Test</button>
+  <!-- Slot 2 -->
+  <div class="collapsible-content">
+    <p>Some thing</p>
+    <p>Some thing</p>
+    <p>Some thing</p>
+    <p>Some thing</p>
+  </div>
+</main-nav-collapsible>
+
+<script>
+  class MainNavCollapsible extends HTMLElement {
+    constructor() {
+      super();
+
+      //get any elements in this component
+      const button = this.querySelector(".collapsible-button");
+      const content = this.querySelector(".collapsible-content");
+
+      const random = this.dataset.random;
+
+      button?.addEventListener("click", () => {
+        console.log("clicked!", random);
+      });
+    }
+
+    connectedCallback() {
+      // we'll need to set up a listener here for document to close the menu if anywhere else in the doc is clicked
+    }
+
+    disconnectedCallback() {
+      // clean up document event listeners
+    }
+  }
+
+  customElements.define("main-nav-collapsible", MainNavCollapsible);
+</script>

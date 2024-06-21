@@ -175,9 +175,7 @@ const tertiaryLinkClassList = [
                   </button>
                 </div>
 
-                <div
-                  class="grow overflow-y-scroll shadow-xl lg:max-w-screen-lg lg:mx-auto"
-                >
+                <div class="grow overflow-y-scroll shadow-xl">
                   <div
                     class:list={[
                       "relative px-6 py-3 lg:px-auto lg:py-0 lg:flex lg:justify-between",
@@ -186,7 +184,8 @@ const tertiaryLinkClassList = [
                     <!-- Start of Featured Topics -->
                     <CollapsibleContent
                       id="featured-topics-collapsible"
-                      buttonClassList={mainNavButtonButtonClassList}
+                      buttonClassList={[...mainNavButtonButtonClassList]}
+                      contentContainerClassList={[]}
                     >
                       <MainNavButton label="Featured Topics" slot="button" />
                       <div

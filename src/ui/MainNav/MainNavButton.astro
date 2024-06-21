@@ -1,27 +1,36 @@
 ---
+import { wgmDesignSystem as ds } from "@common/design-system";
+
 const { label } = Astro.props;
 ---
 
 <div
   class:list={[
-    "flex items-start",
+    "py-1",
+    "px-3",
+    "flex w-full items-start justify-between md:items-center md:space-x-2",
+    "md:w-auto",
     "text-stone-50",
-    "text-2xl lg:text-lg text-left py-1",
-    "font-serif lg:font-sans font-semibold",
+    "text-xl md:text-base",
+    "font-serif font-semibold",
   ]}
 >
   <span class="flex-1 block self-center text-left">
     {label}
   </span>
-  <svg
-    class:list={["flex-none block", "h-10 w-10 lg:h-8 lg:w-8", "px-2"]}
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke-width="2"
-    stroke="currentColor"
-    aria-hidden="true"
+  <div
+    class:list={[
+      "chevron",
+      "transition-transform duration-300",
+      "w-6 md:w-4",
+      ds.typography.color?.primary.contrast,
+    ]}
   >
-    <path stroke-linecap="round" stroke-linejoin="round" d="M4 8L12 16L20 8"
-    ></path>
-  </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <path
+        fill="currentColor"
+        d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"
+      ></path>
+    </svg>
+  </div>
 </div>

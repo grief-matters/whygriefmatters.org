@@ -3,6 +3,7 @@ import { getImageUrl, getLogoSet } from "@common/client";
 
 import MainNav from "./MainNav/MainNav.astro";
 import { wgmDesignSystem as ds } from "@common/design-system";
+import MainNavTest from "./MainNav/MainNavTest.astro";
 
 const logoSet = await getLogoSet();
 
@@ -19,12 +20,20 @@ const lightHeaderLogo = rawLightLogo
   id="site-header"
   class:list={[
     "sticky top-0 focus-within:top-0",
-    "flex items-center justify-between lg:block",
     "bg-blue-900",
     "transition-[top] ease-in-out delay-300 duration-500",
+    // for nav bar
+    "relative",
+    "shadow-xl",
   ]}
 >
-  <div class="xl:container xl:mx-auto">
+  <div
+    class:list={[
+      "flex items-center justify-between",
+      "md:block",
+      "xl:container xl:mx-auto",
+    ]}
+  >
     <a href="/" class="block h-20 lg:h-24 p-3">
       {
         lightHeaderLogo ? (
@@ -38,37 +47,37 @@ const lightHeaderLogo = rawLightLogo
         )
       }
     </a>
+    <MainNavTest />
   </div>
-  <MainNav />
-</header>
 
-<style>
-  header.scroll-down {
-    top: -100%;
-  }
-</style>
+  <style>
+    header.scroll-down {
+      top: -100%;
+    }
+  </style>
 
-<script>
-  import throttle from "lodash/throttle";
+  <script>
+    import throttle from "lodash/throttle";
 
-  const header = document.querySelector("#site-header");
+    const header = document.querySelector("#site-header");
 
-  let lastScrollPosition = 0;
+    let lastScrollPosition = 0;
 
-  function handleScroll() {
-    const headerFocussed = header?.contains(document.activeElement);
-    const scrollingDown = lastScrollPosition < scrollY;
+    function handleScroll() {
+      const headerFocussed = header?.contains(document.activeElement);
+      const scrollingDown = lastScrollPosition < scrollY;
 
-    if (!headerFocussed && scrollingDown) {
-      header?.classList.add("scroll-down");
-    } else {
-      header?.classList.remove("scroll-down");
+      if (!headerFocussed && scrollingDown) {
+        header?.classList.add("scroll-down");
+      } else {
+        header?.classList.remove("scroll-down");
+      }
+
+      lastScrollPosition = scrollY;
     }
 
-    lastScrollPosition = scrollY;
-  }
+    const throttledScrollHandler = throttle(handleScroll, 250);
 
-  const throttledScrollHandler = throttle(handleScroll, 250);
-
-  window.addEventListener("scroll", throttledScrollHandler);
-</script>
+    window.addEventListener("scroll", throttledScrollHandler);
+  </script>
+</header>

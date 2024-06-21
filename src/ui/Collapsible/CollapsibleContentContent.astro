@@ -1,0 +1,24 @@
+---
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+type AdditionalProps = {};
+
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & AdditionalProps;
+
+const { as: Tag = "div", ...attrs } = Astro.props;
+---
+
+<Tag class:list={["collapsible-content-content hidden"]} {...attrs}>
+  <slot />
+</Tag>
+
+<!--
+          Background backdrop, show/hide based on slide-over state.
+      
+          Entering: "ease-in-out duration-500"
+            From: "opacity-0"
+            To: "opacity-100"
+          Leaving: "ease-in-out duration-500"
+            From: "opacity-100"
+            To: "opacity-0"
+        -->

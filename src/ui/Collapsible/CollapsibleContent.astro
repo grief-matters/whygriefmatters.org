@@ -48,7 +48,9 @@ const disableAtBreakpointData = disableAtBreakpoint
 
   {/* This is the outermost container that manages visibility of the panel */}
   <div id={containerId} class:list={["hidden", contentContainerClassList]}>
-    <slot name="content" />
+    <div class="">
+      <slot name="content" />
+    </div>
   </div>
 </collapsible-content>
 
