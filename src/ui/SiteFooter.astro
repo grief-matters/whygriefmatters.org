@@ -13,24 +13,41 @@ const lightHeaderLogo = rawLightLogo
       alt: "Why Grief Matter home",
     }
   : null;
+
+const year = new Date().getFullYear();
+// TODO - add to schema for home page
+const copyrightNotice = `©️ ${year} Why Grief Matters Inc. All rights reserved.`;
 ---
 
-<footer class:list={[ds.background.color?.brand.blue, "p-6"]}>
-  <a href="/" class="block w-48 mb-4">
-    {
-      lightHeaderLogo ? (
-        <img
-          src={lightHeaderLogo.url}
-          alt={lightHeaderLogo.alt}
-          class="h-full grayscale"
-        />
-      ) : (
-        <span>Why Grief Matters</span>
-      )
-    }
-  </a>
-  <RichTextContentBlock
-    class:list={["text-xs font-serif !prose-invert"]}
-    portableText={smallPrint}
-  />
+<footer class:list={[ds.background.color?.brand?.blue, "py-6"]}>
+  <div class="mx-auto container px-3">
+    <a href="/" class="block w-64 max-w-full">
+      {
+        lightHeaderLogo ? (
+          <img
+            src={lightHeaderLogo.url}
+            alt={lightHeaderLogo.alt}
+            class="h-full grayscale"
+          />
+        ) : (
+          <span>Why Grief Matters</span>
+        )
+      }
+    </a>
+    <p
+      class:list={[
+        "font-serif text-sm",
+        "mt-2 mb-6",
+        ds.typography.color.primary.contrast,
+      ]}
+    >
+      {copyrightNotice}
+    </p>
+    <div class="border-t-2 pt-6">
+      <RichTextContentBlock
+        class:list={["text-xs font-serif !prose-invert !max-w-none"]}
+        portableText={smallPrint}
+      />
+    </div>
+  </div>
 </footer>

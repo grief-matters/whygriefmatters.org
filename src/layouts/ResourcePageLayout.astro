@@ -16,15 +16,21 @@ const bgFeaturedColors = [
     <section
       class:list={[
         // "py-3",
-        "[&>*:nth-child(odd)]:bg-stone-200 [&>*:nth-child(even)]:bg-stone-300",
+        // "lg:max-w-screen-lg lg:mx-auto",
+        "[&>*:nth-child(odd)]:bg-stone-200 [&>*:nth-child(even)]:bg-stone-100",
       ]}
     >
       <slot name="featured" />
     </section>
   )
 }
-<section class:list={["flex flex-col-reverse"]}>
-  <section>
+<section
+  class:list={[
+    "flex flex-col-reverse",
+    "lg:flex-row lg:justify-between xl:max-w-screen-xl xl:mx-auto lg:mt-6",
+  ]}
+>
+  <section class:list={["lg:grow"]}>
     <slot name="section" />
   </section>
   {

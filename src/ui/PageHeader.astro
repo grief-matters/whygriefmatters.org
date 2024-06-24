@@ -34,8 +34,9 @@ const bgClass = props.bgVariant
 ---
 
 <header class={bgClass}>
-  <div class:list={["page-header-bg", "bg-cover", "h-40"]}></div>
-  <h1 class="-mt-8 mx-3">
+  <div class:list={["page-header-bg", "bg-cover", "h-40 lg:h-64 xl:h-96"]}>
+  </div>
+  <h1 class:list={["-mt-8 mx-3", "xl:max-w-screen-xl xl:mx-auto"]}>
     {
       props.pageTitle.supTitle && (
         <span class="block">
@@ -56,7 +57,7 @@ const bgClass = props.bgVariant
     <span class="block">
       <span
         class:list={[
-          "text-3xl font-serif font-medium",
+          "text-3xl font-serif font-medium lg:text-4xl",
           "box-decoration-clone px-3",
           ds.background.color?.primary.default,
           ds.typography.color?.primary.contrast,
@@ -79,5 +80,6 @@ const bgClass = props.bgVariant
 <style define:vars={{ bgVar }}>
   .page-header-bg {
     background-image: var(--bgVar);
+    background-position: center;
   }
 </style>

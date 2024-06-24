@@ -60,10 +60,7 @@ const showTags = props.resource.hasSpanishVersion || props.resource.rating;
   }
 
   <SimpleTextBlock class:list={["my-1"]}>
-    {
-      props.resource.description ||
-        "We don't have a description for this resource"
-    }
+    {props.resource.description || props.resource.title}
   </SimpleTextBlock>
 
   <Subtitle datetime={props.resource.lastUpdated} as="time">

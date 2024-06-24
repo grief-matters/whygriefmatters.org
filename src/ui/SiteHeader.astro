@@ -18,54 +18,64 @@ const lightHeaderLogo = rawLightLogo
   id="site-header"
   class:list={[
     "sticky top-0 focus-within:top-0",
-    "flex items-center justify-between lg:block",
     "bg-blue-900",
     "transition-[top] ease-in-out delay-300 duration-500",
+    // for nav bar
+    "relative",
+    "shadow-xl",
   ]}
 >
-  <a href="/" class="block h-20 p-3">
-    {
-      lightHeaderLogo ? (
-        <img
-          src={lightHeaderLogo.url}
-          alt={lightHeaderLogo.alt}
-          class="h-full"
-        />
-      ) : (
-        <span>Why Grief Matters</span>
-      )
+  <div
+    class:list={[
+      "flex items-center justify-between",
+      "md:block",
+      "xl:container xl:mx-auto",
+    ]}
+  >
+    <a href="/" class="block h-20 lg:h-24 p-3">
+      {
+        lightHeaderLogo ? (
+          <img
+            src={lightHeaderLogo.url}
+            alt={lightHeaderLogo.alt}
+            class="h-full"
+          />
+        ) : (
+          <span>Why Grief Matters</span>
+        )
+      }
+    </a>
+    <MainNav />
+  </div>
+
+  <style>
+    header.scroll-down {
+      top: -100%;
     }
-  </a>
-  <MainNav />
+  </style>
+
+  <script>
+    import throttle from "lodash/throttle";
+
+    const header = document.querySelector("#site-header");
+
+    let lastScrollPosition = 0;
+
+    function handleScroll() {
+      const headerFocussed = header?.contains(document.activeElement);
+      const scrollingDown = lastScrollPosition < scrollY;
+
+      if (!headerFocussed && scrollingDown) {
+        header?.classList.add("scroll-down");
+      } else {
+        header?.classList.remove("scroll-down");
+      }
+
+      lastScrollPosition = scrollY;
+    }
+
+    const throttledScrollHandler = throttle(handleScroll, 250);
+
+    window.addEventListener("scroll", throttledScrollHandler);
+  </script>
 </header>
-
-<style>
-  header.scroll-down {
-    top: -100%;
-  }
-</style>
-
-<script>
-  import throttle from "lodash/throttle";
-
-  const header = document.querySelector("#site-header");
-
-  let lastScrollPosition = 0;
-
-  function handleScroll() {
-    const headerFocussed = header?.contains(document.activeElement);
-    const scrollingDown = lastScrollPosition < scrollY;
-
-    if (!headerFocussed && scrollingDown) {
-      header?.classList.add("scroll-down");
-    } else {
-      header?.classList.remove("scroll-down");
-    }
-
-    lastScrollPosition = scrollY;
-  }
-
-  const throttledScrollHandler = throttle(handleScroll, 250);
-
-  window.addEventListener("scroll", throttledScrollHandler);
-</script>

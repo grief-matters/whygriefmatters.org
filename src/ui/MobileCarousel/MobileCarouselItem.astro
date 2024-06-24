@@ -1,14 +1,24 @@
 ---
-interface Props {
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+interface AdditionalProps {
   id: string;
 }
 
-const { id } = Astro.props;
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & AdditionalProps;
+
+const { as: Tag = "div", id, ...attrs } = Astro.props;
 ---
 
-<div
-  class:list={["carousel-item", "snap-start", "shrink-0 w-full"]}
+<Tag
   id={`${id}--carousel-item`}
+  class:list={[
+    "carousel-item",
+    "snap-start lg:snap-none",
+    "shrink-0 w-full",
+    "sm:w-1/2 lg:w-1/3",
+  ]}
+  {...attrs}
 >
   <slot />
-</div>
+</Tag>
