@@ -1,5 +1,5 @@
 ---
-import CollapsibleContentNew from "@ui/Collapsible/CollapsibleContentNew.astro";
+import CollapsibleContent from "@ui/Collapsible/CollapsibleContent.astro";
 import CollapsibleContentButton from "@ui/Collapsible/CollapsibleContentButton.astro";
 import CollapsibleContentContent from "@ui/Collapsible/CollapsibleContentContent.astro";
 
@@ -37,7 +37,7 @@ const navContentContainerClassList = ["pt-3 pb-6 px-3 xl:container xl:mx-auto"];
 ---
 
 {/* Mobile Nav Only */}
-<CollapsibleContentNew>
+<CollapsibleContent>
   <CollapsibleContentButton
     slot="button"
     class:list={[
@@ -94,7 +94,7 @@ const navContentContainerClassList = ["pt-3 pb-6 px-3 xl:container xl:mx-auto"];
         */
     }
 
-    <CollapsibleContentNew>
+    <CollapsibleContent>
       <CollapsibleContentButton
         slot="button"
         class:list={[...navButtonClassList]}
@@ -121,8 +121,8 @@ const navContentContainerClassList = ["pt-3 pb-6 px-3 xl:container xl:mx-auto"];
           </ul>
         </div>
       </CollapsibleContentContent>
-    </CollapsibleContentNew>
-    <CollapsibleContentNew>
+    </CollapsibleContent>
+    <CollapsibleContent>
       <CollapsibleContentButton
         slot="button"
         class:list={[...navButtonClassList]}
@@ -146,8 +146,8 @@ const navContentContainerClassList = ["pt-3 pb-6 px-3 xl:container xl:mx-auto"];
           }
         </div>
       </CollapsibleContentContent>
-    </CollapsibleContentNew>
-    <CollapsibleContentNew>
+    </CollapsibleContent>
+    <CollapsibleContent>
       <CollapsibleContentButton
         slot="button"
         class:list={[...navButtonClassList]}
@@ -208,7 +208,7 @@ const navContentContainerClassList = ["pt-3 pb-6 px-3 xl:container xl:mx-auto"];
           }
         </div>
       </CollapsibleContentContent>
-    </CollapsibleContentNew>
+    </CollapsibleContent>
     <a href="#" class:list={[...navButtonClassList]}>
       <span
         class:list={[
@@ -234,4 +234,4 @@ const navContentContainerClassList = ["pt-3 pb-6 px-3 xl:container xl:mx-auto"];
       >
     </a>
   </CollapsibleContentContent>
-</CollapsibleContentNew>
+</CollapsibleContent>

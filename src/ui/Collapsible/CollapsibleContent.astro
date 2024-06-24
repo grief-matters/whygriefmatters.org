@@ -1,177 +1,88 @@
----
-import {
-  tailwindBreapointToPixelWidthMap,
-  type TailwindBreakpoint,
-} from "@common/tailwind-helpers";
-
-interface Props {
-  // children: any[];
-  id: string;
-  disableAtBreakpoint?: TailwindBreakpoint;
-  elementDisplayClass?: "block" | "flex";
-  elementContainerClassList?: Array<string>;
-  contentContainerClassList?: Array<string>;
-  buttonClassList?: Array<string>;
-  showOverlay?: boolean;
-}
-
-const {
-  elementDisplayClass = "block",
-  disableAtBreakpoint,
-  elementContainerClassList,
-  buttonClassList,
-  contentContainerClassList,
-  id,
-} = Astro.props;
-
-const buttonId = `${id}-button`;
-const containerId = `${id}-container`;
-
-const disableAtBreakpointData = disableAtBreakpoint
-  ? tailwindBreapointToPixelWidthMap[disableAtBreakpoint]
-  : undefined;
----
-
-<collapsible-content
-  data-display={elementDisplayClass}
-  data-disable-at-breakpoint={disableAtBreakpointData}
-  data-button-id={buttonId}
-  data-container-id={containerId}
-  class:list={[elementDisplayClass, elementContainerClassList]}
->
-  {/* This button toggles show/hide */}
-  <button id={buttonId} type="button" class:list={buttonClassList}>
-    <div class:list={["pointer-events-none"]}>
-      <slot name="button" />
-    </div>
-  </button>
-
-  {/* This is the outermost container that manages visibility of the panel */}
-  <div id={containerId} class:list={["hidden", contentContainerClassList]}>
-    <div class="">
-      <slot name="content" />
-    </div>
-  </div>
-</collapsible-content>
+<collapsible-content-new>
+  <slot name="button" />
+  <slot name="content" />
+</collapsible-content-new>
 
 <script>
-  class CollapsibleContent extends HTMLElement {
+  class CollapsibleContentNew extends HTMLElement {
+    isOpen: boolean;
+    button: Element | null;
+    content: Element | null;
+
+    closeButton: Element | null;
+
+    chevron: Element | null;
+
     constructor() {
       super();
+      this.isOpen = false;
+      this.button = null;
+      this.content = null;
+      this.closeButton = null;
+      this.chevron = null;
+
+      // Ensure the handleCloseFromDocumentClick has the correct 'this'
+      this.handleCloseFromDocumentClick =
+        this.handleCloseFromDocumentClick.bind(this);
     }
 
     connectedCallback() {
-      let init = false;
-      let enabled = true;
-
-      const buttonId = this.dataset.buttonId;
-      const containerId = this.dataset.containerId;
-      const disableAtBreakpoint = this.dataset.disableAtBreakpoint;
-
-      const openButton = this.querySelector(`#${buttonId}`);
-      const container = this.querySelector(`#${containerId}`);
-
-      const contentArea = this.querySelector(
-        ".collapsible-content-content-area"
-      );
-      const closeButton = this.querySelector(
+      this.button = this.querySelector(".collapsible-content-button");
+      this.content = this.querySelector(".collapsible-content-content");
+      this.closeButton = this.querySelector(
         ".collapsible-content-close-button"
       );
-      const displayClass = this.dataset.display ?? "block";
 
-      const toggleOpen = () => {
-        container?.classList.toggle("hidden");
-        container?.classList.toggle(displayClass);
-      };
+      this.chevron = this.querySelector(".chevron");
 
-      const close = () => {
-        container?.classList.remove(displayClass);
-        container?.classList.add("hidden");
-      };
-
-      const handleCloseButtonClick = (e: Event) => {
-        close();
-        e.stopPropagation();
-      };
-
-      const handleCloseFromOutsideContentAreaClick = (e: Event) => {
-        if ((e.target as Element).id === buttonId) {
-          return;
-        }
-
-        if (!contentArea?.contains(e.target as Node)) {
-          close();
-        }
-      };
-
-      const handleCloseFromDocumentClick = (e: Event) => {
-        if (!this.contains(e.target as Node)) {
-          close();
-        }
-      };
-
-      const addEventListeners = () => {
-        openButton?.addEventListener("click", toggleOpen);
-        closeButton?.addEventListener("click", handleCloseButtonClick);
-
-        this.addEventListener("click", handleCloseFromOutsideContentAreaClick);
-
-        document.addEventListener("click", handleCloseFromDocumentClick);
-      };
-
-      const removeEventListeners = () => {
-        openButton?.removeEventListener("click", toggleOpen);
-        closeButton?.removeEventListener("click", handleCloseButtonClick);
-
-        this.removeEventListener(
-          "click",
-          handleCloseFromOutsideContentAreaClick
-        );
-
-        document.removeEventListener("click", handleCloseFromDocumentClick);
-      };
-
-      const disableCollapsible = () => {
-        removeEventListeners();
-        openButton?.classList.add("hidden");
-        closeButton?.classList.add("hidden");
-        container?.classList.remove("hidden");
-        container?.classList.add(displayClass);
-        enabled = false;
-      };
-
-      const enableCollapsible = () => {
-        addEventListeners();
-        openButton?.classList.remove("hidden");
-        closeButton?.classList.remove("hidden");
-        close();
-        enabled = true;
-      };
-
-      const handleEventListenersAtBreakpoint = () => {
-        const isAboveBreakpoint = window.matchMedia(
-          `(min-width: ${disableAtBreakpoint}px)`
-        ).matches;
-
-        if (isAboveBreakpoint && enabled) {
-          disableCollapsible();
-          return;
-        }
-
-        if (!isAboveBreakpoint && (!init || !enabled)) {
-          enableCollapsible();
-        }
-      };
-
-      if (typeof disableAtBreakpoint === "undefined") {
-        addEventListeners();
-      } else {
-        handleEventListenersAtBreakpoint();
+      if (this.button) {
+        this.button.addEventListener("click", () => this.toggleOpen());
       }
 
-      window.addEventListener("resize", handleEventListenersAtBreakpoint);
+      if (this.closeButton) {
+        this.closeButton.addEventListener("click", () => this.toggleOpen());
+      }
+
+      document.addEventListener("click", this.handleCloseFromDocumentClick);
     }
+
+    disconnectedCallback() {
+      document.removeEventListener("click", this.handleCloseFromDocumentClick);
+    }
+
+    // This is ok for now as we're only using collapsible in the main nav
+    // but transition classes should be dealt with via data-set if we need different transitions elsewhere
+    toggleOpen = () => {
+      this.isOpen = !this.isOpen;
+
+      if (this.content) {
+        if (this.isOpen) {
+          this.content.classList.remove("hidden");
+          requestAnimationFrame(() => {
+            this.content?.classList.remove("opacity-0");
+            this.content?.classList.add("opacity-100");
+          });
+
+          this.chevron?.classList.add("rotate-180");
+        } else {
+          this.content.classList.remove("opacity-100");
+          this.content.classList.add("opacity-0");
+
+          this.chevron?.classList.remove("rotate-180");
+
+          setTimeout(() => this.content?.classList.add("hidden"), 300);
+        }
+      }
+    };
+
+    handleCloseFromDocumentClick = (e: Event) => {
+      if (!this.contains(e.target as Element)) {
+        if (this.isOpen) {
+          this.toggleOpen();
+        }
+      }
+    };
   }
 
-  customElements.define("collapsible-content", CollapsibleContent);
+  customElements.define("collapsible-content-new", CollapsibleContentNew);
 </script>
