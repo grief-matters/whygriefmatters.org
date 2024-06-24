@@ -2,8 +2,6 @@
 import { getImageUrl, getLogoSet } from "@common/client";
 
 import MainNav from "./MainNav/MainNav.astro";
-import { wgmDesignSystem as ds } from "@common/design-system";
-import MainNavTest from "./MainNav/MainNavTest.astro";
 
 const logoSet = await getLogoSet();
 
@@ -47,7 +45,7 @@ const lightHeaderLogo = rawLightLogo
         )
       }
     </a>
-    <MainNavTest />
+    <MainNav />
   </div>
 
   <style>
