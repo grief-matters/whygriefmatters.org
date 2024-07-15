@@ -7,6 +7,7 @@ import {
   type StyleVariant,
   type StyleVariantClassListMap,
 } from "@common/variants";
+import type { DsColorVariant } from "@common/design-system";
 
 // interface Props {
 //   categories: CategoryTreeItem[];
@@ -16,11 +17,17 @@ import {
 
 interface Props {
   categories: CategoryTreeItem[];
+  variant?: "default" | "contrast";
   startingVariant?: StyleVariant;
   getPath?(slug: string): string;
 }
 
-const { categories, startingVariant = "primary", getPath } = Astro.props;
+const {
+  categories,
+  variant = "default",
+  startingVariant = "primary",
+  getPath,
+} = Astro.props;
 
 // const linkLevels: Array<LinkLevel> = [
 //   "primary",
@@ -52,6 +59,7 @@ const listItemStyleVariantClassListMap: StyleVariantClassListMap = {
           href={typeof getPath === "function" ? getPath(c.slug) : `/${c.slug}`}
           label={c.title}
           variant={startingVariant}
+          colorVariant={variant}
         >
           {c.title}
         </MainNavLink>
@@ -59,6 +67,7 @@ const listItemStyleVariantClassListMap: StyleVariantClassListMap = {
           <Astro.self
             categories={c.children}
             startingVariant={nextVariant}
+            variant={variant}
             getPath={getPath}
           />
         )}

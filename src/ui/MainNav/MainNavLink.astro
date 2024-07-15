@@ -1,19 +1,34 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import type { StyleVariant, StyleVariantClassListMap } from "@common/variants";
+import { wgmDesignSystem as ds } from "@common/design-system";
 
 interface Props extends HTMLAttributes<"a"> {
   label: string;
   variant?: StyleVariant;
+  colorVariant?: "default" | "contrast";
 }
 
-const { label, variant = "primary", ...attrs } = Astro.props;
+const {
+  label,
+  colorVariant = "default",
+  variant = "primary",
+  ...attrs
+} = Astro.props;
+
+const hoverClass =
+  colorVariant === "default"
+    ? ds.decoration.color?.primary.hover
+    : ds.decoration.color?.primary.contrastHover;
 
 const baseClassList = [
   "inline-block",
   "mb-1",
-  "text-stone-50 font-serif",
-  "underline underline-offset-4 decoration-slate-50/25 hover:decoration-slate-50 transition",
+  ds.typography.color?.primary?.[colorVariant],
+  "font-serif",
+  "underline underline-offset-4",
+  hoverClass,
+  "transition",
 ];
 
 const styleVariantClassListMap: StyleVariantClassListMap = {
