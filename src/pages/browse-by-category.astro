@@ -1,0 +1,17 @@
+---
+import { type CategoryTreeItem, buildCategoryTree } from "@common/category";
+import { getFeaturedTopics, getCategories } from "@common/client";
+import MainLayout from "@layouts/MainLayout.astro";
+import MainNavRecursiveCategoryTree from "@ui/MainNav/MainNavRecursiveCategoryTree.astro";
+
+const featuredTopics = await getFeaturedTopics();
+
+const categories = await getCategories();
+const masterCategoryTree: CategoryTreeItem[] = buildCategoryTree(categories);
+---
+
+<MainLayout>
+  <nav class:list={["p-6"]}>
+    <MainNavRecursiveCategoryTree categories={masterCategoryTree} />
+  </nav>
+</MainLayout>
