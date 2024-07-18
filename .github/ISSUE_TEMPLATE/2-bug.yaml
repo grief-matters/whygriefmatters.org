@@ -1,0 +1,56 @@
+name: Bug
+description: Create an Issue to track a Bug.
+title: "WEB: "
+labels: ["bug"]
+projects: ["grief-matters/1"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Bug description
+      description: Describe the bug including steps to reproduce it
+      placeholder: |
+        I see the bug when I...
+
+        1. Do this thing
+        2. Do the next thing
+      value: |
+        I see the bug when I...
+
+        1. Do this thing
+        2. Do the next thing
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: Describe what you are expecting to happen
+      placeholder: |
+        I am expecting...
+      value: |
+        I am expecting...
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+  - type: textarea
+    id: other-info
+    attributes:
+      label: Any relevant info
+      description: |
+        Links? References? Anything that will give us more context about the issue you are encountering!
+
+        Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+      placeholder: |
+        Any other relevant information...
+    validations:
+      required: false
