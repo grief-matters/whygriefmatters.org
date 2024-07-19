@@ -5,26 +5,30 @@ labels: ["bug"]
 projects: ["grief-matters/1"]
 body:
   - type: textarea
-    id: what-happened
+    id: bug-description
     attributes:
-      label: Bug description
-      description: Describe the bug including steps to reproduce it
+      label: Bug Description
+      description: Describe the bug
       placeholder: |
-        I see the bug when I...
-
-        1. Do this thing
-        2. Do the next thing
-      value: |
-        I see the bug when I...
-
-        1. Do this thing
-        2. Do the next thing
+        e.g. The something button does not activate the other thing...
+    validations:
+      required: true
+  - type: textarea
+    id: bug-repro
+    attributes:
+      label: Steps to Reproduce
+      description: Describe the steps to make the bug occur
+      placeholder: |
+        e.g...
+        1. Go to this link
+        2. Do this thing
+        3. Watch it explode 💥
     validations:
       required: true
   - type: textarea
     id: expected-behavior
     attributes:
-      label: Expected behavior
+      label: Expected Behavior
       description: Describe what you are expecting to happen
       placeholder: |
         I am expecting...
