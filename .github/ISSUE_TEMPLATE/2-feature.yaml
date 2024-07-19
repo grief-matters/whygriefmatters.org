@@ -1,0 +1,48 @@
+name: Feature
+description: Create an Issue to track a Feature.
+title: "WEB > "
+labels: ["feature"]
+projects: ["grief-matters/1"]
+body:
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: Describe the Feature. What problem are we trying to solve? What value will this unlock for us or our users?
+      placeholder: |
+        e.g...
+        By adding X our users will be able to do Y, this helps us with Z
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Is there related information, existing features, screenshots, anything that might be relevant to arriving at the right solution?
+      placeholder: |
+        e.g...
+        www.example.com provides this functionality, as a competitor, we should offer something similar. Here are some screenshots of how their feature looks...
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What is the "Definition of Done" for this Feature? What should exist for the feature to be considered complete?
+      placeholder: |
+        e.g...
+        1. User should be able to submit a thing
+        2. User should receive feedback that they have done a thing
+        3. Thing done should be reflected in an updated UI
+    validations:
+      required: true
+  - type: textarea
+    id: suggested-solution
+    attributes:
+      label: Suggested Solution
+      description: If there is already an idea of how this should be implemented, detail it here
+      placeholder: |
+        e.g...
+        Consider using Cloudflare Pages Functions to deliver the backend for this feature
+    validations:
+      required: false

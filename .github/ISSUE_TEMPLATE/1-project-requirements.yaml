@@ -1,0 +1,33 @@
+name: Project Requirements
+description: Create an Issue to track high-level Project Requirements (can be thought of as an 'Epic').
+title: "WEB > "
+labels: ["requirements"]
+projects: ["grief-matters/1"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A **Project Requirements** issue should only be used to track large pieces of work that can be broken down into multiple features. Consider whether a single **Feature** could do the job fine.
+  - type: textarea
+    id: background-and-context
+    attributes:
+      label: Background and Context
+      description: Describe what is being specified - try to keep it high-level
+      placeholder: |
+        e.g...
+        We need a way to take donations because...
+    validations:
+      required: true
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Requirements
+      description: Each requirement should look more or less like the title of a more specific Issue
+      placeholder: |
+        e.g...
+        - [ ] Identify a donor platform
+        - [ ] Implement backend
+        - [ ] Design page template
+        - [ ] Implement template
+    validations:
+      required: true
