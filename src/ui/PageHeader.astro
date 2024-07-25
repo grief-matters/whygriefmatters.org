@@ -22,9 +22,18 @@ const image =
   props.image ??
   fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
 
-const imageUrl = image ? getImageUrl(image.image).url() : null;
-
-const bgVar = `url(${imageUrl})`;
+const smImgUrl = image
+  ? `url(${getImageUrl(image.image).width(640).height(320).url()})`
+  : null;
+const mdImgUrl = image
+  ? `url(${getImageUrl(image.image).width(1024).height(512).url()})`
+  : null;
+const lgImgUrl = image
+  ? `url(${getImageUrl(image.image).width(1280).height(640).url()})`
+  : null;
+const xlImgUrl = image
+  ? `url(${getImageUrl(image.image).width(2560).height(850).url()})`
+  : null;
 
 // const bgClass = ds.background.color?.[props.bgVariant[0]]?.[props.bgVariant[1]];
 
@@ -77,9 +86,29 @@ const bgClass = props.bgVariant
   </h1>
 </header>
 
-<style define:vars={{ bgVar }}>
+<style define:vars={{ smImgUrl, mdImgUrl, lgImgUrl, xlImgUrl }}>
   .page-header-bg {
-    background-image: var(--bgVar);
     background-position: center;
+  }
+
+  @media (max-width: 640px) {
+    .page-header-bg {
+      background-image: var(--smImgUrl);
+    }
+  }
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .page-header-bg {
+      background-image: var(--mdImgUrl);
+    }
+  }
+  @media (min-width: 1025px) and (max-width: 1280px) {
+    .page-header-bg {
+      background-image: var(--lgImgUrl);
+    }
+  }
+  @media (min-width: 1281px) {
+    .page-header-bg {
+      background-image: var(--xlImgUrl);
+    }
   }
 </style>
