@@ -74,9 +74,6 @@ const showTags = props.resource.hasSpanishVersion || props.resource.rating;
   {
     showTags && (
       <div class="my-3">
-        {props.resource.rating && (
-          <Tag>{`Rating: ${props.resource.rating}/10`}</Tag>
-        )}
         {props.resource.hasSpanishVersion && (
           <Tag>{`Available in Spanish`}</Tag>
         )}
