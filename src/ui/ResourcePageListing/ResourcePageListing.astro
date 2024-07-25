@@ -59,20 +59,21 @@ const showTags = props.resource.hasSpanishVersion || props.resource.rating;
     )
   }
 
-  <SimpleTextBlock class:list={["my-1"]}>
-    {props.resource.description || props.resource.title}
-  </SimpleTextBlock>
+  {
+    props.resource.description && (
+      <SimpleTextBlock class:list={["my-1"]}>
+        {props.resource.description}
+      </SimpleTextBlock>
+    )
+  }
 
-  <Subtitle datetime={props.resource.lastUpdated} as="time">
+  <Subtitle class="mt-1" datetime={props.resource.lastUpdated} as="time">
     {`Last updated: ${date}`}
   </Subtitle>
 
   {
     showTags && (
       <div class="my-3">
-        {props.resource.rating && (
-          <Tag>{`Rating: ${props.resource.rating}/10`}</Tag>
-        )}
         {props.resource.hasSpanishVersion && (
           <Tag>{`Available in Spanish`}</Tag>
         )}
