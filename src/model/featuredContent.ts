@@ -40,6 +40,26 @@ export const zResourceLinks = z.object({
   resources: z.array(zResourceLink),
 });
 
+const topicCollectionDisplayOptions = ["none", "topThree", "all"] as const;
+const zTopicCollectionDisplayOption = z.enum(topicCollectionDisplayOptions);
+
+export const zTopicCollectionContentBlock = z.object({
+  showDescription: z.boolean(),
+  showDescriptions: zTopicCollectionDisplayOption,
+  showImages: zTopicCollectionDisplayOption,
+  topicCollection: z.object({
+    description: z.string().nullable(),
+    topics: z.array(
+      z.object({
+        title: z.string(),
+        slug: z.string(),
+        description: z.string().nullable(),
+        image: zImage.nullable(),
+      }),
+    ),
+  }),
+});
+
 export const zFeaturedContentContent = z.discriminatedUnion("contentType", [
   zRowOfThree.extend({ contentType: z.literal("rowOfThree") }),
   zRowOfThreeFeaturedResources.extend({
@@ -50,13 +70,16 @@ export const zFeaturedContentContent = z.discriminatedUnion("contentType", [
   }),
   zResourcePageLinks.extend({ contentType: z.literal("resourcePageLinks") }),
   zResourceLinks.extend({ contentType: z.literal("resourceLinks") }),
+  zTopicCollectionContentBlock.extend({
+    contentType: z.literal("topicCollectionContentBlock"),
+  }),
 ]);
 
 export const zFeaturedContent = z.object({
   title: z.string(),
-  description: zPortableText.optional(),
+  description: zPortableText.nullable(),
   content: z.array(zFeaturedContentContent),
-  featuredContentFooterLink: zResourcePageLink.optional(),
+  featuredContentFooterLink: zResourcePageLink.nullable(),
 });
 
 export type FeaturedContentContent = z.infer<typeof zFeaturedContentContent>;

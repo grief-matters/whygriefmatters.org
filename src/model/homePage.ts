@@ -81,6 +81,24 @@ export const gHomePageDataQuery = groq`
           "url": resourceUrl,
           "type": _type
         }
+      },
+      _type == "topicCollectionContentBlock" => {
+        "contentType": _type,
+        showDescription,
+        showDescriptions,
+        showImages,
+        topicCollection->{
+          description,
+          topics[]->{
+            title,
+            "slug": slug.current,
+            description,
+            image{
+              image,
+              "altText": alt
+            }
+          }
+        }
       }
     },
     featuredContentFooterLink {
@@ -88,9 +106,9 @@ export const gHomePageDataQuery = groq`
       type,
       "population": population->slug.current,
       "category": category->slug.current
-      }
     }
   }
+}
 `;
 
 export type HomePageData = z.infer<typeof zHomePageData>;
