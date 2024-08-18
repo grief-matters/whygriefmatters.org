@@ -1,0 +1,21 @@
+---
+
+---
+
+<a
+  {...externalLinkAttrs}
+  href={to}
+  class:list={[
+    "font-serif italic",
+    ds.typography.color?.primary.default,
+    "p-2",
+    "bg-white",
+    "border-b-4",
+    borderColorClass,
+    ds.border.underline,
+    ds.border.transition,
+    "shadow",
+  ]}
+>
+  <slot />
+</a>

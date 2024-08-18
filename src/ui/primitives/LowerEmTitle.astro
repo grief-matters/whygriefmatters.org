@@ -1,36 +1,40 @@
 ---
-import {
-  getTextColorClassListFromVariant,
-  type DsColorVariant,
+import type { Polymorphic } from "astro/types";
+import type {
+  TypographyColorScheme,
+  TypographyColorSchemeVariant,
+  TypographySize,
 } from "@common/design-system";
-import type { HTMLTag, Polymorphic } from "astro/types";
+
 import words from "lodash/words";
 
-type Props<Tag extends HTMLTag> = {
-  sizeVariant?: "text-lg" | "text-xl" | "text-2xl" | "text-3xl" | "text-4xl";
-  colorVariant?: DsColorVariant;
-  title: string;
-} & Polymorphic<{ as: Tag }>;
+import Heading from "./Heading.astro";
 
-const {
-  as: Tag = "h1",
-  sizeVariant = "text-3xl",
-  colorVariant = ["primary", "default"],
-  title,
-  ...attrs
-} = Astro.props;
+type HeadingHTMLTags = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+
+type OwnProps = {
+  title: string;
+  colorScheme?: TypographyColorScheme;
+  colorSchemeVariant?: TypographyColorSchemeVariant;
+  size?: TypographySize;
+  hoverable?: boolean;
+};
+
+type Props<Tag extends HeadingHTMLTags> = Polymorphic<{ as: Tag }> & OwnProps;
+
+const { as: Tag = "h1", ...props }: Props<HeadingHTMLTags> = Astro.props;
 ---
 
-<Tag
-  class:list={[
-    "font-serif lowercase font-light",
-    "text-3xl",
-    getTextColorClassListFromVariant(colorVariant),
-  ]}
-  {...attrs}
+<Heading
+  as={Tag}
+  size={props.size}
+  hoverable={props.hoverable}
+  colorScheme={props.colorScheme}
+  colorSchemeVariant={props.colorSchemeVariant}
+  class="lowercase"
 >
   {
-    words(title).map((titlePart, i, arr) => {
+    words(props.title).map((titlePart, i, arr) => {
       switch (true) {
         case i + 1 === arr.length:
           return (
@@ -45,4 +49,4 @@ const {
       }
     })
   }
-</Tag>
+</Heading>

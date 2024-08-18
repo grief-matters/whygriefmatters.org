@@ -1,0 +1,38 @@
+---
+import type { ComponentProps, HTMLAttributes } from "astro/types";
+
+import { wgmDesignSystem as ds } from "@common/design-system";
+
+import Card from "./primitives/Card.astro";
+
+interface Props extends HTMLAttributes<"a"> {
+  label: string;
+  external?: boolean;
+  cardProps?: ComponentProps<typeof Card>;
+}
+
+const { label, external, cardProps, ...attrs } = Astro.props;
+
+const externalLinkAttrs = external
+  ? {
+      rel: "noopener",
+      target: "_blank",
+    }
+  : {};
+---
+
+<a
+  class:list={[
+    "font-serif italic",
+    "font-serif italic",
+    ds.typography.color?.primary.default,
+  ]}
+  {...attrs}
+  {...externalLinkAttrs}
+>
+  <Card hoverable {...cardProps}>
+    <div class="p-2">
+      {label}
+    </div>
+  </Card>
+</a>

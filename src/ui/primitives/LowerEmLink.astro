@@ -1,17 +1,18 @@
 ---
-import { wgmDesignSystem as ds } from "@common/design-system";
+import type { ComponentProps } from "astro/types";
 
-import LowerEmTitle from "./LowerEmTitle.astro";
+import Link from "./Link.astro";
 
-interface Props {
-  to: string;
-  label: string;
-}
+type Props = ComponentProps<typeof Link>;
 
-const { to, label } = Astro.props;
+const props = Astro.props;
 ---
 
-<LowerEmTitle
+<Link {...props}>
+  <slot />
+</Link>
+
+<!-- <LowerEmTitle
   as="a"
   href={to}
   title={label}
@@ -22,4 +23,4 @@ const { to, label } = Astro.props;
     ds.decoration.transition,
     ds.decoration.color?.primary.hover,
   ]}
-/>
+/> -->

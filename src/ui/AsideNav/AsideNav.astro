@@ -25,10 +25,13 @@ const { title, links, colorVariant = "primary" } = Astro.props;
       links.map((link) => (
         <li>
           <Link
-            to={link.to}
-            label={link.label}
-            colorVariant={[colorVariant, "contrast"]}
-          />
+            href={link.to}
+            colorScheme={colorVariant}
+            colorSchemeVariant="contrast"
+            size="sm"
+          >
+            {link.label}
+          </Link>
         </li>
       ))
     }

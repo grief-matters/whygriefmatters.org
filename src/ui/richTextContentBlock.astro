@@ -1,17 +1,23 @@
 ---
-import type { PortableText } from "@model/portableText";
-import { toHTML } from "@portabletext/to-html";
 import type { HTMLTag, Polymorphic } from "astro/types";
+import type { PortableText } from "@model/portableText";
 
-type Props<Element extends HTMLTag> = {
+import { toHTML } from "@portabletext/to-html";
+
+type SectioningHTMLTags = "article" | "section" | "div" | "aside";
+
+type OwnProps = {
   portableText: PortableText;
-} & Polymorphic<{ as: Element }>;
+};
 
-const { as: Element = "div", portableText, invert, ...attrs } = Astro.props;
+type Props<Tag extends SectioningHTMLTags> = Polymorphic<{ as: Tag }> &
+  OwnProps;
+
+const { as: Tag = "div", portableText, invert, ...attrs } = Astro.props;
 
 const htmlString = toHTML(portableText, { components: { hardBreak: false } });
 ---
 
-<Element class:list={["prose prose-wgm"]} {...attrs}>
+<Tag class:list={["prose prose-wgm"]} {...attrs}>
   <Fragment set:html={htmlString} />
-</Element>
+</Tag>

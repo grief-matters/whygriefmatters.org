@@ -1,0 +1,33 @@
+---
+import sample from "lodash/sample";
+
+import { getFallbackImageCollection, getImageUrl } from "@common/client";
+
+import type { SanityImage } from "@model/image";
+
+import fallbackImg from "../../img/fallback.jpg";
+
+interface Props {
+  image: SanityImage | null;
+}
+
+const props = Astro.props;
+
+let imageToGet = props.image;
+
+if (imageToGet === null) {
+  const fallbacks = await getFallbackImageCollection();
+  imageToGet = sample(fallbacks) ?? null;
+}
+
+const imgSrc = imageToGet
+  ? getImageUrl(imageToGet.image).width(640).height(450).url()
+  : fallbackImg.src;
+---
+
+<img
+  src={imgSrc}
+  alt={imageToGet?.altText ??
+    "Looking through reeds over a tranquil lake on a sunny day."}
+  loading="lazy"
+/>
