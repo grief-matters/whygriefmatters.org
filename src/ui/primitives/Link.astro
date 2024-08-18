@@ -1,27 +1,22 @@
 ---
-import {
-  type DsColorVariant,
-  wgmDesignSystem as ds,
-  getTextColorClassListFromVariant,
-  getHoverDecorationClassFromTextColorVariant,
-} from "@common/design-system";
-import type { TwFontSizeVariant } from "@common/tailwind-helpers";
+import type { HTMLAttributes } from "astro/types";
 
-interface Props {
-  to: string;
-  label: string;
+import {
+  wgmDesignSystem as ds,
+  type TypographyColorScheme,
+  type TypographyColorSchemeVariant,
+  type TypographySize,
+} from "@common/design-system";
+
+interface Props extends HTMLAttributes<"a"> {
+  colorScheme?: TypographyColorScheme;
+  colorSchemeVariant?: TypographyColorSchemeVariant;
+  size?: TypographySize;
   external?: boolean;
-  sizeVariant?: TwFontSizeVariant;
-  colorVariant?: DsColorVariant;
 }
 
-const {
-  to,
-  label,
-  external,
-  sizeVariant,
-  colorVariant = ["primary", "default"],
-} = Astro.props;
+const { colorScheme, colorSchemeVariant, size, external, ...attrs } =
+  Astro.props;
 
 const externalLinkAttrs = external
   ? {
@@ -29,19 +24,24 @@ const externalLinkAttrs = external
       target: "_blank",
     }
   : {};
+
+const decorationColor =
+  colorSchemeVariant === "contrast" ? "contrastHover" : "hover";
 ---
 
 <a
-  {...externalLinkAttrs}
-  href={to}
   class:list={[
     "font-serif",
-    sizeVariant,
-    getTextColorClassListFromVariant(colorVariant),
-    getHoverDecorationClassFromTextColorVariant(colorVariant),
+    ds.typography.size[size ?? "base"],
+    ds.typography.color[colorScheme ?? "primary"][
+      colorSchemeVariant ?? "default"
+    ],
+    ds.decoration.color[colorScheme ?? "primary"][decorationColor],
     ds.decoration.underline,
     ds.decoration.transition,
   ]}
+  {...attrs}
+  {...externalLinkAttrs}
 >
-  {label}
+  <slot />
 </a>

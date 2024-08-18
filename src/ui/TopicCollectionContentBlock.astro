@@ -1,0 +1,110 @@
+---
+import partition from "lodash/partition";
+
+import { wgmDesignSystem as ds } from "@common/design-system";
+import type {
+  Topic,
+  TopicCollectionDisplayOption,
+} from "@model/featuredContent";
+
+import ResourceLink from "./ResourceLink.astro";
+import ResourcePageLinkTile from "./ResourcePageLinkTile.astro";
+import Card from "./primitives/Card.astro";
+import CMSImage from "./primitives/CMSImage.astro";
+import Heading from "./primitives/Heading.astro";
+import Text from "./primitives/Text.astro";
+import TitleLink from "./primitives/TitleLink.astro";
+
+interface Props {
+  showCollectionDescription: boolean;
+  showTopicDescriptions: TopicCollectionDisplayOption;
+  showTopicImages: TopicCollectionDisplayOption;
+  collection: {
+    description: string | null;
+    topics: Array<Topic>;
+  };
+}
+
+const props = Astro.props;
+
+const gridItems: Array<Topic> = [];
+const flexItems: Array<Topic> = [];
+
+props.collection.topics.forEach((topic, i) => {
+  if (
+    props.showTopicDescriptions === "all" ||
+    props.showTopicImages === "all"
+  ) {
+    gridItems.push(topic);
+    return;
+  }
+
+  if (
+    props.showTopicDescriptions === "topThree" ||
+    props.showTopicImages === "topThree"
+  ) {
+    i < 3 ? gridItems.push(topic) : flexItems.push(topic);
+    return;
+  }
+
+  flexItems.push(topic);
+});
+
+const shouldShowImage = (idx: number): boolean => {
+  return (
+    (props.showTopicImages === "topThree" && idx < 3) ||
+    props.showTopicImages === "all"
+  );
+};
+
+const shouldShowDescription = (idx: number): boolean => {
+  return (
+    (props.showTopicDescriptions === "topThree" && idx < 3) ||
+    props.showTopicDescriptions === "all"
+  );
+};
+---
+
+<div>
+  {
+    props.showCollectionDescription && (
+      <p
+        class:list={[
+          "mb-6",
+          "text-center font-serif",
+          ds.typography?.color?.primary.default,
+        ]}
+      >
+        {props.collection.description}
+      </p>
+    )
+  }
+  {
+    gridItems.length > 0 && (
+      <div class:list={["grid grid-cols-3 gap-4 mb-6"]}>
+        {gridItems.map((topic, i) => (
+          <Card hoverable>
+            <a href={topic.slug} class="block h-full">
+              {shouldShowImage(i) && <CMSImage image={topic.image} />}
+              <div class="p-3">
+                <Heading as="h3" class="mb-1">
+                  {topic.title}
+                </Heading>
+                {shouldShowDescription(i) && <Text>{topic.description}</Text>}
+              </div>
+            </a>
+          </Card>
+        ))}
+      </div>
+    )
+  }
+  {
+    flexItems.length > 0 && (
+      <div class:list={["flex flex-wrap justify-center gap-4 mb-6"]}>
+        {flexItems.map((topic) => (
+          <ResourceLink to={topic.slug} label={topic.title} />
+        ))}
+      </div>
+    )
+  }
+</div>

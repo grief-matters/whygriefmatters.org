@@ -1,16 +1,19 @@
 ---
-import type { FeaturedContent, ResourcePageLink } from "@model/featuredContent";
+import type { FeaturedContent } from "@model/featuredContent";
 
 import { getImageUrl } from "@common/client";
+import { getRoute } from "@common/route";
 
 import RichTextContentBlock from "./richTextContentBlock.astro";
-import LowerEmTitle from "./primitives/LowerEmTitle.astro";
 import FeaturedResources from "./FeaturedResources.astro";
 import MobileCarousel from "./MobileCarousel/MobileCarousel.astro";
 import MobileCarouselItem from "./MobileCarousel/MobileCarouselItem.astro";
 import MobileCarouselControl from "./MobileCarousel/MobileCarouselControl.astro";
-import LowerEmLink from "./primitives/LowerEmLink.astro";
-import ResourceLink from "./ResourceLink.astro";
+import TopicCollectionContentBlock from "./TopicCollectionContentBlock.astro";
+import Heading from "./primitives/Heading.astro";
+import EmphasizedEllipsisText from "./primitives/EmphasizedEllipsisText.astro";
+import Link from "./primitives/Link.astro";
+import CardLink from "./CardLink.astro";
 
 interface Props {
   featuredContent: FeaturedContent;
@@ -27,14 +30,6 @@ function getAdjustedIndex(arrLength: number, index: number) {
   return adjustedIndex;
 }
 
-function getRoute(pageLink: ResourcePageLink): string {
-  const slugParts = [pageLink.type, pageLink.category, pageLink.population]
-    .filter((part) => Boolean(part))
-    .join("/");
-
-  return `/${slugParts}`;
-}
-
 const { featuredContent, indexInCollection = 0 } = Astro.props;
 
 const bgClasses = ["bg-stone-50", "bg-stone-100"];
@@ -46,16 +41,13 @@ const bgClass = bgClasses[adjustedIndex];
 const featurePanelId = crypto.randomUUID();
 ---
 
-<section class:list={["pt-3", bgClass]}>
-  <div class="mx-auto">
-    <LowerEmTitle
-      as="h2"
-      title={featuredContent.title}
-      class:list={[
-        "py-4 px-3",
-        "text-3xl text-center font-serif lowercase font-light",
-      ]}
-    />
+<section class:list={["py-3", bgClass]}>
+  <div class:list={["container mx-auto"]}>
+    <div class="mx-auto py-4 text-center">
+      <Heading as="h2" size="xl3">
+        <EmphasizedEllipsisText text={featuredContent.title} />
+      </Heading>
+    </div>
     {
       featuredContent.description && (
         <RichTextContentBlock
@@ -115,16 +107,20 @@ const featurePanelId = crypto.randomUUID();
 
           case "resourceLinks":
             return (
-              <div class:list={["flex flex-wrap justify-center gap-4", "p-3"]}>
-                {content.resources.map((link) => (
-                  <ResourceLink
-                    to={link.url}
-                    label={link.title}
-                    resourceType={link.type ?? undefined}
-                    external
-                  />
-                ))}
-              </div>
+              <>
+                <div
+                  class:list={["flex flex-wrap justify-center gap-4", "p-3"]}
+                >
+                  {content.resources.map((link) => (
+                    <CardLink
+                      href={link.url}
+                      label={link.title}
+                      cardProps={{ resourceType: link.type ?? undefined }}
+                      external
+                    />
+                  ))}
+                </div>
+              </>
             );
 
           case "resourcePageLinks":
@@ -133,13 +129,25 @@ const featurePanelId = crypto.randomUUID();
                 class:list={["flex", "flex-wrap", "justify-center", "gap-4"]}
               >
                 {content.links.map((pageLink) => (
-                  <ResourceLink
-                    to={getRoute(pageLink)}
+                  <CardLink
+                    href={getRoute(pageLink)}
                     label={pageLink.label}
-                    resourceType={pageLink.type ?? undefined}
+                    cardProps={{
+                      resourceType: pageLink.type ?? undefined,
+                    }}
                   />
                 ))}
               </div>
+            );
+
+          case "topicCollectionContentBlock":
+            return (
+              <TopicCollectionContentBlock
+                showCollectionDescription={content.showDescription}
+                showTopicDescriptions={content.showDescriptions}
+                showTopicImages={content.showImages}
+                collection={content.topicCollection}
+              />
             );
         }
       })
@@ -147,10 +155,14 @@ const featurePanelId = crypto.randomUUID();
     {
       featuredContent.featuredContentFooterLink && (
         <div class="mx-auto py-6 text-center">
-          <LowerEmLink
-            to={getRoute(featuredContent.featuredContentFooterLink)}
-            label={featuredContent.featuredContentFooterLink.label}
-          />
+          <Link
+            href={getRoute(featuredContent.featuredContentFooterLink)}
+            size="xl2"
+          >
+            <EmphasizedEllipsisText
+              text={featuredContent.featuredContentFooterLink.label}
+            />
+          </Link>
         </div>
       )
     }

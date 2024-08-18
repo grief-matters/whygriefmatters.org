@@ -9,7 +9,9 @@ import MainLayout from "@layouts/MainLayout.astro";
 import RichTextContentBlock from "@ui/richTextContentBlock.astro";
 import FeaturePanel from "@ui/FeaturePanel.astro";
 import Hero from "@ui/Hero.astro";
-import LowerEmTitle from "@ui/primitives/LowerEmTitle.astro";
+import Heading from "@ui/primitives/Heading.astro";
+import Text from "@ui/primitives/Text.astro";
+import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
 
 const homePageData = await getHomePageData();
 
@@ -53,11 +55,12 @@ const coreValuesBgColors = [
     </div>
   </Hero>
   <section class="mx-auto pb-6 mt-3 mb-6">
-    <LowerEmTitle
-      as="h2"
-      title="Our Mission"
-      class:list={["py-4", "text-center", "mx-auto"]}
-    />
+    <div class="mx-auto py-4 text-center">
+      <Heading as="h2" size="xl3">
+        <EmphasizedEllipsisText text="Our Mission" />
+      </Heading>
+    </div>
+
     <RichTextContentBlock
       class:list={[
         "px-4 mx-auto",
@@ -69,17 +72,12 @@ const coreValuesBgColors = [
   </section>
 
   <section>
-    <LowerEmTitle
-      as="h2"
-      title="Our Values"
-      class:list={[
-        "py-4",
-        "text-center",
-        ds.background.color?.primary.default,
-        ds.typography.color?.primary.contrast,
-      ]}
-    />
     <div class="bg-gradient-to-r from-sky-700 from-50% to-sky-400 to-50%">
+      <div class="mx-auto py-4 text-center bg-sky-800">
+        <Heading colorSchemeVariant="contrast" as="h2" size="xl3">
+          <EmphasizedEllipsisText text="Our Values" />
+        </Heading>
+      </div>
       <div class="mx-auto sm:grid sm:grid-cols-2 xl:grid-cols-4 xl:container">
         {
           homePageData.org.coreValues.map((coreValue, i) => (
@@ -92,19 +90,20 @@ const coreValuesBgColors = [
                 coreValuesBgColors[i],
               ]}
             >
-              <div class="text-center">
-                <h3
-                  class:list={[
-                    "mb-4",
-                    "text-3xl font-thin font-serif italic",
-                    "first-letter:font-normal first-letter:text-4xl",
-                  ]}
+              <div class="text-center mb-2">
+                <Heading
+                  as="h3"
+                  size="xl2"
+                  colorScheme="primary"
+                  colorSchemeVariant="contrast"
+                  class:list={["mb-3 font-medium"]}
                 >
                   {coreValue.title}
-                </h3>
-                <p class="font-light font-serif italic leading-loose mb-3">
+                </Heading>
+                <p class="font-light font-serif italic leading-loose mb-3" />
+                <Text colorScheme="primary" colorSchemeVariant="contrast">
                   {coreValue.description}
-                </p>
+                </Text>
               </div>
             </div>
           ))

@@ -2,7 +2,7 @@
 import { getCrisisResources } from "@common/client";
 import MainLayout from "@layouts/MainLayout.astro";
 import Subtitle from "@ui/primitives/Subtitle.astro";
-import Title from "@ui/primitives/Title.astro";
+import Title from "@ui/primitives/Heading.astro";
 import TitleLink from "@ui/primitives/TitleLink.astro";
 import RichTextContentBlock from "@ui/richTextContentBlock.astro";
 
@@ -10,7 +10,7 @@ const crisisResources = await getCrisisResources();
 ---
 
 <MainLayout>
-  <Title sizeVariant="text-2xl" class="p-3">
+  <Title size="text-2xl" class="p-3">
     {"Crisis Resources"}
   </Title>
   {

@@ -1,7 +1,7 @@
 ---
 import { wgmDesignSystem as ds } from "@common/design-system";
 import Subtitle from "@ui/primitives/Subtitle.astro";
-import Title from "@ui/primitives/Title.astro";
+import Title from "@ui/primitives/Heading.astro";
 
 interface Props {
   title: string;
@@ -20,7 +20,7 @@ const { colorVariant: variant = "primary", ...props } = Astro.props;
     "[&:not(:last-child)]:mb-3",
   ]}
 >
-  <Title as="h2" colorVariant={[variant, "contrast"]}>{props.title}</Title>
+  <Title as="h2" colorContext={[variant, "contrast"]}>{props.title}</Title>
   {
     props.subtitle && (
       <Subtitle sizeVariant="text-base" colorVariant={[variant, "contrast"]}>

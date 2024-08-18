@@ -12,11 +12,7 @@ import type {
 } from "@model/internetResource";
 import type { Population } from "@model/population";
 
-import {
-  getCategoryPagesData,
-  getFallbackImageCollection,
-  getPopulations,
-} from "@common/client";
+import { getCategoryPagesData, getPopulations } from "@common/client";
 import { getFilteredTypesFromResources } from "@common/resourceType";
 import { getResourcePageTitle } from "@common/page";
 
@@ -25,15 +21,15 @@ import MainLayout from "@layouts/MainLayout.astro";
 import AsideNav from "@ui/AsideNav/AsideNav.astro";
 import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
 import FeaturedResources from "@ui/FeaturedResources.astro";
-import LowerEmTitle from "@ui/primitives/LowerEmTitle.astro";
 import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import PageHeader from "@ui/PageHeader.astro";
 import type { SanityImage } from "@model/image";
-import shuffle from "lodash/shuffle";
 import { getFullCategoryName } from "@common/category";
+import Heading from "@ui/primitives/Heading.astro";
+import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
 
 interface Props {
   title: string;
@@ -99,12 +95,9 @@ const pageTitle = getResourcePageTitle({
       {
         props.featuredStories && (
           <div class="py-3">
-            <LowerEmTitle
-              as="h2"
-              title={"Featured Stories"}
-              sizeVariant="text-2xl"
-              class="text-center py-3"
-            />
+            <Heading as="h2" size="xl2" class="text-center py-3">
+              <EmphasizedEllipsisText text="Featured Stories" />
+            </Heading>
             <FeaturedResources featuredResources={props.featuredStories} />
           </div>
         )
@@ -112,11 +105,9 @@ const pageTitle = getResourcePageTitle({
       {
         props.featuredArticles && (
           <div class="py-3">
-            <LowerEmTitle
-              as="h2"
-              title={"Featured Articles"}
-              class="text-center py-3"
-            />
+            <Heading as="h2" size="xl2" class="text-center py-3">
+              <EmphasizedEllipsisText text="Featured Articles" />
+            </Heading>
             <FeaturedResources featuredResources={props.featuredArticles} />
           </div>
         )
