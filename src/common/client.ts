@@ -13,42 +13,38 @@ import {
   gCategoriesByFilterQuery,
 } from "@model/category";
 import {
-  zPopulation,
   type Population,
-  populationsQuery,
+  zPopulation,
+  gPopulationsQuery,
 } from "@model/population";
 import {
-  gHomePageDataQuery,
   type HomePageData,
+  gHomePageDataQuery,
   zHomePageData,
 } from "@model/homePage";
 import { gLogosQuery, zLogo, type Logo } from "@model/logo";
 import {
+  type CategoryPageData,
   gCategoryPageQuery,
   zCategoryPageData,
-  type CategoryPageData,
 } from "@model/categoryPage";
 import {
+  type ResourceTypePageData,
   gResourceTypePagesQuery,
   zResourceTypePagesData,
-  type ResourceTypePageData,
 } from "@model/resourceTypePage";
 import {
+  type PopulationsPageData,
   gPopulationsPageData,
   zPopulationPageData,
-  type PopulationsPageData,
 } from "@model/populationPage";
 import { zImage, type SanityImage } from "@model/image";
 import {
-  gCrisisResourcesQuery,
   type CrisisResource,
+  gCrisisResourcesQuery,
   zCrisisResource,
 } from "@model/crisisResource";
-import {
-  zPortableText,
-  type PortableText,
-  type RichTextContentBlock,
-} from "@model/portableText";
+import { zPortableText, type PortableText } from "@model/portableText";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -60,6 +56,9 @@ type ClientQueryParams = {
   | { populationSlug: string }
 );
 
+/**
+ * Maps the parts of a GROQ query filter by key
+ */
 const clientQueryParamGroqQueryPartMap: Record<
   keyof ClientQueryParams,
   string
@@ -73,13 +72,13 @@ const clientQueryParamGroqQueryPartMap: Record<
  * Generate a GROQ query filter from a set of params. Params maps to the following query parts:
  *
  * ```
- *   resourceType: `_type == $resourceType`,
- *   categorySlug: `$categorySlug in categories[]->slug.current`,
- *   populationSlug: `$populationSlug in populations[]->slug.current`,
+ *  resourceType: `_type == $resourceType`,
+ *  categorySlug: `$categorySlug in categories[]->slug.current`,
+ *  populationSlug: `$populationSlug in populations[]->slug.current`,
  *```
  *
- * @param params
- * @returns
+ * @param params - the raw parameters
+ * @returns A query filter that can inserted into a GROQ query
  */
 function getQueryFilter(params: ClientQueryParams): string {
   return Object.keys(params)
@@ -164,7 +163,7 @@ export async function getFeaturedTopics(): Promise<Omit<Category, "parent">[]> {
  */
 export async function getPopulations(): Promise<Population[]> {
   const populations = await client
-    .fetch(populationsQuery)
+    .fetch(gPopulationsQuery)
     .then((result) => zPopulation.array().parse(result));
 
   return populations;

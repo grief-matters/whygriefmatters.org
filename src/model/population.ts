@@ -10,7 +10,7 @@ export const zPopulation = z.object({
 
 export type Population = z.infer<typeof zPopulation>;
 
-export const populationQuery = groq`
+export const gPopulationQuery = groq`
 *[_type == "population" && slug.current == $population][0]{
   name,
   "slug": slug.current,
@@ -19,7 +19,7 @@ export const populationQuery = groq`
 }
 `;
 
-export const populationsQuery = groq`
+export const gPopulationsQuery = groq`
 *[_type == "population"]{
   name,
   "slug": slug.current,

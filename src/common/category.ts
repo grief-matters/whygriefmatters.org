@@ -32,6 +32,7 @@ export function buildCategoryTree(categories: Category[]): CategoryTreeItem[] {
 
 /**
  * Given a parentSlug and a child categoryTitle - provide a title that makes sense outside of navigation
+ *
  * @param parentSlug
  * @param categoryTitle
  * @returns
