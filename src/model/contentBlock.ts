@@ -171,3 +171,4 @@ export const zContentBlock = z.discriminatedUnion("contentType", [
 ]);
 
 export type RichTextContentBlock = z.infer<typeof zRichTextContentBlock>;
+export type TopicContentBlock = z.infer<typeof zTopicContentBlock>;

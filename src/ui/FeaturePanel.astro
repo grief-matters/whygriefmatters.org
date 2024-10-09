@@ -1,6 +1,4 @@
 ---
-import type { FeaturedContent } from "@model/featuredContent";
-
 import { getImageUrl } from "@common/client";
 import { getRoute } from "@common/route";
 
@@ -14,9 +12,10 @@ import Heading from "./primitives/Heading.astro";
 import EmphasizedEllipsisText from "./primitives/EmphasizedEllipsisText.astro";
 import Link from "./primitives/Link.astro";
 import CardLink from "./CardLink.astro";
+import type { ContentGroup } from "@model/contentGroup";
 
 interface Props {
-  featuredContent: FeaturedContent;
+  featuredContent: ContentGroup;
   indexInCollection?: number;
 }
 
@@ -43,11 +42,16 @@ const featurePanelId = crypto.randomUUID();
 
 <section class:list={["py-3", bgClass]}>
   <div class:list={["container mx-auto"]}>
-    <div class="mx-auto py-4 text-center">
-      <Heading as="h2" size="xl3">
-        <EmphasizedEllipsisText text={featuredContent.title} />
-      </Heading>
-    </div>
+    {
+      featuredContent.title && (
+        <div class="mx-auto py-4 text-center">
+          <Heading as="h2" size="xl3">
+            <EmphasizedEllipsisText text={featuredContent.title} />
+          </Heading>
+        </div>
+      )
+    }
+
     {
       featuredContent.description && (
         <RichTextContentBlock
@@ -57,111 +61,106 @@ const featurePanelId = crypto.randomUUID();
       )
     }
     {
-      featuredContent.content.map((content, panelIdx) => {
-        switch (content.contentType) {
-          case "richTextContentBlock":
-            return (
-              <div class="max-w-prose px-3 my-6 m-auto prose font-serif text-center text-sky-800">
-                <RichTextContentBlock portableText={content.portableText} />
-              </div>
-            );
+      featuredContent.blocks.map((block, panelIdx) =>
+        block.map((content) => {
+          switch (content.contentType) {
+            case "richTextContentBlock":
+              return (
+                <div class="max-w-prose px-3 my-6 m-auto prose font-serif text-center text-sky-800">
+                  <RichTextContentBlock portableText={content.portableText} />
+                </div>
+              );
 
-          case "rowOfThreeFeaturedResources":
-            return (
-              <div class="mb-3">
-                <FeaturedResources featuredResources={content.resources} />
-              </div>
-            );
+            case "rowOfThreeFeaturedResources":
+              return (
+                <div class="mb-3">
+                  <FeaturedResources featuredResources={content.resources} />
+                </div>
+              );
 
-          case "rowOfThree":
-            return (
-              <div>
-                <MobileCarousel>
-                  <Fragment slot="items">
-                    {content.images.map((image, imgIdx) => (
-                      <MobileCarouselItem
-                        id={`${featurePanelId}-${panelIdx}-${imgIdx}`}
-                      >
-                        <img
-                          src={getImageUrl(image.image)
-                            .width(640)
-                            .height(450)
-                            .url()}
-                          alt={image.altText}
-                        />
-                      </MobileCarouselItem>
+            case "rowOfThree":
+              return (
+                <div class="mb-3">
+                  <MobileCarousel>
+                    <Fragment slot="items">
+                      {content.images.map((image, imgIdx) => (
+                        <MobileCarouselItem
+                          id={`${featurePanelId}-${panelIdx}-${imgIdx}`}
+                        >
+                          <div class="p-3">
+                            <img
+                              src={getImageUrl(image.image)
+                                .width(640)
+                                .height(450)
+                                .url()}
+                              alt={image.altText}
+                            />
+                          </div>
+                        </MobileCarouselItem>
+                      ))}
+                    </Fragment>
+                    <Fragment slot="controls">
+                      {Array.from({ length: 3 }, (_, i) => (
+                        <MobileCarouselControl
+                          id={`${featurePanelId}-${panelIdx}-${i}`}
+                        >
+                          {i + 1}
+                        </MobileCarouselControl>
+                      ))}
+                    </Fragment>
+                  </MobileCarousel>
+                </div>
+              );
+
+            case "resourceLinks":
+              return (
+                <>
+                  <div
+                    class:list={["flex flex-wrap justify-center gap-4", "p-3"]}
+                  >
+                    {content.resources.map((link) => (
+                      <CardLink
+                        href={link.url}
+                        label={link.title}
+                        cardProps={{ resourceType: link.type ?? undefined }}
+                        external
+                      />
                     ))}
-                  </Fragment>
-                  <Fragment slot="controls">
-                    {Array.from({ length: 3 }, (_, i) => (
-                      <MobileCarouselControl
-                        id={`${featurePanelId}-${panelIdx}-${i}`}
-                      >
-                        {i + 1}
-                      </MobileCarouselControl>
-                    ))}
-                  </Fragment>
-                </MobileCarousel>
-              </div>
-            );
+                  </div>
+                </>
+              );
 
-          case "resourceLinks":
-            return (
-              <>
+            case "resourcePageLinks":
+              return (
                 <div
-                  class:list={["flex flex-wrap justify-center gap-4", "p-3"]}
+                  class:list={["flex", "flex-wrap", "justify-center", "gap-4"]}
                 >
-                  {content.resources.map((link) => (
+                  {content.links.map((pageLink) => (
                     <CardLink
-                      href={link.url}
-                      label={link.title}
-                      cardProps={{ resourceType: link.type ?? undefined }}
-                      external
+                      href={getRoute(pageLink)}
+                      label={pageLink.label}
+                      cardProps={{
+                        resourceType: pageLink.type ?? undefined,
+                      }}
                     />
                   ))}
                 </div>
-              </>
-            );
+              );
 
-          case "resourcePageLinks":
-            return (
-              <div
-                class:list={["flex", "flex-wrap", "justify-center", "gap-4"]}
-              >
-                {content.links.map((pageLink) => (
-                  <CardLink
-                    href={getRoute(pageLink)}
-                    label={pageLink.label}
-                    cardProps={{
-                      resourceType: pageLink.type ?? undefined,
-                    }}
-                  />
-                ))}
-              </div>
-            );
-
-          case "topicCollectionContentBlock":
-            return (
-              <TopicCollectionContentBlock
-                showCollectionDescription={content.showDescription}
-                showTopicDescriptions={content.showDescriptions}
-                showTopicImages={content.showImages}
-                collection={content.topicCollection}
-              />
-            );
-        }
-      })
+            case "topicCollectionContentBlockNew":
+              return <TopicCollectionContentBlock topics={content.topics} />;
+            default:
+              return <div>[[MISSING CONTENT TYPE]]</div>;
+          }
+        })
+      )
     }
     {
-      featuredContent.featuredContentFooterLink && (
+      featuredContent.jumpLink && (
+        // TODO - need a switch for different footer link types
         <div class="mx-auto py-6 text-center">
-          <Link
-            href={getRoute(featuredContent.featuredContentFooterLink)}
-            size="xl2"
-          >
-            <EmphasizedEllipsisText
-              text={featuredContent.featuredContentFooterLink.label}
-            />
+          <Link href={getRoute(featuredContent.jumpLink)} size="xl2">
+            <EmphasizedEllipsisText text={featuredContent.jumpLink.label} />
           </Link>
         </div>
       )

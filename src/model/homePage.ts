@@ -1,10 +1,9 @@
 import { z } from "zod";
 import groq from "groq";
 
-import { zFeaturedContent } from "./featuredContent";
 import { zPortableText } from "./portableText";
 import { zImage } from "./image";
-import { gFeaturedResourceProjection } from "./featuredResource";
+import { gContentGroupProjection, zContentGroup } from "./contentGroup";
 
 export const zHomePageData = z.object({
   org: z.object({
@@ -20,7 +19,7 @@ export const zHomePageData = z.object({
     logo: zImage,
   }),
   heroImage: zImage,
-  featurePanels: z.array(zFeaturedContent),
+  featurePanels: z.array(zContentGroup),
 });
 
 export const gHomePageDataQuery = groq`
@@ -45,68 +44,7 @@ export const gHomePageDataQuery = groq`
     "altText": heroImage.alt, 
   },
   featurePanels[]->{
-    title,
-    description,
-    content[]{
-      _type == "richTextContentBlock" => {
-        "contentType": _type,
-        portableText
-      },
-      _type == "rowOfThree" => {
-        "contentType": _type,
-        images[]{
-          image,
-          "altText": alt
-        }
-      },
-      _type == "rowOfThreeFeaturedResources" => {
-        "contentType": _type,
-        resources[]->{
-          ${gFeaturedResourceProjection}
-        }
-      },
-      _type == "resourcePageLinks" => {
-        "contentType": _type,
-        links[]{
-          label,
-          type,
-          "category": category -> slug.current,
-          "population": population -> slug.current
-        },
-      },
-      _type == "resourceLinks" => {
-        "contentType": _type,
-        resources[]->{
-          "title": coalesce(title, name),
-          "url": resourceUrl,
-          "type": _type
-        }
-      },
-      _type == "topicCollectionContentBlock" => {
-        "contentType": _type,
-        showDescription,
-        showDescriptions,
-        showImages,
-        topicCollection->{
-          description,
-          topics[]->{
-            title,
-            "slug": slug.current,
-            description,
-            image{
-              image,
-              "altText": alt
-            }
-          }
-        }
-      }
-    },
-    featuredContentFooterLink {
-      label,
-      type,
-      "population": population->slug.current,
-      "category": category->slug.current
-    }
+    ${gContentGroupProjection}
   }
 }
 `;

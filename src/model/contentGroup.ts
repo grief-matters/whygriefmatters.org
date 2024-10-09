@@ -50,3 +50,5 @@ export const zContentGroup = z.object({
     ])
     .nullable(),
 });
+
+export type ContentGroup = z.infer<typeof zContentGroup>;
