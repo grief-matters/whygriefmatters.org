@@ -45,6 +45,11 @@ import {
   zCrisisResource,
 } from "@model/crisisResource";
 import { zPortableText, type PortableText } from "@model/portableText";
+import {
+  gCoreContentGroupsQuery,
+  zCoreContentGroup,
+  type CoreContentGroup,
+} from "@model/coreContentGroup";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -97,6 +102,19 @@ export const client = createClient({
 });
 
 const imgUrlBuilder = imageUrlBuilder(client);
+
+/**
+ * Returns a promise that resolves to the Core Content Groups ot throws a Zod error
+ *
+ * @returns
+ */
+export async function getCoreContentGroups(): Promise<CoreContentGroup[]> {
+  const coreContentGroups = await client
+    .fetch(gCoreContentGroupsQuery)
+    .then((result) => zCoreContentGroup.array().parse(result));
+
+  return coreContentGroups;
+}
 
 /**
  * Gets the entire list of categories with parents

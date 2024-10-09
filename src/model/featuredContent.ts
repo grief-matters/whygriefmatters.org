@@ -1,44 +1,14 @@
 import { z } from "zod";
 import { zImage } from "./image";
-import { zInternetResourceType } from "./internetResource";
-import { zRichTextContentBlock, zPortableText } from "./portableText";
-import { zFeaturedResource } from "./featuredResource";
-
-export const zResourcePageLink = z
-  .object({
-    label: z.string(),
-    type: zInternetResourceType.nullable(),
-    population: z.string().nullable(),
-    category: z.string().nullable(),
-  })
-  .refine(
-    (val) =>
-      val.type !== null || val.population !== null || val.category !== null,
-  );
-
-export type ResourcePageLink = z.infer<typeof zResourcePageLink>;
-
-export const zResourceLink = z.object({
-  title: z.string(),
-  url: z.string().url(),
-  type: zInternetResourceType.nullable(),
-});
-
-export const zRowOfThree = z.object({
-  images: z.array(zImage),
-});
-
-export const zRowOfThreeFeaturedResources = z.object({
-  resources: z.array(zFeaturedResource),
-});
-
-export const zResourcePageLinks = z.object({
-  links: z.array(zResourcePageLink),
-});
-
-export const zResourceLinks = z.object({
-  resources: z.array(zResourceLink),
-});
+import { zPortableText } from "./portableText";
+import {
+  zRowOfThree,
+  zRowOfThreeFeaturedResources,
+  zResourcePageLinks,
+  zResourceLinks,
+  zRichTextContentBlock,
+  zResourcePageLink,
+} from "./contentBlock";
 
 const topicCollectionDisplayOptions = ["none", "topThree", "all"] as const;
 const zTopicCollectionDisplayOption = z.enum(topicCollectionDisplayOptions);

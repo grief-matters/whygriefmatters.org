@@ -20,9 +20,4 @@ export const zTypedObject = zSchemaForType<TypedObject>()(zBaseTypedObject);
  */
 export const zPortableText = z.array(zTypedObject);
 
-export const zRichTextContentBlock = z.object({
-  portableText: zPortableText,
-});
-
 export type PortableText = z.infer<typeof zPortableText>;
-export type RichTextContentBlock = z.infer<typeof zRichTextContentBlock>;
