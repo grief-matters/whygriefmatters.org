@@ -8,16 +8,23 @@ type SectioningHTMLTags = "article" | "section" | "div" | "aside";
 
 type OwnProps = {
   portableText: PortableText;
+  classList?: Array<string>;
 };
 
 type Props<Tag extends SectioningHTMLTags> = Polymorphic<{ as: Tag }> &
   OwnProps;
 
-const { as: Tag = "div", portableText, invert, ...attrs } = Astro.props;
+const {
+  as: Tag = "div",
+  portableText,
+  classList,
+  invert,
+  ...attrs
+} = Astro.props;
 
 const htmlString = toHTML(portableText, { components: { hardBreak: false } });
 ---
 
-<Tag class:list={["prose prose-wgm"]} {...attrs}>
+<Tag class:list={["prose prose-wgm", ...(classList ?? [])]} {...attrs}>
   <Fragment set:html={htmlString} />
 </Tag>

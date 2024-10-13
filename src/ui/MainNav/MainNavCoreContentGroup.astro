@@ -1,0 +1,162 @@
+---
+import CollapsibleContent from "@ui/Collapsible/CollapsibleContent.astro";
+import CollapsibleContentButton from "@ui/Collapsible/CollapsibleContentButton.astro";
+import CollapsibleContentCloseButton from "@ui/Collapsible/CollapsibleContentCloseButton.astro";
+import CollapsibleContentContent from "@ui/Collapsible/CollapsibleContentContent.astro";
+import Card from "@ui/primitives/Card.astro";
+import Heading from "@ui/primitives/Heading.astro";
+import Text from "@ui/primitives/Text.astro";
+import MainNavContentBlock from "./MainNavContentBlock.astro";
+import RichTextContentBlock from "@ui/richTextContentBlock.astro";
+import type { CoreContentGroup } from "@model/coreContentGroup";
+import { wgmDesignSystem as ds } from "@common/design-system";
+import { getImageUrl } from "@common/client";
+import { getFallbackImageCollection } from "@common/client";
+
+interface Props {
+  coreContentGroup: CoreContentGroup;
+}
+
+const { coreContentGroup: ccg } = Astro.props;
+
+const fallbackImages = await getFallbackImageCollection();
+
+const bgImage = ccg.coverImage?.image
+  ? ccg.coverImage?.image
+  : fallbackImages[Math.floor(Math.random() * fallbackImages.length)].image;
+
+const bgImageUrl = getImageUrl(bgImage).url();
+const bgVar = `url(${bgImageUrl})`;
+
+const bgPosX = `${(bgImage.hotspot?.x ?? 0) * 100}%`;
+const bgPosY = `${(bgImage.hotspot?.y ?? 0) * 100}%`;
+---
+
+<CollapsibleContent>
+  <CollapsibleContentButton slot="button" classList={["block text-start py-3"]}>
+    <Text
+      class:list={[
+        "font-bold",
+        ds.decoration.underline,
+        ds.decoration.transition,
+        ds.decoration.color.primary.hover,
+        "decoration-dotted",
+      ]}
+      size="xl2"
+      as="span"
+    >
+      {ccg.title}
+    </Text>
+  </CollapsibleContentButton>
+  <CollapsibleContentContent slot="content">
+    <div class="fixed inset-0 bg-orange-50">
+      <div class="h-full flex max-h-full flex-col-reverse">
+        <div class="w-full flex justify-end mb-3">
+          <CollapsibleContentCloseButton
+            classList={["flex justify-end items-center space-x-2 p-6"]}
+          >
+            <span
+              class:list={[
+                "font-semibold",
+                "block",
+                "font-serif italic text-2xl",
+                ds.typography.color?.primary.default,
+              ]}
+            >
+              {"Close"}
+            </span>
+            <div class:list={["w-6", ds.typography.color?.primary.default]}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                <g transform="rotate(45, 50, 50)">
+                  <line
+                    x1="10"
+                    y1="50"
+                    x2="90"
+                    y2="50"
+                    stroke="currentColor"
+                    stroke-width="8"
+                    stroke-linecap="round"></line>
+                  <line
+                    x1="50"
+                    y1="10"
+                    x2="50"
+                    y2="90"
+                    stroke="currentColor"
+                    stroke-width="8"
+                    stroke-linecap="round"></line>
+                </g>
+              </svg>
+            </div>
+          </CollapsibleContentCloseButton>
+        </div>
+        <div class="flex-grow h-full max-h-full overflow-y-auto">
+          <div class="p-6">
+            <Heading class:list={["font-bold mb-6"]} size="xl2" as="h2">
+              {ccg.title}
+            </Heading>
+            <div class="divide-y divide-dashed">
+              {
+                ccg.mainContent.blocks.map((contentBlock, i) => (
+                  <div class="pb-3 pt-6 first:pt-0">
+                    {contentBlock.map((content) => (
+                      <MainNavContentBlock block={content} />
+                    ))}
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+          <div
+            class:list={[
+              { hidden: ccg.supplementaryContent === null },
+              "p-6",
+              "supplementary-bg",
+            ]}
+          >
+            {
+              ccg.supplementaryContent && (
+                <Card>
+                  <div class="m-3">
+                    {ccg.supplementaryContent.title && (
+                      <Heading
+                        class:list={["font-semibold mb-2"]}
+                        size="xl2"
+                        as="h3"
+                      >
+                        {ccg.supplementaryContent.title}
+                      </Heading>
+                    )}
+                    {ccg.supplementaryContent.description && (
+                      <RichTextContentBlock
+                        portableText={ccg.supplementaryContent.description}
+                        classList={["font-serif mb-3"]}
+                      />
+                    )}
+                    {ccg.supplementaryContent.blocks.map((contentBlock) => (
+                      <div>
+                        {contentBlock.map((content) => (
+                          <div class="mb-3">
+                            <MainNavContentBlock block={content} />
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </CollapsibleContentContent>
+</CollapsibleContent>
+
+<style define:vars={{ bgVar, bgPosX, bgPosY }}>
+  .supplementary-bg {
+    background-image: var(--bgVar);
+    background-size: cover;
+    background-position-x: var(--bgPosX);
+    background-position-y: var(--bgPosY);
+  }
+</style>

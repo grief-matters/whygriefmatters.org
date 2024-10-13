@@ -61,6 +61,8 @@ type ClientQueryParams = {
   | { populationSlug: string }
 );
 
+const cache: Record<string, any> = {};
+
 /**
  * Maps the parts of a GROQ query filter by key
  */
@@ -122,11 +124,15 @@ export async function getCoreContentGroups(): Promise<CoreContentGroup[]> {
  * @returns
  */
 export async function getCategories(): Promise<Category[]> {
-  const categories = await client
-    .fetch(gCategoriesQuery)
-    .then((result) => zCategory.array().parse(result));
+  if (typeof cache.categories === "undefined" || cache.categories === null) {
+    const categories = await client
+      .fetch(gCategoriesQuery)
+      .then((result) => zCategory.array().parse(result));
 
-  return categories;
+    cache.categories = categories;
+  }
+
+  return cache.categories;
 }
 
 /**
@@ -270,16 +276,22 @@ export async function getLogoSet(): Promise<Logo[]> {
  * @returns
  */
 export async function getFallbackImageCollection(): Promise<SanityImage[]> {
-  const query = groq`
-    *[_type == "imageCollection" && title == "Generic Fallbacks"].images[]{
-      image, 
-      "altText": alt
-    }
-  `;
+  if (!cache.fallbackImageCollection) {
+    const query = groq`
+      *[_type == "imageCollection" && title == "Generic Fallbacks"].images[]{
+        image, 
+        "altText": alt
+      }
+    `;
 
-  return await client
-    .fetch(query)
-    .then((result) => zImage.array().parse(result));
+    const images = await client
+      .fetch(query)
+      .then((result) => zImage.array().parse(result));
+
+    cache.fallbackImageCollection = images;
+  }
+
+  return cache.fallbackImageCollection;
 }
 
 /**
