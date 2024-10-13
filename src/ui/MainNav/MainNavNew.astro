@@ -39,10 +39,18 @@ const coreContentGroups = await getCoreContentGroups();
       <line x1="3" y1="18" x2="21" y2="18"></line>
     </svg>
   </CollapsibleContentButton>
-  <CollapsibleContentContent classList={["sm:grid"]} slot="content">
-    <div class="fixed inset-0 bg-orange-50">
-      <div class="h-full max-h-full flex flex-col-reverse">
-        <div class="w-full flex justify-end mb-3">
+  <CollapsibleContentContent
+    classList={["sm:grid sm:opacity-100"]}
+    slot="content"
+  >
+    <div
+      class:list={[
+        "fixed inset-0 bg-orange-50",
+        "sm:static sm:opacity-100 sm:bg-transparent",
+      ]}
+    >
+      <div class:list={["h-full max-h-full flex flex-col-reverse sm:block"]}>
+        <div class:list={["w-full flex justify-end mb-3", "sm:hidden"]}>
           <CollapsibleContentCloseButton
             classList={["flex justify-end items-center space-x-2 p-6"]}
           >
@@ -80,8 +88,13 @@ const coreContentGroups = await getCoreContentGroups();
             </div>
           </CollapsibleContentCloseButton>
         </div>
-        <div class="flex-grow mt-24 mx-12">
-          <div>
+        <div class="flex-grow mt-24 mx-12 sm:mx-auto sm:my-0">
+          <div
+            class:list={[
+              "sm:grid sm:grid-cols-2",
+              "md:grid-cols-4 md:container md:mx-auto",
+            ]}
+          >
             {
               coreContentGroups.map((ccg) => (
                 <MainNavCoreContentGroup coreContentGroup={ccg} />
