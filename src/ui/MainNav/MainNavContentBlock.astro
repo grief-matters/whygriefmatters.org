@@ -3,11 +3,9 @@ import type { ContentBlock } from "@model/contentBlock";
 import MainNavTopicCollectionContentBlock from "./MainNavTopicCollectionContentBlock.astro";
 import MainNavTopicContentBlock from "./MainNavTopicContentBlock.astro";
 import RichTextContentBlock from "@ui/richTextContentBlock.astro";
-import { content } from "tailwind.config.cjs";
 import { getImageUrl } from "@common/client";
 import MainNavLink from "./MainNavLink.astro";
 import { getRoute } from "@common/route";
-import CardLink from "@ui/CardLink.astro";
 
 interface Props {
   block: ContentBlock;

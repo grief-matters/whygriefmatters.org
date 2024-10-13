@@ -77,6 +77,26 @@ export async function getCategoryTree(
   return rootCategories;
 }
 
+export function findCategorySubtree(
+  tree: CategoryTreeItem[],
+  targetSlug: string,
+): CategoryTreeItem | null {
+  for (const category of tree) {
+    if (category.slug === targetSlug) {
+      return category;
+    }
+
+    if (category.children.length > 0) {
+      const result = findCategorySubtree(category.children, targetSlug);
+      if (result) {
+        return result;
+      }
+    }
+  }
+
+  return null;
+}
+
 /**
  * Given a parentSlug and a child categoryTitle - provide a title that makes sense outside of navigation
  *

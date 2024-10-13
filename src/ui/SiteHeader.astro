@@ -1,7 +1,6 @@
 ---
 import { getImageUrl, getLogoSet } from "@common/client";
 
-import MainNav from "./MainNav/MainNav.astro";
 import MainNavNew from "./MainNav/MainNavNew.astro";
 
 const logoSet = await getLogoSet();
@@ -21,8 +20,6 @@ const lightHeaderLogo = rawLightLogo
     "sticky top-0 focus-within:top-0",
     "bg-blue-900",
     "transition-[top] ease-in-out delay-300 duration-500",
-    // for nav bar
-    "lg:relative",
     "shadow-xl",
   ]}
 >
@@ -46,7 +43,6 @@ const lightHeaderLogo = rawLightLogo
         )
       }
     </a>
-    <!-- <MainNav /> -->
     <MainNavNew />
   </div>
 

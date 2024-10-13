@@ -121,10 +121,11 @@ const featurePanelId = crypto.randomUUID();
                     {content.resources.map((link) => (
                       <CardLink
                         href={link.url}
-                        label={link.title}
                         cardProps={{ resourceType: link.type ?? undefined }}
                         external
-                      />
+                      >
+                        {link.title}
+                      </CardLink>
                     ))}
                   </div>
                 </>
@@ -138,11 +139,12 @@ const featurePanelId = crypto.randomUUID();
                   {content.links.map((pageLink) => (
                     <CardLink
                       href={getRoute(pageLink)}
-                      label={pageLink.label}
                       cardProps={{
                         resourceType: pageLink.type ?? undefined,
                       }}
-                    />
+                    >
+                      {pageLink.label}
+                    </CardLink>
                   ))}
                 </div>
               );

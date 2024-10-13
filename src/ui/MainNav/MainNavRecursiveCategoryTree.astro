@@ -19,6 +19,7 @@ interface Props {
   variant?: "default" | "contrast";
   startingVariant?: StyleVariant;
   getPath?(slug: string): string;
+  classList?: Array<string>;
 }
 
 const {
@@ -50,7 +51,7 @@ const listItemStyleVariantClassListMap: StyleVariantClassListMap = {
 };
 ---
 
-<ul class={""}>
+<ul>
   {
     categories.map((c) => (
       <li class:list={listItemStyleVariantClassListMap[startingVariant]}>

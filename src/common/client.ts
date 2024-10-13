@@ -61,7 +61,7 @@ type ClientQueryParams = {
   | { populationSlug: string }
 );
 
-const cache: Record<string, any> = {};
+export const dataCache: Record<string, any> = {};
 
 /**
  * Maps the parts of a GROQ query filter by key
@@ -124,15 +124,18 @@ export async function getCoreContentGroups(): Promise<CoreContentGroup[]> {
  * @returns
  */
 export async function getCategories(): Promise<Category[]> {
-  if (typeof cache.categories === "undefined" || cache.categories === null) {
+  if (
+    typeof dataCache.categories === "undefined" ||
+    dataCache.categories === null
+  ) {
     const categories = await client
       .fetch(gCategoriesQuery)
       .then((result) => zCategory.array().parse(result));
 
-    cache.categories = categories;
+    dataCache.categories = categories;
   }
 
-  return cache.categories;
+  return dataCache.categories;
 }
 
 /**
@@ -212,11 +215,18 @@ export async function getHomePageData(): Promise<HomePageData> {
  * @returns {CategoryPageData[]}
  */
 export async function getCategoryPagesData(): Promise<CategoryPageData[]> {
-  const categoryPagesData = await client
-    .fetch(gCategoryPageQuery)
-    .then((result) => zCategoryPageData.array().parse(result));
+  if (
+    typeof dataCache.categoryPagesData === "undefined" ||
+    dataCache.categoryPagesData === null
+  ) {
+    const categoryPagesData = await client
+      .fetch(gCategoryPageQuery)
+      .then((result) => zCategoryPageData.array().parse(result));
 
-  return categoryPagesData.filter((pageData) => pageData.resources.length > 0);
+    dataCache.categoryPagesData = categoryPagesData;
+  }
+
+  return dataCache.categoryPagesData;
 }
 
 /**
@@ -276,7 +286,7 @@ export async function getLogoSet(): Promise<Logo[]> {
  * @returns
  */
 export async function getFallbackImageCollection(): Promise<SanityImage[]> {
-  if (!cache.fallbackImageCollection) {
+  if (!dataCache.fallbackImageCollection) {
     const query = groq`
       *[_type == "imageCollection" && title == "Generic Fallbacks"].images[]{
         image, 
@@ -288,10 +298,10 @@ export async function getFallbackImageCollection(): Promise<SanityImage[]> {
       .fetch(query)
       .then((result) => zImage.array().parse(result));
 
-    cache.fallbackImageCollection = images;
+    dataCache.fallbackImageCollection = images;
   }
 
-  return cache.fallbackImageCollection;
+  return dataCache.fallbackImageCollection;
 }
 
 /**

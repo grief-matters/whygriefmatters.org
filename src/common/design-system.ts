@@ -29,62 +29,62 @@ export const wgmDesignSystem = {
         app: {
           default: "border-blue-500",
           contrast: "",
-          hover: "border-blue-800/30 hover:border-blue-900",
+          hover: "border-blue-800/30 hover:border-blue-500",
         },
         article: {
           default: "border-fuchsia-500",
           contrast: "",
-          hover: "border-fuchsia-800/30 hover:border-fuchsia-900",
+          hover: "border-fuchsia-800/30 hover:border-fuchsia-500",
         },
         blog: {
           default: "border-red-500",
           contrast: "",
-          hover: "border-red-800/30 hover:border-red-900",
+          hover: "border-red-800/30 hover:border-red-500",
         },
         book: {
           default: "border-orange-500",
           contrast: "",
-          hover: "border-orange-800/30 hover:border-orange-900",
+          hover: "border-orange-800/30 hover:border-orange-500",
         },
         booklet: {
           default: "border-amber-500",
           contrast: "",
-          hover: "border-amber-800/30 hover:border-amber-900",
+          hover: "border-amber-800/30 hover:border-amber-500",
         },
         brochure: {
           default: "border-yellow-400",
           contrast: "",
-          hover: "border-yellow-800/30 hover:border-yellow-900",
+          hover: "border-yellow-800/30 hover:border-yellow-400",
         },
         course: {
           default: "border-sky-500",
           contrast: "",
-          hover: "border-sky-800/30 hover:border-sky-900",
+          hover: "border-sky-800/30 hover:border-sky-500",
         },
         forum: {
           default: "border-fuchsia-500",
           contrast: "",
-          hover: "border-fuchsia-800/30 hover:border-fuchsia-900",
+          hover: "border-fuchsia-800/30 hover:border-fuchsia-500",
         },
         memorial: {
           default: "border-indigo-500",
           contrast: "",
-          hover: "border-indigo-800/30 hover:border-indigo-900",
+          hover: "border-indigo-800/30 hover:border-indigo-500",
         },
         peerSupport: {
           default: "border-rose-500",
           contrast: "",
-          hover: "border-rose-800/30 hover:border-rose-900",
+          hover: "border-rose-800/30 hover:border-rose-500",
         },
         podcast: {
           default: "border-violet-500",
           contrast: "",
-          hover: "border-violet-800/30 hover:border-violet-900",
+          hover: "border-violet-800/30 hover:border-violet-500",
         },
         podcastEpisode: {
           default: "border-violet-500",
           contrast: "",
-          hover: "border-violet-800/30 hover:border-violet-900",
+          hover: "border-violet-800/30 hover:border-violet-500",
         },
         story: {
           default: "border-teal-500/70",
@@ -94,22 +94,22 @@ export const wgmDesignSystem = {
         supportGroup: {
           default: "border-purple-500",
           contrast: "",
-          hover: "border-purple-800/30 hover:border-purple-900",
+          hover: "border-purple-800/30 hover:border-purple-500",
         },
         therapyResource: {
           default: "border-cyan-500",
           contrast: "",
-          hover: "border-cyan-800/30 hover:border-cyan-900",
+          hover: "border-cyan-800/30 hover:border-cyan-500",
         },
         video: {
           default: "border-green-500",
           contrast: "",
-          hover: "border-green-800/30 hover:border-green-900",
+          hover: "border-green-800/30 hover:border-green-500",
         },
         webinar: {
           default: "border-green-500",
           contrast: "",
-          hover: "border-green-800/30 hover:border-green-900",
+          hover: "border-green-800/30 hover:border-green-500",
         },
         website: {
           default: "border-red-500",
