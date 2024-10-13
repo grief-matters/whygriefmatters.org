@@ -16,7 +16,13 @@ const props = Astro.props;
 <div>
   {
     (
-      <div class:list={["grid grid-cols-1 gap-4 mb-6"]}>
+      <div
+        class:list={[
+          "grid grid-cols-1 gap-4",
+          "sm:grid-cols-2",
+          "lg:grid-cols-3",
+        ]}
+      >
         {props.topics.map((topicContentBlock) => (
           <Card hoverable>
             <a href={topicContentBlock.topic.slug} class="block h-full">
