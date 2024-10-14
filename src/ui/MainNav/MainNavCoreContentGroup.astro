@@ -145,12 +145,13 @@ const bgPosY = `${(bgImage.hotspot?.y ?? 0) * 100}%`;
               { hidden: ccg.supplementaryContent === null },
               "p-6",
               "supplementary-bg",
+              "flex justify-center items-center",
             ]}
           >
             {
               ccg.supplementaryContent && (
                 <Card>
-                  <div class="m-3">
+                  <div class="m-3 max-w-[600px]">
                     {ccg.supplementaryContent.title && (
                       <Heading
                         class:list={["font-semibold mb-2"]}

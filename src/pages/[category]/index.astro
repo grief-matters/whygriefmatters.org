@@ -143,20 +143,28 @@ const subtopics = Object.entries(props.subtopicResources);
       {
         props.featuredStories && (
           <div class="py-3">
-            <Heading as="h2" size="xl2" class="text-center py-3">
-              <EmphasizedEllipsisText text="Featured Stories" />
-            </Heading>
-            <FeaturedResources featuredResources={props.featuredStories} />
+            <div class="xl:container mx-auto">
+              <div class="xl:mx-9">
+                <Heading as="h2" size="xl2" class="text-center py-3">
+                  <EmphasizedEllipsisText text="Featured Stories" />
+                </Heading>
+                <FeaturedResources featuredResources={props.featuredStories} />
+              </div>
+            </div>
           </div>
         )
       }
       {
         props.featuredArticles && (
           <div class="py-3">
-            <Heading as="h2" size="xl2" class="text-center py-3">
-              <EmphasizedEllipsisText text="Featured Articles" />
-            </Heading>
-            <FeaturedResources featuredResources={props.featuredArticles} />
+            <div class="xl:container mx-auto">
+              <div class="md:mx-6 xl:mx-9">
+                <Heading as="h2" size="xl2" class="text-center py-3">
+                  <EmphasizedEllipsisText text="Featured Articles" />
+                </Heading>
+                <FeaturedResources featuredResources={props.featuredArticles} />
+              </div>
+            </div>
           </div>
         )
       }
@@ -227,7 +235,7 @@ const subtopics = Object.entries(props.subtopicResources);
               <Heading as="h3" class:list={["mb-3 font-semibold"]}>
                 Resources In Subtopics
               </Heading>
-              <Text class="mb-3">{`There aren't any specific resources for this topic, but you we're explore resources available within subtopics below or select a subtopic above to show a more focused list.`}</Text>
+              <Text class="mb-3">{`There aren't any specific resources for this topic, but you can explore resources available within subtopics below or select a subtopic above to show a more focused list.`}</Text>
               <>
                 {subtopics.map(([slug, subtopic]) => (
                   <details>
