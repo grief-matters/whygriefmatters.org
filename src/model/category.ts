@@ -1,9 +1,18 @@
 import groq from "groq";
 import { z } from "zod";
 
+import { zImage } from "./image";
+
 const zCategoryBase = z.object({
   title: z.string(),
   slug: z.string(),
+});
+
+export const zTopic = z.object({
+  title: z.string(),
+  slug: z.string(),
+  description: z.string().nullable(),
+  image: zImage.nullable(),
 });
 
 export const zCategory = zCategoryBase.extend({
@@ -19,7 +28,11 @@ export const zCategory = zCategoryBase.extend({
 export const gCategoriesByFilterQuery = (queryFilter: string) => groq`
 array::compact(*[${queryFilter}].categories[]->{
   title,
-  "slug": slug.current
+  "slug": slug.current,
+  parent->{
+    title,
+    "slug": slug.current,
+  }
 })
 `;
 

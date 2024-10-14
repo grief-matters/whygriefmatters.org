@@ -1,16 +1,19 @@
 ---
-import type { HTMLTag, Polymorphic } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
-type AdditionalProps = {};
+interface Props extends HTMLAttributes<"div"> {
+  classList?: Array<string>;
+}
 
-type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & AdditionalProps;
-
-const { as: Tag = "div", ...attrs } = Astro.props;
+const { classList, ...attrs } = Astro.props;
 ---
 
-<Tag class:list={["collapsible-content-content hidden"]} {...attrs}>
+<div
+  class:list={["collapsible-content-content hidden", ...(classList ?? [])]}
+  {...attrs}
+>
   <slot />
-</Tag>
+</div>
 
 <!--
           Background backdrop, show/hide based on slide-over state.

@@ -1,0 +1,20 @@
+---
+import type { TopicContentBlock } from "@model/contentBlock";
+import MainNavTopicContentBlock from "./MainNavTopicContentBlock.astro";
+
+interface Props {
+  topicContentBlocks: Array<TopicContentBlock>;
+}
+
+const { topicContentBlocks } = Astro.props;
+---
+
+<div>
+  {
+    topicContentBlocks.map((tcb) => (
+      <div class="mb-2">
+        <MainNavTopicContentBlock topicContentBlock={tcb} />
+      </div>
+    ))
+  }
+</div>

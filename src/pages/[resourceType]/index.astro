@@ -1,6 +1,7 @@
 ---
 import pluralize from "pluralize";
 import startCase from "lodash/startCase";
+import sortBy from "lodash/sortBy";
 
 import type {
   InternetResourcePageListing,
@@ -9,6 +10,8 @@ import type {
 import type { Category } from "@model/category";
 import type { Population } from "@model/population";
 
+import Text from "@ui/primitives/Text.astro";
+
 import {
   getCategoriesByFilter,
   getPopulations,
@@ -16,15 +19,13 @@ import {
 } from "@common/client";
 
 import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
-import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
-import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
-import AsideNav from "@ui/AsideNav/AsideNav.astro";
 
 import { getResourcePageTitle } from "@common/page";
 import PageHeader from "@ui/PageHeader.astro";
+import Heading from "@ui/primitives/Heading.astro";
+import MainNavLink from "@ui/MainNav/MainNavLink.astro";
+import { getFullCategoryName } from "@common/category";
 
 interface Props {
   resources: Array<InternetResourcePageListing>;
@@ -46,14 +47,22 @@ export async function getStaticPaths() {
       );
 
       // This is less than ideal as means an additional request for each type
-      const slugsWithTitles = await getCategoriesByFilter({ resourceType });
+      const categoriesByFilter = await getCategoriesByFilter({ resourceType });
+
+      const reTitled = categoriesByFilter.map((cat) => {
+        console.log("cat: ", cat);
+        return {
+          ...cat,
+          title: getFullCategoryName(cat.parent?.slug ?? "", cat.title),
+        };
+      });
 
       return {
         params: { resourceType },
         props: {
           resources,
           applicablePopulations: filteredPopulations ?? [],
-          applicableCategories: slugsWithTitles ?? [],
+          applicableCategories: sortBy(reTitled, (s) => s.title) ?? [],
         },
       };
     }
@@ -72,49 +81,53 @@ const resourceTypeLabel = `${startCase(pluralize(params.resourceType))}`;
 const pageTitle = getResourcePageTitle({
   resourceType: params.resourceType as InternetResourceType,
 });
+
+let quantityText;
+
+switch (true) {
+  case props.resources.length > 1000:
+    quantityText = "over a thousand";
+    break;
+  case props.resources.length > 200:
+    quantityText = "hundreds of";
+    break;
+  case props.resources.length > 24:
+    quantityText = "dozens of";
+    break;
+  default:
+    quantityText = "a range of";
+    break;
+}
 ---
 
 <MainLayout>
   <ResourcePageLayout>
     <PageHeader slot="header" pageTitle={pageTitle} />
-    <ResourcePageListingsContainer slot="section">
-      {
-        props.resources.map((resource) => (
-          <ResourcePageListingsListItem>
-            <ResourcePageListing resource={resource} />
-          </ResourcePageListingsListItem>
-        ))
-      }
-    </ResourcePageListingsContainer>
-    <AsideNavContainer
-      slot="aside"
-      title="Narrow Your Search"
-      colorVariant="secondary"
-    >
-      {
-        props.applicableCategories?.length > 0 && (
-          <AsideNav
-            title={`${resourceTypeLabel} by category...`}
-            links={props.applicableCategories.map((category) => ({
-              to: `/${params.resourceType}/${category.slug}`,
-              label: category.title,
-            }))}
-            colorVariant={"secondary"}
-          />
-        )
-      }
-      {
-        props.applicablePopulations?.length > 0 && (
-          <AsideNav
-            title={`${resourceTypeLabel} for...`}
-            links={props.applicablePopulations.map((population) => ({
-              to: `/${params.resourceType}/${population.slug}`,
-              label: population.name,
-            }))}
-            colorVariant={"secondary"}
-          />
-        )
-      }
-    </AsideNavContainer>
+    <section slot="section" class="m-3 mb-12">
+      <Text class="mb-3">
+        {
+          `We have collected together ${quantityText} ${resourceTypeLabel.toLowerCase()} spanning a range of topics.`
+        }
+      </Text>
+      <Text class="mb-3">
+        {
+          `To see ${resourceTypeLabel.toLowerCase()} for a specific topic select from the list below.`
+        }
+      </Text>
+      <Heading as="h3" class:list={["mb-3 font-semibold"]}>Topics</Heading>
+      <ul class="p-3 lg:p-6 bg-white shadow-md sm:columns-2 lg:columns-3">
+        {
+          props.applicableCategories.map((category) => (
+            <li>
+              <MainNavLink
+                href={`/${params.resourceType}/${category.slug}`}
+                label={category.title}
+                variant="secondary"
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
   </ResourcePageLayout>
 </MainLayout>

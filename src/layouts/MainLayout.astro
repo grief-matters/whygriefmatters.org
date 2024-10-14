@@ -15,18 +15,20 @@ import SiteHeader from "@ui/SiteHeader.astro";
 
   <body
     class:list={[
-      "min-h-full p-0 m-0",
+      "min-h-screen",
+      "flex flex-col",
       ds.background.color?.neutral?.defaultLightest,
       ds.typography.color?.primary.default,
     ]}
   >
     <SiteHeader />
-    <main>
+    <main class="flex-grow">
       <slot />
     </main>
     <SiteFooter />
   </body>
 </html>
+
 <style>
   html {
     font-size: 18px;

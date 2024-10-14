@@ -1,0 +1,108 @@
+---
+import { getCoreContentGroups } from "@common/client";
+import CollapsibleContent from "@ui/Collapsible/CollapsibleContent.astro";
+import CollapsibleContentButton from "@ui/Collapsible/CollapsibleContentButton.astro";
+import CollapsibleContentCloseButton from "@ui/Collapsible/CollapsibleContentCloseButton.astro";
+import CollapsibleContentContent from "@ui/Collapsible/CollapsibleContentContent.astro";
+import { wgmDesignSystem as ds } from "@common/design-system";
+import MainNavCoreContentGroup from "./MainNavCoreContentGroup.astro";
+
+const coreContentGroups = await getCoreContentGroups();
+---
+
+<CollapsibleContent>
+  <CollapsibleContentButton
+    slot="button"
+    classList={[
+      "flex items-center",
+      ds.typography.color?.primary.contrast,
+      "w-8",
+      "mx-2 mt-3",
+      "sm:hidden",
+    ]}
+  >
+    <span class="sr-only">
+      {"Menu"}
+    </span>
+
+    <svg
+      class="w-full"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+      fill="none"
+      stroke-linecap="round"
+    >
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </CollapsibleContentButton>
+  <CollapsibleContentContent
+    classList={["sm:grid sm:opacity-100"]}
+    slot="content"
+  >
+    <div
+      class:list={[
+        "fixed inset-0 bg-orange-50",
+        "sm:static sm:opacity-100 sm:bg-transparent",
+      ]}
+    >
+      <div class:list={["h-full max-h-full flex flex-col-reverse sm:block"]}>
+        <div class:list={["w-full flex justify-end mb-3", "sm:hidden"]}>
+          <CollapsibleContentCloseButton
+            classList={["flex justify-end items-center space-x-2 p-6"]}
+          >
+            <span
+              class:list={[
+                "font-semibold",
+                "block",
+                "font-serif italic text-2xl",
+                ds.typography.color?.primary.default,
+              ]}
+            >
+              {"Close"}
+            </span>
+            <div class:list={["w-6", ds.typography.color?.primary.default]}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                <g transform="rotate(45, 50, 50)">
+                  <line
+                    x1="10"
+                    y1="50"
+                    x2="90"
+                    y2="50"
+                    stroke="currentColor"
+                    stroke-width="8"
+                    stroke-linecap="round"></line>
+                  <line
+                    x1="50"
+                    y1="10"
+                    x2="50"
+                    y2="90"
+                    stroke="currentColor"
+                    stroke-width="8"
+                    stroke-linecap="round"></line>
+                </g>
+              </svg>
+            </div>
+          </CollapsibleContentCloseButton>
+        </div>
+        <div class="flex-grow mt-24 mx-12 sm:mx-auto sm:my-0">
+          <div
+            class:list={[
+              "sm:grid sm:grid-cols-2",
+              "md:grid-cols-4 md:container md:mx-auto",
+            ]}
+          >
+            {
+              coreContentGroups.map((ccg) => (
+                <MainNavCoreContentGroup coreContentGroup={ccg} />
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </CollapsibleContentContent>
+</CollapsibleContent>

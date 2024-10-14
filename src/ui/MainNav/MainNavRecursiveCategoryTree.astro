@@ -7,7 +7,6 @@ import {
   type StyleVariant,
   type StyleVariantClassListMap,
 } from "@common/variants";
-import type { DsColorVariant } from "@common/design-system";
 
 // interface Props {
 //   categories: CategoryTreeItem[];
@@ -20,6 +19,7 @@ interface Props {
   variant?: "default" | "contrast";
   startingVariant?: StyleVariant;
   getPath?(slug: string): string;
+  classList?: Array<string>;
 }
 
 const {
@@ -51,7 +51,7 @@ const listItemStyleVariantClassListMap: StyleVariantClassListMap = {
 };
 ---
 
-<ul class={""}>
+<ul>
   {
     categories.map((c) => (
       <li class:list={listItemStyleVariantClassListMap[startingVariant]}>

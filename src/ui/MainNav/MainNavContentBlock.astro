@@ -1,0 +1,70 @@
+---
+import type { ContentBlock } from "@model/contentBlock";
+import MainNavTopicCollectionContentBlock from "./MainNavTopicCollectionContentBlock.astro";
+import MainNavTopicContentBlock from "./MainNavTopicContentBlock.astro";
+import RichTextContentBlock from "@ui/richTextContentBlock.astro";
+import { getImageUrl } from "@common/client";
+import MainNavLink from "./MainNavLink.astro";
+import { getRoute } from "@common/route";
+
+interface Props {
+  block: ContentBlock;
+}
+
+const { block } = Astro.props;
+---
+
+<div>
+  {
+    () => {
+      switch (block.contentType) {
+        case "accessibleImage":
+          return (
+            <img src={getImageUrl(block.image).url()} alt={block.altText} />
+          );
+        case "resourceLinks":
+          return <div>resourceLinks</div>;
+        case "resourcePageLinks":
+          return (
+            <ul>
+              {block.links.map((link) => (
+                <li class="mb-2">
+                  <MainNavLink
+                    label={link.label}
+                    href={getRoute({
+                      type: link.type,
+                      category: link.category,
+                      population: link.population,
+                    })}
+                    variant="secondary"
+                  />
+                </li>
+              ))}
+            </ul>
+          );
+
+        case "richTextContentBlock":
+          return (
+            <div class="mb-3">
+              <RichTextContentBlock
+                class:list={["font-serif italic text-xl leading-relaxed"]}
+                portableText={block.portableText}
+              />
+            </div>
+          );
+        case "rowOfThree":
+          return <div>rowOfThree</div>;
+        case "rowOfThreeFeaturedResources":
+          return <div>rowOfThreeFeaturedResources</div>;
+        case "topicContentBlock":
+          return <MainNavTopicContentBlock topicContentBlock={block} />;
+        case "topicCollectionContentBlockNew":
+          return (
+            <MainNavTopicCollectionContentBlock
+              topicContentBlocks={block.topics}
+            />
+          );
+      }
+    }
+  }
+</div>

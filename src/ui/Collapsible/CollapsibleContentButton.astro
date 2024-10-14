@@ -1,13 +1,16 @@
 ---
-import type { HTMLTag, Polymorphic } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
-type Props<Tag extends HTMLTag> = {
+interface Props extends HTMLAttributes<"button"> {
   classList?: Array<string>;
-} & Polymorphic<{ as: Tag }>;
+}
 
-const { as: Tag = "button", classList = [], ...attrs } = Astro.props;
+const { classList, ...attrs } = Astro.props;
 ---
 
-<Tag class:list={["collapsible-content-button"]} {...attrs}>
+<button
+  class:list={["collapsible-content-button", ...(classList ?? [])]}
+  {...attrs}
+>
   <slot />
-</Tag>
+</button>

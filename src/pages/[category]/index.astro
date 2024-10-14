@@ -1,5 +1,6 @@
 ---
 import startCase from "lodash/startCase";
+import sortBy from "lodash/sortBy";
 import pluralize from "pluralize";
 
 import type {
@@ -27,25 +28,47 @@ import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageLi
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import PageHeader from "@ui/PageHeader.astro";
 import type { SanityImage } from "@model/image";
-import { getFullCategoryName } from "@common/category";
+import {
+  findCategorySubtree,
+  getCategoryTree,
+  getFullCategoryName,
+  type CategoryTreeItem,
+} from "@common/category";
+import Text from "@ui/primitives/Text.astro";
+import CardLink from "@ui/CardLink.astro";
+import MainNavRecursiveCategoryTree from "@ui/MainNav/MainNavRecursiveCategoryTree.astro";
 import Heading from "@ui/primitives/Heading.astro";
 import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
+
+type SubtopicResources = Record<
+  string,
+  {
+    title: string;
+    resources: Array<InternetResourcePageListing>;
+  }
+>;
 
 interface Props {
   title: string;
   resources: Array<InternetResourcePageListing>;
+  subtopicResources: SubtopicResources;
   featuredArticles: Array<CategoryPageFeaturedResource> | null;
   featuredStories: Array<CategoryPageFeaturedResource> | null;
   applicablePopulations: Array<Population>;
   applicableTypes: Array<InternetResourceType>;
   image: SanityImage | null;
+  childTree: CategoryTreeItem | null;
 }
 
 export async function getStaticPaths() {
   const categoryPagesData = await getCategoryPagesData();
+  const categoryTree = await getCategoryTree();
+
   const populations = await getPopulations();
 
   return categoryPagesData.map((data: CategoryPageData) => {
+    const treeForCategory = findCategorySubtree(categoryTree, data.slug);
+
     const filteredPopulations = populations.filter((p) =>
       data.resources.some((r) => r.populations?.includes(p.slug))
     );
@@ -56,16 +79,36 @@ export async function getStaticPaths() {
       ? getFullCategoryName(data.parent.slug, data.title)
       : data.title;
 
+    const subtopicResources: SubtopicResources = {};
+
+    treeForCategory?.children.forEach((child) => {
+      const pageMatch = categoryPagesData.find((x) => x.slug === child.slug);
+      if (typeof pageMatch === "undefined") {
+        return;
+      }
+
+      subtopicResources[child.slug] = {
+        title: pageMatch.title,
+        resources: sortBy(pageMatch.resources, ["type", "title"]),
+      };
+
+      if (data.slug === "loss-of-a") {
+        console.log(subtopicResources);
+      }
+    });
+
     return {
       params: { category: data.slug },
       props: {
         title: fullTitle,
         image: data.image,
-        resources: data.resources,
+        resources: sortBy(data.resources, ["type", "title"]),
+        subtopicResources: subtopicResources,
         featuredArticles: data.featuredArticles,
         featuredStories: data.featuredStories,
         applicablePopulations: filteredPopulations ?? [],
-        applicableTypes: filteredTypes ?? [],
+        applicableTypes: filteredTypes.sort() ?? [],
+        childTree: treeForCategory,
       },
     };
   });
@@ -81,8 +124,13 @@ const showNarrowSearchAside = showApplicablePopulations || showApplicableTypes;
 const pageTitle = getResourcePageTitle({
   categoryName: props.title,
 });
+
+const subtopics = Object.entries(props.subtopicResources);
 ---
 
+<!-- We need to deal with categories that 
+ - have no resources of their own (usually have children) 
+-->
 <MainLayout>
   <ResourcePageLayout>
     <PageHeader
@@ -95,63 +143,141 @@ const pageTitle = getResourcePageTitle({
       {
         props.featuredStories && (
           <div class="py-3">
-            <Heading as="h2" size="xl2" class="text-center py-3">
-              <EmphasizedEllipsisText text="Featured Stories" />
-            </Heading>
-            <FeaturedResources featuredResources={props.featuredStories} />
+            <div class="xl:container mx-auto">
+              <div class="xl:mx-9">
+                <Heading as="h2" size="xl2" class="text-center py-3">
+                  <EmphasizedEllipsisText text="Featured Stories" />
+                </Heading>
+                <FeaturedResources featuredResources={props.featuredStories} />
+              </div>
+            </div>
           </div>
         )
       }
       {
         props.featuredArticles && (
           <div class="py-3">
-            <Heading as="h2" size="xl2" class="text-center py-3">
-              <EmphasizedEllipsisText text="Featured Articles" />
-            </Heading>
-            <FeaturedResources featuredResources={props.featuredArticles} />
+            <div class="xl:container mx-auto">
+              <div class="md:mx-6 xl:mx-9">
+                <Heading as="h2" size="xl2" class="text-center py-3">
+                  <EmphasizedEllipsisText text="Featured Articles" />
+                </Heading>
+                <FeaturedResources featuredResources={props.featuredArticles} />
+              </div>
+            </div>
           </div>
         )
       }
     </Fragment>
-    <ResourcePageListingsContainer slot="section">
+    <div slot="section">
       {
-        props.resources.map((resource) => (
-          <ResourcePageListingsListItem>
-            <ResourcePageListing resource={resource} />
-          </ResourcePageListingsListItem>
-        ))
+        (props.childTree?.children?.length ?? 0) > 0 && (
+          <section class="m-3 p-3 bg-white shadow-md">
+            <Heading as="h3" class:list={["mb-3 font-semibold inline"]}>
+              Subtopics
+            </Heading>
+            <Text class="mb-3">{`This topic has subtopics if you're looking for something more specific than is shown below.`}</Text>
+            <details open={props.resources.length === 0}>
+              <summary class="font-serif font-semibold">Show Subtopics</summary>
+              <div class="ml-3">
+                <MainNavRecursiveCategoryTree
+                  categories={props.childTree?.children ?? []}
+                  startingVariant="secondary"
+                />
+              </div>
+            </details>
+          </section>
+        )
       }
-    </ResourcePageListingsContainer>
-    {
-      showNarrowSearchAside && (
-        <AsideNavContainer
-          slot="aside"
-          title="Narrow Your Search"
-          subtitle="View resources in this category tailored to you"
-          colorVariant="secondary"
-        >
-          {props.applicablePopulations?.length > 0 && (
-            <AsideNav
-              title="Resources for..."
-              links={props.applicablePopulations.map((population) => ({
-                to: `/${params.category}/${population.slug}`,
-                label: population.name,
-              }))}
-              colorVariant={"secondary"}
-            />
-          )}
-          {props.applicableTypes?.length > 1 && (
-            <AsideNav
-              title="By type..."
-              links={props.applicableTypes.map((type) => ({
-                to: `/${type}/${params.category}`,
-                label: pluralize(startCase(type)),
-              }))}
-              colorVariant={"secondary"}
-            />
-          )}
-        </AsideNavContainer>
-      )
-    }
+      {
+        props.applicableTypes.length > 1 && (
+          <section class="p-3 mb-3 lg:mb-6">
+            <Heading as="h3" class:list={["mb-4 font-semibold"]}>
+              Types Of Resources In This Topic
+            </Heading>
+            <div class:list={["flex flex-wrap gap-4"]}>
+              {props.applicableTypes.map((type) => (
+                <CardLink
+                  href={`/${type}/${params.category}`}
+                  cardProps={{ resourceType: type ?? undefined }}
+                >
+                  <span class="flex space-x-2">
+                    <>
+                      <span>{pluralize(startCase(type))}</span>
+                      <span>
+                        {props.resources.filter((x) => x.type === type).length}
+                      </span>
+                    </>
+                  </span>
+                </CardLink>
+              ))}
+            </div>
+          </section>
+        )
+      }
+      {
+        props.applicablePopulations.length > 0 && (
+          <section class="p-3 mb-3 lg:mb-6">
+            <Heading as="h3" class:list={["mb-4 font-semibold"]}>
+              Underserved Groups
+            </Heading>
+            <Text class="mb-3">{`We have identified resources within this topic for the following groups`}</Text>
+            <div class:list={["flex flex-wrap gap-4"]}>
+              {props.applicablePopulations.map((population) => (
+                <CardLink href={`/${params.category}/${population.slug}`}>
+                  {population.name}
+                </CardLink>
+              ))}
+            </div>
+          </section>
+        )
+      }
+      <section class="p-3">
+        {
+          props.resources.length > 0 ? (
+            <>
+              <Heading as="h3" class:list={["mb-6 font-semibold"]}>
+                Resources In This Topic
+              </Heading>
+              <ResourcePageListingsContainer>
+                {props.resources.map((resource) => (
+                  <ResourcePageListingsListItem>
+                    <ResourcePageListing resource={resource} />
+                  </ResourcePageListingsListItem>
+                ))}
+              </ResourcePageListingsContainer>
+            </>
+          ) : (
+            <>
+              <Heading as="h3" class:list={["mb-3 font-semibold"]}>
+                Resources In Subtopics
+              </Heading>
+              <Text class="mb-3">{`There aren't any specific resources for this topic, but you can explore resources available within subtopics below or select a subtopic above to show a more focused list.`}</Text>
+              <>
+                {subtopics.map(([slug, subtopic]) => (
+                  <details>
+                    <summary>
+                      <Heading
+                        as="h3"
+                        class:list={["mb-3 font-semibold inline-block"]}
+                      >
+                        {subtopic.title}
+                      </Heading>
+                    </summary>
+                    <ResourcePageListingsContainer>
+                      {subtopic.resources.map((resource) => (
+                        <ResourcePageListingsListItem>
+                          <ResourcePageListing resource={resource} />
+                        </ResourcePageListingsListItem>
+                      ))}
+                    </ResourcePageListingsContainer>
+                  </details>
+                ))}
+              </>
+            </>
+          )
+        }
+      </section>
+    </div>
   </ResourcePageLayout>
 </MainLayout>

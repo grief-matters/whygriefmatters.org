@@ -26,7 +26,10 @@ import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageL
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
 import { getFullCategoryName } from "@common/category";
 import PageHeader from "@ui/PageHeader.astro";
+import Text from "@ui/primitives/Text.astro";
 import { getResourcePageTitle } from "@common/page";
+import CardLink from "@ui/CardLink.astro";
+import MainNavLink from "@ui/MainNav/MainNavLink.astro";
 
 interface Props {
   categoryTitle: string;
@@ -91,46 +94,23 @@ const pageTitle = getResourcePageTitle({
       pageTitle={pageTitle}
       image={props.image ? props.image : undefined}
     />
-    <ResourcePageListingsContainer slot="section">
-      {
-        props.resources.map((resource) => (
-          <ResourcePageListingsListItem>
-            <ResourcePageListing resource={resource} />
-          </ResourcePageListingsListItem>
-        ))
-      }
-    </ResourcePageListingsContainer>
-    <Fragment slot="aside">
-      {
-        props.applicableTypes?.length > 1 && (
-          <AsideNavContainer
-            title="Narrow Your Search"
-            subtitle={`See resources in ${fullCategoryTitle} for ${props.populationData.name} by type...`}
-            colorVariant="secondary"
-          >
-            <AsideNav
-              links={props.applicableTypes.map((type) => ({
-                to: `/${type}/${params.category}/${params.population}`,
-                label: pluralize(startCase(type)),
-              }))}
-              colorVariant={"secondary"}
-            />
-          </AsideNavContainer>
-        )
-      }
-      <AsideNavContainer
-        title="See More Resources"
-        subtitle="Can't find what you're looking for?"
-      >
-        <AsideNav
-          links={[
-            {
-              to: `/${params.category}`,
-              label: `See all resources in ${fullCategoryTitle}`,
-            },
-          ]}
+    <section slot="section">
+      <ResourcePageListingsContainer>
+        {
+          props.resources.map((resource) => (
+            <ResourcePageListingsListItem>
+              <ResourcePageListing resource={resource} />
+            </ResourcePageListingsListItem>
+          ))
+        }
+      </ResourcePageListingsContainer>
+      <div class="mb-6">
+        <MainNavLink
+          href={`/${params.category}`}
+          label={`Back to all resources in ${fullCategoryTitle}`}
+          variant="secondary"
         />
-      </AsideNavContainer>
-    </Fragment>
+      </div>
+    </section>
   </ResourcePageLayout>
 </MainLayout>

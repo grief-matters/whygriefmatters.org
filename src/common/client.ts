@@ -45,6 +45,11 @@ import {
   zCrisisResource,
 } from "@model/crisisResource";
 import { zPortableText, type PortableText } from "@model/portableText";
+import {
+  gCoreContentGroupsQuery,
+  zCoreContentGroup,
+  type CoreContentGroup,
+} from "@model/coreContentGroup";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -55,6 +60,8 @@ type ClientQueryParams = {
   | { categorySlug: string }
   | { populationSlug: string }
 );
+
+export const dataCache: Record<string, any> = {};
 
 /**
  * Maps the parts of a GROQ query filter by key
@@ -99,16 +106,36 @@ export const client = createClient({
 const imgUrlBuilder = imageUrlBuilder(client);
 
 /**
+ * Returns a promise that resolves to the Core Content Groups ot throws a Zod error
+ *
+ * @returns
+ */
+export async function getCoreContentGroups(): Promise<CoreContentGroup[]> {
+  const coreContentGroups = await client
+    .fetch(gCoreContentGroupsQuery)
+    .then((result) => zCoreContentGroup.array().parse(result));
+
+  return coreContentGroups;
+}
+
+/**
  * Gets the entire list of categories with parents
  *
  * @returns
  */
 export async function getCategories(): Promise<Category[]> {
-  const categories = await client
-    .fetch(gCategoriesQuery)
-    .then((result) => zCategory.array().parse(result));
+  if (
+    typeof dataCache.categories === "undefined" ||
+    dataCache.categories === null
+  ) {
+    const categories = await client
+      .fetch(gCategoriesQuery)
+      .then((result) => zCategory.array().parse(result));
 
-  return categories;
+    dataCache.categories = categories;
+  }
+
+  return dataCache.categories;
 }
 
 /**
@@ -188,11 +215,18 @@ export async function getHomePageData(): Promise<HomePageData> {
  * @returns {CategoryPageData[]}
  */
 export async function getCategoryPagesData(): Promise<CategoryPageData[]> {
-  const categoryPagesData = await client
-    .fetch(gCategoryPageQuery)
-    .then((result) => zCategoryPageData.array().parse(result));
+  if (
+    typeof dataCache.categoryPagesData === "undefined" ||
+    dataCache.categoryPagesData === null
+  ) {
+    const categoryPagesData = await client
+      .fetch(gCategoryPageQuery)
+      .then((result) => zCategoryPageData.array().parse(result));
 
-  return categoryPagesData.filter((pageData) => pageData.resources.length > 0);
+    dataCache.categoryPagesData = categoryPagesData;
+  }
+
+  return dataCache.categoryPagesData;
 }
 
 /**
@@ -252,16 +286,22 @@ export async function getLogoSet(): Promise<Logo[]> {
  * @returns
  */
 export async function getFallbackImageCollection(): Promise<SanityImage[]> {
-  const query = groq`
-    *[_type == "imageCollection" && title == "Generic Fallbacks"].images[]{
-      image, 
-      "altText": alt
-    }
-  `;
+  if (!dataCache.fallbackImageCollection) {
+    const query = groq`
+      *[_type == "imageCollection" && title == "Generic Fallbacks"].images[]{
+        image, 
+        "altText": alt
+      }
+    `;
 
-  return await client
-    .fetch(query)
-    .then((result) => zImage.array().parse(result));
+    const images = await client
+      .fetch(query)
+      .then((result) => zImage.array().parse(result));
+
+    dataCache.fallbackImageCollection = images;
+  }
+
+  return dataCache.fallbackImageCollection;
 }
 
 /**
