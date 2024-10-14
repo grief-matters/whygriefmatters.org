@@ -15,6 +15,8 @@ interface Props {
 const { topicContentBlock } = Astro.props;
 
 const categoryTreeItems = await getCategoryTree(topicContentBlock.topic.slug);
+
+console.log(topicContentBlock.topic.slug);
 ---
 
 <div>
@@ -34,7 +36,7 @@ const categoryTreeItems = await getCategoryTree(topicContentBlock.topic.slug);
           label={
             topicContentBlock.displayTitle ?? topicContentBlock.topic.title
           }
-          href={topicContentBlock.topic.slug}
+          href={`/${topicContentBlock.topic.slug}`}
         />
         {topicContentBlock.showDescription && (
           <Text>{topicContentBlock.topic.description}</Text>
