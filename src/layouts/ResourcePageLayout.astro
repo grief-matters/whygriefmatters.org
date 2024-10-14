@@ -26,7 +26,6 @@ const bgFeaturedColors = [
 }
 <section
   class:list={[
-    "flex flex-col-reverse",
     "lg:flex-row lg:justify-between lg:max-w-screen-md lg:mx-auto lg:mt-6",
     "xl:max-w-screen-lg",
   ]}
@@ -36,7 +35,7 @@ const bgFeaturedColors = [
   </section>
   {
     hasAside && (
-      <aside class="m-3">
+      <aside>
         <slot name="aside" />
       </aside>
     )

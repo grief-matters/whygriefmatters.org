@@ -118,23 +118,6 @@ const pageTitle = getResourcePageTitle({
           </AsideNavContainer>
         )
       }
-      <AsideNavContainer
-        title="Related Resources"
-        subtitle="Didn't find what you were looking for?"
-      >
-        <AsideNav
-          links={[
-            {
-              to: `/${params.category}`,
-              label: `See all resources in ${fullCategoryTitle}`,
-            },
-            {
-              to: `/${params.resourceType}`,
-              label: `See all ${pluralize(startCase(params.resourceType))}`,
-            },
-          ]}
-        />
-      </AsideNavContainer>
     </Fragment>
   </ResourcePageLayout>
 </MainLayout>

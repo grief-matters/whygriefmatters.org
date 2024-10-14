@@ -191,7 +191,7 @@ const subtopics = Object.entries(props.subtopicResources);
       }
       {
         props.applicableTypes.length > 1 && (
-          <section class="p-3">
+          <section class="p-3 mb-3 lg:mb-6">
             <Heading as="h3" class:list={["mb-4 font-semibold"]}>
               Types Of Resources In This Topic
             </Heading>
@@ -209,6 +209,23 @@ const subtopics = Object.entries(props.subtopicResources);
                       </span>
                     </>
                   </span>
+                </CardLink>
+              ))}
+            </div>
+          </section>
+        )
+      }
+      {
+        props.applicablePopulations.length > 0 && (
+          <section class="p-3 mb-3 lg:mb-6">
+            <Heading as="h3" class:list={["mb-4 font-semibold"]}>
+              Underserved Groups
+            </Heading>
+            <Text class="mb-3">{`We have identified resources within this topic for the following groups`}</Text>
+            <div class:list={["flex flex-wrap gap-4"]}>
+              {props.applicablePopulations.map((population) => (
+                <CardLink href={`/${params.category}/${population.slug}`}>
+                  {population.name}
                 </CardLink>
               ))}
             </div>
