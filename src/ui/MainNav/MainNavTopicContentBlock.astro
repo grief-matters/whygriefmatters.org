@@ -15,8 +15,6 @@ interface Props {
 const { topicContentBlock } = Astro.props;
 
 const categoryTreeItems = await getCategoryTree(topicContentBlock.topic.slug);
-
-console.log(topicContentBlock.topic.slug);
 ---
 
 <div>
