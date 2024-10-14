@@ -28,7 +28,11 @@ export const zCategory = zCategoryBase.extend({
 export const gCategoriesByFilterQuery = (queryFilter: string) => groq`
 array::compact(*[${queryFilter}].categories[]->{
   title,
-  "slug": slug.current
+  "slug": slug.current,
+  parent->{
+    title,
+    "slug": slug.current,
+  }
 })
 `;
 
