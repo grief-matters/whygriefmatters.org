@@ -23,7 +23,7 @@ export const gPopulationsPageData = groq`
 *[_type == "population"]{
   name,
   "slug": slug.current,
-  "resources": *[^.slug.current in populations[]->slug.current]{
+  "resources": *[^.slug.current in populations[]->slug.current && _type != 'crisisResource']{
     categories[]->{
       title,
       "slug": slug.current

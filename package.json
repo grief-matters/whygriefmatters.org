@@ -29,6 +29,7 @@
     "@types/lodash": "^4.14.202",
     "@types/pluralize": "^0.0.33",
     "astro": "^4.15.12",
+    "libphonenumber-js": "^1.11.12",
     "lodash": "^4.17.21",
     "node-html-parser": "^6.1.13",
     "pluralize": "^8.0.0",

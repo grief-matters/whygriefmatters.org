@@ -1,7 +1,9 @@
 ---
 import { getImageUrl, getLogoSet } from "@common/client";
+import { wgmDesignSystem as ds } from "@common/design-system";
 
 import MainNavNew from "./MainNav/MainNavNew.astro";
+import Link from "./primitives/Link.astro";
 
 const logoSet = await getLogoSet();
 
@@ -9,72 +11,107 @@ const rawLightLogo = logoSet?.find((l) => l.variant === "light-secondary");
 const lightHeaderLogo = rawLightLogo
   ? {
       url: getImageUrl(rawLightLogo.image).url(),
-      alt: "Why Grief Matter home",
+      alt: "Why Grief Matter home page",
     }
   : null;
+
+const rawDarkLogo = logoSet?.find((l) => l.variant === "dark-primary");
+const darkHeaderLogo = rawDarkLogo
+  ? {
+      url: getImageUrl(rawDarkLogo.image).url(),
+      alt: "Why Grief Matters Logo home page",
+    }
+  : null;
+
+// const lgImgUrl = image
+// ? `url(${getImageUrl(image.image).width(1280).height(640).url()})`
+// : null;
+
+const lightUrl = `url(${lightHeaderLogo?.url})`;
+const darkUrl = `url(${darkHeaderLogo?.url})`;
 ---
 
+<div class="w-screen bg-yellow-200">
+  <nav class="flex justify-end xl:container xl:mx-auto">
+    <a
+      class:list={[
+        "font-serif font-bold",
+        "lg:text-lg",
+        "sm:bg-blue-900 sm:text-yellow-200 px-2 sm:px-6",
+        "underline-offset-2 hover:underline decoration-dotted decoration-sky-800/30",
+        ds.decoration.transition,
+      ]}
+      href="/crisis">Help! I'm In Crisis</a
+    >
+  </nav>
+</div>
 <header
   id="site-header"
   class:list={[
     "z-10",
     "sticky top-0 focus-within:top-0",
-    "bg-blue-900",
+    "bg-blue-900 sm:bg-white",
     "transition-[top] ease-in-out delay-300 duration-500",
     "shadow-xl",
   ]}
 >
-  <div
-    class:list={[
-      "flex items-center justify-between",
-      "sm:block",
-      "xl:container xl:mx-auto",
-    ]}
-  >
-    <a href="/" class="block h-24 p-3">
-      {
-        lightHeaderLogo ? (
-          <img
-            src={lightHeaderLogo.url}
-            alt={lightHeaderLogo.alt}
-            class="h-full"
-          />
-        ) : (
-          <span>Why Grief Matters</span>
-        )
-      }
-    </a>
+  <div class:list={["flex items-center justify-between", "sm:block"]}>
+    <div class:list={["xl:container xl:mx-auto"]}>
+      <a href="/" class="block h-24 p-3">
+        {
+          lightHeaderLogo ? (
+            <img
+              src={lightHeaderLogo.url}
+              alt={lightHeaderLogo.alt}
+              class="h-full logo"
+            />
+          ) : (
+            <span>Why Grief Matters</span>
+          )
+        }
+      </a>
+    </div>
     <MainNavNew />
   </div>
-
-  <style>
-    header.scroll-down {
-      top: -100%;
-    }
-  </style>
-
-  <script>
-    import throttle from "lodash/throttle";
-
-    const header = document.querySelector("#site-header");
-
-    let lastScrollPosition = 0;
-
-    function handleScroll() {
-      const headerFocussed = header?.contains(document.activeElement);
-      const scrollingDown = lastScrollPosition < scrollY;
-
-      if (!headerFocussed && scrollingDown) {
-        header?.classList.add("scroll-down");
-      } else {
-        header?.classList.remove("scroll-down");
-      }
-
-      lastScrollPosition = scrollY;
-    }
-
-    const throttledScrollHandler = throttle(handleScroll, 250);
-
-    window.addEventListener("scroll", throttledScrollHandler);
-  </script>
 </header>
+
+<style define:vars={{ lightUrl, darkUrl }}>
+  header.scroll-down {
+    top: -100%;
+  }
+
+  .logo {
+    content: var(--lightUrl);
+  }
+
+  @media (min-width: 641px) {
+    .logo {
+      content: var(--darkUrl);
+    }
+  }
+</style>
+
+<script>
+  import throttle from "lodash/throttle";
+
+  const header = document.querySelector("#site-header");
+
+  let lastScrollPosition = 0;
+
+  function handleScroll() {
+    const headerFocussed = header?.contains(document.activeElement);
+    const scrollingDown = lastScrollPosition < scrollY;
+
+    if (!headerFocussed && scrollingDown) {
+      header?.classList.add("scroll-down");
+    } else {
+      header?.classList.remove("scroll-down");
+    }
+
+    lastScrollPosition = scrollY;
+  }
+
+  const throttledScrollHandler = throttle(handleScroll, 250);
+
+  window.addEventListener("scroll", throttledScrollHandler);
+</script>

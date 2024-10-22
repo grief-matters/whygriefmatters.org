@@ -13,10 +13,17 @@ interface Props extends HTMLAttributes<"a"> {
   colorSchemeVariant?: TypographyColorSchemeVariant;
   size?: TypographySize;
   external?: boolean;
+  underline?: boolean;
 }
 
-const { colorScheme, colorSchemeVariant, size, external, ...attrs } =
-  Astro.props;
+const {
+  colorScheme,
+  colorSchemeVariant,
+  size,
+  external,
+  underline = true,
+  ...attrs
+} = Astro.props;
 
 const externalLinkAttrs = external
   ? {
@@ -37,8 +44,8 @@ const decorationColor =
       colorSchemeVariant ?? "default"
     ],
     ds.decoration.color[colorScheme ?? "primary"][decorationColor],
-    ds.decoration.underline,
     ds.decoration.transition,
+    { underline: underline },
   ]}
   {...attrs}
   {...externalLinkAttrs}

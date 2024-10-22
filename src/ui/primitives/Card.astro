@@ -6,6 +6,7 @@ interface Props {
   hoverable?: boolean;
   resourceType?: InternetResourceType;
   fullHeight?: boolean;
+  disableBorder?: boolean;
 }
 
 const props = Astro.props;
@@ -21,7 +22,7 @@ const borderColorClass = props.resourceType
   class:list={[
     props.fullHeight ? "h-full" : null,
     "bg-white",
-    "border-b-4",
+    props.disableBorder ? null : "border-b-4",
     borderColorClass,
     "shadow-md",
     ...(props.hoverable ? ["hover:shadow-lg transition-all"] : []),
