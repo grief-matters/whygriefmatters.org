@@ -88,13 +88,15 @@ const pageTitle = getResourcePageTitle({
       image={props.image ? props.image : undefined}
     />
     <ResourcePageListingsContainer slot="section">
-      {
-        props.resources.map((resource) => (
-          <ResourcePageListingsListItem>
-            <ResourcePageListing resource={resource} />
-          </ResourcePageListingsListItem>
-        ))
-      }
+      <div class="p-3">
+        {
+          props.resources.map((resource) => (
+            <ResourcePageListingsListItem>
+              <ResourcePageListing resource={resource} />
+            </ResourcePageListingsListItem>
+          ))
+        }
+      </div>
     </ResourcePageListingsContainer>
     <Fragment slot="aside">
       {

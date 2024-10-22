@@ -64,7 +64,7 @@ export const gCategoryPageQuery = groq`
       title,
       "slug": slug.current,
     },
-    "resources": *[^.slug.current in categories[]->slug.current]{
+    "resources": *[^.slug.current in categories[]->slug.current && _type != 'crisisResource']{
       ${gPageResourceListingProjection}
     },
     featuredArticles[]->{

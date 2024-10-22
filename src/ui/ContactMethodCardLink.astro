@@ -1,0 +1,123 @@
+---
+import {
+  days,
+  type Availability,
+  type ContactMethod,
+} from "@model/crisisResource";
+import CardLink from "./CardLink.astro";
+import { getPhoneNumberUri, getSmsNumberUri } from "@common/phoneNumber";
+import Subtitle from "./primitives/Subtitle.astro";
+import Card from "./primitives/Card.astro";
+import Link from "./primitives/Link.astro";
+
+interface Props {
+  contactMethod: ContactMethod;
+}
+
+function getAvailabilityText(availability: Availability) {
+  let dayText;
+  switch (true) {
+    case days.every((d) => availability.days.includes(d)):
+      dayText = "7 days a week";
+      break;
+    case days
+      .filter((d) => d !== "Saturday" && d !== "Sunday")
+      .every((d) => availability.days.includes(d)):
+      dayText = "Weekdays";
+      break;
+    case availability.days.includes("Saturday") &&
+      availability.days.includes("Sunday"):
+      dayText = "Weekends";
+      break;
+    default:
+      dayText = availability.days.join(", ");
+      break;
+  }
+
+  let timeText;
+
+  if (
+    availability.availableFrom === "00:00" &&
+    availability.availableTo === "00:00"
+  ) {
+    timeText = "24 hours a day";
+  } else {
+    timeText = `${availability.availableFrom} - ${availability.availableTo}`;
+  }
+
+  return `${timeText}, ${dayText}`;
+}
+
+const { contactMethod } = Astro.props;
+
+const shouldRenderAvailabilities =
+  (contactMethod.contactType === "tel" ||
+    contactMethod.contactType === "tty" ||
+    contactMethod.contactType === "sms") &&
+  contactMethod.availabilities;
+---
+
+<div class="p-3 sm: flex justify-between">
+  {
+    () => {
+      switch (contactMethod.contactType) {
+        case "tel":
+          return (
+            <Link
+              href={getPhoneNumberUri(contactMethod.telephoneNumber) ?? "#"}
+            >
+              <div>
+                <span class="font-semibold">{"Call: "}</span>
+                {contactMethod.telephoneNumber}
+              </div>
+            </Link>
+          );
+        case "tty":
+          return (
+            <Link
+              href={getPhoneNumberUri(contactMethod.telephoneNumber) ?? "#"}
+            >
+              <div>
+                <span class="font-semibold">{"TTY: "}</span>
+                {contactMethod.telephoneNumber}
+              </div>
+            </Link>
+          );
+        case "sms":
+          return (
+            <Link
+              href={getSmsNumberUri(
+                contactMethod.telephoneNumber,
+                contactMethod.smsBody ?? undefined
+              )}
+            >
+              <span class="font-semibold">{"Text: "}</span>
+              {contactMethod.smsBody ? `${contactMethod.smsBody} to ` : ""}
+              {contactMethod.telephoneNumber}
+            </Link>
+          );
+        case "liveChat":
+          return <Link href={contactMethod.liveChatUrl}>Live Chat</Link>;
+        case "email":
+          return (
+            <Link href={`mailto:${contactMethod.email}`}>
+              <span class="font-semibold">{"Email: "}</span>
+              {contactMethod.email}
+            </Link>
+          );
+        case "contactForm":
+          return <Link href={contactMethod.contactForm}>{"Contact Form"}</Link>;
+        default:
+          return <>[[unknown type]]</>;
+      }
+    }
+  }
+  <div>
+    {
+      shouldRenderAvailabilities &&
+        contactMethod.availabilities?.map((a) => (
+          <Subtitle>{getAvailabilityText(a)}</Subtitle>
+        ))
+    }
+  </div>
+</div>

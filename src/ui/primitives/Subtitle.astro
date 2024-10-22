@@ -1,30 +1,41 @@
 ---
-import type { DsColorVariant } from "@common/design-system";
-import { wgmDesignSystem as ds } from "@common/design-system";
-import type { TwFontSizeVariant } from "@common/tailwind-helpers";
-import type { HTMLTag, Polymorphic } from "astro/types";
+import type { Polymorphic } from "astro/types";
+import {
+  wgmDesignSystem as ds,
+  type TypographyColorScheme,
+  type TypographyColorSchemeVariant,
+  type TypographySize,
+} from "@common/design-system";
 
-type AdditionalProps = {
-  sizeVariant?: TwFontSizeVariant;
-  colorVariant?: DsColorVariant;
+type SubtitleHTMLTags = "span" | "p";
+
+type OwnProps = {
+  colorScheme?: TypographyColorScheme;
+  colorSchemeVariant?: TypographyColorSchemeVariant;
+  size?: TypographySize;
+  hoverable?: boolean;
 };
 
-type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & AdditionalProps;
+type Props<Tag extends SubtitleHTMLTags> = Polymorphic<{ as: Tag }> & OwnProps;
 
 const {
   as: Tag = "span",
-  sizeVariant = "text-sm",
-  colorVariant = ["neutral", "default"],
-  ...attrs
-} = Astro.props;
-
-const cv: DsColorVariant = colorVariant;
-const textColorClass = ds.typography.color?.[cv[0]]?.[cv[1]];
+  size = "sm",
+  hoverable = false,
+  ...props
+}: Props<SubtitleHTMLTags> = Astro.props;
 ---
 
 <Tag
-  class:list={["block", "font-serif italic", sizeVariant, textColorClass]}
-  {...attrs}
+  class:list={[
+    "block",
+    "font-serif italic",
+    ds.typography.size[size],
+    ds.typography.color[props.colorScheme ?? "neutral"][
+      props.colorSchemeVariant ?? "default"
+    ],
+  ]}
+  {...props}
 >
   <slot />
 </Tag>
