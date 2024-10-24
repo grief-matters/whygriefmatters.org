@@ -91,10 +91,6 @@ export async function getStaticPaths() {
         title: pageMatch.title,
         resources: sortBy(pageMatch.resources, ["type", "title"]),
       };
-
-      if (data.slug === "loss-of-a") {
-        console.log(subtopicResources);
-      }
     });
 
     return {
