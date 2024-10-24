@@ -1,0 +1,44 @@
+---
+import {
+  SignedIn,
+  SignedOut,
+  UserButton,
+  SignInButton,
+} from "@clerk/astro/components";
+
+import { wgmDesignSystem as ds } from "@common/design-system";
+import Text from "@ui/primitives/Text.astro";
+---
+
+<div>
+  <SignedOut>
+    <SignInButton asChild>
+      <button
+        class:list={[
+          "hover:shadow-md hover:shadow-blue-800/30 transition duration-300",
+          "bg-blue-900",
+          "text-start px-3",
+          "rounded",
+          "sm:w-full sm:text-center sm:py-1",
+        ]}
+      >
+        <Text
+          class:list={[
+            "font-bold",
+            ds.decoration.transition,
+            ds.decoration.color.primary.hover,
+            "hover:decoration-stone-50",
+            "text-stone-50 font-medium",
+            "text-base",
+          ]}
+          as="span"
+        >
+          {"Sign In"}
+        </Text>
+      </button>
+    </SignInButton>
+  </SignedOut>
+  <SignedIn>
+    <UserButton />
+  </SignedIn>
+</div>
