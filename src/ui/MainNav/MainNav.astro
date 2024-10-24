@@ -1,319 +1,108 @@
 ---
+import { getCoreContentGroups } from "@common/client";
 import CollapsibleContent from "@ui/Collapsible/CollapsibleContent.astro";
 import CollapsibleContentButton from "@ui/Collapsible/CollapsibleContentButton.astro";
-import CollapsibleContentContent from "@ui/Collapsible/CollapsibleContentContent.astro";
-
-import { buildCategoryTree, type CategoryTreeItem } from "@common/category";
-import { getCategories, getFeaturedTopics } from "@common/client";
-import { wgmDesignSystem as ds } from "@common/design-system";
-import MainNavLink from "./MainNavLink.astro";
-import MainNavRecursiveCategoryTree from "./MainNavRecursiveCategoryTree.astro";
 import CollapsibleContentCloseButton from "@ui/Collapsible/CollapsibleContentCloseButton.astro";
-import MainNavButton from "./MainNavButton.astro";
-import partition from "lodash/partition";
-import Title from "@ui/primitives/Heading.astro";
+import CollapsibleContentContent from "@ui/Collapsible/CollapsibleContentContent.astro";
+import { wgmDesignSystem as ds } from "@common/design-system";
+import MainNavCoreContentGroup from "./MainNavCoreContentGroup.astro";
 
-const featuredTopics = await getFeaturedTopics();
-
-const categories = await getCategories();
-const masterCategoryTree: CategoryTreeItem[] = buildCategoryTree(categories);
-
-const typesOfLoss = masterCategoryTree.find(
-  (rootCategory) => rootCategory.slug === "types-of-loss"
-);
-
-const supportingTheBereaved = masterCategoryTree.find(
-  (rootCategory) => rootCategory.slug === "supporting-the-bereaved"
-);
-
-const otherTopics = partition(
-  masterCategoryTree.filter(
-    (rootCategory) =>
-      // rootCategory.children.length === 0 &&
-      rootCategory.slug !== "types-of-loss" &&
-      rootCategory.slug !== "supporting-the-bereaved" &&
-      !featuredTopics.some((x) => x.slug === rootCategory.slug)
-  ),
-  (x) => x.children.length === 0
-);
-
-const navButtonClassList = ["block", "w-full md:w-auto"];
-
-const navContentClassList = [
-  "md:absolute md:top-full md:left-0 md:right-0",
-  "bg-blue-800",
-  "md:shadow-xl",
-  "transition ease-in-out duration-300 opacity-0",
-  "md:max-h-screen md:overflow-y-auto",
-];
-
-const navContentContainerClassList = ["pt-3 pb-6 px-3 xl:container xl:mx-auto"];
+const coreContentGroups = await getCoreContentGroups();
 ---
 
-{/* Mobile Nav Only */}
 <CollapsibleContent>
   <CollapsibleContentButton
     slot="button"
-    class:list={[
-      "flex items-center mr-3",
-      "md:hidden",
+    classList={[
+      "flex items-center",
       ds.typography.color?.primary.contrast,
-      "w-6",
+      "w-8",
+      "mx-2 mt-3",
+      "sm:hidden",
     ]}
   >
     <span class="sr-only">
       {"Menu"}
     </span>
-    <svg class="w-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-      <path
-        fill="currentColor"
-        d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"
-      ></path>
+
+    <svg
+      class="w-full"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+      fill="none"
+      stroke-linecap="round"
+    >
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
     </svg>
   </CollapsibleContentButton>
   <CollapsibleContentContent
+    classList={["sm:grid sm:opacity-100"]}
     slot="content"
-    class:list={[
-      "fixed inset-0 bg-blue-900",
-      "max-h-full overflow-y-auto overscroll-none",
-      "md:flex md:justify-between",
-      "md:static",
-    ]}
   >
-    <CollapsibleContentCloseButton class:list={["w-full h-20", "md:hidden"]}>
-      <div class="w-full flex justify-end items-center space-x-2 p-3 py-6">
-        <span
-          class:list={[
-            "block",
-            "font-serif italic text-2xl",
-            ds.typography.color?.primary.contrast,
-          ]}
-        >
-          {"Close"}
-        </span>
-        <div class:list={["w-6", ds.typography.color?.primary.contrast]}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-            <path
-              fill="currentColor"
-              d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"
-            ></path>
-          </svg>
-        </div>
-      </div>
-    </CollapsibleContentCloseButton>
-
-    {
-      /* 
-        Start of Main Nav 
-        */
-    }
-
-    <CollapsibleContent>
-      <CollapsibleContentButton
-        slot="button"
-        class:list={[...navButtonClassList]}
-      >
-        <MainNavButton label="Featured Topics" />
-      </CollapsibleContentButton>
-      <CollapsibleContentContent
-        slot="content"
-        class:list={[...navContentClassList]}
-      >
-        <div
-          class:list={[
-            ...navContentContainerClassList,
-            "md:flex md:justify-between md:space-x-16",
-          ]}
-        >
-          <div>
-            <div class:list={["border-b-2 mb-6 pb-6"]}>
-              <h3
-                class:list={[
-                  "text-2xl font-semibold",
-                  "mb-3",
-                  "text-stone-50 font-serif",
-                ]}
-              >
-                Featured Topics
-              </h3>
-              <ul>
-                {
-                  featuredTopics.map((topic) => (
-                    <li>
-                      <MainNavLink
-                        href={`/${topic.slug}`}
-                        label={topic.title}
-                        variant="secondary"
-                        colorVariant="contrast"
-                      />
-                    </li>
-                  ))
-                }
-              </ul>
-            </div>
-            <h3
+    <div
+      class:list={[
+        "fixed inset-0 bg-orange-50",
+        "sm:static sm:opacity-100 sm:bg-transparent",
+      ]}
+    >
+      <div class:list={["h-full max-h-full flex flex-col-reverse sm:block"]}>
+        <div class:list={["w-full flex justify-end mb-3", "sm:hidden"]}>
+          <CollapsibleContentCloseButton
+            classList={["flex justify-end items-center space-x-2 p-6"]}
+          >
+            <span
               class:list={[
-                "text-xl font-semibold",
-                "mb-2",
-                "text-stone-50 font-serif",
+                "font-semibold",
+                "block",
+                "font-serif italic text-2xl",
+                ds.typography.color?.primary.default,
               ]}
             >
-              Other Topics
-            </h3>
-            <ul>
-              {
-                otherTopics[0].map((topic) => (
-                  <li>
-                    <MainNavLink
-                      href={`/${topic.slug}`}
-                      label={topic.title}
-                      variant="secondary"
-                      colorVariant="contrast"
-                    />
-                  </li>
-                ))
-              }
-            </ul>
-          </div>
-          <div>
-            <MainNavRecursiveCategoryTree
-              variant="contrast"
-              categories={otherTopics[1]}
-            />
-          </div>
+              {"Close"}
+            </span>
+            <div class:list={["w-6", ds.typography.color?.primary.default]}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                <g transform="rotate(45, 50, 50)">
+                  <line
+                    x1="10"
+                    y1="50"
+                    x2="90"
+                    y2="50"
+                    stroke="currentColor"
+                    stroke-width="8"
+                    stroke-linecap="round"></line>
+                  <line
+                    x1="50"
+                    y1="10"
+                    x2="50"
+                    y2="90"
+                    stroke="currentColor"
+                    stroke-width="8"
+                    stroke-linecap="round"></line>
+                </g>
+              </svg>
+            </div>
+          </CollapsibleContentCloseButton>
         </div>
-      </CollapsibleContentContent>
-    </CollapsibleContent>
-    <CollapsibleContent>
-      <CollapsibleContentButton
-        slot="button"
-        class:list={[...navButtonClassList]}
-      >
-        <MainNavButton label="Types of Loss" />
-      </CollapsibleContentButton>
-      <CollapsibleContentContent
-        slot="content"
-        class:list={[...navContentClassList]}
-      >
-        <div
-          class:list={[
-            ...navContentContainerClassList,
-            "md:flex md:space-x-16",
-          ]}
-        >
-          {
-            typesOfLoss?.children.map((c) => (
-              <MainNavRecursiveCategoryTree
-                variant="contrast"
-                categories={[c]}
-              />
-            ))
-          }
-        </div>
-      </CollapsibleContentContent>
-    </CollapsibleContent>
-    <CollapsibleContent>
-      <CollapsibleContentButton
-        slot="button"
-        class:list={[...navButtonClassList]}
-      >
-        <MainNavButton label="Supporting the Bereaved" />
-      </CollapsibleContentButton>
-      <CollapsibleContentContent
-        slot="content"
-        class:list={[...navContentClassList]}
-      >
-        <div
-          class:list={[
-            ...navContentContainerClassList,
-            "md:flex md:justify-between",
-          ]}
-        >
-          {
-            supportingTheBereaved?.children
-              .filter((c) => c.children.length > 0)
-              .map((c, i) => (
-                <div class="mb-3">
-                  <MainNavRecursiveCategoryTree
-                    variant="contrast"
-                    categories={[c]}
-                  />
-                  {i + 1 === c.children.length ? (
-                    <ul class="border-t-2 mt-6 pt-6">
-                      <h3
-                        class:list={[
-                          "text-xl font-semibold",
-                          "mb-2",
-                          "text-stone-50 font-serif",
-                        ]}
-                      >
-                        Specific Support Topics
-                      </h3>
-                      <p
-                        class:list={[
-                          "text-xl font-light text-stone-50 font-serif italic",
-                          "pb-6",
-                        ]}
-                      >
-                        A selection of topics focussing on providing specific
-                        support.
-                      </p>
-                      {supportingTheBereaved?.children
-                        .filter((c) => c.children.length === 0)
-                        .map((c) => (
-                          <li>
-                            <MainNavLink
-                              href={`/${c.slug}`}
-                              label={c.title}
-                              variant="secondary"
-                              colorVariant="contrast"
-                            />
-                          </li>
-                        ))}
-                    </ul>
-                  ) : null}
-                </div>
+        <div class="flex-grow mt-24 mx-12 sm:mx-auto sm:my-0 sm:bg-blue-900">
+          <div
+            class:list={[
+              "sm:grid sm:grid-cols-2",
+              "md:grid-cols-4 md:container md:mx-auto",
+            ]}
+          >
+            {
+              coreContentGroups.map((ccg) => (
+                <MainNavCoreContentGroup coreContentGroup={ccg} />
               ))
-          }
+            }
+          </div>
         </div>
-      </CollapsibleContentContent>
-    </CollapsibleContent>
-
-    <a href="/browse-by-category" class:list={[...navButtonClassList]}>
-      <span
-        class:list={[
-          "py-1 px-3",
-          "flex w-full items-start justify-between",
-          "md:w-auto md:",
-          "text-stone-50",
-          "text-xl md:text-base",
-          "font-serif font-semibold",
-        ]}>All Categories</span
-      >
-    </a>
-    <a href="#" class:list={[...navButtonClassList]}>
-      <span
-        class:list={[
-          "py-1 px-3",
-          "flex w-full items-start justify-between",
-          "md:w-auto md:",
-          "text-stone-50",
-          "text-xl md:text-base",
-          "font-serif font-semibold",
-        ]}>About Us</span
-      >
-    </a>
-    <a href="#" class:list={[...navButtonClassList]}>
-      <span
-        class:list={[
-          "py-1 px-3",
-          "flex w-full items-start justify-between",
-          "md:w-auto md:",
-          "text-stone-50",
-          "text-xl md:text-base",
-          "font-serif font-semibold",
-        ]}>Contribute</span
-      >
-    </a>
+      </div>
+    </div>
   </CollapsibleContentContent>
 </CollapsibleContent>
