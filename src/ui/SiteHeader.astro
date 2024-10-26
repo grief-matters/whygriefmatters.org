@@ -57,19 +57,36 @@ const darkUrl = `url(${darkHeaderLogo?.url})`;
 >
   <div class:list={["flex items-center justify-between", "sm:block"]}>
     <div class:list={["xl:container xl:mx-auto"]}>
-      <a href="/" class="block h-24 p-3">
-        {
-          lightHeaderLogo ? (
-            <img
-              src={lightHeaderLogo.url}
-              alt={lightHeaderLogo.alt}
-              class="h-full logo"
-            />
-          ) : (
-            <span>Why Grief Matters</span>
-          )
-        }
-      </a>
+      <div class="sm:flex sm:justify-between">
+        <a href="/" class="block h-24 p-3">
+          {
+            lightHeaderLogo ? (
+              <img
+                src={lightHeaderLogo.url}
+                alt={lightHeaderLogo.alt}
+                class="h-full logo"
+              />
+            ) : (
+              <span>Why Grief Matters</span>
+            )
+          }
+        </a>
+        <div class="hidden sm:flex sm:p-2 sm:items-center sm:space-x-4">
+          <a
+            class:list={[
+              "font-serif font-semibold",
+              "text-blue-900",
+              "decoration-blue-800/30 hover:decoration-blue-900",
+              "decoration-dotted",
+              ds.decoration.underline,
+              ds.decoration.transition,
+            ]}
+            href="/contribute"
+          >
+            {"Contribute"}
+          </a>
+        </div>
+      </div>
     </div>
     <MainNav />
   </div>
