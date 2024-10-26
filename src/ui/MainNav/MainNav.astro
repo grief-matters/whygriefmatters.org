@@ -1,10 +1,12 @@
 ---
 import { getCoreContentGroups } from "@common/client";
+import { wgmDesignSystem as ds } from "@common/design-system";
+
 import CollapsibleContent from "@ui/Collapsible/CollapsibleContent.astro";
 import CollapsibleContentButton from "@ui/Collapsible/CollapsibleContentButton.astro";
 import CollapsibleContentCloseButton from "@ui/Collapsible/CollapsibleContentCloseButton.astro";
 import CollapsibleContentContent from "@ui/Collapsible/CollapsibleContentContent.astro";
-import { wgmDesignSystem as ds } from "@common/design-system";
+
 import MainNavCoreContentGroup from "./MainNavCoreContentGroup.astro";
 
 const coreContentGroups = await getCoreContentGroups();

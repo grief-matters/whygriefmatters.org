@@ -1,7 +1,4 @@
 ---
-import startCase from "lodash/startCase";
-import pluralize from "pluralize";
-
 import {
   type InternetResourcePageListing,
   internetResourceTypes,
@@ -17,8 +14,6 @@ import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
-import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
-import AsideNav from "@ui/AsideNav/AsideNav.astro";
 import PageHeader from "@ui/PageHeader.astro";
 import type { SanityImage } from "@model/image";
 
@@ -98,28 +93,5 @@ const pageTitle = getResourcePageTitle({
         }
       </div>
     </ResourcePageListingsContainer>
-    <Fragment slot="aside">
-      {
-        props.applicablePopulations?.length > 0 && (
-          <AsideNavContainer
-            title="Narrow Your Search"
-            subtitle={`View ${startCase(
-              pluralize(params.resourceType)
-            )} in ${fullCategoryTitle} for...`}
-            colorVariant="secondary"
-          >
-            {
-              <AsideNav
-                links={props.applicablePopulations.map((population) => ({
-                  to: `/${params.resourceType}/${params.category}/${population.slug}`,
-                  label: population.name,
-                }))}
-                colorVariant={"secondary"}
-              />
-            }
-          </AsideNavContainer>
-        )
-      }
-    </Fragment>
   </ResourcePageLayout>
 </MainLayout>

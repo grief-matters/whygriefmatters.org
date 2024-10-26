@@ -2,10 +2,18 @@ export const wgmDesignSystem = {
   background: {
     color: {
       primary: {
+        defaultLightest: "",
+        defaultLighter: "",
+        defaultDarker: "",
+        contrast: "",
         default: "bg-sky-900",
       },
       secondary: {
         default: "bg-yellow-200",
+        defaultLightest: "",
+        defaultLighter: "",
+        defaultDarker: "",
+        contrast: "",
       },
       brand: {
         blue: "bg-blue-900",
@@ -188,3 +196,8 @@ export type TypographyColorSchemeVariant = {
   [K in TypographyColorScheme]: keyof DesignSystem["typography"]["color"][K];
 }[TypographyColorScheme];
 export type TypographySize = keyof DesignSystem["typography"]["size"];
+
+export type BgColorScheme = keyof DesignSystem["background"]["color"];
+export type BgColorSchemeVariant = {
+  [K in TypographyColorScheme]: keyof DesignSystem["background"]["color"][K];
+}[TypographyColorScheme];

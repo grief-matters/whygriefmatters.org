@@ -1,7 +1,4 @@
 ---
-import startCase from "lodash/startCase";
-import pluralize from "pluralize";
-
 import type {
   InternetResourcePageListing,
   InternetResourceType,
@@ -10,15 +7,9 @@ import type { CategoryPageData } from "@model/categoryPage";
 import type { Population } from "@model/population";
 import type { SanityImage } from "@model/image";
 
-import {
-  getCategoryPagesData,
-  getFallbackImageCollection,
-  getPopulations,
-} from "@common/client";
+import { getCategoryPagesData, getPopulations } from "@common/client";
 import { getFilteredTypesFromResources } from "@common/resourceType";
 
-import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
@@ -26,9 +17,7 @@ import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageL
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
 import { getFullCategoryName } from "@common/category";
 import PageHeader from "@ui/PageHeader.astro";
-import Text from "@ui/primitives/Text.astro";
 import { getResourcePageTitle } from "@common/page";
-import CardLink from "@ui/CardLink.astro";
 import MainNavLink from "@ui/MainNav/MainNavLink.astro";
 
 interface Props {

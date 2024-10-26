@@ -1,5 +1,4 @@
 import startCase from "lodash/startCase";
-import words from "lodash/words";
 import libPluralize from "pluralize";
 
 /**

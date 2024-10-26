@@ -1,10 +1,9 @@
 ---
 import { getHomePageData, getImageUrl } from "@common/client";
-import { wgmDesignSystem as ds } from "@common/design-system";
 
 import MainLayout from "@layouts/MainLayout.astro";
 
-import RichTextContentBlock from "@ui/richTextContentBlock.astro";
+import RichTextContentBlock from "@ui/RichTextContentBlock.astro";
 import FeaturePanel from "@ui/FeaturePanel.astro";
 import Hero from "@ui/Hero.astro";
 import Heading from "@ui/primitives/Heading.astro";
@@ -60,7 +59,7 @@ const coreValuesBgColors = [
     </div>
 
     <RichTextContentBlock
-      class:list={[
+      classList={[
         "px-4 mx-auto max-w-4xl",
         "first:prose-p:text-lg",
         "font-serif text-center",

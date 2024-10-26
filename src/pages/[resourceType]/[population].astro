@@ -8,14 +8,10 @@ import type {
 } from "@model/internetResource";
 
 import { getPopulationPagesData } from "@common/client";
-import { getHumanReadableStringFromValue } from "@common/string";
-import { getFullCategoryName } from "@common/category";
 
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 
-import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
 import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
@@ -105,50 +101,5 @@ const pageTitle = getResourcePageTitle({
         ))
       }
     </ResourcePageListingsContainer>
-    <Fragment slot="aside">
-      {
-        props.applicableCategories.length > 0 && (
-          <AsideNavContainer
-            title="Narrow Your Search"
-            subtitle={`See ${getHumanReadableStringFromValue(
-              params.resourceType,
-              true
-            )} for ${props.populationName} by category...`}
-            colorVariant="secondary"
-          >
-            <AsideNav
-              links={props.applicableCategories.map((category) => ({
-                to: `/${params.resourceType}/${category.slug}/${params.population}`,
-                label: `${getFullCategoryName(
-                  category.parent?.slug ?? "",
-                  category.title
-                )}`,
-              }))}
-              colorVariant="secondary"
-            />
-          </AsideNavContainer>
-        )
-      }
-      <AsideNavContainer
-        title="Related Resources"
-        subtitle="Didn't find what you were looking for?"
-      >
-        <AsideNav
-          links={[
-            {
-              to: `/${params.population}`,
-              label: `See all resources for ${props.populationName}`,
-            },
-            {
-              to: `/${params.resourceType}`,
-              label: `See all ${getHumanReadableStringFromValue(
-                params.resourceType,
-                true
-              )}`,
-            },
-          ]}
-        />
-      </AsideNavContainer>
-    </Fragment>
   </ResourcePageLayout>
 </MainLayout>

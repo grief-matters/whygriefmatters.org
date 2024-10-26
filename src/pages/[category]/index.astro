@@ -19,8 +19,6 @@ import { getResourcePageTitle } from "@common/page";
 
 import MainLayout from "@layouts/MainLayout.astro";
 
-import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
 import FeaturedResources from "@ui/FeaturedResources.astro";
 import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
@@ -113,10 +111,6 @@ export async function getStaticPaths() {
 const params = Astro.params;
 const props = Astro.props;
 
-const showApplicablePopulations = props.applicablePopulations?.length > 0;
-const showApplicableTypes = props.applicableTypes?.length > 1;
-const showNarrowSearchAside = showApplicablePopulations || showApplicableTypes;
-
 const pageTitle = getResourcePageTitle({
   categoryName: props.title,
 });
@@ -124,16 +118,12 @@ const pageTitle = getResourcePageTitle({
 const subtopics = Object.entries(props.subtopicResources);
 ---
 
-<!-- We need to deal with categories that 
- - have no resources of their own (usually have children) 
--->
 <MainLayout>
   <ResourcePageLayout>
     <PageHeader
       slot="header"
       pageTitle={pageTitle}
       image={props.image ? props.image : undefined}
-      bgVariant={["neutral", "default"]}
     />
     <Fragment slot="featured">
       {
@@ -250,7 +240,7 @@ const subtopics = Object.entries(props.subtopicResources);
               </Heading>
               <Text class="mb-3">{`There aren't any specific resources for this topic, but you can explore resources available within subtopics below or select a subtopic above to show a more focused list.`}</Text>
               <>
-                {subtopics.map(([slug, subtopic]) => (
+                {subtopics.map(([_, subtopic]) => (
                   <details>
                     <summary>
                       <Heading

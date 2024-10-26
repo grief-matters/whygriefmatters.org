@@ -5,9 +5,9 @@ import type { InternetResourcePageListing } from "@model/internetResource";
 import { wgmDesignSystem as ds } from "@common/design-system";
 
 import Tag from "@ui/primitives/Tag.astro";
-import SimpleTextBlock from "@ui/primitives/SimpleTextBlock.astro";
 import TitleLink from "../primitives/TitleLink.astro";
 import Subtitle from "../primitives/Subtitle.astro";
+import Text from "@ui/primitives/Text.astro";
 
 interface Props {
   resource: InternetResourcePageListing;
@@ -61,14 +61,17 @@ const showTags = props.resource.hasSpanishVersion || props.resource.rating;
 
   {
     props.resource.description && (
-      <SimpleTextBlock class:list={["my-1"]}>
-        {props.resource.description}
-      </SimpleTextBlock>
+      <div class="max-w-3xl">
+        <Text>{props.resource.description}</Text>
+      </div>
     )
   }
 
-  <Subtitle class="mt-1" datetime={props.resource.lastUpdated} as="time">
-    {`Last updated: ${date}`}
+  <Subtitle class="mt-1" as="div">
+    <span>
+      {`Last updated: `}
+      <time datetime={props.resource.lastUpdated}>{date}</time>
+    </span>
   </Subtitle>
 
   {

@@ -11,11 +11,6 @@ import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.ast
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
-import pluralize from "pluralize";
-import startCase from "lodash/startCase";
-import Resource from "@ui/Resource.astro";
 import { getFullCategoryName } from "@common/category";
 import PageHeader from "@ui/PageHeader.astro";
 import { getResourcePageTitle } from "@common/page";
@@ -98,25 +93,5 @@ const pageTitle = getResourcePageTitle({
         ))
       }
     </ResourcePageListingsContainer>
-    <AsideNavContainer
-      slot="aside"
-      title="Related Resources"
-      subtitle="Didn't find what you were looking for?"
-    >
-      <AsideNav
-        links={[
-          {
-            to: `/${params.resourceType}/${params.category}`,
-            label: `See all ${pluralize(
-              startCase(params.resourceType)
-            )} in ${fullCategoryTitle}`,
-          },
-          {
-            to: `/${params.category}`,
-            label: `See all resources in ${fullCategoryTitle}`,
-          },
-        ]}
-      />
-    </AsideNavContainer>
   </ResourcePageLayout>
 </MainLayout>

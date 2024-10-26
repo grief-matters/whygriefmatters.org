@@ -1,6 +1,4 @@
 ---
-import pluralize from "pluralize";
-import startCase from "lodash/startCase";
 import uniqBy from "lodash/uniqBy";
 
 import type {
@@ -14,8 +12,6 @@ import { getPopulationPagesData } from "@common/client";
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 
-import AsideNav from "@ui/AsideNav/AsideNav.astro";
-import AsideNavContainer from "@ui/AsideNav/AsideNavContainer.astro";
 import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
@@ -76,36 +72,5 @@ const pageTitle = getResourcePageTitle({
         ))
       }
     </ResourcePageListingsContainer>
-    <AsideNavContainer
-      slot="aside"
-      title="Narrow Your Search"
-      subtitle={`View resources for ${props.populationName}`}
-      colorVariant="secondary"
-    >
-      {
-        props.applicableCategories?.length > 0 && (
-          <AsideNav
-            title="By category..."
-            links={props.applicableCategories.map((category) => ({
-              to: `/${category.slug}/${params.population}`,
-              label: category.title,
-            }))}
-            colorVariant={"secondary"}
-          />
-        )
-      }
-      {
-        props.applicableTypes?.length > 1 && (
-          <AsideNav
-            title="By type..."
-            links={props.applicableTypes.map((type) => ({
-              to: `/${type}/${params.population}`,
-              label: startCase(pluralize(type)),
-            }))}
-            colorVariant={"secondary"}
-          />
-        )
-      }
-    </AsideNavContainer>
   </ResourcePageLayout>
 </MainLayout>

@@ -1,6 +1,6 @@
-import type { ResourcePageLink } from "@model/featuredContent";
+import type { ResourcePageLink } from "@model/contentBlock";
 
-export function getRoute(pageLink: ResourcePageLink): string {
+export function getRoute(pageLink: Omit<ResourcePageLink, "label">): string {
   const slugParts = [pageLink.type, pageLink.category, pageLink.population]
     .filter((part) => Boolean(part))
     .join("/");

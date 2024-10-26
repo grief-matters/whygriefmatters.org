@@ -1,19 +1,14 @@
 ---
 import { getFallbackImageCollection, getImageUrl } from "@common/client";
-import {
-  wgmDesignSystem as ds,
-  type DsColorVariant,
-} from "@common/design-system";
+import { wgmDesignSystem as ds } from "@common/design-system";
 import type { PageTitle } from "@common/page";
 import type { SanityImage } from "@model/image";
 
 interface Props {
   pageTitle: PageTitle;
   image?: SanityImage;
-  bgVariant?: DsColorVariant;
 }
 
-// TODO - fetch a random image for those that are missing
 const fallbackImages = await getFallbackImageCollection();
 
 const props = Astro.props;
@@ -36,15 +31,9 @@ const xlImgUrl = image
   : null;
 const bgPosX = `${(image.image.hotspot?.x ?? 0) * 100}%`;
 const bgPosY = `${(image.image.hotspot?.y ?? 0) * 100}%`;
-
-// const bgClass = ds.background.color?.[props.bgVariant[0]]?.[props.bgVariant[1]];
-
-const bgClass = props.bgVariant
-  ? ds.background.color?.[props.bgVariant[0]]?.[props.bgVariant[1]]
-  : undefined;
 ---
 
-<header class:list={[bgClass]}>
+<header class={ds.background.color.neutral.defaultLighter}>
   <div class:list={["sm:mx-auto sm:p-3 sm:relative", "xl:container xl:p-6"]}>
     <div class:list={["sm:bg-white sm:p-2 sm:shadow-xl", "xl:mx-6", "lg:mt-6"]}>
       <div class:list={["page-header-bg", "h-40 sm:h-80 xl:h-96"]}></div>
