@@ -4,10 +4,10 @@
   "description": "The source code for the Grief Matters website. The best resources on grief and loss, all in one place.",
   "main": "index.js",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
+    "dev": "wrangler types && astro dev",
+    "start": "wrangler types && astro dev",
+    "build": "wrangler types && astro check && astro build",
+    "preview": "wrangler types && wrangler pages dev ./dist"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/grief-matters/whygriefmatters.org#readme",
   "dependencies": {
     "@astrojs/check": "^0.9.4",
+    "@astrojs/cloudflare": "^11.1.0",
     "@astrojs/tailwind": "^5.1.1",
     "@portabletext/to-html": "^2.0.5",
     "@sanity/client": "^6.4.12",
@@ -46,6 +47,7 @@
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "groq": "^3.20.1",
     "prettier": "3.0.3",
-    "prettier-plugin-astro": "^0.12.0"
+    "prettier-plugin-astro": "^0.12.0",
+    "wrangler": "^3.83.0"
   }
 }
