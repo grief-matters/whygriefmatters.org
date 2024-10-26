@@ -97,10 +97,15 @@ function getQueryFilter(params: ClientQueryParams): string {
  * Sanity JS Client configured with current env variables
  */
 export const client = createClient({
-  projectId: import.meta.env.SANITY_STUDIO_PROJECT_ID,
-  dataset: import.meta.env.SANITY_STUDIO_DATASET,
+  projectId:
+    import.meta.env.SANITY_STUDIO_PROJECT_ID ||
+    process.env.SANITY_STUDIO_PROJECT_ID,
+  dataset:
+    import.meta.env.SANITY_STUDIO_DATASET || process.env.SANITY_STUDIO_DATASET,
+  apiVersion:
+    import.meta.env.SANITY_STUDIO_API_VERSION ||
+    process.env.SANITY_STUDIO_API_VERSION,
   useCdn: true,
-  apiVersion: import.meta.env.SANITY_STUDIO_API_VERSION,
 });
 
 const imgUrlBuilder = imageUrlBuilder(client);
