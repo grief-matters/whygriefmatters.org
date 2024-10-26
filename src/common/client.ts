@@ -108,6 +108,12 @@ export const client = createClient({
   useCdn: true,
 });
 
+export const envCheck = () => {
+  // Server-side environment
+  console.log("process: ", process.env.SANITY_STUDIO_PROJECT_ID);
+  console.log("meta: ", import.meta.env.SANITY_STUDIO_PROJECT_ID);
+};
+
 const imgUrlBuilder = imageUrlBuilder(client);
 
 /**
