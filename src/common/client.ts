@@ -96,23 +96,13 @@ function getQueryFilter(params: ClientQueryParams): string {
 /**
  * Sanity JS Client configured with current env variables
  */
+// TODO - hardcode Sanity values until we can resolve env variable issue
 export const client = createClient({
-  projectId:
-    process.env.SANITY_STUDIO_PROJECT_ID ||
-    import.meta.env.SANITY_STUDIO_PROJECT_ID,
-  dataset:
-    process.env.SANITY_STUDIO_DATASET || import.meta.env.SANITY_STUDIO_DATASET,
-  apiVersion:
-    process.env.SANITY_STUDIO_API_VERSION ||
-    import.meta.env.SANITY_STUDIO_API_VERSION,
+  projectId: "vg3sb730",
+  dataset: "production",
+  apiVersion: "2023-07-16",
   useCdn: true,
 });
-
-export const envCheck = () => {
-  // Server-side environment
-  console.log("process: ", process.env.SANITY_STUDIO_PROJECT_ID);
-  console.log("meta: ", import.meta.env.SANITY_STUDIO_PROJECT_ID);
-};
 
 const imgUrlBuilder = imageUrlBuilder(client);
 
