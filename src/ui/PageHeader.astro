@@ -1,5 +1,5 @@
 ---
-import { getFallbackImageCollection, getImageUrl } from "@common/client";
+import { getFallbackImageCollection, getImageUrlBuilder } from "@common/client";
 import { wgmDesignSystem as ds } from "@common/design-system";
 import type { PageTitle } from "@common/page";
 import type { SanityImage } from "@model/image";
@@ -18,16 +18,16 @@ const image =
   fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
 
 const smImgUrl = image
-  ? `url(${getImageUrl(image.image).width(640).height(320).url()})`
+  ? `url(${getImageUrlBuilder(image.image).width(640).height(320).url()})`
   : null;
 const mdImgUrl = image
-  ? `url(${getImageUrl(image.image).width(1024).height(512).url()})`
+  ? `url(${getImageUrlBuilder(image.image).width(1024).height(512).url()})`
   : null;
 const lgImgUrl = image
-  ? `url(${getImageUrl(image.image).width(1280).height(640).url()})`
+  ? `url(${getImageUrlBuilder(image.image).width(1280).height(640).url()})`
   : null;
 const xlImgUrl = image
-  ? `url(${getImageUrl(image.image).width(2560).height(850).url()})`
+  ? `url(${getImageUrlBuilder(image.image).width(2560).height(850).url()})`
   : null;
 const bgPosX = `${(image.image.hotspot?.x ?? 0) * 100}%`;
 const bgPosY = `${(image.image.hotspot?.y ?? 0) * 100}%`;

@@ -1,7 +1,7 @@
 ---
 import sample from "lodash/sample";
 
-import { getFallbackImageCollection, getImageUrl } from "@common/client";
+import { getFallbackImageCollection, getImageUrlBuilder } from "@common/client";
 
 import type { SanityImage } from "@model/image";
 
@@ -21,7 +21,7 @@ if (imageToGet === null) {
 }
 
 const imgSrc = imageToGet
-  ? getImageUrl(imageToGet.image).width(640).height(450).url()
+  ? getImageUrlBuilder(imageToGet.image).width(640).height(450).url()
   : fallbackImg.src;
 ---
 

@@ -1,5 +1,5 @@
 ---
-import { getImageUrl } from "@common/client";
+import { getImageUrlBuilder } from "@common/client";
 import { getRoute } from "@common/route";
 
 import RichTextContentBlock from "./PortableTextContentBlock.astro";
@@ -89,7 +89,7 @@ const featurePanelId = crypto.randomUUID();
                         >
                           <div class="p-3">
                             <img
-                              src={getImageUrl(image.image)
+                              src={getImageUrlBuilder(image.image)
                                 .width(640)
                                 .height(450)
                                 .url()}

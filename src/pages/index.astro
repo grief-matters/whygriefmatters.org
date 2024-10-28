@@ -1,5 +1,5 @@
 ---
-import { getHomePageData, getImageUrl } from "@common/client";
+import { getHomePageData, getImageUrlBuilder } from "@common/client";
 
 import MainLayout from "@layouts/MainLayout.astro";
 
@@ -13,12 +13,12 @@ import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro"
 const homePageData = await getHomePageData();
 
 const heroImg = {
-  url: getImageUrl(homePageData.heroImage.image).url(),
+  url: getImageUrlBuilder(homePageData.heroImage.image).url(),
   alt: homePageData.heroImage.altText,
 };
 
 const logo = {
-  url: getImageUrl(homePageData.org.logo.image).url(),
+  url: getImageUrlBuilder(homePageData.org.logo.image).url(),
   alt: homePageData.org.logo.altText,
 };
 

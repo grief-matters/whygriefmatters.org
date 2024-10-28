@@ -1,5 +1,5 @@
 ---
-import { getImageUrl, getLogoSet } from "@common/client";
+import { getImageUrlBuilder, getLogoSet } from "@common/client";
 import { wgmDesignSystem as ds } from "@common/design-system";
 
 import MainNav from "./MainNav/MainNav.astro";
@@ -9,7 +9,7 @@ const logoSet = await getLogoSet();
 const rawLightLogo = logoSet?.find((l) => l.variant === "light-secondary");
 const lightHeaderLogo = rawLightLogo
   ? {
-      url: getImageUrl(rawLightLogo.image).url(),
+      url: getImageUrlBuilder(rawLightLogo.image).url(),
       alt: "Why Grief Matter home page",
     }
   : null;
@@ -17,7 +17,7 @@ const lightHeaderLogo = rawLightLogo
 const rawDarkLogo = logoSet?.find((l) => l.variant === "dark-primary");
 const darkHeaderLogo = rawDarkLogo
   ? {
-      url: getImageUrl(rawDarkLogo.image).url(),
+      url: getImageUrlBuilder(rawDarkLogo.image).url(),
       alt: "Why Grief Matters Logo home page",
     }
   : null;

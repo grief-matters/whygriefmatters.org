@@ -10,7 +10,7 @@ import MainNavContentBlock from "./MainNavContentBlock.astro";
 import RichTextContentBlock from "@ui/PortableTextContentBlock.astro";
 import type { CoreContentGroup } from "@model/coreContentGroup";
 import { wgmDesignSystem as ds } from "@common/design-system";
-import { getImageUrl } from "@common/client";
+import { getImageUrlBuilder } from "@common/client";
 import { getFallbackImageCollection } from "@common/client";
 
 interface Props {
@@ -25,7 +25,7 @@ const bgImage = ccg.coverImage?.image
   ? ccg.coverImage?.image
   : fallbackImages[Math.floor(Math.random() * fallbackImages.length)].image;
 
-const bgImageUrl = getImageUrl(bgImage).url();
+const bgImageUrl = getImageUrlBuilder(bgImage).url();
 const bgVar = `url(${bgImageUrl})`;
 
 const bgPosX = `${(bgImage.hotspot?.x ?? 0) * 100}%`;

@@ -1,5 +1,5 @@
 ---
-import { getImageUrl, getLogoSet, getSmallPrint } from "@common/client";
+import { getImageUrlBuilder, getLogoSet, getSmallPrint } from "@common/client";
 import RichTextContentBlock from "./PortableTextContentBlock.astro";
 import { wgmDesignSystem as ds } from "@common/design-system";
 
@@ -9,7 +9,7 @@ const logoSet = await getLogoSet();
 const rawLightLogo = logoSet?.find((l) => l.variant === "light-secondary");
 const lightHeaderLogo = rawLightLogo
   ? {
-      url: getImageUrl(rawLightLogo.image).url(),
+      url: getImageUrlBuilder(rawLightLogo.image).url(),
       alt: "Why Grief Matter home",
     }
   : null;

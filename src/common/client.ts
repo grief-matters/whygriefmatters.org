@@ -1,6 +1,6 @@
 import groq from "groq";
 import uniqBy from "lodash/uniqBy";
-import { createClient } from "@sanity/client";
+import { createClient, SanityClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { ImageUrlBuilder } from "@sanity/image-url/lib/types/builder";
@@ -50,6 +50,7 @@ import {
   zCoreContentGroup,
   type CoreContentGroup,
 } from "@model/coreContentGroup";
+import { getEnvVar, isSSR } from "./env-helper";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -97,14 +98,64 @@ function getQueryFilter(params: ClientQueryParams): string {
  * Sanity JS Client configured with current env variables
  */
 // TODO - hardcode Sanity values until we can resolve env variable issue
-export const client = createClient({
-  projectId: "vg3sb730",
-  dataset: "production",
-  apiVersion: "2023-07-16",
-  useCdn: true,
-});
+// export const client = createClient({
+//   projectId: "vg3sb730",
+//   dataset: "production",
+//   apiVersion: "2023-07-16",
+//   useCdn: true,
+// });
 
-const imgUrlBuilder = imageUrlBuilder(client);
+// const imgUrlBuilder = imageUrlBuilder(client);
+
+type Clients = {
+  buildClient: null | SanityClient;
+  runtimeClient: null | SanityClient;
+  imgUrlBuilder: null | ImageUrlBuilder;
+};
+const clients: Clients = {
+  buildClient: null,
+  runtimeClient: null,
+  imgUrlBuilder: null,
+};
+
+function getClient(): SanityClient {
+  // What mode are we in? Which client should we return?
+  if (isSSR()) {
+    if (clients.runtimeClient === null) {
+      const client = createClient({
+        projectId: getEnvVar("SANITY_STUDIO_PROJECT_ID"),
+        dataset: getEnvVar("SANITY_STUDIO_DATASET"),
+        apiVersion: getEnvVar("SANITY_STUDIO_API_VERSION"),
+        useCdn: true,
+      });
+      clients.runtimeClient = client;
+    }
+
+    return clients.runtimeClient;
+  }
+
+  if (clients.buildClient === null) {
+    const client = createClient({
+      projectId: getEnvVar("SANITY_STUDIO_PROJECT_ID"),
+      dataset: getEnvVar("SANITY_STUDIO_DATASET"),
+      apiVersion: getEnvVar("SANITY_STUDIO_API_VERSION"),
+      // For build time this should really be set to 'false' - but we're trying to minimise API requests due to cost
+      useCdn: true,
+    });
+    clients.buildClient = client;
+  }
+  return clients.buildClient;
+}
+
+function getImageBuilder(): ImageUrlBuilder {
+  if (clients.imgUrlBuilder === null) {
+    const client = getClient();
+    const builder = imageUrlBuilder(client);
+    clients.imgUrlBuilder = builder;
+  }
+
+  return clients.imgUrlBuilder;
+}
 
 /**
  * Returns a promise that resolves to the Core Content Groups ot throws a Zod error
@@ -112,6 +163,7 @@ const imgUrlBuilder = imageUrlBuilder(client);
  * @returns
  */
 export async function getCoreContentGroups(): Promise<CoreContentGroup[]> {
+  const client = getClient();
   const coreContentGroups = await client
     .fetch(gCoreContentGroupsQuery)
     .then((result) => zCoreContentGroup.array().parse(result));
@@ -129,6 +181,7 @@ export async function getCategories(): Promise<Category[]> {
     typeof dataCache.categories === "undefined" ||
     dataCache.categories === null
   ) {
+    const client = getClient();
     const categories = await client
       .fetch(gCategoriesQuery)
       .then((result) => zCategory.array().parse(result));
@@ -148,6 +201,7 @@ export async function getCategories(): Promise<Category[]> {
 export async function getCategoriesByFilter(
   filter: ClientQueryParams,
 ): Promise<Array<Category>> {
+  const client = getClient();
   const categories = await client.fetch(
     gCategoriesByFilterQuery(getQueryFilter(filter)),
     filter,
@@ -164,6 +218,7 @@ export async function getCategoriesByFilter(
  * @returns
  */
 export async function getCrisisResources(): Promise<CrisisResource[]> {
+  const client = getClient();
   const crisisResources = await client
     .fetch(gCrisisResourcesQuery)
     .then((result) => zCrisisResource.array().parse(result));
@@ -177,6 +232,7 @@ export async function getCrisisResources(): Promise<CrisisResource[]> {
  * @returns
  */
 export async function getFeaturedTopics(): Promise<Omit<Category, "parent">[]> {
+  const client = getClient();
   const featuredTopics = await client
     .fetch(gFeaturedTopicsQuery)
     .then((result) => zCategory.array().parse(result.topics));
@@ -190,6 +246,7 @@ export async function getFeaturedTopics(): Promise<Omit<Category, "parent">[]> {
  * @returns {Population[]}
  */
 export async function getPopulations(): Promise<Population[]> {
+  const client = getClient();
   const populations = await client
     .fetch(gPopulationsQuery)
     .then((result) => zPopulation.array().parse(result));
@@ -203,6 +260,7 @@ export async function getPopulations(): Promise<Population[]> {
  * @returns {HomePageData}
  */
 export async function getHomePageData(): Promise<HomePageData> {
+  const client = getClient();
   const homePage = await client
     .fetch(gHomePageDataQuery)
     .then((result) => zHomePageData.parse(result));
@@ -220,6 +278,7 @@ export async function getCategoryPagesData(): Promise<CategoryPageData[]> {
     typeof dataCache.categoryPagesData === "undefined" ||
     dataCache.categoryPagesData === null
   ) {
+    const client = getClient();
     const categoryPagesData = await client
       .fetch(gCategoryPageQuery)
       .then((result) => zCategoryPageData.array().parse(result));
@@ -238,6 +297,7 @@ export async function getCategoryPagesData(): Promise<CategoryPageData[]> {
 export async function getPopulationPagesData(): Promise<
   Array<PopulationsPageData>
 > {
+  const client = getClient();
   const populationPagesData = await client
     .fetch(gPopulationsPageData)
     .then((result) => zPopulationPageData.array().parse(result));
@@ -251,6 +311,7 @@ export async function getPopulationPagesData(): Promise<
  * @returns
  */
 export async function getResourceTypePagesData(): Promise<ResourceTypePageData> {
+  const client = getClient();
   const resourceTypePageData = await client
     .fetch(gResourceTypePagesQuery)
     .then((result) => zResourceTypePagesData.parse(result));
@@ -264,8 +325,9 @@ export async function getResourceTypePagesData(): Promise<ResourceTypePageData> 
  * @param source - A Sanity Image Asset
  * @returns {ImageUrlBuilder} The CDN url for the image
  */
-export function getImageUrl(source: SanityImageSource): ImageUrlBuilder {
-  return imgUrlBuilder.image(source);
+export function getImageUrlBuilder(source: SanityImageSource): ImageUrlBuilder {
+  const imgUrlBuilder = getImageBuilder();
+  return imgUrlBuilder?.image(source) ?? "";
 }
 
 /**
@@ -274,6 +336,7 @@ export function getImageUrl(source: SanityImageSource): ImageUrlBuilder {
  * @returns
  */
 export async function getLogoSet(): Promise<Logo[]> {
+  const client = getClient();
   const logoSet = await client
     .fetch(gLogosQuery)
     .then((result) => zLogo.array().parse(result));
@@ -295,6 +358,7 @@ export async function getFallbackImageCollection(): Promise<SanityImage[]> {
       }
     `;
 
+    const client = getClient();
     const images = await client
       .fetch(query)
       .then((result) => zImage.array().parse(result));
@@ -310,6 +374,7 @@ export async function getFallbackImageCollection(): Promise<SanityImage[]> {
  * @todo We probably want to give the footer it's own content type in the future
  */
 export async function getSmallPrint(): Promise<PortableText> {
+  const client = getClient();
   const query = groq`*[_id == "organization-singleton"][0].smallPrint`;
 
   return await client
