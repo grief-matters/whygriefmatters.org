@@ -11,9 +11,9 @@ import Subtitle from "@ui/primitives/Subtitle.astro";
 import TitleLink from "@ui/primitives/TitleLink.astro";
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
-import RichTextContentBlock from "@ui/richTextContentBlock.astro";
 import partition from "lodash/partition";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+import RichTextContentBlock from "@ui/PortableTextContentBlock.astro";
 
 const crisisResources = await getCrisisResources();
 
@@ -24,11 +24,7 @@ const [[suicide], rest] = partition(crisisResources, (cr) =>
 
 <MainLayout>
   <ResourcePageLayout>
-    <PageHeader
-      slot="header"
-      pageTitle={{ title: "Crisis Resources" }}
-      bgVariant={["neutral", "default"]}
-    />
+    <PageHeader slot="header" pageTitle={{ title: "Crisis Resources" }} />
     <Fragment slot="section">
       <section class:list={["lg:grow"]}>
         <div class="p-3">
@@ -53,10 +49,11 @@ const [[suicide], rest] = partition(crisisResources, (cr) =>
                     {suicide.title}
                   </Heading>
                 </a>
-                <RichTextContentBlock
-                  classList={["prose prose-wgm font-serif max-w-full"]}
-                  portableText={suicide.description}
-                />
+                {
+                  suicide?.description && (
+                    <RichTextContentBlock portableText={suicide.description} />
+                  )
+                }
                 <ul>
                   {
                     suicide.contactMethods.map((cm) => (
@@ -85,18 +82,20 @@ const [[suicide], rest] = partition(crisisResources, (cr) =>
                   />
                   {resource.sourceWebsite && (
                     <Subtitle class="mt-1">
-                      {`From `}
-                      <a
-                        href={resource.sourceWebsite.resourceUrl}
-                        rel="noopener"
-                        target="_blank"
-                        class:list={[
-                          "underline underline-offset-2",
-                          "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
-                        ]}
-                      >
-                        {resource.sourceWebsite.name}
-                      </a>
+                      <Fragment>
+                        {`From `}
+                        <a
+                          href={resource.sourceWebsite.resourceUrl}
+                          rel="noopener"
+                          target="_blank"
+                          class:list={[
+                            "underline underline-offset-2",
+                            "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
+                          ]}
+                        >
+                          {resource.sourceWebsite.name}
+                        </a>
+                      </Fragment>
                     </Subtitle>
                   )}
                   {resource.description && (

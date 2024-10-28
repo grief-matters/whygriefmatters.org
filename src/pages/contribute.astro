@@ -1,5 +1,25 @@
 ---
+import { SignedIn, SignedOut } from "@clerk/astro/components";
+
 import MainLayout from "@layouts/MainLayout.astro";
+import AccountButton from "@ui/AccountButton.astro";
+import Heading from "@ui/primitives/Heading.astro";
+import Text from "@ui/primitives/Text.astro";
+
+export const prerender = false;
 ---
 
-<MainLayout><div>contribute</div></MainLayout>
+<MainLayout>
+  <div class:list={["xl:max-w-screen-lg xl:mx-auto p-3"]}>
+    <SignedIn>
+      <Text>Evaluate resources</Text>
+    </SignedIn>
+    <SignedOut>
+      <Heading as="h1" size="xl5">Contribute</Heading>
+      <Text>Contribute to the Why Grief Matters project</Text>
+      <div class="w-64 mt-6">
+        <AccountButton />
+      </div>
+    </SignedOut>
+  </div>
+</MainLayout>

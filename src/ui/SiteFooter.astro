@@ -1,6 +1,6 @@
 ---
-import { getImageUrl, getLogoSet, getSmallPrint } from "@common/client";
-import RichTextContentBlock from "./richTextContentBlock.astro";
+import { getImageUrlBuilder, getLogoSet, getSmallPrint } from "@common/client";
+import RichTextContentBlock from "./PortableTextContentBlock.astro";
 import { wgmDesignSystem as ds } from "@common/design-system";
 
 const smallPrint = await getSmallPrint();
@@ -9,7 +9,7 @@ const logoSet = await getLogoSet();
 const rawLightLogo = logoSet?.find((l) => l.variant === "light-secondary");
 const lightHeaderLogo = rawLightLogo
   ? {
-      url: getImageUrl(rawLightLogo.image).url(),
+      url: getImageUrlBuilder(rawLightLogo.image).url(),
       alt: "Why Grief Matter home",
     }
   : null;
@@ -45,7 +45,7 @@ const copyrightNotice = `©️ ${year} Why Grief Matters Inc. All rights reserve
     </p>
     <div class="border-t-2 pt-6">
       <RichTextContentBlock
-        class:list={["text-xs font-serif !prose-invert !max-w-none"]}
+        classList={["text-xs font-serif !prose-invert !max-w-none"]}
         portableText={smallPrint}
       />
     </div>

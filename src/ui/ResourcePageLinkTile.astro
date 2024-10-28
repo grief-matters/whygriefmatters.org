@@ -1,5 +1,5 @@
 ---
-import { getImageUrl } from "@common/client";
+import { getImageUrlBuilder } from "@common/client";
 import { wgmDesignSystem as ds } from "@common/design-system";
 import type { SanityImage } from "@model/image";
 import type { InternetResourceType } from "@model/internetResource";
@@ -20,7 +20,7 @@ const borderColorClass = props.resourceType
 
 const imageUrl =
   props.image !== null
-    ? getImageUrl(props.image.image).width(640).height(450).url()
+    ? getImageUrlBuilder(props.image.image).width(640).height(450).url()
     : null;
 ---
 
@@ -33,8 +33,8 @@ const imageUrl =
     "bg-white",
     "border-b-4",
     borderColorClass,
-    ds.border.underline,
-    ds.border.transition,
+    ds.decoration.underline,
+    ds.decoration.transition,
     "shadow-md hover:shadow-lg",
     "transition-all",
   ]}

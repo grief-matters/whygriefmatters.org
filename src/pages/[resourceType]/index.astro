@@ -50,7 +50,6 @@ export async function getStaticPaths() {
       const categoriesByFilter = await getCategoriesByFilter({ resourceType });
 
       const reTitled = categoriesByFilter.map((cat) => {
-        console.log("cat: ", cat);
         return {
           ...cat,
           title: getFullCategoryName(cat.parent?.slug ?? "", cat.title),

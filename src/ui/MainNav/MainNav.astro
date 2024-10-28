@@ -1,11 +1,15 @@
 ---
 import { getCoreContentGroups } from "@common/client";
+import { wgmDesignSystem as ds } from "@common/design-system";
+
+import Text from "@ui/primitives/Text.astro";
 import CollapsibleContent from "@ui/Collapsible/CollapsibleContent.astro";
 import CollapsibleContentButton from "@ui/Collapsible/CollapsibleContentButton.astro";
 import CollapsibleContentCloseButton from "@ui/Collapsible/CollapsibleContentCloseButton.astro";
 import CollapsibleContentContent from "@ui/Collapsible/CollapsibleContentContent.astro";
-import { wgmDesignSystem as ds } from "@common/design-system";
+
 import MainNavCoreContentGroup from "./MainNavCoreContentGroup.astro";
+import AccountButton from "@ui/AccountButton.astro";
 
 const coreContentGroups = await getCoreContentGroups();
 ---
@@ -88,7 +92,9 @@ const coreContentGroups = await getCoreContentGroups();
             </div>
           </CollapsibleContentCloseButton>
         </div>
-        <div class="flex-grow mt-24 mx-12 sm:mx-auto sm:my-0 sm:bg-blue-900">
+        <div
+          class="flex flex-col flex-grow justify-between mt-16 mx-12 sm:mx-auto sm:my-0 sm:bg-blue-900"
+        >
           <div
             class:list={[
               "sm:grid sm:grid-cols-2",
@@ -101,6 +107,41 @@ const coreContentGroups = await getCoreContentGroups();
               ))
             }
           </div>
+          <div class="sm:hidden">
+            <a class="block py-1" href="/about">
+              <Text
+                class:list={[
+                  "font-bold",
+                  ds.decoration.underline,
+                  ds.decoration.transition,
+                  ds.decoration.color.primary.hover,
+                  "decoration-dotted",
+                ]}
+                size="xl"
+                as="span"
+              >
+                {"About Us"}
+              </Text>
+            </a>
+            <a class="block py-1" href="/contribute">
+              <Text
+                class:list={[
+                  "font-bold",
+                  ds.decoration.underline,
+                  ds.decoration.transition,
+                  ds.decoration.color.primary.hover,
+                  "decoration-dotted",
+                ]}
+                size="xl"
+                as="span"
+              >
+                {"Contribute"}
+              </Text>
+            </a>
+          </div>
+        </div>
+        <div class="flex justify-end p-3 mt-3 sm:hidden">
+          <AccountButton />
         </div>
       </div>
     </div>

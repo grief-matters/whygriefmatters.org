@@ -1,19 +1,12 @@
 ---
-import type { HTMLTag, Polymorphic } from "astro/types";
-
-type ContainerHTMLTags = "div";
-
-type AdditionalProps = {
+type Props = {
   id: string;
 };
 
-type Props<Tag extends ContainerHTMLTags> = Polymorphic<{ as: Tag }> &
-  AdditionalProps;
-
-const { as: Tag = "div", id, ...attrs } = Astro.props;
+const { id } = Astro.props;
 ---
 
-<Tag
+<div
   id={`${id}--carousel-item`}
   class:list={[
     "carousel-item",
@@ -21,7 +14,6 @@ const { as: Tag = "div", id, ...attrs } = Astro.props;
     "shrink-0 w-full",
     "sm:w-1/2 lg:w-1/3",
   ]}
-  {...attrs}
 >
   <slot />
-</Tag>
+</div>

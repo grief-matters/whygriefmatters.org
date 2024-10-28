@@ -1,5 +1,5 @@
 ---
-import type { Polymorphic } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 import {
   wgmDesignSystem as ds,
   type TypographyColorScheme,
@@ -7,33 +7,44 @@ import {
   type TypographySize,
 } from "@common/design-system";
 
-type SubtitleHTMLTags = "span" | "p";
+// Define valid HTML tags we want to support
+type ValidTags =
+  | "p"
+  | "span"
+  | "div"
+  | "h1"
+  | "h2"
+  | "h3"
+  | "h4"
+  | "h5"
+  | "h6"
+  | "time";
 
-type OwnProps = {
+interface Props extends HTMLAttributes<"span"> {
+  as?: ValidTags;
+  children: any;
   colorScheme?: TypographyColorScheme;
   colorSchemeVariant?: TypographyColorSchemeVariant;
   size?: TypographySize;
   hoverable?: boolean;
-};
-
-type Props<Tag extends SubtitleHTMLTags> = Polymorphic<{ as: Tag }> & OwnProps;
+}
 
 const {
   as: Tag = "span",
   size = "sm",
   hoverable = false,
+  class: className,
   ...props
-}: Props<SubtitleHTMLTags> = Astro.props;
+} = Astro.props;
 ---
 
 <Tag
   class:list={[
     "block",
     "font-serif italic",
-    ds.typography.size[size],
-    ds.typography.color[props.colorScheme ?? "neutral"][
-      props.colorSchemeVariant ?? "default"
-    ],
+    ds.typography.size[size as TypographySize],
+    ds.typography.color.neutral.default,
+    className,
   ]}
   {...props}
 >

@@ -1,11 +1,14 @@
 ---
 import type { ContentBlock } from "@model/contentBlock";
+
+import { getRoute } from "@common/route";
+import { getImageUrlBuilder } from "@common/client";
+
+import RichTextContentBlock from "@ui/PortableTextContentBlock.astro";
+
 import MainNavTopicCollectionContentBlock from "./MainNavTopicCollectionContentBlock.astro";
 import MainNavTopicContentBlock from "./MainNavTopicContentBlock.astro";
-import RichTextContentBlock from "@ui/richTextContentBlock.astro";
-import { getImageUrl } from "@common/client";
 import MainNavLink from "./MainNavLink.astro";
-import { getRoute } from "@common/route";
 
 interface Props {
   block: ContentBlock;
@@ -20,7 +23,10 @@ const { block } = Astro.props;
       switch (block.contentType) {
         case "accessibleImage":
           return (
-            <img src={getImageUrl(block.image).url()} alt={block.altText} />
+            <img
+              src={getImageUrlBuilder(block.image).url()}
+              alt={block.altText}
+            />
           );
         case "resourceLinks":
           return <div>resourceLinks</div>;
@@ -47,7 +53,7 @@ const { block } = Astro.props;
           return (
             <div class="mb-3">
               <RichTextContentBlock
-                class:list={["font-serif italic text-xl leading-relaxed"]}
+                classList={["font-serif italic text-xl leading-relaxed"]}
                 portableText={block.portableText}
               />
             </div>

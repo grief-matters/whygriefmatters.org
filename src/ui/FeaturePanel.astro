@@ -1,8 +1,8 @@
 ---
-import { getImageUrl } from "@common/client";
+import { getImageUrlBuilder } from "@common/client";
 import { getRoute } from "@common/route";
 
-import RichTextContentBlock from "./richTextContentBlock.astro";
+import RichTextContentBlock from "./PortableTextContentBlock.astro";
 import FeaturedResources from "./FeaturedResources.astro";
 import MobileCarousel from "./MobileCarousel/MobileCarousel.astro";
 import MobileCarouselItem from "./MobileCarousel/MobileCarouselItem.astro";
@@ -55,7 +55,7 @@ const featurePanelId = crypto.randomUUID();
     {
       featuredContent.description && (
         <RichTextContentBlock
-          class:list={["font-serif text-center prose", "px-3 mx-auto mb-6"]}
+          classList={["font-serif text-center prose", "max-w-4xl px-3 mx-auto mb-6"]}
           portableText={featuredContent.description}
         />
       )
@@ -89,7 +89,7 @@ const featurePanelId = crypto.randomUUID();
                         >
                           <div class="p-3">
                             <img
-                              src={getImageUrl(image.image)
+                              src={getImageUrlBuilder(image.image)
                                 .width(640)
                                 .height(450)
                                 .url()}
