@@ -55,7 +55,6 @@ import {
   zCoreContentGroup,
   type CoreContentGroup,
 } from "@model/coreContentGroup";
-import { getEnvVar, isSSR } from "./env-helper";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -102,59 +101,10 @@ function getQueryFilter(params: ClientQueryParams): string {
 /**
  * Sanity JS Client configured with current env variables
  */
-// TODO - hardcode Sanity values until we can resolve env variable issue
-// export const client = createClient({
-//   projectId: "vg3sb730",
-//   dataset: "production",
-//   apiVersion: "2023-07-16",
-//   useCdn: true,
-// });
-
-// const imgUrlBuilder = imageUrlBuilder(client);
-
-// type Clients = {
-//   buildClient: null | SanityClient;
-//   runtimeClient: null | SanityClient;
-//   imgUrlBuilder: null | ImageUrlBuilder;
-// };
-
-// const clients: Clients = {
-//   buildClient: null,
-//   runtimeClient: null,
-//   imgUrlBuilder: null,
-// };
-
 let client: SanityClient | null = null;
 let imgUrlBuilder: ImageUrlBuilder | null = null;
 
 function getClient(): SanityClient {
-  // What mode are we in? Which client should we return?
-  // if (isSSR()) {
-  //   if (clients.runtimeClient === null) {
-  //     const client = createClient({
-  //       projectId: getEnvVar("SANITY_STUDIO_PROJECT_ID"),
-  //       dataset: getEnvVar("SANITY_STUDIO_DATASET"),
-  //       apiVersion: getEnvVar("SANITY_STUDIO_API_VERSION"),
-  //       useCdn: true,
-  //     });
-  //     clients.runtimeClient = client;
-  //   }
-
-  //   return clients.runtimeClient;
-  // }
-
-  // if (clients.buildClient === null) {
-  //   const client = createClient({
-  //     projectId: getEnvVar("SANITY_STUDIO_PROJECT_ID"),
-  //     dataset: getEnvVar("SANITY_STUDIO_DATASET"),
-  //     apiVersion: getEnvVar("SANITY_STUDIO_API_VERSION"),
-  //     // For build time this should really be set to 'false' - but we're trying to minimise API requests due to cost
-  //     useCdn: true,
-  //   });
-  //   clients.buildClient = client;
-  // }
-  // return clients.buildClient;
-
   if (client === null) {
     console.log("===========================");
     console.log("META");
