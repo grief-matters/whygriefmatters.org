@@ -4,17 +4,27 @@
  * @returns The environment variable value or undefined
  */
 export function getEnvVar<K extends keyof Env>(key: K): Env[K] | undefined {
-  // Check if we're in build/client context
-  if (typeof import.meta !== "undefined" && import.meta.env) {
-    return import.meta.env[key] as Env[K];
-  }
+  console.log(process.env);
+  return process.env[key] ?? import.meta.env[key];
 
-  // Check if we're in SSR context
-  if (typeof process !== "undefined" && process.env) {
-    return process.env[key] as Env[K];
-  }
+  // If we 'build' locally - keys will be missing from both meta and process
 
-  return undefined;
+  // If
+
+  // console.log("meta env: ", import.meta.env);
+  // console.log("process env: ", process.env);
+
+  // // Check if we're in build/client context
+  // if (typeof import.meta !== "undefined" && import.meta.env) {
+  //   return import.meta.env[key] as Env[K];
+  // }
+
+  // // Check if we're in SSR context
+  // if (typeof process !== "undefined" && process.env) {
+  //   return process.env[key] as Env[K];
+  // }
+
+  // return undefined;
 }
 
 /**

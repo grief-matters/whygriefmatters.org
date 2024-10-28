@@ -4,6 +4,11 @@ import { createClient, SanityClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { ImageUrlBuilder } from "@sanity/image-url/lib/types/builder";
+import {
+  SANITY_STUDIO_API_VERSION,
+  SANITY_STUDIO_DATASET,
+  SANITY_STUDIO_PROJECT_ID,
+} from "astro:env/server";
 
 import {
   type Category,
@@ -107,54 +112,79 @@ function getQueryFilter(params: ClientQueryParams): string {
 
 // const imgUrlBuilder = imageUrlBuilder(client);
 
-type Clients = {
-  buildClient: null | SanityClient;
-  runtimeClient: null | SanityClient;
-  imgUrlBuilder: null | ImageUrlBuilder;
-};
-const clients: Clients = {
-  buildClient: null,
-  runtimeClient: null,
-  imgUrlBuilder: null,
-};
+// type Clients = {
+//   buildClient: null | SanityClient;
+//   runtimeClient: null | SanityClient;
+//   imgUrlBuilder: null | ImageUrlBuilder;
+// };
+
+// const clients: Clients = {
+//   buildClient: null,
+//   runtimeClient: null,
+//   imgUrlBuilder: null,
+// };
+
+let client: SanityClient | null = null;
+let imgUrlBuilder: ImageUrlBuilder | null = null;
 
 function getClient(): SanityClient {
   // What mode are we in? Which client should we return?
-  if (isSSR()) {
-    if (clients.runtimeClient === null) {
-      const client = createClient({
-        projectId: getEnvVar("SANITY_STUDIO_PROJECT_ID"),
-        dataset: getEnvVar("SANITY_STUDIO_DATASET"),
-        apiVersion: getEnvVar("SANITY_STUDIO_API_VERSION"),
-        useCdn: true,
-      });
-      clients.runtimeClient = client;
-    }
+  // if (isSSR()) {
+  //   if (clients.runtimeClient === null) {
+  //     const client = createClient({
+  //       projectId: getEnvVar("SANITY_STUDIO_PROJECT_ID"),
+  //       dataset: getEnvVar("SANITY_STUDIO_DATASET"),
+  //       apiVersion: getEnvVar("SANITY_STUDIO_API_VERSION"),
+  //       useCdn: true,
+  //     });
+  //     clients.runtimeClient = client;
+  //   }
 
-    return clients.runtimeClient;
-  }
+  //   return clients.runtimeClient;
+  // }
 
-  if (clients.buildClient === null) {
-    const client = createClient({
-      projectId: getEnvVar("SANITY_STUDIO_PROJECT_ID"),
-      dataset: getEnvVar("SANITY_STUDIO_DATASET"),
-      apiVersion: getEnvVar("SANITY_STUDIO_API_VERSION"),
-      // For build time this should really be set to 'false' - but we're trying to minimise API requests due to cost
+  // if (clients.buildClient === null) {
+  //   const client = createClient({
+  //     projectId: getEnvVar("SANITY_STUDIO_PROJECT_ID"),
+  //     dataset: getEnvVar("SANITY_STUDIO_DATASET"),
+  //     apiVersion: getEnvVar("SANITY_STUDIO_API_VERSION"),
+  //     // For build time this should really be set to 'false' - but we're trying to minimise API requests due to cost
+  //     useCdn: true,
+  //   });
+  //   clients.buildClient = client;
+  // }
+  // return clients.buildClient;
+
+  if (client === null) {
+    console.log("===========================");
+    console.log("META");
+    console.log("===========================");
+    console.log(import.meta.env);
+    console.log("===========================");
+    console.log("PROCESS");
+    console.log("===========================");
+    console.log(process.env);
+    console.log("===========================");
+
+    const c = createClient({
+      projectId: SANITY_STUDIO_PROJECT_ID,
+      dataset: SANITY_STUDIO_DATASET,
+      apiVersion: SANITY_STUDIO_API_VERSION,
       useCdn: true,
     });
-    clients.buildClient = client;
+    client = c;
   }
-  return clients.buildClient;
+
+  return client;
 }
 
 function getImageBuilder(): ImageUrlBuilder {
-  if (clients.imgUrlBuilder === null) {
+  if (imgUrlBuilder === null) {
     const client = getClient();
     const builder = imageUrlBuilder(client);
-    clients.imgUrlBuilder = builder;
+    imgUrlBuilder = builder;
   }
-
-  return clients.imgUrlBuilder;
+  return imgUrlBuilder;
 }
 
 /**
