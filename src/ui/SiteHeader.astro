@@ -3,6 +3,7 @@ import { getImageUrlBuilder, getLogoSet } from "@common/client";
 import { wgmDesignSystem as ds } from "@common/design-system";
 
 import MainNav from "./MainNav/MainNav.astro";
+import AccountButton from "./AccountButton.astro";
 
 const logoSet = await getLogoSet();
 
@@ -84,6 +85,7 @@ const darkUrl = `url(${darkHeaderLogo?.url})`;
           >
             {"Contribute"}
           </a>
+          <AccountButton />
         </div>
       </div>
     </div>

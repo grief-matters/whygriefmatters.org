@@ -24,6 +24,7 @@
     "@astrojs/check": "^0.9.4",
     "@astrojs/cloudflare": "^11.1.0",
     "@astrojs/tailwind": "^5.1.1",
+    "@clerk/astro": "^1.4.1",
     "@portabletext/to-html": "^2.0.5",
     "@sanity/client": "^6.4.12",
     "@sanity/image-url": "^1.0.2",

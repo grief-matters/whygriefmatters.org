@@ -1,11 +1,12 @@
 import { defineConfig, envField } from "astro/config";
 
 import tailwind from "@astrojs/tailwind";
+import clerk from "@clerk/astro";
 import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind({ applyBaseStyles: false })],
+  integrations: [clerk(), tailwind({ applyBaseStyles: false })],
   adapter: cloudflare({
     platformProxy: {
       enabled: true,
