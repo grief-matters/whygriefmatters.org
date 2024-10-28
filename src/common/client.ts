@@ -1,14 +1,15 @@
+import {
+  SANITY_STUDIO_API_VERSION,
+  SANITY_STUDIO_DATASET,
+  SANITY_STUDIO_PROJECT_ID,
+} from "astro:env/server";
+
 import groq from "groq";
 import uniqBy from "lodash/uniqBy";
 import { createClient, SanityClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { ImageUrlBuilder } from "@sanity/image-url/lib/types/builder";
-import {
-  SANITY_STUDIO_API_VERSION,
-  SANITY_STUDIO_DATASET,
-  SANITY_STUDIO_PROJECT_ID,
-} from "astro:env/server";
 
 import {
   type Category,
@@ -106,16 +107,6 @@ let imgUrlBuilder: ImageUrlBuilder | null = null;
 
 function getClient(): SanityClient {
   if (client === null) {
-    console.log("===========================");
-    console.log("META");
-    console.log("===========================");
-    console.log(import.meta.env);
-    console.log("===========================");
-    console.log("PROCESS");
-    console.log("===========================");
-    console.log(process.env);
-    console.log("===========================");
-
     const c = createClient({
       projectId: SANITY_STUDIO_PROJECT_ID,
       dataset: SANITY_STUDIO_DATASET,
