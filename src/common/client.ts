@@ -1,4 +1,5 @@
 import {
+  SANITY_AUTH_TOKEN,
   SANITY_STUDIO_API_VERSION,
   SANITY_STUDIO_DATASET,
   SANITY_STUDIO_PROJECT_ID,
@@ -103,13 +104,31 @@ function getQueryFilter(params: ClientQueryParams): string {
  * Sanity JS Client configured with current env variables
  */
 let client: SanityClient | null = null;
+let authedClient: SanityClient | null = null;
 let imgUrlBuilder: ImageUrlBuilder | null = null;
+
+export function getAuthedClient(): SanityClient {
+  if (authedClient === null) {
+    const c = createClient({
+      projectId: SANITY_STUDIO_PROJECT_ID,
+      // dataset: SANITY_STUDIO_DATASET,
+      dataset: "dev",
+      apiVersion: SANITY_STUDIO_API_VERSION,
+      token: SANITY_AUTH_TOKEN,
+      useCdn: false,
+    });
+    authedClient = c;
+  }
+
+  return authedClient;
+}
 
 function getClient(): SanityClient {
   if (client === null) {
     const c = createClient({
       projectId: SANITY_STUDIO_PROJECT_ID,
-      dataset: SANITY_STUDIO_DATASET,
+      // dataset: SANITY_STUDIO_DATASET,
+      dataset: "dev",
       apiVersion: SANITY_STUDIO_API_VERSION,
       useCdn: true,
     });

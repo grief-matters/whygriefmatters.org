@@ -1,4 +1,6 @@
 ---
+import { actions } from "astro:actions";
+
 import { SignedIn, SignedOut } from "@clerk/astro/components";
 
 import MainLayout from "@layouts/MainLayout.astro";
@@ -13,6 +15,31 @@ export const prerender = false;
   <div class:list={["xl:max-w-screen-lg xl:mx-auto p-3"]}>
     <SignedIn>
       <Text>Evaluate resources</Text>
+      <form
+        data-eval-submit
+        method="POST"
+        action={actions.evaluation.upsertEvaluation}
+      >
+        <label
+          >Resource ID <input
+            id="resourceID"
+            name="resourceID"
+            required
+            type="text"
+          /></label
+        >
+        <label
+          >Rating <input
+            id="rating"
+            name="rating"
+            required
+            type="number"
+            min="1"
+            max="10"
+          /></label
+        >
+        <button>Submit</button>
+      </form>
     </SignedIn>
     <SignedOut>
       <Heading as="h1" size="xl5">Contribute</Heading>
@@ -23,3 +50,19 @@ export const prerender = false;
     </SignedOut>
   </div>
 </MainLayout>
+
+<script>
+  document.querySelectorAll("form[data-eval-submit]").forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formElement = e.target as HTMLFormElement;
+      const formData = new FormData(formElement);
+
+      await fetch(formElement.action, {
+        method: "POST",
+        body: formData,
+      });
+    });
+  });
+</script>
