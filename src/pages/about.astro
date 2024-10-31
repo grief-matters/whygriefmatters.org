@@ -1,7 +1,56 @@
 ---
+import { getAboutPageData } from "@common/client";
 import MainLayout from "@layouts/MainLayout.astro";
+import PortableTextContentBlock from "@ui/PortableTextContentBlock.astro";
+import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
+import Heading from "@ui/primitives/Heading.astro";
+import Section from "@ui/primitives/Section.astro";
+import TeamMember from "@ui/TeamMember.astro";
+
+const data = await getAboutPageData();
 ---
 
 <MainLayout>
-  <div>about page</div>
+  <div class="mx-auto mt-6 max-w-4xl px-4">
+    <Heading as="h1" size="xl4">About Us</Heading>
+  </div>
+  <Section>
+    <div class="mx-auto py-4 text-center">
+      <Heading as="h2" size="xl3">
+        <EmphasizedEllipsisText text="Our Story" />
+      </Heading>
+    </div>
+    <PortableTextContentBlock
+      classList={["mx-auto px-4 pb-6 max-w-4xl"]}
+      portableText={data.ourStory}
+    />
+  </Section>
+  <!-- TODO - No content for 'Intro' yet -->
+  <!-- <Section>
+    <div class="mx-auto py-4 text-center">
+      <Heading as="h2" size="xl3">
+        <EmphasizedEllipsisText text="Our Team" />
+      </Heading>
+    </div>
+    <PortableTextContentBlock
+      classList={["mx-auto max-w-4xl"]}
+      portableText={data.teamIntro}
+    />
+  </Section> -->
+  <Section>
+    <div class="text-center">
+      <Heading as="h2" size="xl3">
+        <EmphasizedEllipsisText text="Site Creators" />
+      </Heading>
+    </div>
+    {data.creators.map((person) => <TeamMember person={person} />)}
+  </Section>
+  <Section>
+    <div class="text-center">
+      <Heading as="h2" size="xl3">
+        <EmphasizedEllipsisText text="Our Team" />
+      </Heading>
+    </div>
+    {data.teamMembers.map((person) => <TeamMember person={person} />)}
+  </Section>
 </MainLayout>

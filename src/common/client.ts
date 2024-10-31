@@ -56,6 +56,11 @@ import {
   zCoreContentGroup,
   type CoreContentGroup,
 } from "@model/coreContentGroup";
+import {
+  gAboutPageQuery,
+  zAboutPage,
+  type AboutPageData,
+} from "@model/aboutPage";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -351,4 +356,17 @@ export async function getSmallPrint(): Promise<PortableText> {
   return await client
     .fetch(query)
     .then((result) => zPortableText.parse(result));
+}
+
+/**
+ * Get data for About Page content type
+ * @returns - All data required to build the ABout Page
+ */
+export async function getAboutPageData(): Promise<AboutPageData> {
+  const client = getClient();
+  const data = await client
+    .fetch(gAboutPageQuery)
+    .then((result) => zAboutPage.parse(result));
+
+  return data;
 }

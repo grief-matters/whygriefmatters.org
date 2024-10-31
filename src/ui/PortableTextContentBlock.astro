@@ -14,6 +14,6 @@ const htmlString = toHTML(props.portableText, {
 });
 ---
 
-<div class:list={["prose prose-wgm", ...(props.classList ?? [])]}>
+<div class:list={["prose prose-wgm font-serif", ...(props.classList ?? [])]}>
   <Fragment set:html={htmlString} />
 </div>
