@@ -6,4 +6,5 @@ interface Env {
 	SANITY_STUDIO_API_VERSION: string;
 	SANITY_STUDIO_DATASET: string;
 	SANITY_STUDIO_PROJECT_ID: string;
+	SANITY_AUTH_TOKEN: string;
 }
