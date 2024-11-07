@@ -107,15 +107,14 @@ let client: SanityClient | null = null;
 let authedClient: SanityClient | null = null;
 let imgUrlBuilder: ImageUrlBuilder | null = null;
 
-export function getAuthedClient(): SanityClient {
+export function getAuthedClient(useCdn?: boolean): SanityClient {
   if (authedClient === null) {
     const c = createClient({
       projectId: SANITY_STUDIO_PROJECT_ID,
-      // dataset: SANITY_STUDIO_DATASET,
-      dataset: "dev",
+      dataset: SANITY_STUDIO_DATASET,
       apiVersion: SANITY_STUDIO_API_VERSION,
       token: SANITY_AUTH_TOKEN,
-      useCdn: false,
+      useCdn: useCdn ?? true,
     });
     authedClient = c;
   }
@@ -123,14 +122,13 @@ export function getAuthedClient(): SanityClient {
   return authedClient;
 }
 
-function getClient(): SanityClient {
+export function getClient(useCdn?: boolean): SanityClient {
   if (client === null) {
     const c = createClient({
       projectId: SANITY_STUDIO_PROJECT_ID,
-      // dataset: SANITY_STUDIO_DATASET,
-      dataset: "dev",
+      dataset: SANITY_STUDIO_DATASET,
       apiVersion: SANITY_STUDIO_API_VERSION,
-      useCdn: true,
+      useCdn: useCdn ?? true,
     });
     client = c;
   }
