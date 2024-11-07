@@ -1,12 +1,28 @@
 ---
-import { actions } from "astro:actions";
-
 import { SignedIn, SignedOut } from "@clerk/astro/components";
 
 import MainLayout from "@layouts/MainLayout.astro";
 import AccountButton from "@ui/AccountButton.astro";
 import Heading from "@ui/primitives/Heading.astro";
 import Text from "@ui/primitives/Text.astro";
+import { getClient } from "@common/client";
+import {
+  getResourceEvaluationDataQuery,
+  zResourceEvaluationData,
+} from "@model/resourceEvaluation";
+import ResourceEvaluation from "@ui/ResourceEvaluation/ResourceEvaluation.astro";
+
+const userId = Astro.locals.auth().userId;
+
+const client = getClient();
+
+const promise = userId
+  ? client
+      .fetch(getResourceEvaluationDataQuery(userId))
+      .then((result) => zResourceEvaluationData.parse(result))
+  : null;
+
+const data = await Promise.resolve(promise);
 
 export const prerender = false;
 ---
@@ -14,32 +30,7 @@ export const prerender = false;
 <MainLayout>
   <div class:list={["xl:max-w-screen-lg xl:mx-auto p-3"]}>
     <SignedIn>
-      <Text>Evaluate resources</Text>
-      <form
-        data-eval-submit
-        method="POST"
-        action={actions.evaluation.upsertEvaluation}
-      >
-        <label
-          >Resource ID <input
-            id="resourceID"
-            name="resourceID"
-            required
-            type="text"
-          /></label
-        >
-        <label
-          >Rating <input
-            id="rating"
-            name="rating"
-            required
-            type="number"
-            min="1"
-            max="10"
-          /></label
-        >
-        <button>Submit</button>
-      </form>
+      {data && <ResourceEvaluation evaluationData={data} />}
     </SignedIn>
     <SignedOut>
       <Heading as="h1" size="xl5">Contribute</Heading>
@@ -50,19 +41,3 @@ export const prerender = false;
     </SignedOut>
   </div>
 </MainLayout>
-
-<script>
-  document.querySelectorAll("form[data-eval-submit]").forEach((form) => {
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const formElement = e.target as HTMLFormElement;
-      const formData = new FormData(formElement);
-
-      await fetch(formElement.action, {
-        method: "POST",
-        body: formData,
-      });
-    });
-  });
-</script>

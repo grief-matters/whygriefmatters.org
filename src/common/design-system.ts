@@ -33,6 +33,9 @@ export const wgmDesignSystem = {
         default: "border-sky-700/70",
         hover: "border-sky-700/30 hover:border-sky-700/70",
       },
+      neutral: {
+        default: "border-stone-200",
+      },
       resourceType: {
         app: {
           default: "border-blue-500",
