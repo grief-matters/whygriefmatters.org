@@ -1,52 +1,13 @@
-import { getAuthedClient, getClient } from "@common/client";
-import {
-  getResourceEvaluationDataQuery,
-  zResourceEvaluationData,
-  type ResourceEvaluationItem,
-} from "@model/resourceEvaluation";
 import type { APIContext, APIRoute } from "astro";
-import groq from "groq";
+
+import {
+  createUserEvaluation,
+  getUserEvaluation,
+  updateUserEvaluation,
+} from "@common/client";
+import { type ResourceEvaluationItem } from "@model/resourceEvaluation";
 
 export const prerender = false;
-
-export const GET: APIRoute = async (context: APIContext) => {
-  const userId = context.locals.auth().userId;
-
-  // Only return results from this endpoint to authenticated users
-  if (userId === null) {
-    return new Response(null, {
-      status: 404,
-      statusText: "Not found",
-    });
-  }
-
-  try {
-    const client = getClient(false);
-    const data = await client
-      .fetch(getResourceEvaluationDataQuery(userId))
-      .then((result) => zResourceEvaluationData.parse(result));
-
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  } catch (error) {
-    return new Response(
-      JSON.stringify({
-        error:
-          error instanceof Error ? error.message : "Unknown error occurred",
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-  }
-};
 
 export const POST: APIRoute = async (context: APIContext) => {
   const userId = context.locals.auth().userId;
@@ -60,71 +21,38 @@ export const POST: APIRoute = async (context: APIContext) => {
 
   try {
     const body = await context.request.json();
-    const query = groq`
-      {
-        "resourceEvaluationItem": *[_id == '${body.resourceId}'][0]{
-          "id": _id,
-          "title": coalesce(title, name),
-          "resourceUrl": coalesce(resourceUrl, appleUrl, spotifyUrl, playStoreUrl),
-        },
-        "resourceEvaluation": *[_type == 'resourceEvaluation' 
-        && userId == '${userId}' 
-        && resourceId == '${body.resourceId}'][0]{
-          "id": _id,
-          userId,
-          resourceId,
-          rating
-        }
-      }
-    `;
 
-    const client = getAuthedClient(false);
-    const evaluationData = await client.fetch(query);
+    const rating = Number(body.rating);
+    if (Number.isNaN(rating)) {
+      return new Response(null, {
+        status: 400,
+        statusText: "Supplied rating is not a valid number",
+      });
+    }
 
-    if (!evaluationData.resourceEvaluationItem) {
+    const evaluationData = await getUserEvaluation(userId, body.resourceId);
+
+    if (!evaluationData.resourceDetails) {
       return new Response(null, {
         status: 404,
-        statusText: "Not found",
+        statusText: "Could not find Internet Resource item",
       });
     }
 
     const partialResponseData: Partial<ResourceEvaluationItem> = {
       id: body.resourceId,
-      title: evaluationData.resourceEvaluationItem.title,
-      resourceUrl: evaluationData.resourceEvaluationItem.resourceUrl,
+      title: evaluationData.resourceDetails.title,
+      resourceUrl: evaluationData.resourceDetails.resourceUrl,
     };
 
-    // If we already have an evaluation for this resource, for this user
-    // create a 'patch'
-    if (evaluationData.resourceEvaluation) {
-      const res = await client
-        .patch(evaluationData.resourceEvaluation.id)
-        .set({ rating: Number(body.rating) })
-        .commit();
+    const response = evaluationData.evaluationDetails
+      ? await updateUserEvaluation(evaluationData.evaluationDetails.id, rating)
+      : await createUserEvaluation(userId, body.resourceId, rating);
 
-      return new Response(
-        JSON.stringify({
-          ...partialResponseData,
-          rating: res.rating,
-        }),
-        {
-          status: 200,
-        },
-      );
-    }
-
-    const doc = {
-      _type: "resourceEvaluation",
-      userId: userId,
-      resourceId: body.resourceId,
-      rating: Number(body.rating),
-    };
-
-    const res = await client.create(doc);
     return new Response(
       JSON.stringify({
         ...partialResponseData,
-        rating: res.rating,
+        rating: response.rating,
       }),
       { status: 200 },
     );

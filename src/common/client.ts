@@ -57,6 +57,11 @@ import {
   zCoreContentGroup,
   type CoreContentGroup,
 } from "@model/coreContentGroup";
+import {
+  gUserEvaluation,
+  zUserEvaluation,
+  type UserEvaluation,
+} from "@model/resourceEvaluation";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -368,4 +373,46 @@ export async function getSmallPrint(): Promise<PortableText> {
   return await client
     .fetch(query)
     .then((result) => zPortableText.parse(result));
+}
+
+/**
+ * Get an Evaluation of a Resource by a specific User
+ * @param userId
+ * @param resourceId
+ * @returns The details of the resource along with the evaluation - if one exists. `evaluationDetails` will be `null` if the user is yet to evaluate the resource
+ */
+export async function getUserEvaluation(
+  userId: string,
+  resourceId: string,
+): Promise<UserEvaluation> {
+  const client = getAuthedClient(false);
+  const userEvaluation = await client
+    .fetch(gUserEvaluation, { userId, resourceId })
+    .then((result) => zUserEvaluation.parse(result));
+
+  return userEvaluation;
+}
+
+export async function updateUserEvaluation(id: string, rating: number) {
+  const client = getAuthedClient();
+
+  return await client
+    .patch(id)
+    .set({ rating: Number(rating) })
+    .commit();
+}
+
+export async function createUserEvaluation(
+  userId: string,
+  resourceId: string,
+  rating: number,
+) {
+  const client = getAuthedClient();
+
+  return await client.create({
+    _type: "resourceEvaluation",
+    userId,
+    resourceId,
+    rating,
+  });
 }
