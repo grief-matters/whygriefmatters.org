@@ -29,6 +29,10 @@ export default defineConfig({
           context: "server",
           access: "public",
         }),
+        SANITY_AUTH_TOKEN: envField.string({
+          context: "server",
+          access: "secret",
+        }),
       },
     },
   },

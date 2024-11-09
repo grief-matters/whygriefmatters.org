@@ -1,0 +1,327 @@
+---
+import startCase from "lodash/startCase";
+import { internetResourceTypes } from "@model/internetResource";
+import type { ResourceEvaluationData } from "@model/resourceEvaluation";
+import { wgmDesignSystem as ds } from "@common/design-system";
+
+interface Props {
+  evaluationData: ResourceEvaluationData;
+}
+
+const { evaluationData } = Astro.props;
+---
+
+<resource-evaluation-table
+  data-evaluation-data={JSON.stringify(evaluationData)}
+>
+  <div
+    id="table-data-controls"
+    class:list={["sm:flex sm:justify-between sm:items-end mb-6"]}
+  >
+    <div class="mb-3">
+      <label
+        for="resource-type-select"
+        class:list={["block mb-3", "font-serif", "text-xl font-semibold"]}
+      >
+        {"Select the type of resource to evaluate"}
+      </label>
+      <select
+        id="resource-type-select"
+        name="resource-type-select"
+        class:list={[ds.border.color.neutral.default, "rounded-md", "w-full"]}
+      >
+        {
+          internetResourceTypes.map((type) => (
+            <option value={type}>{startCase(type)}</option>
+          ))
+        }
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <input
+        class:list={[
+          "rounded-full border-stone-200 w-full",
+          "placeholder:text-stone-400 px-4 italic font-serif",
+        ]}
+        type="text"
+        id="search-input"
+        placeholder="Search by Title..."
+      />
+    </div>
+  </div>
+
+  <table class:list={["table-auto w-full"]} id="resources-table">
+    <thead>
+      <tr>
+        <th
+          class:list={[
+            "font-serif font-semibold text-start bg-blue-900 text-stone-50 px-3 py-1",
+          ]}>{"Title Of Resource"}</th
+        >
+        <th
+          class:list={[
+            "font-serif font-semibold text-start bg-blue-900 text-stone-50 px-3 py-1",
+          ]}>Rating</th
+        >
+      </tr>
+    </thead>
+    <tbody id="resources-table-body">
+      <!-- Populated via script -->
+    </tbody>
+  </table>
+
+  <div
+    id="table-pagination-controls"
+    class:list={["flex w-full justify-center py-4"]}
+  >
+    <button id="prev-page-btn" type="button">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="currentColor"
+      >
+        <path d="M15 6l-6 6 6 6"></path>
+      </svg>
+      <span class="sr-only">{"Previous"}</span>
+    </button>
+    <span class="font-serif italic" id="page-info">
+      {"Page "}<span id="current-page-text">{"1"}</span>
+    </span>
+    <button id="next-page-btn" type="button">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="currentColor"
+      >
+        <path d="M9 6l6 6-6 6"></path>
+      </svg>
+      <span class="sr-only">{"Next"}</span>
+    </button>
+  </div>
+</resource-evaluation-table>
+
+<script>
+  import type { InternetResourceType } from "@model/internetResource";
+  import type {
+    ResourceEvaluationData,
+    ResourceEvaluationItem,
+  } from "@model/resourceEvaluation";
+
+  import sortBy from "lodash/sortBy";
+
+  const itemsPerPage = 50;
+
+  class ResourceEvaluationTable extends HTMLElement {
+    evaluationData: ResourceEvaluationData | undefined;
+    tableData: Array<ResourceEvaluationItem>;
+    filteredData: Array<ResourceEvaluationItem>;
+    pageData: Array<ResourceEvaluationItem>;
+
+    currentPage: number;
+    totalPages: number;
+
+    resourceTypeSelect?: HTMLSelectElement | null;
+    searchInput?: HTMLInputElement | null;
+    resourcesTableBody?: HTMLElement | null;
+    prevBtn?: HTMLButtonElement | null;
+    nextBtn?: HTMLButtonElement | null;
+    currentPageText?: HTMLElement | null;
+
+    constructor() {
+      super();
+      this.tableData = [];
+      this.filteredData = [];
+      this.pageData = [];
+      this.currentPage = 1;
+      this.totalPages = 1;
+    }
+
+    connectedCallback() {
+      this.resourceTypeSelect = this.querySelector("#resource-type-select");
+      this.searchInput = this.querySelector("#search-input");
+      this.resourcesTableBody = this.querySelector("#resources-table-body");
+      this.prevBtn = this.querySelector("#prev-page-btn");
+      this.nextBtn = this.querySelector("#next-page-btn");
+      this.currentPageText = this.querySelector("#current-page-text");
+
+      this.prevBtn?.addEventListener("click", this.handlePrevButtonClick);
+      this.nextBtn?.addEventListener("click", this.handleNextButtonClick);
+      this.searchInput?.addEventListener("input", this.resetTable);
+      this.resourceTypeSelect?.addEventListener("change", this.resetTable);
+
+      const data = this.dataset.evaluationData;
+
+      if (data) {
+        this.evaluationData = JSON.parse(data);
+        this.updateTableData();
+      }
+    }
+
+    updateTableData = () => {
+      if (!this.evaluationData) {
+        return;
+      }
+
+      const dataType: InternetResourceType =
+        (this.resourceTypeSelect?.value as InternetResourceType) ?? "article";
+      this.tableData = this.evaluationData[dataType] ?? [];
+
+      const searchTerm = this.searchInput?.value?.toLowerCase();
+      this.filteredData = sortBy(
+        this.tableData.filter((item) =>
+          item.title?.toLowerCase().includes(searchTerm ?? "")
+        ),
+        ["title"]
+      );
+
+      this.totalPages = Math.ceil(this.filteredData.length / itemsPerPage);
+      this.currentPage = Math.min(this.currentPage, this.totalPages);
+
+      if (this.prevBtn) {
+        this.prevBtn.disabled = this.currentPage === 1;
+      }
+
+      if (this.nextBtn) {
+        this.nextBtn.disabled = this.currentPage === this.totalPages;
+      }
+
+      if (this.currentPageText) {
+        this.currentPageText.textContent = `${this.currentPage ?? ""}`;
+      }
+
+      const startIndex = (this.currentPage - 1) * itemsPerPage;
+      this.pageData = this.filteredData.slice(
+        startIndex,
+        startIndex + itemsPerPage
+      );
+
+      this.renderTable();
+    };
+
+    renderTable = () => {
+      if (!this.resourcesTableBody) {
+        return;
+      }
+
+      this.resourcesTableBody.innerHTML = this.pageData
+        .map(
+          (item) => `
+        <tr data-resource-id="${item.id}">
+          <td class="w-full border border-slate-200 px-3">
+            <a class="underline underline-offset-2 transition-decoration duration-300 decoration-sky-800/30 hover:decoration-sky-900 font-serif" href="${
+              item.resourceUrl
+            }" rel="noopener" target="_blank">
+              ${item.title}
+            </a>
+          </td>
+          <td class="whitespace-nowrap border border-slate-200 px-3 py-2">
+            <select class="rating-select border-stone-200 rounded-md py-1 mr-1">
+              <option value="" ${item.rating === null ? "selected" : ""}>
+                None
+              </option>
+              ${[...Array(10)]
+                .map(
+                  (_, i) => `
+                    <option value="${i + 1}" ${
+                      item.rating === i + 1 ? "selected" : ""
+                    }>
+                      ${i + 1}
+                    </option>
+                `
+                )
+                .join("")}
+            </select>
+            <button class="disabled:opacity-50 disabled:pointer-none py-1 save-rating bg-blue-900 text-stone-50 font-serif rounded-md hover:shadow-md hover:shadow-blue-800/30 transition duration-300 px-3 h-full">Save</button>
+          </td>
+        </tr>
+      `
+        )
+        .join("");
+
+      this.attachEventListeners();
+    };
+
+    attachEventListeners = () => {
+      this.querySelectorAll(".save-rating").forEach((button) => {
+        button.addEventListener("click", this.handleSaveRating);
+      });
+    };
+
+    handleSaveRating = async (e: Event) => {
+      const target = e.target as HTMLElement;
+      // TODO - Add a loading/disabled state to the button
+      target.setAttribute("disabled", "true");
+
+      const row = target.closest("tr");
+      const resourceId = row?.dataset.resourceId;
+      const rating = (row?.querySelector(".rating-select") as HTMLSelectElement)
+        ?.value;
+
+      try {
+        if (!resourceId || !rating) {
+          throw new Error("Failed to save rating");
+        }
+
+        const res = await fetch("/api/resource-evaluation", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            resourceId,
+            rating,
+          }),
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to save rating");
+        }
+
+        const updatedRow = await res.json();
+
+        // TODO - typeguard this to ensure we have a valid type
+        const resourceType: InternetResourceType = this.resourceTypeSelect
+          ?.value as InternetResourceType;
+
+        this.evaluationData = {
+          ...this.evaluationData,
+          [resourceType]: (this.evaluationData?.[resourceType] ?? []).map(
+            (row) => (row.id === updatedRow.id ? updatedRow : row)
+          ),
+        };
+
+        this.updateTableData();
+        target.removeAttribute("disabled");
+      } catch (error) {
+        console.error("Error saving rating: ", error);
+      }
+    };
+
+    resetTable = () => {
+      this.currentPage = 1;
+      this.updateTableData();
+    };
+
+    handlePrevButtonClick = () => {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+        this.updateTableData();
+      }
+    };
+
+    handleNextButtonClick = () => {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+        this.updateTableData();
+      }
+    };
+  }
+
+  // Tell the browser to use our AstroHeart class for <astro-heart> elements.
+  customElements.define("resource-evaluation-table", ResourceEvaluationTable);
+</script>
