@@ -1,15 +1,15 @@
 ---
 import { SignedIn, SignedOut } from "@clerk/astro/components";
-
-import MainLayout from "@layouts/MainLayout.astro";
-import AccountButton from "@ui/AccountButton.astro";
-import Heading from "@ui/primitives/Heading.astro";
-import Text from "@ui/primitives/Text.astro";
 import { getClient } from "@common/client";
 import {
   getResourceEvaluationDataQuery,
   zResourceEvaluationData,
 } from "@model/resourceEvaluation";
+
+import MainLayout from "@layouts/MainLayout.astro";
+import AccountButton from "@ui/AccountButton.astro";
+import Heading from "@ui/primitives/Heading.astro";
+import Text from "@ui/primitives/Text.astro";
 import ResourceEvaluation from "@ui/ResourceEvaluation/ResourceEvaluation.astro";
 
 const userId = Astro.locals.auth().userId;
