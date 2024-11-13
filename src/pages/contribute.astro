@@ -14,7 +14,7 @@ import ResourceEvaluation from "@ui/ResourceEvaluation/ResourceEvaluation.astro"
 
 const userId = Astro.locals.auth().userId;
 
-const client = getClient();
+const client = getClient(false);
 
 const promise = userId
   ? client
