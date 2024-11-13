@@ -30,6 +30,8 @@ export const POST: APIRoute = async (context: APIContext) => {
       });
     }
 
+    const comment = (body.comment ?? "").length > 0 ? body.comment : null;
+
     const evaluationData = await getUserEvaluation(userId, body.resourceId);
 
     if (!evaluationData.resourceDetails) {
@@ -46,13 +48,18 @@ export const POST: APIRoute = async (context: APIContext) => {
     };
 
     const response = evaluationData.evaluationDetails
-      ? await updateUserEvaluation(evaluationData.evaluationDetails.id, rating)
-      : await createUserEvaluation(userId, body.resourceId, rating);
+      ? await updateUserEvaluation(
+          evaluationData.evaluationDetails.id,
+          rating,
+          comment,
+        )
+      : await createUserEvaluation(userId, body.resourceId, rating, comment);
 
     return new Response(
       JSON.stringify({
         ...partialResponseData,
         rating: response.rating,
+        comment: response.comment,
       }),
       { status: 200 },
     );

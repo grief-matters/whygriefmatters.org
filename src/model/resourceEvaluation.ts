@@ -13,7 +13,7 @@ export function getResourceEvaluationDataQuery(userId: string) {
         "id": _id,
         "title": coalesce(title, name),
         "resourceUrl": coalesce(resourceUrl, appleUrl, spotifyUrl, playStoreUrl),
-        "rating": *[_type == 'resourceEvaluation' && userId == '${userId}' && resourceId == ^._id][0].rating
+        ...(*[_type == 'resourceEvaluation' && userId == '${userId}' && resourceId == ^._id][0]{rating, comment})
       }
     `,
   );
@@ -36,6 +36,7 @@ export const gUserEvaluation = groq`
       "id": _id,
       userId,
       resourceId,
+      comment,
       rating
     }
   }
@@ -54,6 +55,7 @@ export const zUserEvaluation = z.object({
       id: z.string(),
       userId: z.string(),
       resourceId: z.string(),
+      comment: z.string().nullable(),
       rating: z.number().nullable(),
     })
     .nullable(),
@@ -63,7 +65,8 @@ const zResourceEvaluationItem = z.object({
   id: z.string(),
   title: z.string(),
   resourceUrl: z.string(),
-  rating: z.number().nullable(),
+  comment: z.string().nullish(),
+  rating: z.number().nullish(),
 });
 
 export const zResourceEvaluationData = z.record(

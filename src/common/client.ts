@@ -117,14 +117,14 @@ let client: SanityClient | null = null;
 let authedClient: SanityClient | null = null;
 let imgUrlBuilder: ImageUrlBuilder | null = null;
 
-export function getAuthedClient(useCdn?: boolean): SanityClient {
+export function getAuthedClient(useCdn: boolean = false): SanityClient {
   if (authedClient === null) {
     const c = createClient({
       projectId: SANITY_STUDIO_PROJECT_ID,
       dataset: SANITY_STUDIO_DATASET,
       apiVersion: SANITY_STUDIO_API_VERSION,
       token: SANITY_AUTH_TOKEN,
-      useCdn: useCdn ?? true,
+      useCdn: useCdn,
     });
     authedClient = c;
   }
@@ -132,13 +132,13 @@ export function getAuthedClient(useCdn?: boolean): SanityClient {
   return authedClient;
 }
 
-export function getClient(useCdn?: boolean): SanityClient {
+export function getClient(useCdn: boolean = true): SanityClient {
   if (client === null) {
     const c = createClient({
       projectId: SANITY_STUDIO_PROJECT_ID,
       dataset: SANITY_STUDIO_DATASET,
       apiVersion: SANITY_STUDIO_API_VERSION,
-      useCdn: useCdn ?? true,
+      useCdn: useCdn,
     });
     client = c;
   }
@@ -411,19 +411,30 @@ export async function getUserEvaluation(
   return userEvaluation;
 }
 
-export async function updateUserEvaluation(id: string, rating: number) {
-  const client = getAuthedClient();
+export async function updateUserEvaluation(
+  id: string,
+  rating: number,
+  comment: string | null,
+) {
+  const client = getAuthedClient(false);
 
-  return await client
-    .patch(id)
-    .set({ rating: Number(rating) })
-    .commit();
+  return comment
+    ? await client
+        .patch(id)
+        .set({ rating: Number(rating), comment })
+        .commit()
+    : await client
+        .patch(id)
+        .set({ rating: Number(rating) })
+        .unset(["comment"])
+        .commit();
 }
 
 export async function createUserEvaluation(
   userId: string,
   resourceId: string,
   rating: number,
+  comment: string | null,
 ) {
   const client = getAuthedClient();
 
@@ -432,5 +443,6 @@ export async function createUserEvaluation(
     userId,
     resourceId,
     rating,
+    comment: comment ?? undefined,
   });
 }

@@ -62,6 +62,11 @@ const { evaluationData } = Astro.props;
         <th
           class:list={[
             "font-serif font-semibold text-start bg-blue-900 text-stone-50 px-3 py-1",
+          ]}>Comment</th
+        >
+        <th
+          class:list={[
+            "font-serif font-semibold text-start bg-blue-900 text-stone-50 px-3 py-1",
           ]}>Rating</th
         >
       </tr>
@@ -212,19 +217,24 @@ const { evaluationData } = Astro.props;
         .map(
           (item) => `
         <tr data-resource-id="${item.id}">
-          <td class="w-full border border-slate-200 px-3">
+          <td class="w-2/3 border border-slate-200 px-3">
             <a class="underline underline-offset-2 transition-decoration duration-300 decoration-sky-800/30 hover:decoration-sky-900 font-serif" href="${
               item.resourceUrl
             }" rel="noopener" target="_blank">
               ${item.title}
             </a>
           </td>
-          <td class="whitespace-nowrap border border-slate-200 px-3 py-2">
-            <select class="rating-select border-stone-200 rounded-md py-1 mr-1">
+          <td class="w-full border border-slate-200 px-3 py-2">
+            <textarea class="comment-input w-full border-stone-200 rounded-md py-1" rows="1">${
+              item.comment ?? ""
+            }</textarea>
+          </td>
+          <td class="whitespace-nowrap border border-slate-200 px-3 py-2 relative">
+            <select class="rating-select border-stone-200 rounded-md py-1 mr-1 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500">
               <option value="" ${item.rating === null ? "selected" : ""}>
                 None
               </option>
-              ${[...Array(10)]
+              ${[...Array(5)]
                 .map(
                   (_, i) => `
                     <option value="${i + 1}" ${
@@ -237,6 +247,18 @@ const { evaluationData } = Astro.props;
                 .join("")}
             </select>
             <button class="disabled:opacity-50 disabled:pointer-none py-1 save-rating bg-blue-900 text-stone-50 font-serif rounded-md hover:shadow-md hover:shadow-blue-800/30 transition duration-300 px-3 h-full">Save</button>
+            <div class="ease-in duration-300 transition-all success-indicator absolute -right-12 bg-green-400 m-2 inline-block w-6 text-center rounded-full text-white p-1 hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                <path 
+                  d="M 20 50 C 20 50, 35 65, 45 75 C 45 75, 45 75, 45 75 C 45 75, 70 35, 80 20" 
+                  stroke="#fff"
+                  stroke-width="12" 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round"
+                  fill="none"
+                />
+              </svg>  
+            </div>
           </td>
         </tr>
       `
@@ -254,19 +276,37 @@ const { evaluationData } = Astro.props;
 
     handleSaveRating = async (e: Event) => {
       const target = e.target as HTMLElement;
-      // TODO - Add a loading/disabled state to the button
       target.setAttribute("disabled", "true");
 
       const row = target.closest("tr");
       const resourceId = row?.dataset.resourceId;
-      const rating = (row?.querySelector(".rating-select") as HTMLSelectElement)
-        ?.value;
+      const ratingSelect = row?.querySelector(
+        ".rating-select"
+      ) as HTMLSelectElement;
+      const rating = ratingSelect?.value;
+      const successIndicator = row?.querySelector(".success-indicator");
+
+      const commentInput = row?.querySelector(
+        ".comment-input"
+      ) as HTMLTextAreaElement;
+      const comment = commentInput.value.trim();
+
+      if (!rating || rating === "") {
+        ratingSelect.setCustomValidity("Please select a rating");
+        ratingSelect.reportValidity();
+        ratingSelect.focus();
+
+        ratingSelect.addEventListener("input", function clearInvalid() {
+          if (ratingSelect.value) {
+            ratingSelect.setCustomValidity("");
+            ratingSelect.removeEventListener("input", clearInvalid);
+          }
+        });
+        target.removeAttribute("disabled");
+        return;
+      }
 
       try {
-        if (!resourceId || !rating) {
-          throw new Error("Failed to save rating");
-        }
-
         const res = await fetch("/api/resource-evaluation", {
           method: "POST",
           headers: {
@@ -275,11 +315,12 @@ const { evaluationData } = Astro.props;
           body: JSON.stringify({
             resourceId,
             rating,
+            comment,
           }),
         });
 
         if (!res.ok) {
-          throw new Error("Failed to save rating");
+          throw new Error("Failed to save evaluation");
         }
 
         const updatedRow = await res.json();
@@ -295,10 +336,30 @@ const { evaluationData } = Astro.props;
           ),
         };
 
-        this.updateTableData();
-        target.removeAttribute("disabled");
+        ratingSelect.value = updatedRow.rating ?? "";
+        commentInput.value = updatedRow.comment ?? "";
+
+        successIndicator?.classList.remove("hidden");
+        successIndicator?.classList.add("inline-block", "opacity-0");
+
+        requestAnimationFrame(() => {
+          successIndicator?.classList.add("opacity-100");
+          successIndicator?.classList.remove("opacity-0");
+        });
+
+        setTimeout(() => {
+          successIndicator?.classList.remove("opacity-100");
+          successIndicator?.classList.add("opacity-0");
+
+          setTimeout(() => {
+            successIndicator?.classList.remove("inline-block");
+            successIndicator?.classList.add("hidden");
+          }, 300);
+        }, 2000);
       } catch (error) {
         console.error("Error saving rating: ", error);
+      } finally {
+        target.removeAttribute("disabled");
       }
     };
 
