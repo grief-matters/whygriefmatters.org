@@ -4,11 +4,23 @@
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
     "paths": {
-      "@common/*": ["src/common/*"],
-      "@components/*": ["src/components/*"],
-      "@layouts/*": ["src/layouts/*"],
-      "@model/*": ["src/model/*"],
-      "@ui/*": ["src/ui/*"]
-    }
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@layouts/*": [
+        "src/layouts/*"
+      ],
+      "@model/*": [
+        "src/model/*"
+      ],
+      "@ui/*": [
+        "src/ui/*"
+      ]
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
   }
 }

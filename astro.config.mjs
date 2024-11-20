@@ -4,9 +4,11 @@ import tailwind from "@astrojs/tailwind";
 import clerk from "@clerk/astro";
 import cloudflare from "@astrojs/cloudflare";
 
+import react from "@astrojs/react";
+
 // https://astro.build/config
 export default defineConfig({
-  integrations: [clerk(), tailwind({ applyBaseStyles: false })],
+  integrations: [clerk(), tailwind({ applyBaseStyles: false }), react()],
   adapter: cloudflare({
     platformProxy: {
       enabled: true,
