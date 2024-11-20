@@ -29,8 +29,8 @@ const lgImgUrl = image
 const xlImgUrl = image
   ? `url(${getImageUrlBuilder(image.image).width(2560).height(850).url()})`
   : null;
-const bgPosX = `${(image.image.hotspot?.x ?? 0) * 100}%`;
-const bgPosY = `${(image.image.hotspot?.y ?? 0) * 100}%`;
+const bgPosX = `${(image.image.hotspot?.x ?? 0.5) * 100}%`;
+const bgPosY = `${(image.image.hotspot?.y ?? 0.5) * 100}%`;
 ---
 
 <header class={ds.background.color.neutral.defaultLighter}>
