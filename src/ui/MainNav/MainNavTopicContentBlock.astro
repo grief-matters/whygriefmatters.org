@@ -1,25 +1,22 @@
 ---
 import type { TopicContentBlock } from "@model/contentBlock";
 
-import { getCategoryTree } from "@common/category";
-
-import MainNavRecursiveCategoryTree from "./MainNavRecursiveCategoryTree.astro";
-import MainNavLink from "./MainNavLink.astro";
 import CMSImage from "@ui/primitives/CMSImage.astro";
 import Text from "@ui/primitives/Text.astro";
+
+import MainNavLink from "./MainNavLink.astro";
+import MainNavRecursiveTopicTree from "./MainNavRecursiveTopicTree.astro";
 
 interface Props {
   topicContentBlock: TopicContentBlock;
 }
 
 const { topicContentBlock } = Astro.props;
-
-const categoryTreeItems = await getCategoryTree(topicContentBlock.topic.slug);
 ---
 
 <div>
   {
-    topicContentBlock.showImage && (
+    topicContentBlock.showImage && topicContentBlock.topic.image && (
       <div class="mb-3">
         <CMSImage image={topicContentBlock.topic.image} />
       </div>
@@ -27,7 +24,7 @@ const categoryTreeItems = await getCategoryTree(topicContentBlock.topic.slug);
   }
   {
     topicContentBlock.showSubtopics ? (
-      <MainNavRecursiveCategoryTree categories={categoryTreeItems} />
+      <MainNavRecursiveTopicTree topic={topicContentBlock.topic} />
     ) : (
       <>
         <MainNavLink
