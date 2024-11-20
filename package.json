@@ -26,6 +26,7 @@
     "@astrojs/react": "^3.6.2",
     "@astrojs/tailwind": "^5.1.2",
     "@clerk/astro": "^1.4.1",
+    "@mui/material": "^6.1.7",
     "@portabletext/to-html": "^2.0.5",
     "@sanity/client": "^6.4.12",
     "@sanity/image-url": "^1.0.2",
