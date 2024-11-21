@@ -26,7 +26,7 @@ export function getRecursiveSubtopicsProjection(depth: number = 5): string {
   `;
 }
 
-const zBaseTopic = z.object({
+export const zBaseTopic = z.object({
   title: z.string(),
   slug: z.string(),
   description: z.string().nullish(),
