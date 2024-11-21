@@ -15,7 +15,6 @@ import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
-import { getFullCategoryName } from "@common/category";
 import PageHeader from "@ui/PageHeader.astro";
 import { getResourcePageTitle } from "@common/page";
 import MainNavLink from "@ui/MainNav/MainNavLink.astro";
@@ -25,7 +24,6 @@ interface Props {
   resources: Array<InternetResourcePageListing>;
   populationData: Population;
   applicableTypes: Array<InternetResourceType>;
-  parentSlug: string;
   image: SanityImage | null;
 }
 
@@ -51,7 +49,6 @@ export async function getStaticPaths() {
           props: {
             categoryTitle: data.title,
             image: data.image,
-            parentSlug: data.parent?.slug ?? "",
             populationData: population,
             resources,
             applicableTypes: filteredTypes ?? [],
@@ -65,10 +62,7 @@ export async function getStaticPaths() {
 const params = Astro.params;
 const props = Astro.props;
 
-const fullCategoryTitle = getFullCategoryName(
-  props.parentSlug,
-  props.categoryTitle
-);
+const fullCategoryTitle = props.categoryTitle;
 
 const pageTitle = getResourcePageTitle({
   categoryName: fullCategoryTitle,

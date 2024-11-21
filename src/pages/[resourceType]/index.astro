@@ -25,7 +25,6 @@ import { getResourcePageTitle } from "@common/page";
 import PageHeader from "@ui/PageHeader.astro";
 import Heading from "@ui/primitives/Heading.astro";
 import MainNavLink from "@ui/MainNav/MainNavLink.astro";
-import { getFullCategoryName } from "@common/category";
 
 interface Props {
   resources: Array<InternetResourcePageListing>;
@@ -49,19 +48,13 @@ export async function getStaticPaths() {
       // This is less than ideal as means an additional request for each type
       const categoriesByFilter = await getCategoriesByFilter({ resourceType });
 
-      const reTitled = categoriesByFilter.map((cat) => {
-        return {
-          ...cat,
-          title: getFullCategoryName(cat.parent?.slug ?? "", cat.title),
-        };
-      });
-
       return {
         params: { resourceType },
         props: {
           resources,
           applicablePopulations: filteredPopulations ?? [],
-          applicableCategories: sortBy(reTitled, (s) => s.title) ?? [],
+          applicableCategories:
+            sortBy(categoriesByFilter, (s) => s.title) ?? [],
         },
       };
     }
