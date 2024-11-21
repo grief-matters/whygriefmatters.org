@@ -7,6 +7,7 @@ import {
   zInternetResourcePageListing,
   zInternetResourceType,
 } from "./internetResource";
+import { getRecursiveSubtopicsProjection, zBaseTopic } from "./topic";
 
 const zFeaturedResource = z.object({
   type: zInternetResourceType,
@@ -41,29 +42,19 @@ const gFeaturedResourceProjection = groq`
   hasSpanishVersion,
 `;
 
-export const zCategoryPageData = z.object({
-  title: z.string(),
-  slug: z.string(),
-  parent: z
-    .object({
-      title: z.string(),
-      slug: z.string(),
-    })
-    .nullable(),
-  resources: z.array(zInternetResourcePageListing),
-  featuredArticles: z.array(zFeaturedResource).nullable(),
-  featuredStories: z.array(zFeaturedResource).nullable(),
-  image: zImage.nullable(),
-});
+export const zCategoryPageData = z
+  .object({
+    resources: z.array(zInternetResourcePageListing),
+    featuredArticles: z.array(zFeaturedResource).nullable(),
+    featuredStories: z.array(zFeaturedResource).nullable(),
+  })
+  .merge(zBaseTopic)
+  // TODO - problematic recursive schema
+  .extend({ subtopics: z.any() });
 
 export const gCategoryPageQuery = groq`
 *[_type == "category"]{
-    title,
-    "slug": slug.current,
-    parent->{
-      title,
-      "slug": slug.current,
-    },
+    ${getRecursiveSubtopicsProjection()},
     "resources": *[^.slug.current in categories[]->slug.current && _type != 'crisisResource']{
       ${gPageResourceListingProjection}
     },
@@ -73,10 +64,6 @@ export const gCategoryPageQuery = groq`
     featuredStories[]->{
       ${gFeaturedResourceProjection}
     },
-    image{
-      image,
-      "altText": alt
-    }
   }
 `;
 

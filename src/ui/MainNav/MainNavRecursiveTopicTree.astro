@@ -1,0 +1,43 @@
+---
+import type { Topic } from "@model/topic";
+import {
+  styleVariants,
+  type StyleVariant,
+  type StyleVariantClassListMap,
+} from "@common/variants";
+
+import MainNavLink from "./MainNavLink.astro";
+
+interface Props {
+  topic: Topic;
+  variant?: StyleVariant;
+}
+
+const { topic, variant = "primary" } = Astro.props;
+
+const currentLinkLevelIndex = styleVariants.findIndex((x) => x === variant);
+
+const nextIndex = Math.min(currentLinkLevelIndex + 1, styleVariants.length - 1);
+const nextVariant = styleVariants[nextIndex];
+
+const listItemStyleVariantClassListMap: StyleVariantClassListMap = {
+  primary: ["mb-4"],
+  secondary: [],
+  tertiary: ["ml-4"],
+};
+---
+
+<MainNavLink variant={variant} href={`/${topic.slug}`} label={topic.title}>
+  {topic.title}
+</MainNavLink>
+{
+  topic.subtopics && (
+    <ul>
+      {topic.subtopics?.map((t: Topic) => (
+        <li class:list={listItemStyleVariantClassListMap[nextVariant]}>
+          <Astro.self topic={t} variant={nextVariant} />
+        </li>
+      ))}
+    </ul>
+  )
+}
