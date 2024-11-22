@@ -1,6 +1,7 @@
 ---
+import Container from "@ui/primitives/Container.astro";
+
 const hasFeatured = Astro.slots.has("featured");
-const hasAside = Astro.slots.has("aside");
 ---
 
 <slot name="header" />
@@ -9,26 +10,15 @@ const hasAside = Astro.slots.has("aside");
     <section
       class:list={[
         "[&>*:nth-child(odd)]:bg-stone-200 [&>*:nth-child(even)]:bg-stone-100",
+        "mx-auto",
       ]}
     >
       <slot name="featured" />
     </section>
   )
 }
-<section
-  class:list={[
-    "lg:flex-row lg:justify-between lg:max-w-screen-md lg:mx-auto lg:mt-6",
-    "xl:max-w-screen-lg",
-  ]}
->
-  <section class:list={["lg:grow"]}>
+<Container>
+  <section>
     <slot name="section" />
   </section>
-  {
-    hasAside && (
-      <aside>
-        <slot name="aside" />
-      </aside>
-    )
-  }
-</section>
+</Container>
