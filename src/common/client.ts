@@ -325,7 +325,7 @@ export async function getResourceTypePagesData(): Promise<ResourceTypePageData> 
  */
 export function getImageUrlBuilder(source: SanityImageSource): ImageUrlBuilder {
   const imgUrlBuilder = getImageBuilder();
-  return imgUrlBuilder?.image(source) ?? "";
+  return imgUrlBuilder?.image(source);
 }
 
 /**

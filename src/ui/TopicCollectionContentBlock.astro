@@ -26,8 +26,8 @@ const props = Astro.props;
         {props.topics.map((topicContentBlock) => (
           <Card hoverable>
             <a href={topicContentBlock.topic.slug} class="block h-full">
-              {topicContentBlock.showImage && topicContentBlock.topic.image && (
-                <CMSImage image={topicContentBlock.topic.image} />
+              {topicContentBlock.showImage && (
+                <CMSImage image={topicContentBlock.topic.image ?? null} />
               )}
               <div class="p-3">
                 <Heading as="h3" class="mb-1">
