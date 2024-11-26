@@ -23,7 +23,6 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/cloudflare": "^11.1.0",
-    "@astrojs/react": "^3.6.2",
     "@astrojs/tailwind": "^5.1.2",
     "@clerk/astro": "^1.4.1",
     "@mui/material": "^6.1.7",
@@ -32,15 +31,11 @@
     "@sanity/image-url": "^1.0.2",
     "@types/lodash": "^4.14.202",
     "@types/pluralize": "^0.0.33",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
     "astro": "^4.15.12",
     "libphonenumber-js": "^1.11.12",
     "lodash": "^4.17.21",
     "node-html-parser": "^6.1.13",
     "pluralize": "^8.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.6.3",
     "zod": "^3.22.4"
