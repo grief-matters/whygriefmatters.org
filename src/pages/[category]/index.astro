@@ -7,9 +7,15 @@ import type {
   CategoryPageData,
   CategoryPageFeaturedResource,
 } from "@model/categoryPage";
-import type {
-  InternetResourcePageListing,
-  InternetResourceType,
+import type { Topic } from "@model/featuredContent";
+import type { SanityImage } from "@model/image";
+import {
+  primaryResourceTypes,
+  secondaryResourceTypes,
+  type InternetResourcePageListing,
+  type InternetResourceType,
+  type PrimaryInternetResourceType,
+  type SecondaryInternetResourceType,
 } from "@model/internetResource";
 import type { Population } from "@model/population";
 
@@ -19,24 +25,18 @@ import { getResourcePageTitle } from "@common/page";
 
 import MainLayout from "@layouts/MainLayout.astro";
 
+import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
+import Heading from "@ui/primitives/Heading.astro";
+import Text from "@ui/primitives/Text.astro";
+
+import CardLink from "@ui/CardLink.astro";
 import FeaturedResources from "@ui/FeaturedResources.astro";
+import MainNavRecursiveTopicTree from "@ui/MainNav/MainNavRecursiveTopicTree.astro";
+import PageHeader from "@ui/PageHeader.astro";
+import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
-import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import PageHeader from "@ui/PageHeader.astro";
-import type { SanityImage } from "@model/image";
-import {
-  findCategorySubtree,
-  getCategoryTree,
-  getFullCategoryName,
-  type CategoryTreeItem,
-} from "@common/category";
-import Text from "@ui/primitives/Text.astro";
-import CardLink from "@ui/CardLink.astro";
-import MainNavRecursiveCategoryTree from "@ui/MainNav/MainNavRecursiveCategoryTree.astro";
-import Heading from "@ui/primitives/Heading.astro";
-import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
 
 type SubtopicResources = Record<
   string,
@@ -55,37 +55,33 @@ interface Props {
   applicablePopulations: Array<Population>;
   applicableTypes: Array<InternetResourceType>;
   image: SanityImage | null;
-  childTree: CategoryTreeItem | null;
+  topic: Topic;
+  subtopics: any;
 }
 
 export async function getStaticPaths() {
   const categoryPagesData = await getCategoryPagesData();
-  const categoryTree = await getCategoryTree();
-
   const populations = await getPopulations();
 
   return categoryPagesData.map((data: CategoryPageData) => {
-    const treeForCategory = findCategorySubtree(categoryTree, data.slug);
-
     const filteredPopulations = populations.filter((p) =>
       data.resources.some((r) => r.populations?.includes(p.slug))
     );
 
     const filteredTypes = getFilteredTypesFromResources(data.resources);
 
-    const fullTitle = data.parent?.slug
-      ? getFullCategoryName(data.parent.slug, data.title)
-      : data.title;
+    // TODO - we need to fix titling so that we can distinguish between "{Loss of A} X" and "{Supporting} X"
+    const fullTitle = data.title;
 
     const subtopicResources: SubtopicResources = {};
 
-    treeForCategory?.children.forEach((child) => {
-      const pageMatch = categoryPagesData.find((x) => x.slug === child.slug);
+    data.subtopics?.forEach((t: Topic) => {
+      const pageMatch = categoryPagesData.find((x) => x.slug === t.slug);
       if (typeof pageMatch === "undefined") {
         return;
       }
 
-      subtopicResources[child.slug] = {
+      subtopicResources[t.slug] = {
         title: pageMatch.title,
         resources: sortBy(pageMatch.resources, ["type", "title"]),
       };
@@ -102,7 +98,7 @@ export async function getStaticPaths() {
         featuredStories: data.featuredStories,
         applicablePopulations: filteredPopulations ?? [],
         applicableTypes: filteredTypes.sort() ?? [],
-        childTree: treeForCategory,
+        subtopics: data.subtopics,
       },
     };
   });
@@ -157,7 +153,7 @@ const subtopics = Object.entries(props.subtopicResources);
     </Fragment>
     <div slot="section">
       {
-        (props.childTree?.children?.length ?? 0) > 0 && (
+        (props.subtopics?.length ?? 0) > 0 && (
           <section class="m-3 p-3 bg-white shadow-md">
             <Heading as="h3" class:list={["mb-3 font-semibold inline"]}>
               Subtopics
@@ -166,9 +162,12 @@ const subtopics = Object.entries(props.subtopicResources);
             <details open={props.resources.length === 0}>
               <summary class="font-serif font-semibold">Show Subtopics</summary>
               <div class="ml-3">
-                <MainNavRecursiveCategoryTree
-                  categories={props.childTree?.children ?? []}
-                  startingVariant="secondary"
+                <MainNavRecursiveTopicTree
+                  topic={{
+                    title: props.title,
+                    slug: params.category,
+                    subtopics: props.subtopics,
+                  }}
                 />
               </div>
             </details>
@@ -181,22 +180,59 @@ const subtopics = Object.entries(props.subtopicResources);
             <Heading as="h3" class:list={["mb-4 font-semibold"]}>
               Types Of Resources In This Topic
             </Heading>
+            <Text class="my-2">Main types of resources in this topic</Text>
+            <div class:list={["flex flex-wrap gap-4 mb-3"]}>
+              {props.applicableTypes
+                .filter((type) =>
+                  primaryResourceTypes.includes(
+                    type as PrimaryInternetResourceType
+                  )
+                )
+                .map((type) => (
+                  <CardLink
+                    href={`/${type}/${params.category}`}
+                    cardProps={{ resourceType: type ?? undefined }}
+                  >
+                    <span class="flex space-x-2">
+                      <>
+                        <span>{pluralize(startCase(type))}</span>
+                        <span>
+                          {
+                            props.resources.filter((x) => x.type === type)
+                              .length
+                          }
+                        </span>
+                      </>
+                    </span>
+                  </CardLink>
+                ))}
+            </div>
+            <Text class="my-2">Other types of resources in this topic</Text>
             <div class:list={["flex flex-wrap gap-4"]}>
-              {props.applicableTypes.map((type) => (
-                <CardLink
-                  href={`/${type}/${params.category}`}
-                  cardProps={{ resourceType: type ?? undefined }}
-                >
-                  <span class="flex space-x-2">
-                    <>
-                      <span>{pluralize(startCase(type))}</span>
-                      <span>
-                        {props.resources.filter((x) => x.type === type).length}
-                      </span>
-                    </>
-                  </span>
-                </CardLink>
-              ))}
+              {props.applicableTypes
+                .filter((type) =>
+                  secondaryResourceTypes.includes(
+                    type as SecondaryInternetResourceType
+                  )
+                )
+                .map((type) => (
+                  <CardLink
+                    href={`/${type}/${params.category}`}
+                    cardProps={{ resourceType: type ?? undefined }}
+                  >
+                    <span class="flex space-x-2">
+                      <>
+                        <span>{pluralize(startCase(type))}</span>
+                        <span>
+                          {
+                            props.resources.filter((x) => x.type === type)
+                              .length
+                          }
+                        </span>
+                      </>
+                    </span>
+                  </CardLink>
+                ))}
             </div>
           </section>
         )

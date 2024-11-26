@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "wrangler types && astro dev",
+    "dev-host": "wrangler types && astro dev --host",
     "start": "wrangler types && astro dev",
     "build": "wrangler types && astro check && astro build",
     "preview": "wrangler types && wrangler pages dev ./dist"

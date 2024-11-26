@@ -1,9 +1,16 @@
 import groq from "groq";
 import { z } from "zod";
 
-export const internetResourceTypes = [
-  "app",
+export const primaryResourceTypes = [
   "article",
+  "story",
+  "website",
+  "peerSupport",
+  "supportGroup",
+] as const;
+
+export const secondaryResourceTypes = [
+  "app",
   "blog",
   "book",
   "booklet",
@@ -11,17 +18,20 @@ export const internetResourceTypes = [
   "course",
   "forum",
   "memorial",
-  "peerSupport",
   "podcast",
   "podcastEpisode",
-  "story",
-  "supportGroup",
   "therapyResource",
   "video",
   "webinar",
-  "website",
 ] as const;
 
+export const internetResourceTypes = [
+  ...primaryResourceTypes,
+  ...secondaryResourceTypes,
+] as const;
+
+export const zPrimaryInternetResourceType = z.enum(primaryResourceTypes);
+export const zSecondaryInternetResourceType = z.enum(secondaryResourceTypes);
 export const zInternetResourceType = z.enum(internetResourceTypes);
 
 export const zInternetResourcePageListing = z.object({
@@ -56,6 +66,12 @@ export const gPageResourceListingProjection = groq`
   "populations": populations[]->slug.current
 `;
 
+export type PrimaryInternetResourceType = z.infer<
+  typeof zPrimaryInternetResourceType
+>;
+export type SecondaryInternetResourceType = z.infer<
+  typeof zSecondaryInternetResourceType
+>;
 export type InternetResourceType = z.infer<typeof zInternetResourceType>;
 export type InternetResourcePageListing = z.infer<
   typeof zInternetResourcePageListing

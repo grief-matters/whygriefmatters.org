@@ -1,5 +1,6 @@
+import { z } from "zod";
 import groq from "groq";
-import { zTopic } from "./category";
+
 import {
   gFeaturedResourceProjection,
   zFeaturedResource,
@@ -7,7 +8,11 @@ import {
 import { zImage } from "./image";
 import { zInternetResourceType } from "./internetResource";
 import { zPortableText } from "./portableText";
-import { z } from "zod";
+import {
+  gBaseTopicProjection,
+  getRecursiveSubtopicsProjection,
+  zTopic,
+} from "./topic";
 
 export const zRichTextContentBlock = z.object({
   portableText: zPortableText,
@@ -57,6 +62,7 @@ export const zTopicContentBlock = z.object({
   showSubtopics: z.boolean(),
 });
 
+// TODO - break this up - it's very difficult to debug
 export const gContentBlocksProjection = groq`
   _type == "accessibleImage" => {
     "contentType": _type,
@@ -100,13 +106,10 @@ export const gContentBlocksProjection = groq`
   _type == "topicContentBlock" => {
     "contentType": _type,
     topic->{
-      title,
-      "slug": slug.current,
-      description,
-      image{
-        image,
-        "altText": alt
-      }
+      ${gBaseTopicProjection}
+      "subtopics": select(^.showSubtopics == true => subtopics[]->{
+        ${getRecursiveSubtopicsProjection()}
+      }, null),
     },
     "displayTitle": titleOverride,
     showImage,
@@ -117,36 +120,17 @@ export const gContentBlocksProjection = groq`
     "contentType": _type,
     "topics": topicContentBlocks[]{
       topic->{
-        title,
-        "slug": slug.current,
-        description,
-        image{
-          image,
-          "altText": alt
-        }
+        ${gBaseTopicProjection}
+        "subtopics": select(^.showSubtopics == true => subtopics[]->{
+          ${getRecursiveSubtopicsProjection()}
+        }, null),
       },
       "displayTitle": titleOverride,
       showImage,
       showDescription,
       showSubtopics
-    }
+    },
   },
-`;
-
-export const gTopicContentBlockProjection = groq`
-  topic->{
-    title,
-    "slug": slug.current,
-    description,
-    image{
-      image,
-      "altText": alt
-    }
-  },
-  "displayTitle": titleOverride,
-  showImage,
-  showDescription,
-  showSubtopics  
 `;
 
 export const zTopicCollectionContentBlock = z.object({
