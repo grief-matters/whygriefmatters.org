@@ -123,20 +123,6 @@ const subtopics = Object.entries(props.subtopicResources);
     />
     <Fragment slot="featured">
       {
-        props.featuredStories && (
-          <div class="py-3">
-            <div class="xl:container mx-auto">
-              <div class="xl:mx-9">
-                <Heading as="h2" size="xl2" class="text-center py-3">
-                  <EmphasizedEllipsisText text="Featured Stories" />
-                </Heading>
-                <FeaturedResources featuredResources={props.featuredStories} />
-              </div>
-            </div>
-          </div>
-        )
-      }
-      {
         props.featuredArticles && (
           <div class="py-3">
             <div class="xl:container mx-auto">
@@ -145,6 +131,20 @@ const subtopics = Object.entries(props.subtopicResources);
                   <EmphasizedEllipsisText text="Featured Articles" />
                 </Heading>
                 <FeaturedResources featuredResources={props.featuredArticles} />
+              </div>
+            </div>
+          </div>
+        )
+      }
+      {
+        props.featuredStories && (
+          <div class="py-3">
+            <div class="xl:container mx-auto">
+              <div class="xl:mx-9">
+                <Heading as="h2" size="xl2" class="text-center py-3">
+                  <EmphasizedEllipsisText text="Featured Stories" />
+                </Heading>
+                <FeaturedResources featuredResources={props.featuredStories} />
               </div>
             </div>
           </div>
