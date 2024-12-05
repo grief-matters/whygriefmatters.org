@@ -18,25 +18,29 @@ const image =
   fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
 
 const smImgUrl = image
-  ? `url(${getImageUrlBuilder(image.image).width(640).height(320).url()})`
+  ? getImageUrlBuilder(image.image).width(640).height(320).url()
   : null;
 const mdImgUrl = image
-  ? `url(${getImageUrlBuilder(image.image).width(1024).height(512).url()})`
+  ? getImageUrlBuilder(image.image).width(1024).height(512).url()
   : null;
 const lgImgUrl = image
-  ? `url(${getImageUrlBuilder(image.image).width(1280).height(640).url()})`
+  ? getImageUrlBuilder(image.image).width(1280).height(640).url()
   : null;
 const xlImgUrl = image
-  ? `url(${getImageUrlBuilder(image.image).width(2560).height(850).url()})`
+  ? getImageUrlBuilder(image.image).width(1560).height(650).url()
   : null;
 const bgPosX = `${(image.image.hotspot?.x ?? 0.5) * 100}%`;
 const bgPosY = `${(image.image.hotspot?.y ?? 0.5) * 100}%`;
 ---
 
 <header class={ds.background.color.neutral.defaultLighter}>
-  <div class:list={["sm:mx-auto sm:p-3 sm:relative", "xl:container xl:p-6"]}>
-    <div class:list={["sm:bg-white sm:p-2 sm:shadow-xl", "xl:mx-6", "lg:mt-6"]}>
-      <div class:list={["page-header-bg", "h-40 sm:h-80 xl:h-96"]}></div>
+  <div class:list={["p-3 relative", "xl:container xl:p-6"]}>
+    <div class:list={["text-right"]}>
+      <img
+        srcset={`${smImgUrl} 640w, ${mdImgUrl} 1024w, ${lgImgUrl} 1280w, ${xlImgUrl} 1560w`}
+        sizes="(max-width: 640px) 640px, (max-width: 1024px) 1024px, (max-width: 1280px) 1280px, 1560px"
+        class:list={["inline-block border-8 border-white drop-shadow-md"]}
+      />
     </div>
     <h1
       class:list={[
@@ -46,6 +50,7 @@ const bgPosY = `${(image.image.hotspot?.y ?? 0.5) * 100}%`;
         "md:mx-24",
         // "lg:top-0 lg:mt-8",
         "xl:max-w-2xl ",
+        "absolute z-50"
       ]}
     >
       {
@@ -88,33 +93,3 @@ const bgPosY = `${(image.image.hotspot?.y ?? 0.5) * 100}%`;
     </h1>
   </div>
 </header>
-
-<style define:vars={{ smImgUrl, mdImgUrl, lgImgUrl, xlImgUrl, bgPosX, bgPosY }}>
-  .page-header-bg {
-    background-size: cover;
-    background-position: center;
-    background-position-x: var(--bgPosX);
-    background-position-y: var(--bgPosY);
-  }
-
-  @media (max-width: 640px) {
-    .page-header-bg {
-      background-image: var(--smImgUrl);
-    }
-  }
-  @media (min-width: 641px) and (max-width: 1024px) {
-    .page-header-bg {
-      background-image: var(--mdImgUrl);
-    }
-  }
-  @media (min-width: 1025px) and (max-width: 1280px) {
-    .page-header-bg {
-      background-image: var(--lgImgUrl);
-    }
-  }
-  @media (min-width: 1281px) {
-    .page-header-bg {
-      background-image: var(--xlImgUrl);
-    }
-  }
-</style>
