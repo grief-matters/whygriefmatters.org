@@ -27,7 +27,7 @@ const lgImgUrl = image
   ? getImageUrlBuilder(image.image).width(1280).height(640).url()
   : null;
 const xlImgUrl = image
-  ? getImageUrlBuilder(image.image).width(1560).height(650).url()
+  ? getImageUrlBuilder(image.image).width(1400).height(650).url()
   : null;
 ---
 
@@ -55,7 +55,7 @@ const xlImgUrl = image
             <span
               class:list={[
                 "font-serif italic",
-                "box-decoration-clone px-3",
+                "box-decoration-clone px-3 md:text-lg lg:text-xl xl:text-2xl",
                 ds.background.color?.primary.default,
                 ds.typography.color?.primary.contrast,
               ]}
