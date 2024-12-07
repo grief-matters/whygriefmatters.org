@@ -29,28 +29,24 @@ const lgImgUrl = image
 const xlImgUrl = image
   ? getImageUrlBuilder(image.image).width(1560).height(650).url()
   : null;
-const bgPosX = `${(image.image.hotspot?.x ?? 0.5) * 100}%`;
-const bgPosY = `${(image.image.hotspot?.y ?? 0.5) * 100}%`;
 ---
 
 <header class={ds.background.color.neutral.defaultLighter}>
   <div class:list={["p-3 relative", "xl:container xl:p-6"]}>
-    <div class:list={["text-right"]}>
+    <div class:list={["lg:text-right"]}>
       <img
         srcset={`${smImgUrl} 640w, ${mdImgUrl} 1024w, ${lgImgUrl} 1280w, ${xlImgUrl} 1560w`}
         sizes="(max-width: 640px) 640px, (max-width: 1024px) 1024px, (max-width: 1280px) 1280px, 1560px"
-        class:list={["inline-block border-8 border-white drop-shadow-md"]}
+        class:list={["inline-block border-8 border-white drop-shadow-md lg:w-2/3"]}
       />
     </div>
     <h1
       class:list={[
         "overflow-hidden",
         "-mt-9",
-        "sm:mx-12 sm:absolute sm:bottom-0 sm:left-0",
-        "md:mx-24",
-        // "lg:top-0 lg:mt-8",
+        "bottom-0 left-0",
         "xl:max-w-2xl ",
-        "absolute"
+        "absolute lg:ml-80 lg:mb-12 mx-10 sm:mx-24"
       ]}
     >
       {
