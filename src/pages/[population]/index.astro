@@ -7,8 +7,11 @@ import type {
   InternetResourceType,
 } from "@model/internetResource";
 import type { Category } from "@model/category";
+import type { SanityImage } from "@model/image";
 
+import { getFilteredTypesFromResources } from "@common/resourceType";
 import { getPopulationPagesData } from "@common/client";
+import { getResourcePageTitle } from "@common/page";
 
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
@@ -16,12 +19,11 @@ import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
 import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
-import { getFilteredTypesFromResources } from "@common/resourceType";
 import PageHeader from "@ui/PageHeader.astro";
-import { getResourcePageTitle } from "@common/page";
 
 interface Props {
   populationName: string;
+  image: SanityImage | null;
   resources: Array<InternetResourcePageListing>;
   applicableTypes: Array<InternetResourceType>;
   applicableCategories: Array<Category>;
@@ -45,6 +47,7 @@ export async function getStaticPaths() {
       params: { population: pageData.slug },
       props: {
         populationName: pageData.name,
+        image: pageData.image,
         resources:
           sortBy(pageData.resources, [
             "lastUpdated",
@@ -67,7 +70,11 @@ const pageTitle = getResourcePageTitle({
 
 <MainLayout>
   <ResourcePageLayout>
-    <PageHeader slot="header" pageTitle={pageTitle} />
+    <PageHeader
+      slot="header"
+      pageTitle={pageTitle}
+      image={props.image ?? undefined}
+    />
     <div slot="section" class="p-3">
       <ResourcePageListingsContainer>
         {
