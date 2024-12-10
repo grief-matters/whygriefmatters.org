@@ -31,7 +31,7 @@ const listItemStyleVariantClassListMap: StyleVariantClassListMap = {
   {topic.title}
 </MainNavLink>
 {
-  topic.subtopics && (
+  (topic.subtopics ?? []).length > 0 && (
     <ul>
       {topic.subtopics?.map((t: Topic) => (
         <li class:list={listItemStyleVariantClassListMap[nextVariant]}>

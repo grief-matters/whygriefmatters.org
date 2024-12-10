@@ -1,4 +1,6 @@
 ---
+import sortBy from "lodash/sortBy";
+
 import {
   type InternetResourcePageListing,
   internetResourceTypes,
@@ -48,7 +50,9 @@ export async function getStaticPaths() {
         return {
           params: { category: catPage.slug, resourceType },
           props: {
-            resources: resourcesFilteredByType,
+            resources: sortBy(resourcesFilteredByType, [
+              "lastUpdated",
+            ]).reverse(),
             applicablePopulations: filteredPopulations,
             categoryTitle: catPage.title,
             image: catPage.image,
@@ -76,8 +80,8 @@ const pageTitle = getResourcePageTitle({
       pageTitle={pageTitle}
       image={props.image ? props.image : undefined}
     />
-    <ResourcePageListingsContainer slot="section">
-      <div class="p-3">
+    <div slot="section" class="p-3">
+      <ResourcePageListingsContainer slot="section">
         {
           props.resources.map((resource) => (
             <ResourcePageListingsListItem>
@@ -85,7 +89,7 @@ const pageTitle = getResourcePageTitle({
             </ResourcePageListingsListItem>
           ))
         }
-      </div>
-    </ResourcePageListingsContainer>
+      </ResourcePageListingsContainer>
+    </div>
   </ResourcePageLayout>
 </MainLayout>

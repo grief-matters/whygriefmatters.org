@@ -1,5 +1,6 @@
 ---
 import uniqBy from "lodash/uniqBy";
+import sortBy from "lodash/sortBy";
 
 import type {
   InternetResourcePageListing,
@@ -44,7 +45,12 @@ export async function getStaticPaths() {
       params: { population: pageData.slug },
       props: {
         populationName: pageData.name,
-        resources: pageData.resources ?? [],
+        resources:
+          sortBy(pageData.resources, [
+            "lastUpdated",
+            "type",
+            "title",
+          ]).reverse() ?? [],
         applicableCategories,
         applicableTypes,
       },
@@ -62,14 +68,16 @@ const pageTitle = getResourcePageTitle({
 <MainLayout>
   <ResourcePageLayout>
     <PageHeader slot="header" pageTitle={pageTitle} />
-    <ResourcePageListingsContainer slot="section">
-      {
-        props.resources.map((resource) => (
-          <ResourcePageListingsListItem>
-            <ResourcePageListing resource={resource} />
-          </ResourcePageListingsListItem>
-        ))
-      }
-    </ResourcePageListingsContainer>
+    <div slot="section" class="p-3">
+      <ResourcePageListingsContainer>
+        {
+          props.resources.map((resource) => (
+            <ResourcePageListingsListItem>
+              <ResourcePageListing resource={resource} />
+            </ResourcePageListingsListItem>
+          ))
+        }
+      </ResourcePageListingsContainer>
+    </div>
   </ResourcePageLayout>
 </MainLayout>

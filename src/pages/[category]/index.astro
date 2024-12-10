@@ -22,6 +22,7 @@ import type { Population } from "@model/population";
 import { getCategoryPagesData, getPopulations } from "@common/client";
 import { getFilteredTypesFromResources } from "@common/resourceType";
 import { getResourcePageTitle } from "@common/page";
+import { wgmDesignSystem as ds } from "@common/design-system";
 
 import MainLayout from "@layouts/MainLayout.astro";
 
@@ -111,7 +112,14 @@ const pageTitle = getResourcePageTitle({
   categoryName: props.title,
 });
 
-const subtopics = Object.entries(props.subtopicResources);
+
+const primaryApplicableTypes = props.applicableTypes.filter((type) =>
+  primaryResourceTypes.includes(type as PrimaryInternetResourceType)
+);
+
+const secondaryApplicableTypes = props.applicableTypes.filter((type) =>
+  secondaryResourceTypes.includes(type as SecondaryInternetResourceType)
+);
 ---
 
 <MainLayout>
@@ -154,23 +162,10 @@ const subtopics = Object.entries(props.subtopicResources);
     <div slot="section">
       {
         (props.subtopics?.length ?? 0) > 0 && (
-          <section class="m-3 p-3 bg-white shadow-md">
-            <Heading as="h3" class:list={["mb-3 font-semibold inline"]}>
-              Subtopics
-            </Heading>
-            <Text class="mb-3">{`This topic has subtopics if you're looking for something more specific than is shown below.`}</Text>
-            <details open={props.resources.length === 0}>
-              <summary class="font-serif font-semibold">Show Subtopics</summary>
-              <div class="ml-3">
-                <MainNavRecursiveTopicTree
-                  topic={{
-                    title: props.title,
-                    slug: params.category,
-                    subtopics: props.subtopics,
-                  }}
-                />
-              </div>
-            </details>
+          <section class="m-3 p-4 sm:px-5 bg-white shadow-md">
+            {props.subtopics.map((st: Topic) => (
+              <MainNavRecursiveTopicTree topic={st} variant="secondary" />
+            ))}
           </section>
         )
       }
@@ -178,62 +173,68 @@ const subtopics = Object.entries(props.subtopicResources);
         props.applicableTypes.length > 1 && (
           <section class="p-3 mb-3 lg:mb-6">
             <Heading as="h3" class:list={["mb-4 font-semibold"]}>
-              Types Of Resources In This Topic
+              {"Types Of Resources On This Topic"}
             </Heading>
-            <Text class="my-2">Main types of resources in this topic</Text>
-            <div class:list={["flex flex-wrap gap-4 mb-3"]}>
-              {props.applicableTypes
-                .filter((type) =>
-                  primaryResourceTypes.includes(
-                    type as PrimaryInternetResourceType
+            {primaryApplicableTypes.length > 0 && (
+              <Text class="my-2">{"Primary resources"}</Text>
+              <div class:list={["flex flex-wrap gap-4 mb-3"]}>
+                {props.applicableTypes
+                  .filter((type) =>
+                      primaryResourceTypes.includes(
+                      type as PrimaryInternetResourceType
+                    )
                   )
-                )
-                .map((type) => (
-                  <CardLink
-                    href={`/${type}/${params.category}`}
-                    cardProps={{ resourceType: type ?? undefined }}
-                  >
-                    <span class="flex space-x-2">
-                      <>
-                        <span>{pluralize(startCase(type))}</span>
-                        <span>
-                          {
-                            props.resources.filter((x) => x.type === type)
-                              .length
-                          }
+                  .map((type) => (
+                    <CardLink
+                      href={`/${type}/${params.category}`}
+                      cardProps={{ resourceType: type ?? undefined }}
+                    >
+                      <span class="flex space-x-2">
+                        <>
+                          <span>{pluralize(startCase(type))}</span>
+                          <span>
+                            {
+                              props.resources.filter((x) => x.type === type)
+                                .length
+                            }
+                          </span>
+                        </>
+                      </span>
+                    </CardLink>
+                  ))}
+              </div>)
+            }
+            
+            {
+              secondaryApplicableTypes.length > 0 && (
+                <Text class="my-2">{'Explore more options'}</Text>
+                <div class:list={["flex flex-wrap gap-4"]}>
+                  {props.applicableTypes
+                    .filter((type) =>
+                      secondaryResourceTypes.includes(
+                        type as SecondaryInternetResourceType
+                      )
+                    )
+                    .map((type) => (
+                      <CardLink
+                        href={`/${type}/${params.category}`}
+                        cardProps={{ resourceType: type ?? undefined }}
+                      >
+                        <span class="flex space-x-2">
+                          <>
+                            <span>{pluralize(startCase(type))}</span>
+                            <span>
+                              {
+                                props.resources.filter((x) => x.type === type).length
+                              }
+                            </span>
+                          </>
                         </span>
-                      </>
-                    </span>
-                  </CardLink>
-                ))}
-            </div>
-            <Text class="my-2">Other types of resources in this topic</Text>
-            <div class:list={["flex flex-wrap gap-4"]}>
-              {props.applicableTypes
-                .filter((type) =>
-                  secondaryResourceTypes.includes(
-                    type as SecondaryInternetResourceType
-                  )
-                )
-                .map((type) => (
-                  <CardLink
-                    href={`/${type}/${params.category}`}
-                    cardProps={{ resourceType: type ?? undefined }}
-                  >
-                    <span class="flex space-x-2">
-                      <>
-                        <span>{pluralize(startCase(type))}</span>
-                        <span>
-                          {
-                            props.resources.filter((x) => x.type === type)
-                              .length
-                          }
-                        </span>
-                      </>
-                    </span>
-                  </CardLink>
-                ))}
-            </div>
+                      </CardLink>
+                    ))}
+                </div>
+              )
+            }
           </section>
         )
       }
@@ -256,10 +257,10 @@ const subtopics = Object.entries(props.subtopicResources);
       }
       <section class="p-3">
         {
-          props.resources.length > 0 ? (
+          props.resources.length > 0 && (
             <>
-              <Heading as="h3" class:list={["mb-6 font-semibold"]}>
-                Resources In This Topic
+              <Heading as="h3" size="xl2" class:list={["mb-6 font-semibold", ds.typography.color.primary.defaultLight]}>
+                {'Resources On This Topic'}
               </Heading>
               <ResourcePageListingsContainer>
                 {props.resources.map((resource) => (
@@ -268,34 +269,6 @@ const subtopics = Object.entries(props.subtopicResources);
                   </ResourcePageListingsListItem>
                 ))}
               </ResourcePageListingsContainer>
-            </>
-          ) : (
-            <>
-              <Heading as="h3" class:list={["mb-3 font-semibold"]}>
-                Resources In Subtopics
-              </Heading>
-              <Text class="mb-3">{`There aren't any specific resources for this topic, but you can explore resources available within subtopics below or select a subtopic above to show a more focused list.`}</Text>
-              <>
-                {subtopics.map(([_, subtopic]) => (
-                  <details>
-                    <summary>
-                      <Heading
-                        as="h3"
-                        class:list={["mb-3 font-semibold inline-block"]}
-                      >
-                        {subtopic.title}
-                      </Heading>
-                    </summary>
-                    <ResourcePageListingsContainer>
-                      {subtopic.resources.map((resource) => (
-                        <ResourcePageListingsListItem>
-                          <ResourcePageListing resource={resource} />
-                        </ResourcePageListingsListItem>
-                      ))}
-                    </ResourcePageListingsContainer>
-                  </details>
-                ))}
-              </>
             </>
           )
         }

@@ -158,15 +158,18 @@ export const wgmDesignSystem = {
     color: {
       primary: {
         default: "text-sky-800",
+        defaultLight: "text-sky-800/60",
         contrast: "text-stone-50",
       },
       secondary: {
         default: "",
         contrast: "text-blue-900",
+        defaultLight: undefined,
       },
       neutral: {
         default: "text-slate-500",
         contrast: "",
+        defaultLight: undefined,
       },
       // brand: {
       //   default: "",
