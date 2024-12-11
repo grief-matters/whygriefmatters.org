@@ -375,26 +375,16 @@ export async function getFallbackImageCollection(): Promise<SanityImage[]> {
 /**
  * Gets legal and copyright text for footer from org
  *
- * @returns
+ * @returns - All data needed to build the footer with copyright and legal
  */
 export async function getFooterData(): Promise<FooterData> {
   const client = getClient();
-  const query = groq`*[_id == "organization-singleton"][0]{
-    "logo": logos[@.variant == "light-secondary"][0]{
-        "image": logo.image,
-        "altText": logo.alt
-      },
-    "copyrightDate": dateTime(now()),
-    copyrightNotice,
-    "organizationName": legalName,
-    "legalText": smallPrint,
-  }`;
-
-  return await client
-    .fetch(query)
+  const data = await client
+    .fetch(gFooterDataQuery)
     .then((result) => zFooterData.parse(result));
-}
 
+  return data;
+}
 
 /**
  * Get data for About Page content type
