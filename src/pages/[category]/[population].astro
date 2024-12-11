@@ -12,9 +12,11 @@ import { getFilteredTypesFromResources } from "@common/resourceType";
 import { getResourcePageTitle } from "@common/page";
 
 import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+
+import Container from "@ui/primitives/Container.astro";
 
 import PageHeader from "@ui/PageHeader.astro";
+import Heading from "@ui/primitives/Heading.astro";
 import ResourceCounts, {
   type ResourceTypesCounts,
 } from "@ui/ResourceCounts.astro";
@@ -80,27 +82,27 @@ props.applicableTypes.forEach(
 ---
 
 <MainLayout>
-  <ResourcePageLayout>
-    <PageHeader
-      slot="header"
-      pageTitle={pageTitle}
-      image={props.image ? props.image : undefined}
-    />
-    <Fragment slot="section">
-      {
-        props.applicableTypes.length > 1 && (
-          <section class="p-3 mb-3 lg:mb-6">
-            <ResourceCounts
-              resourceTypesCounts={resourceTypesCounts}
-              population={params.population}
-              category={params.category}
-            />
-          </section>
-        )
-      }
-      <section class="p-3">
-        <ResourcePageListings resources={props.resources} />
-      </section>
-    </Fragment>
-  </ResourcePageLayout>
+  <PageHeader
+    pageTitle={pageTitle}
+    image={props.image ? props.image : undefined}
+  />
+  <Container>
+    {
+      props.applicableTypes.length > 1 && (
+        <section class="p-3 lg:mb-6">
+          <Heading as="h3" class:list={["mb-4 font-semibold"]}>
+            {`Types Of Resources For ${props.populationData.name} On This Topic`}
+          </Heading>
+          <ResourceCounts
+            resourceTypesCounts={resourceTypesCounts}
+            population={params.population}
+            category={params.category}
+          />
+        </section>
+      )
+    }
+    <section class="p-3 lg:mb-6">
+      <ResourcePageListings resources={props.resources} />
+    </section>
+  </Container>
 </MainLayout>

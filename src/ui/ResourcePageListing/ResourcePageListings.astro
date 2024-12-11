@@ -45,17 +45,19 @@ const resourcesRecordEntries = Object.entries(resources).sort(([a], [b]) => {
 {
   resourcesRecordEntries.map(([resourceType, resourceSet]) => (
     <>
-      <Heading
-        as="h3"
-        size="xl2"
-        class:list={[
-          "font-medium text-sky-800/50",
-          "my-3 sm:mb-4",
-          "underline decoration-sky-800/10 underline-offset-4",
-        ]}
-      >
-        {startCase(pluralize(resourceType))}
-      </Heading>
+      {resourcesRecordEntries.length > 1 && (
+        <Heading
+          as="h3"
+          size="xl2"
+          class:list={[
+            "font-medium text-sky-800/50",
+            "my-3 sm:mb-4",
+            "underline decoration-sky-800/10 underline-offset-4",
+          ]}
+        >
+          {startCase(pluralize(resourceType))}
+        </Heading>
+      )}
       <ResourcePageListingsContainer>
         {sortBy(resourceSet, ["lastUpdated"])
           .reverse()
