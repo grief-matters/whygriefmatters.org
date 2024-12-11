@@ -67,6 +67,11 @@ import {
   zUserEvaluation,
   type UserEvaluation,
 } from "@model/resourceEvaluation";
+import {
+  gFooterDataQuery,
+  zFooterData,
+  type FooterData,
+} from "@model/footer";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -368,17 +373,28 @@ export async function getFallbackImageCollection(): Promise<SanityImage[]> {
 }
 
 /**
- * Get legal text for footer
- * @todo We probably want to give the footer it's own content type in the future
+ * Gets legal and copyright text for footer from org
+ *
+ * @returns
  */
-export async function getSmallPrint(): Promise<PortableText> {
+export async function getFooterData(): Promise<FooterData> {
   const client = getClient();
-  const query = groq`*[_id == "organization-singleton"][0].smallPrint`;
+  const query = groq`*[_id == "organization-singleton"][0]{
+    "logo": logos[@.variant == "light-secondary"][0]{
+        "image": logo.image,
+        "altText": logo.alt
+      },
+    "copyrightDate": dateTime(now()),
+    copyrightNotice,
+    "organizationName": legalName,
+    "legalText": smallPrint,
+  }`;
 
   return await client
     .fetch(query)
-    .then((result) => zPortableText.parse(result));
+    .then((result) => zFooterData.parse(result));
 }
+
 
 /**
  * Get data for About Page content type
