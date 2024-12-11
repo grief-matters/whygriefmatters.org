@@ -56,6 +56,7 @@ export async function getStaticPaths() {
   });
 }
 
+const params = Astro.params;
 const props = Astro.props;
 
 const pageTitle = getResourcePageTitle({
@@ -82,7 +83,10 @@ props.applicableTypes.forEach(
       {
         props.applicableTypes.length > 1 && (
           <section class="p-3 mb-3 lg:mb-6">
-            <ResourceCounts resourceTypesCounts={resourceTypesCounts} />
+            <ResourceCounts
+              resourceTypesCounts={resourceTypesCounts}
+              population={params.population}
+            />
           </section>
         )
       }
