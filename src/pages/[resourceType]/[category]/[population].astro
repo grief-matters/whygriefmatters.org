@@ -3,17 +3,16 @@ import {
   type InternetResourcePageListing,
   internetResourceTypes,
 } from "@model/internetResource";
+import type { SanityImage } from "@model/image";
 
 import { getPopulations, getCategoryPagesData } from "@common/client";
+import { getResourcePageTitle } from "@common/page";
 
 import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
-import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
-import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
+
 import PageHeader from "@ui/PageHeader.astro";
-import { getResourcePageTitle } from "@common/page";
-import type { SanityImage } from "@model/image";
+import ResourcePageListings from "@ui/ResourcePageListing/ResourcePageListings.astro";
 
 interface Props {
   resources: Array<InternetResourcePageListing>;
@@ -78,14 +77,10 @@ const pageTitle = getResourcePageTitle({
       pageTitle={pageTitle}
       image={props.image ? props.image : undefined}
     />
-    <ResourcePageListingsContainer slot="section">
-      {
-        props.resources.map((resource) => (
-          <ResourcePageListingsListItem>
-            <ResourcePageListing resource={resource} />
-          </ResourcePageListingsListItem>
-        ))
-      }
-    </ResourcePageListingsContainer>
+    <Fragment slot="section">
+      <section class="p-3">
+        <ResourcePageListings resources={props.resources} />
+      </section>
+    </Fragment>
   </ResourcePageLayout>
 </MainLayout>

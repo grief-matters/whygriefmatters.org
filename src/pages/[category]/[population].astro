@@ -90,7 +90,11 @@ props.applicableTypes.forEach(
       {
         props.applicableTypes.length > 1 && (
           <section class="p-3 mb-3 lg:mb-6">
-            <ResourceCounts resourceTypesCounts={resourceTypesCounts} />
+            <ResourceCounts
+              resourceTypesCounts={resourceTypesCounts}
+              population={params.population}
+              category={params.category}
+            />
           </section>
         )
       }
