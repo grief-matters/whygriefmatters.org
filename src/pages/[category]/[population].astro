@@ -9,15 +9,16 @@ import type { SanityImage } from "@model/image";
 
 import { getCategoryPagesData, getPopulations } from "@common/client";
 import { getFilteredTypesFromResources } from "@common/resourceType";
+import { getResourcePageTitle } from "@common/page";
 
 import MainLayout from "@layouts/MainLayout.astro";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
-import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
-import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
+
 import PageHeader from "@ui/PageHeader.astro";
-import { getResourcePageTitle } from "@common/page";
-import MainNavLink from "@ui/MainNav/MainNavLink.astro";
+import ResourceCounts, {
+  type ResourceTypesCounts,
+} from "@ui/ResourceCounts.astro";
+import ResourcePageListings from "@ui/ResourcePageListing/ResourcePageListings.astro";
 
 interface Props {
   categoryTitle: string;
@@ -68,6 +69,14 @@ const pageTitle = getResourcePageTitle({
   categoryName: fullCategoryTitle,
   populationName: props.populationData.name,
 });
+
+const resourceTypesCounts: ResourceTypesCounts = {};
+props.applicableTypes.forEach(
+  (t) =>
+    (resourceTypesCounts[t] = props.resources.filter(
+      (x) => x.type === t
+    ).length)
+);
 ---
 
 <MainLayout>
@@ -77,23 +86,17 @@ const pageTitle = getResourcePageTitle({
       pageTitle={pageTitle}
       image={props.image ? props.image : undefined}
     />
-    <section slot="section">
-      <ResourcePageListingsContainer>
-        {
-          props.resources.map((resource) => (
-            <ResourcePageListingsListItem>
-              <ResourcePageListing resource={resource} />
-            </ResourcePageListingsListItem>
-          ))
-        }
-      </ResourcePageListingsContainer>
-      <div class="mb-6">
-        <MainNavLink
-          href={`/${params.category}`}
-          label={`Back to all resources in ${fullCategoryTitle}`}
-          variant="secondary"
-        />
-      </div>
-    </section>
+    <Fragment slot="section">
+      {
+        props.applicableTypes.length > 1 && (
+          <section class="p-3 mb-3 lg:mb-6">
+            <ResourceCounts resourceTypesCounts={resourceTypesCounts} />
+          </section>
+        )
+      }
+      <section class="p-3">
+        <ResourcePageListings resources={props.resources} />
+      </section>
+    </Fragment>
   </ResourcePageLayout>
 </MainLayout>

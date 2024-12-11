@@ -1,0 +1,87 @@
+---
+import startCase from "lodash/startCase";
+import partition from "lodash/partition";
+import pluralize from "pluralize";
+
+import {
+  primaryResourceTypes,
+  type InternetResourceType,
+  type PrimaryInternetResourceType,
+} from "@model/internetResource";
+import CardLink from "./CardLink.astro";
+import Heading from "./primitives/Heading.astro";
+import Text from "./primitives/Text.astro";
+import { getRoute } from "@common/route";
+
+export type ResourceTypesCounts = Partial<Record<InternetResourceType, number>>;
+
+interface Props {
+  resourceTypesCounts: ResourceTypesCounts;
+  population?: string;
+  category?: string;
+}
+
+const props = Astro.props;
+
+const [primary, secondary]: [InternetResourceType[], InternetResourceType[]] =
+  partition(
+    Object.keys(props.resourceTypesCounts) as InternetResourceType[],
+    (k) => primaryResourceTypes.includes(k as PrimaryInternetResourceType)
+  );
+---
+
+<Heading as="h3" class:list={["mb-4 font-semibold"]}>
+  {"Types Of Resources On This Topic"}
+</Heading>
+{
+  primary.length > 0 && (
+    <>
+      <Text class="my-2">{"Primary resources"}</Text>
+      <div class:list={["flex flex-wrap gap-4 mb-3"]}>
+        {primary.map((resourceType) => (
+          <CardLink
+            href={getRoute({
+              category: props.category ?? null,
+              population: props.population ?? null,
+              type: resourceType,
+            })}
+            cardProps={{ resourceType: resourceType ?? undefined }}
+          >
+            <span class="flex space-x-2">
+              <>
+                <span>{pluralize(startCase(resourceType))}</span>
+                <span>{props.resourceTypesCounts[resourceType]}</span>
+              </>
+            </span>
+          </CardLink>
+        ))}
+      </div>
+    </>
+  )
+}
+{
+  secondary.length > 0 && (
+    <>
+      <Text class="my-2">{"Explore more options"}</Text>
+      <div class:list={["flex flex-wrap gap-4 mb-3"]}>
+        {secondary.map((resourceType) => (
+          <CardLink
+            href={getRoute({
+              category: props.category ?? null,
+              population: props.population ?? null,
+              type: resourceType,
+            })}
+            cardProps={{ resourceType: resourceType ?? undefined }}
+          >
+            <span class="flex space-x-2">
+              <>
+                <span>{pluralize(startCase(resourceType))}</span>
+                <span>{props.resourceTypesCounts[resourceType]}</span>
+              </>
+            </span>
+          </CardLink>
+        ))}
+      </div>
+    </>
+  )
+}
