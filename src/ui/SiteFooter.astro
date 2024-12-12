@@ -1,22 +1,17 @@
 ---
-import { getImageUrlBuilder, getLogoSet, getSmallPrint } from "@common/client";
+import { getFooterData, getImageUrlBuilder } from "@common/client";
 import RichTextContentBlock from "./PortableTextContentBlock.astro";
 import { wgmDesignSystem as ds } from "@common/design-system";
 
-const smallPrint = await getSmallPrint();
-const logoSet = await getLogoSet();
-
-const rawLightLogo = logoSet?.find((l) => l.variant === "light-secondary");
-const lightHeaderLogo = rawLightLogo
+const footerData = await getFooterData();
+const lightHeaderLogo = footerData
   ? {
-      url: getImageUrlBuilder(rawLightLogo.image).url(),
-      alt: "Why Grief Matter home",
+      url: getImageUrlBuilder(footerData.logo.image).url(),
+      alt: footerData.logo.altText,
     }
   : null;
 
-const year = new Date().getFullYear();
-// TODO - add to schema for home page
-const copyrightNotice = `©️ ${year} Why Grief Matters Inc. All rights reserved.`;
+const copyrightNotice = `\u00A9 ${footerData.copyrightDate.getFullYear()} ${footerData.copyrightNotice}`;
 ---
 
 <footer class:list={[ds.background.color?.brand?.blue, "py-6 -z-10"]}>
@@ -41,12 +36,12 @@ const copyrightNotice = `©️ ${year} Why Grief Matters Inc. All rights reserve
         ds.typography.color.primary.contrast,
       ]}
     >
-      {copyrightNotice}
+      {copyrightNotice} 
     </p>
     <div class="border-t-2 pt-6">
       <RichTextContentBlock
         classList={["text-xs font-serif !prose-invert !max-w-none"]}
-        portableText={smallPrint}
+        portableText={footerData.legalText}
       />
     </div>
   </div>
