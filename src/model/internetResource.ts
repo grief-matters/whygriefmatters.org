@@ -7,6 +7,7 @@ export const primaryResourceTypes = [
   "website",
   "peerSupport",
   "supportGroup",
+  "therapyResource",
 ] as const;
 
 export const secondaryResourceTypes = [
@@ -20,7 +21,6 @@ export const secondaryResourceTypes = [
   "memorial",
   "podcast",
   "podcastEpisode",
-  "therapyResource",
   "video",
   "webinar",
 ] as const;

@@ -4,12 +4,12 @@ import partition from "lodash/partition";
 import pluralize from "pluralize";
 
 import {
+  internetResourceTypes,
   primaryResourceTypes,
   type InternetResourceType,
   type PrimaryInternetResourceType,
 } from "@model/internetResource";
 import CardLink from "./CardLink.astro";
-import Heading from "./primitives/Heading.astro";
 import Text from "./primitives/Text.astro";
 import { getRoute } from "@common/route";
 
@@ -28,6 +28,12 @@ const [primary, secondary]: [InternetResourceType[], InternetResourceType[]] =
     Object.keys(props.resourceTypesCounts) as InternetResourceType[],
     (k) => primaryResourceTypes.includes(k as PrimaryInternetResourceType)
   );
+
+const sortFn = (a: InternetResourceType, b: InternetResourceType) => {
+  const idxA = internetResourceTypes.indexOf(a);
+  const idxB = internetResourceTypes.indexOf(b);
+  return idxA - idxB;
+};
 ---
 
 <Fragment>
@@ -36,7 +42,7 @@ const [primary, secondary]: [InternetResourceType[], InternetResourceType[]] =
       <>
         <Text class="my-2">{"Primary resources"}</Text>
         <div class:list={["flex flex-wrap gap-4 mb-3"]}>
-          {primary.map((resourceType) => (
+          {primary.sort(sortFn).map((resourceType) => (
             <CardLink
               href={getRoute({
                 category: props.category ?? null,
