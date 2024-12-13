@@ -1,20 +1,22 @@
 ---
+import sortBy from "lodash/sortBy";
+
 import {
   type InternetResourcePageListing,
   internetResourceTypes,
 } from "@model/internetResource";
 import type { Population } from "@model/population";
+import type { SanityImage } from "@model/image";
 
 import { getPopulations, getCategoryPagesData } from "@common/client";
 import { getResourcePageTitle } from "@common/page";
 
 import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import ResourcePageListing from "@ui/ResourcePageListing/ResourcePageListing.astro";
-import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageListingsContainer.astro";
-import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
+
+import Container from "@ui/primitives/Container.astro";
+
 import PageHeader from "@ui/PageHeader.astro";
-import type { SanityImage } from "@model/image";
+import ResourcePageListings from "@ui/ResourcePageListing/ResourcePageListings.astro";
 
 interface Props {
   resources: Array<InternetResourcePageListing>;
@@ -48,7 +50,9 @@ export async function getStaticPaths() {
         return {
           params: { category: catPage.slug, resourceType },
           props: {
-            resources: resourcesFilteredByType,
+            resources: sortBy(resourcesFilteredByType, [
+              "lastUpdated",
+            ]).reverse(),
             applicablePopulations: filteredPopulations,
             categoryTitle: catPage.title,
             image: catPage.image,
@@ -70,22 +74,11 @@ const pageTitle = getResourcePageTitle({
 ---
 
 <MainLayout>
-  <ResourcePageLayout>
-    <PageHeader
-      slot="header"
-      pageTitle={pageTitle}
-      image={props.image ? props.image : undefined}
-    />
-    <ResourcePageListingsContainer slot="section">
-      <div class="p-3">
-        {
-          props.resources.map((resource) => (
-            <ResourcePageListingsListItem>
-              <ResourcePageListing resource={resource} />
-            </ResourcePageListingsListItem>
-          ))
-        }
-      </div>
-    </ResourcePageListingsContainer>
-  </ResourcePageLayout>
+  <PageHeader pageTitle={pageTitle} image={props.image ?? undefined} />
+  <Container>
+    {/* TODO - Add populations */}
+    <section class="p-3 lg:mb-6">
+      <ResourcePageListings resources={props.resources} />
+    </section>
+  </Container>
 </MainLayout>
