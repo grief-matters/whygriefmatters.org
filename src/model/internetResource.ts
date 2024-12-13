@@ -4,10 +4,10 @@ import { z } from "zod";
 export const primaryResourceTypes = [
   "article",
   "story",
-  "website",
   "peerSupport",
   "supportGroup",
   "therapyResource",
+  "website",
 ] as const;
 
 export const secondaryResourceTypes = [
