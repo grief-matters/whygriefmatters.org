@@ -25,7 +25,7 @@ const bgImage = ccg.coverImage?.image
   ? ccg.coverImage?.image
   : fallbackImages[Math.floor(Math.random() * fallbackImages.length)].image;
 
-const bgImageUrl = getImageUrlBuilder(bgImage).url();
+const bgImageUrl = getImageUrlBuilder(bgImage).width(675).height(675).url();
 const bgVar = `url(${bgImageUrl})`;
 
 const bgPosX = `${(bgImage.hotspot?.x ?? 0) * 100}%`;
@@ -58,7 +58,7 @@ const bgPosY = `${(bgImage.hotspot?.y ?? 0) * 100}%`;
     <div
       class:list={[
         "fixed inset-0 bg-orange-50",
-        "lg:absolute lg:top-full lg:h-[75vh] xl:mx-6 2xl:container 2xl:mx-auto",
+        "lg:absolute lg:top-full lg:h-[75vh] lg:max-h-[675px] xl:mx-6 2xl:container 2xl:mx-auto",
         "lg:shadow-2xl",
       ]}
     >

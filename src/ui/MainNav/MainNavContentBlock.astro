@@ -24,7 +24,7 @@ const { block } = Astro.props;
         case "accessibleImage":
           return (
             <img
-              src={getImageUrlBuilder(block.image).url()}
+              src={getImageUrlBuilder(block.image).width(450).height(270).url()}
               alt={block.altText}
             />
           );
