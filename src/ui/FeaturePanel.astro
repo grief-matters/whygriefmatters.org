@@ -1,6 +1,6 @@
 ---
 import { getImageUrlBuilder } from "@common/client";
-import { getRoute } from "@common/route";
+import { getRouteFromDynamicResourcePageLink } from "@common/route";
 
 import RichTextContentBlock from "./PortableTextContentBlock.astro";
 import FeaturedResources from "./FeaturedResources.astro";
@@ -13,6 +13,7 @@ import EmphasizedEllipsisText from "./primitives/EmphasizedEllipsisText.astro";
 import Link from "./primitives/Link.astro";
 import CardLink from "./CardLink.astro";
 import type { ContentGroup } from "@model/contentGroup";
+import Container from "./primitives/Container.astro";
 
 interface Props {
   featuredContent: ContentGroup;
@@ -54,27 +55,29 @@ const featurePanelId = crypto.randomUUID();
 
     {
       featuredContent.description && (
-        <RichTextContentBlock
-          classList={["font-serif text-center prose", "max-w-4xl px-3 mx-auto mb-6"]}
-          portableText={featuredContent.description}
-        />
+        <Container>
+          <RichTextContentBlock
+            classList={["font-serif text-center prose", "max-w-4xl px-3 mx-auto mb-6"]}
+            portableText={featuredContent.description}
+          />
+        </Container>
       )
     }
     {
       featuredContent.blocks.map((block, panelIdx) =>
-        block.map((content) => {
-          switch (content.contentType) {
+        block.content.map((contentItem) => {
+          switch (contentItem.contentType) {
             case "richTextContentBlock":
               return (
                 <div class="max-w-prose px-3 my-6 m-auto prose font-serif text-center text-sky-800">
-                  <RichTextContentBlock portableText={content.portableText} />
+                  <RichTextContentBlock portableText={contentItem.portableText} />
                 </div>
               );
 
             case "rowOfThreeFeaturedResources":
               return (
                 <div class="mb-3">
-                  <FeaturedResources featuredResources={content.resources} />
+                  <FeaturedResources featuredResources={contentItem.resources} />
                 </div>
               );
 
@@ -83,7 +86,7 @@ const featurePanelId = crypto.randomUUID();
                 <div class="mb-3">
                   <MobileCarousel>
                     <Fragment slot="items">
-                      {content.images.map((image, imgIdx) => (
+                      {contentItem.images.map((image, imgIdx) => (
                         <MobileCarouselItem
                           id={`${featurePanelId}-${panelIdx}-${imgIdx}`}
                         >
@@ -118,10 +121,12 @@ const featurePanelId = crypto.randomUUID();
                   <div
                     class:list={["flex flex-wrap justify-center gap-4", "p-3"]}
                   >
-                    {content.resources.map((link) => (
+                    {contentItem.resources.map((link) => (
                       <CardLink
                         href={link.url}
-                        cardProps={{ resourceType: link.type ?? undefined }}
+                        cardProps={{
+                          resourceType: link.type ?? undefined
+                        }}
                         external
                       >
                         {link.title}
@@ -136,12 +141,10 @@ const featurePanelId = crypto.randomUUID();
                 <div
                   class:list={["flex", "flex-wrap", "justify-center", "gap-4"]}
                 >
-                  {content.links.map((pageLink) => (
-                    <CardLink
-                      href={getRoute(pageLink)}
-                      cardProps={{
-                        resourceType: pageLink.type ?? undefined,
-                      }}
+                  {contentItem.links.map((pageLink) => (
+                    <CardLink 
+                      href={pageLink.linkType === 'resourcePageLink' ? getRouteFromDynamicResourcePageLink(pageLink) : pageLink.url} 
+                      cardProps={{resourceType: pageLink.linkType === 'resourcePageLink' ? pageLink.type : undefined}}
                     >
                       {pageLink.label}
                     </CardLink>
@@ -152,7 +155,7 @@ const featurePanelId = crypto.randomUUID();
             case "topicCollectionContentBlockNew":
               return (
                 <div class="mx-3">
-                  <TopicCollectionContentBlock topics={content.topics} />
+                  <TopicCollectionContentBlock topics={contentItem.topics} />
                 </div>
               );
 
@@ -169,7 +172,7 @@ const featurePanelId = crypto.randomUUID();
             case "resourcePageLink":
               return (
                 <div class="mx-auto text-center pt-6 pb-3">
-                  <Link href={getRoute(featuredContent.jumpLink)} size="xl">
+                  <Link href={getRouteFromDynamicResourcePageLink(featuredContent.jumpLink)} size="xl">
                     <EmphasizedEllipsisText
                       text={featuredContent.jumpLink.label}
                     />

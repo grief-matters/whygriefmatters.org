@@ -53,15 +53,21 @@ const shouldRenderAvailabilities =
     contactMethod.contactType === "tty" ||
     contactMethod.contactType === "sms") &&
   contactMethod.availabilities;
+
+const classListOverride = [
+  "text-pink-600 decoration-pink-600/30 hover:decoration-pink-600",
+];
 ---
 
-<div class="p-3 sm:flex sm:justify-between">
+<div class="sm:flex sm:items-center sm:space-x-6">
   {
     () => {
       switch (contactMethod.contactType) {
         case "tel":
           return (
             <Link
+              external
+              classListOverride={classListOverride}
               href={getPhoneNumberUri(contactMethod.telephoneNumber) ?? "#"}
             >
               <div>
@@ -73,6 +79,8 @@ const shouldRenderAvailabilities =
         case "tty":
           return (
             <Link
+              external
+              classListOverride={classListOverride}
               href={getPhoneNumberUri(contactMethod.telephoneNumber) ?? "#"}
             >
               <div>
@@ -84,6 +92,8 @@ const shouldRenderAvailabilities =
         case "sms":
           return (
             <Link
+              external
+              classListOverride={classListOverride}
               href={getSmsNumberUri(
                 contactMethod.telephoneNumber,
                 contactMethod.smsBody ?? undefined
@@ -95,16 +105,31 @@ const shouldRenderAvailabilities =
             </Link>
           );
         case "liveChat":
-          return <Link href={contactMethod.liveChatUrl}>Live Chat</Link>;
+          return (
+            <Link
+              classListOverride={classListOverride}
+              href={contactMethod.liveChatUrl}
+            >
+              <span class="font-semibold">{"Live Chat"}</span>
+            </Link>
+          );
         case "email":
           return (
-            <Link href={`mailto:${contactMethod.email}`}>
+            <Link
+              external
+              classListOverride={classListOverride}
+              href={`mailto:${contactMethod.email}`}
+            >
               <span class="font-semibold">{"Email: "}</span>
               {contactMethod.email}
             </Link>
           );
         case "contactForm":
-          return <Link href={contactMethod.contactForm}>{"Contact Form"}</Link>;
+          return (
+            <Link external href={contactMethod.contactForm}>
+              {"Contact Form"}
+            </Link>
+          );
         default:
           return <>[[unknown type]]</>;
       }

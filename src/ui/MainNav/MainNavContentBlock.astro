@@ -1,7 +1,7 @@
 ---
-import type { ContentBlock } from "@model/contentBlock";
+import type { Content } from "@model/contentBlock";
 
-import { getRoute } from "@common/route";
+import { getRouteFromDynamicResourcePageLink } from "@common/route";
 import { getImageUrlBuilder } from "@common/client";
 
 import RichTextContentBlock from "@ui/PortableTextContentBlock.astro";
@@ -11,7 +11,7 @@ import MainNavTopicContentBlock from "./MainNavTopicContentBlock.astro";
 import MainNavLink from "./MainNavLink.astro";
 
 interface Props {
-  block: ContentBlock;
+  block: Content;
 }
 
 const { block } = Astro.props;
@@ -37,11 +37,15 @@ const { block } = Astro.props;
                 <li class="mb-2">
                   <MainNavLink
                     label={link.label}
-                    href={getRoute({
-                      type: link.type,
-                      category: link.category,
-                      population: link.population,
-                    })}
+                    href={
+                      link.linkType === "resourcePageLink"
+                        ? getRouteFromDynamicResourcePageLink({
+                            type: link.type,
+                            category: link.category,
+                            population: link.population,
+                          })
+                        : link.url
+                    }
                     variant="secondary"
                   />
                 </li>

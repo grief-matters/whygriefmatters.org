@@ -1,0 +1,83 @@
+---
+import { getImageUrlBuilder } from "@common/client";
+import type { CrisisResource } from "@model/crisisResource";
+import ContactMethodCardLink from "@ui/ContactMethodCardLink.astro";
+import PortableTextContentBlock from "@ui/PortableTextContentBlock.astro";
+import Card from "@ui/primitives/Card.astro";
+import Subtitle from "@ui/primitives/Subtitle.astro";
+import TitleLink from "@ui/primitives/TitleLink.astro";
+
+interface Props {
+  crisisResource: CrisisResource;
+  showLogo?: boolean;
+}
+
+const { crisisResource, showLogo } = Astro.props;
+---
+
+<Card disableBorder>
+  <div class="p-3 sm:p-6">
+    <article
+      class:list={[
+        "flex flex-col-reverse items-center",
+        "sm:flex-row sm:space-x-6",
+      ]}
+    >
+      {
+        showLogo && crisisResource.logo !== null && (
+          <img
+            class="flex-none max-h-36 sm:h-auto sm:w-48 sm:max-h-none p-3 sm:p-0"
+            src={getImageUrlBuilder(crisisResource.logo).width(400).url()}
+          />
+        )
+      }
+      <div class="">
+        <TitleLink
+          label={crisisResource.title}
+          href={crisisResource.resourceUrl ?? "#"}
+          rel="noopener"
+          target="_blank"
+        />
+        {
+          crisisResource.sourceWebsite && (
+            <Subtitle class="mt-2">
+              <Fragment>
+                {`From `}
+                <a
+                  href={crisisResource.sourceWebsite.resourceUrl}
+                  rel="noopener"
+                  target="_blank"
+                  class:list={[
+                    "underline underline-offset-2",
+                    "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
+                  ]}
+                >
+                  {crisisResource.sourceWebsite.name}
+                </a>
+              </Fragment>
+            </Subtitle>
+          )
+        }
+        {
+          crisisResource.description && (
+            <PortableTextContentBlock
+              classList={["w-100 mt-2 sm:pb-3"]}
+              portableText={crisisResource.description}
+            />
+          )
+        }
+        {
+          crisisResource.contactMethods?.length > 0 && (
+            <ul class:list={["sm:mx-6"]}>
+              {crisisResource.contactMethods.map((cm) => (
+                <li class="my-3">
+                  <ContactMethodCardLink contactMethod={cm} />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </article>
+  </div>
+</Card>

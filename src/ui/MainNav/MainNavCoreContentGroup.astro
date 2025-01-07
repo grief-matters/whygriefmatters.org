@@ -131,7 +131,7 @@ const bgPosY = `${(bgImage.hotspot?.y ?? 0) * 100}%`;
                       "md:pt-0 md:flex-1 md:pl-4 md:first:pl-0",
                     ]}
                   >
-                    {contentBlock.map((content) => (
+                    {contentBlock.content.map((content) => (
                       <MainNavContentBlock block={content} />
                     ))}
                   </div>
@@ -169,7 +169,7 @@ const bgPosY = `${(bgImage.hotspot?.y ?? 0) * 100}%`;
                     )}
                     {ccg.supplementaryContent.blocks.map((contentBlock) => (
                       <div>
-                        {contentBlock.map((content) => (
+                        {contentBlock.content.map((content) => (
                           <div class="mb-3">
                             <MainNavContentBlock block={content} />
                           </div>

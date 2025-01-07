@@ -14,6 +14,7 @@ interface Props extends HTMLAttributes<"a"> {
   size?: TypographySize;
   external?: boolean;
   underline?: boolean;
+  classListOverride?: Array<string>;
 }
 
 const {
@@ -22,6 +23,7 @@ const {
   size,
   external,
   underline = true,
+  classListOverride = [],
   ...attrs
 } = Astro.props;
 
@@ -34,18 +36,22 @@ const externalLinkAttrs = external
 
 const decorationColor =
   colorSchemeVariant === "contrast" ? "contrastHover" : "hover";
+
+const standardClassList = [
+  ds.typography.color[colorScheme ?? "primary"][
+    colorSchemeVariant ?? "default"
+  ],
+  ds.decoration.color[colorScheme ?? "primary"][decorationColor],
+];
 ---
 
 <a
   class:list={[
     "font-serif",
     ds.typography.size[size ?? "base"],
-    ds.typography.color[colorScheme ?? "primary"][
-      colorSchemeVariant ?? "default"
-    ],
-    ds.decoration.color[colorScheme ?? "primary"][decorationColor],
     ds.decoration.transition,
     { underline: underline },
+    ...(classListOverride ? classListOverride : standardClassList),
   ]}
   {...attrs}
   {...externalLinkAttrs}

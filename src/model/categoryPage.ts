@@ -4,13 +4,13 @@ import { z } from "zod";
 import { zImage } from "./image";
 import {
   gPageResourceListingProjection,
+  zExtendedResourceType,
   zInternetResourcePageListing,
-  zInternetResourceType,
 } from "./internetResource";
 import { getRecursiveSubtopicsProjection, zBaseTopic } from "./topic";
 
 const zFeaturedResource = z.object({
-  type: zInternetResourceType,
+  type: zExtendedResourceType,
   title: z.string(),
   description: z.string().nullable(),
   lastUpdated: z.string().datetime(),

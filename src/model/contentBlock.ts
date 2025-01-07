@@ -6,13 +6,14 @@ import {
   zFeaturedResource,
 } from "./featuredResource";
 import { zImage } from "./image";
-import { zInternetResourceType } from "./internetResource";
+import { zExtendedResourceType } from "./internetResource";
 import { zPortableText } from "./portableText";
 import {
   gBaseTopicProjection,
   getRecursiveSubtopicsProjection,
   zTopic,
 } from "./topic";
+import { gCrisisResourceProjection, zCrisisResource } from "./crisisResource";
 
 export const zRichTextContentBlock = z.object({
   portableText: zPortableText,
@@ -21,21 +22,27 @@ export const zRichTextContentBlock = z.object({
 export const zResourceLink = z.object({
   title: z.string(),
   url: z.string().url(),
-  type: zInternetResourceType.nullable(),
+  type: zExtendedResourceType.nullable(),
 });
 
-export const zResourcePageLink = z
-  .object({
-    label: z.string(),
-    type: zInternetResourceType.nullable(),
-    population: z.string().nullable(),
-    category: z.string().nullable(),
-  })
-  .refine(
-    (val) =>
-      val.type !== null || val.population !== null || val.category !== null,
-  );
+export const zDynamicResourcePageLink = z.object({
+  label: z.string(),
+  type: zExtendedResourceType.nullable(),
+  population: z.string().nullable(),
+  category: z.string().nullable(),
+});
 
+export const zRelativePageLink = z.object({
+  label: z.string(),
+  url: z.string(),
+});
+
+export const zResourcePageLink = z.discriminatedUnion("linkType", [
+  zRelativePageLink.extend({ linkType: z.literal("relativeLink") }),
+  zDynamicResourcePageLink.extend({ linkType: z.literal("resourcePageLink") }),
+]);
+
+export type DynamicResourcePageLink = z.infer<typeof zDynamicResourcePageLink>;
 export type ResourcePageLink = z.infer<typeof zResourcePageLink>;
 
 export const zRowOfThree = z.object({
@@ -44,6 +51,15 @@ export const zRowOfThree = z.object({
 
 export const zRowOfThreeFeaturedResources = z.object({
   resources: z.array(zFeaturedResource),
+});
+
+export const zFeaturedResourceBlock = z.object({
+  resource: zFeaturedResource,
+});
+
+export const zFeaturedCrisisResourceBlock = z.object({
+  showImage: z.boolean().nullable(),
+  resource: zCrisisResource,
 });
 
 export const zResourcePageLinks = z.object({
@@ -80,10 +96,18 @@ export const gContentBlocksProjection = groq`
   _type == "resourcePageLinks" => {
     "contentType": _type,
     links[]{
-      label,
-      type,
-      "category": category -> slug.current,
-      "population": population -> slug.current
+      _type == "relativeLink" => {
+        "linkType": _type,
+        label,
+        url
+      },
+      _type == "resourcePageLink" => {
+        "linkType": _type,
+        label,
+        type,
+        "category": category -> slug.current,
+        "population": population -> slug.current
+      },
     },
   },
   _type == "richTextContentBlock" => {
@@ -131,13 +155,26 @@ export const gContentBlocksProjection = groq`
       showSubtopics
     },
   },
+  _type == "featuredResource" => {
+    "contentType": _type,
+    resource->{
+      ${gFeaturedResourceProjection}
+    }
+  },
+  _type == "featuredCrisisResource" => {
+    "contentType": _type,
+    showImage,
+    resource->{
+      ${gCrisisResourceProjection}
+    }
+  }
 `;
 
 export const zTopicCollectionContentBlock = z.object({
   topics: z.array(zTopicContentBlock),
 });
 
-export const zContentBlock = z.discriminatedUnion("contentType", [
+export const zContent = z.discriminatedUnion("contentType", [
   zImage.extend({ contentType: z.literal("accessibleImage") }),
   zResourceLinks.extend({ contentType: z.literal("resourceLinks") }),
   zResourcePageLinks.extend({ contentType: z.literal("resourcePageLinks") }),
@@ -148,12 +185,23 @@ export const zContentBlock = z.discriminatedUnion("contentType", [
   zRowOfThreeFeaturedResources.extend({
     contentType: z.literal("rowOfThreeFeaturedResources"),
   }),
+  zFeaturedResourceBlock.extend({ contentType: z.literal("featuredResource") }),
+  zFeaturedCrisisResourceBlock.extend({
+    contentType: z.literal("featuredCrisisResource"),
+  }),
   zTopicContentBlock.extend({ contentType: z.literal("topicContentBlock") }),
   zTopicCollectionContentBlock.extend({
     contentType: z.literal("topicCollectionContentBlockNew"),
   }),
 ]);
 
+export const zContentBlock = z.object({
+  title: z.string().nullable(),
+  description: z.string().nullable(),
+  content: z.array(zContent),
+});
+
+export type Content = z.infer<typeof zContent>;
 export type ContentBlock = z.infer<typeof zContentBlock>;
 export type RichTextContentBlock = z.infer<typeof zRichTextContentBlock>;
 export type TopicContentBlock = z.infer<typeof zTopicContentBlock>;
