@@ -11,7 +11,7 @@ import {
 } from "@model/internetResource";
 import CardLink from "./CardLink.astro";
 import Text from "./primitives/Text.astro";
-import { getRoute } from "@common/route";
+import { getRouteFromDynamicResourcePageLink } from "@common/route";
 
 export type ResourceTypesCounts = Partial<Record<InternetResourceType, number>>;
 
@@ -44,7 +44,7 @@ const sortFn = (a: InternetResourceType, b: InternetResourceType) => {
         <div class:list={["flex flex-wrap gap-4 mb-3"]}>
           {primary.sort(sortFn).map((resourceType) => (
             <CardLink
-              href={getRoute({
+              href={getRouteFromDynamicResourcePageLink({
                 category: props.category ?? null,
                 population: props.population ?? null,
                 type: resourceType,
@@ -70,7 +70,7 @@ const sortFn = (a: InternetResourceType, b: InternetResourceType) => {
         <div class:list={["flex flex-wrap gap-4 mb-3"]}>
           {secondary.map((resourceType) => (
             <CardLink
-              href={getRoute({
+              href={getRouteFromDynamicResourcePageLink({
                 category: props.category ?? null,
                 population: props.population ?? null,
                 type: resourceType,

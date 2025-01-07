@@ -34,7 +34,7 @@ const xlImgUrl = image
 
 <header class={ds.background.color.neutral.defaultLighter}>
   <Container>
-    <div class:list={["md:mx-3 md:m-8 md:p-3 md:bg-white md:shadow-lg"]}>
+    <div class:list={["md:mx-3 md:p-3 md:bg-white md:shadow-lg"]}>
       <img
         srcset={`${smImgUrl} 640w, ${mdImgUrl} 1024w, ${lgImgUrl} 1280w, ${xlImgUrl} 1560w`}
         sizes="(max-width: 640px) 640px, (max-width: 1024px) 1024px, (max-width: 1280px) 1280px, 100vw"
@@ -42,8 +42,9 @@ const xlImgUrl = image
         src={xlImgUrl}
       />
     </div>
-    <h1 class:list={["mx-3 -mt-8 md:mx-10 md:-mt-14 mb-3 md:mb-6"]}>
+    <h1 class:list={["mx-3 -mt-8 md:mx-10 mb-3 md:mb-6"]}>
       {
+        /* 
         props.pageTitle.supTitle && (
           <span class="block">
             <span
@@ -59,6 +60,7 @@ const xlImgUrl = image
             </span>
           </span>
         )
+      */
       }
 
       <span class="block">
@@ -75,11 +77,15 @@ const xlImgUrl = image
       </span>
 
       {
+        /* 
+
         props.pageTitle.subTitle && (
           <span class="block">
             <span>{props.pageTitle.subTitle}</span>
           </span>
         )
+          
+      */
       }
     </h1>
   </Container>

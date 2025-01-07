@@ -51,7 +51,6 @@ import {
   gCrisisResourcesQuery,
   zCrisisResource,
 } from "@model/crisisResource";
-import { zPortableText, type PortableText } from "@model/portableText";
 import {
   gCoreContentGroupsQuery,
   zCoreContentGroup,
@@ -67,11 +66,12 @@ import {
   zUserEvaluation,
   type UserEvaluation,
 } from "@model/resourceEvaluation";
+import { gFooterDataQuery, zFooterData, type FooterData } from "@model/footer";
 import {
-  gFooterDataQuery,
-  zFooterData,
-  type FooterData,
-} from "@model/footer";
+  gContentGroupPagesQuery,
+  zContentGroup,
+  type ContentGroup,
+} from "@model/contentGroup";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -320,6 +320,15 @@ export async function getResourceTypePagesData(): Promise<ResourceTypePageData> 
     .then((result) => zResourceTypePagesData.parse(result));
 
   return resourceTypePageData;
+}
+
+export async function getContentGroupPagesData(): Promise<ContentGroup[]> {
+  const client = getClient();
+  const contentGroupPagesData = await client
+    .fetch(gContentGroupPagesQuery)
+    .then((result) => zContentGroup.array().parse(result));
+
+  return contentGroupPagesData;
 }
 
 /**

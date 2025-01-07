@@ -34,6 +34,11 @@ export const zPrimaryInternetResourceType = z.enum(primaryResourceTypes);
 export const zSecondaryInternetResourceType = z.enum(secondaryResourceTypes);
 export const zInternetResourceType = z.enum(internetResourceTypes);
 
+export const zExtendedResourceType = z.enum([
+  ...internetResourceTypes,
+  "crisisResource",
+]);
+
 export const zInternetResourcePageListing = z.object({
   title: z.string(),
   lastUpdated: z.string().datetime(),
@@ -76,3 +81,5 @@ export type InternetResourceType = z.infer<typeof zInternetResourceType>;
 export type InternetResourcePageListing = z.infer<
   typeof zInternetResourcePageListing
 >;
+
+export type ExtendedResourceType = z.infer<typeof zExtendedResourceType>;

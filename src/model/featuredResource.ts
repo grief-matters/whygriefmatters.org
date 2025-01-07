@@ -2,10 +2,10 @@ import groq from "groq";
 import { z } from "zod";
 
 import { zImage } from "./image";
-import { zInternetResourceType } from "./internetResource";
+import { zExtendedResourceType } from "./internetResource";
 
 export const zFeaturedResource = z.object({
-  type: zInternetResourceType,
+  type: zExtendedResourceType,
   title: z.string(),
   description: z.string().nullable(),
   lastUpdated: z.string().datetime(),

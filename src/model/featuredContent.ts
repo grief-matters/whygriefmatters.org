@@ -7,7 +7,7 @@ import {
   zResourcePageLinks,
   zResourceLinks,
   zRichTextContentBlock,
-  zResourcePageLink,
+  zDynamicResourcePageLink,
 } from "./contentBlock";
 
 const topicCollectionDisplayOptions = ["none", "topThree", "all"] as const;
@@ -49,7 +49,7 @@ export const zFeaturedContent = z.object({
   title: z.string(),
   description: zPortableText.nullable(),
   content: z.array(zFeaturedContentContent),
-  featuredContentFooterLink: zResourcePageLink.nullable(),
+  featuredContentFooterLink: zDynamicResourcePageLink.nullable(),
 });
 
 export type FeaturedContentContent = z.infer<typeof zFeaturedContentContent>;

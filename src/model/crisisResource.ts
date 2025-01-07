@@ -3,6 +3,7 @@ import { z } from "zod";
 import { zPortableText } from "./portableText";
 import { zCategory } from "./category";
 import { zPopulation } from "./population";
+import { zSanityImage } from "./image";
 
 export const contactMethodTypes = [
   "tel",
@@ -73,6 +74,7 @@ export const zCrisisResource = z.object({
   title: z.string(),
   description: zPortableText.nullable(),
   resourceUrl: z.string().url().nullable(),
+  logo: zSanityImage.nullable(),
   sourceWebsite: z
     .object({
       name: z.string(),
@@ -91,11 +93,11 @@ const gAvailabilityProjection = groq`
     timezone,
 `;
 
-export const gCrisisResourcesQuery = groq`
-  *[_type == "crisisResource"]{
-    "title": name,
+export const gCrisisResourceProjection = groq`
+"title": name,
     description,
     resourceUrl,
+    logo,
     sourceWebsite->{
       name,
       resourceUrl,
@@ -150,6 +152,11 @@ export const gCrisisResourcesQuery = groq`
           , [])
       }
     }, [])
+`;
+
+export const gCrisisResourcesQuery = groq`
+  *[_type == "crisisResource"]{
+    ${gCrisisResourceProjection}
   }
 `;
 

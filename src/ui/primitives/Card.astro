@@ -1,10 +1,10 @@
 ---
 import { wgmDesignSystem as ds } from "@common/design-system";
-import type { InternetResourceType } from "@model/internetResource";
+import type { ExtendedResourceType } from "@model/internetResource";
 
 interface Props {
   hoverable?: boolean;
-  resourceType?: InternetResourceType;
+  resourceType?: ExtendedResourceType | null;
   fullHeight?: boolean;
   disableBorder?: boolean;
 }

@@ -127,6 +127,11 @@ export const wgmDesignSystem = {
           contrast: "",
           hover: "border-red-500/30 hover:border-red-500/70",
         },
+        crisisResource: {
+          contrast: "",
+          default: "border-sky-700/70",
+          hover: "border-sky-700/30 hover:border-sky-700/70",
+        },
       },
     },
   },
@@ -171,10 +176,6 @@ export const wgmDesignSystem = {
         contrast: "",
         defaultLight: undefined,
       },
-      // brand: {
-      //   default: "",
-      //   blue: "text-blue-800",
-      // },
     },
     size: {
       xs: "text-xs",

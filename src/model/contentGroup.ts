@@ -3,41 +3,51 @@ import groq from "groq";
 
 import { gContentBlocksProjection, zContentBlock } from "./contentBlock";
 import { zPortableText } from "./portableText";
-import { zInternetResourceType } from "./internetResource";
+import { zExtendedResourceType } from "./internetResource";
 
 export const gContentGroupProjection = groq`
+  title,
+  description,
+  "blocks": contentBlocks[]{
     title,
     description,
-    "blocks": contentBlocks[]{
-      "content": content[]{
-        ${gContentBlocksProjection}
-      }
-    }.content,
-    "jumpLink": coalesce(contentGroupJumpLink{
-        "jumpLinkType": _type,
-        label, 
-        type,
-        "population": population->slug.current,
-        "category": category->slug.current
-      }, relativeContentGroupJumpLink{
-        "jumpLinkType": "relative",
-        label, 
-        url
-      }
-    )
+    "content": content[]{
+      ${gContentBlocksProjection}
+    }
+  },
+  "jumpLink": coalesce(contentGroupJumpLink{
+      "jumpLinkType": _type,
+      label, 
+      type,
+      "population": population->slug.current,
+      "category": category->slug.current
+    }, relativeContentGroupJumpLink{
+      "jumpLinkType": "relative",
+      label, 
+      url
+    }
+  ),
+  "slug": slug.current
+`;
+
+export const gContentGroupPagesQuery = groq`
+  *[_type == "contentGroup" && defined(slug.current)]{
+    ${gContentGroupProjection}
+  }
 `;
 
 export const zContentGroup = z.object({
   title: z.string().nullable(),
+  slug: z.string().nullable(),
   description: zPortableText.nullable(),
-  blocks: z.array(z.array(zContentBlock)),
+  blocks: z.array(zContentBlock),
   jumpLink: z
     .discriminatedUnion("jumpLinkType", [
       // TODO: We can't use the zResourcePageLink schema as extend/refine don't mix
       z
         .object({
           label: z.string(),
-          type: zInternetResourceType.nullable(),
+          type: zExtendedResourceType.nullable(),
           population: z.string().nullable(),
           category: z.string().nullable(),
         })

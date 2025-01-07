@@ -9,6 +9,7 @@ import Hero from "@ui/Hero.astro";
 import Heading from "@ui/primitives/Heading.astro";
 import Text from "@ui/primitives/Text.astro";
 import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
+import Container from "@ui/primitives/Container.astro";
 
 const homePageData = await getHomePageData();
 
@@ -51,22 +52,20 @@ const coreValuesBgColors = [
       </div>
     </div>
   </Hero>
-  <section class="mx-auto pb-6 mt-2 mb-6">
-    <div class="mx-auto py-4 text-center lg:py-6">
-      <Heading as="h2" size="xl3">
-        <EmphasizedEllipsisText text="Our Mission" />
-      </Heading>
-    </div>
+  <Container>
+    <section class="px-4 pb-8">
+      <div class="mx-auto py-4 text-center lg:py-6">
+        <Heading as="h2" size="xl3">
+          <EmphasizedEllipsisText text="Our Mission" />
+        </Heading>
+      </div>
 
-    <RichTextContentBlock
-      classList={[
-        "px-4 mx-auto max-w-4xl",
-        "first:prose-p:text-lg",
-        "font-serif text-center",
-      ]}
-      portableText={homePageData?.org.mission}
-    />
-  </section>
+      <RichTextContentBlock
+        classList={["first:prose-p:text-lg", "text-center"]}
+        portableText={homePageData?.org.mission}
+      />
+    </section>
+  </Container>
 
   <section>
     <div class="bg-gradient-to-r from-sky-700 from-50% to-sky-400 to-50%">
