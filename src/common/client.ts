@@ -72,6 +72,7 @@ import {
   zContentGroup,
   type ContentGroup,
 } from "@model/contentGroup";
+import { isReservedSlug } from "./reserved-slugs";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -326,7 +327,12 @@ export async function getContentGroupPagesData(): Promise<ContentGroup[]> {
   const client = getClient();
   const contentGroupPagesData = await client
     .fetch(gContentGroupPagesQuery)
-    .then((result) => zContentGroup.array().parse(result));
+    .then((result) =>
+      zContentGroup
+        .array()
+        .parse(result)
+        .filter((cgp) => cgp.slug === null || !isReservedSlug(cgp.slug)),
+    );
 
   return contentGroupPagesData;
 }
