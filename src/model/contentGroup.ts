@@ -8,13 +8,13 @@ import { zExtendedResourceType } from "./internetResource";
 export const gContentGroupProjection = groq`
   title,
   description,
-  "blocks": contentBlocks[]{
+  "blocks": coalesce(contentBlocks[]->{
     title,
     description,
     "content": content[]{
       ${gContentBlocksProjection}
     }
-  },
+  }, []),
   "jumpLink": coalesce(contentGroupJumpLink{
       "jumpLinkType": _type,
       label, 
