@@ -78,15 +78,16 @@ const cleanTopic = props.filter
   ? removeEmptyTopics(props.topic, countsLookup, props.filter)
   : props.topic;
 
-const nodeTree = transformTopicHierarchyToNavNodes(
-  cleanTopic as Topic,
-  countsLookup,
-  props.filter
-);
+const nodeTree = cleanTopic
+  ? transformTopicHierarchyToNavNodes(
+      cleanTopic as Topic,
+      countsLookup,
+      props.filter
+    )
+  : null;
+
+const shouldRender =
+  nodeTree !== null && (nodeTree.renderAsLink || nodeTree.subtopics.length > 0);
 ---
 
-{
-  (nodeTree.renderAsLink || nodeTree.subtopics.length > 0) && (
-    <TopicHierarchyNavRenderer navigationNodeTree={nodeTree} />
-  )
-}
+{shouldRender && <TopicHierarchyNavRenderer navigationNodeTree={nodeTree} />}
