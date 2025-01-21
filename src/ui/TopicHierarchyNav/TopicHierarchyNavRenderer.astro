@@ -27,7 +27,7 @@ const depthIndentationMap = new Map([
 
 {
   currentNode.renderAsLink ? (
-    <Link classList={["inline-block mb-1"]} href={currentNode.slug}>
+    <Link classList={["inline-block mb-1"]} href={`/${currentNode.slug}`}>
       {currentNode.label}
     </Link>
   ) : (
