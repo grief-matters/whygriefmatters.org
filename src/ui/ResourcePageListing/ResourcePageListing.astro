@@ -8,6 +8,7 @@ import Tag from "@ui/primitives/Tag.astro";
 import TitleLink from "../primitives/TitleLink.astro";
 import Subtitle from "../primitives/Subtitle.astro";
 import Text from "@ui/primitives/Text.astro";
+import FancyLabel from "@ui/primitives/FancyLabel.astro";
 
 interface Props {
   resource: InternetResourcePageListing;
@@ -25,15 +26,10 @@ const showTags = props.resource.hasSpanishVersion || props.resource.rating;
 ---
 
 <article>
-  <span
-    class:list={[
-      "block uppercase text-xs tracking-superwide leading-none",
-      "mb-2 pl-2",
-      "border-l-2",
-      ds.border.color?.resourceType?.[props.resource.type].default,
-      "text-slate-500",
-    ]}>{startCase(props.resource.type)}</span
-  >
+  <FancyLabel
+    label={startCase(props.resource.type)}
+    resourceType={props.resource.type}
+  />
   <TitleLink
     label={props.resource.title}
     href={props.resource.resourceUrl}

@@ -1,0 +1,93 @@
+---
+import type { InternetResourceType } from "@model/internetResource";
+import type { ResourceTypeCountsByTopic } from "@model/resourceTypePage";
+import type { Topic } from "@model/topic";
+
+import { getResourceCountsByTopic } from "@common/client";
+import { getRouteFromResourcePageLinkParams } from "@common/route";
+
+import TopicHierarchyNavRenderer, {
+  type NavNode,
+} from "./TopicHierarchyNavRenderer.astro";
+
+type TopicFilter = {
+  resourceType?: InternetResourceType;
+  population?: string; // not sure about pop yet
+};
+
+interface Props {
+  topic: Topic;
+  filter?: TopicFilter;
+}
+
+const props = Astro.props;
+
+// TODO - does not deal with population atm
+const countsLookup = await getResourceCountsByTopic();
+
+function removeEmptyTopics(
+  topic: Topic,
+  lookup: ResourceTypeCountsByTopic,
+  filter: TopicFilter
+) {
+  if (typeof filter.resourceType === "undefined") {
+    return topic;
+  }
+
+  const topicObj = { ...topic };
+
+  const currentSlug = topicObj.slug;
+  const resourceCount = lookup[currentSlug]?.[filter.resourceType];
+
+  const isEmpty = resourceCount === 0;
+
+  topicObj.subtopics = topicObj.subtopics
+    ?.map((subtopic) => removeEmptyTopics(subtopic, lookup, filter))
+    .filter((subtopic) => subtopic !== null);
+
+  if (isEmpty && topicObj.subtopics?.length === 0) {
+    return null;
+  }
+
+  return topicObj;
+}
+
+function transformTopicHierarchyToNavNodes(
+  topic: Topic,
+  lookup: ResourceTypeCountsByTopic,
+  filter?: TopicFilter
+): NavNode {
+  return {
+    label: topic.title,
+    slug: getRouteFromResourcePageLinkParams({
+      resourceType: filter?.resourceType,
+      population: filter?.population,
+      topic: topic.slug,
+    }),
+    renderAsLink: filter?.resourceType
+      ? (lookup[topic.slug]?.[filter.resourceType] || 0) > 0
+      : true,
+    subtopics:
+      topic.subtopics?.map((st) =>
+        transformTopicHierarchyToNavNodes(st, lookup, filter)
+      ) ?? [],
+  };
+}
+
+const cleanTopic = props.filter
+  ? removeEmptyTopics(props.topic, countsLookup, props.filter)
+  : props.topic;
+
+const nodeTree = cleanTopic
+  ? transformTopicHierarchyToNavNodes(
+      cleanTopic as Topic,
+      countsLookup,
+      props.filter
+    )
+  : null;
+
+const shouldRender =
+  nodeTree !== null && (nodeTree.renderAsLink || nodeTree.subtopics.length > 0);
+---
+
+{shouldRender && <TopicHierarchyNavRenderer navigationNodeTree={nodeTree} />}

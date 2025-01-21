@@ -7,6 +7,7 @@ interface Props {
   resourceType?: ExtendedResourceType | null;
   fullHeight?: boolean;
   disableBorder?: boolean;
+  additiveClasses?: Array<string>;
 }
 
 const props = Astro.props;
@@ -26,6 +27,7 @@ const borderColorClass = props.resourceType
     borderColorClass,
     "shadow-md",
     ...(props.hoverable ? ["hover:shadow-lg transition-all"] : []),
+    ...(props.additiveClasses ?? []),
   ]}
 >
   <div class:list={["border border-b-0 border-slate-100 h-full"]}><slot /></div>

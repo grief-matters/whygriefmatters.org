@@ -6,6 +6,7 @@ import Text from "@ui/primitives/Text.astro";
 
 import MainNavLink from "./MainNavLink.astro";
 import MainNavRecursiveTopicTree from "./MainNavRecursiveTopicTree.astro";
+import Card from "@ui/primitives/Card.astro";
 
 interface Props {
   topicContentBlock: TopicContentBlock;
@@ -15,13 +16,6 @@ const { topicContentBlock } = Astro.props;
 ---
 
 <div>
-  {
-    topicContentBlock.showImage && topicContentBlock.topic.image && (
-      <div class="mb-3">
-        <CMSImage image={topicContentBlock.topic.image} />
-      </div>
-    )
-  }
   {
     topicContentBlock.showSubtopics ? (
       <MainNavRecursiveTopicTree topic={topicContentBlock.topic} />
@@ -37,6 +31,13 @@ const { topicContentBlock } = Astro.props;
           <Text>{topicContentBlock.topic.description}</Text>
         )}
       </>
+    )
+  }
+  {
+    topicContentBlock.showImage && topicContentBlock.topic.image && (
+      <Card disableBorder additiveClasses={["p-2 my-3"]}>
+        <CMSImage image={topicContentBlock.topic.image} />
+      </Card>
     )
   }
 </div>
