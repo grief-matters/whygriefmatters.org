@@ -1,12 +1,14 @@
 ---
-import { getResourceCountsByTopic } from "@common/client";
 import type { InternetResourceType } from "@model/internetResource";
 import type { ResourceTypeCountsByTopic } from "@model/resourceTypePage";
 import type { Topic } from "@model/topic";
+
+import { getResourceCountsByTopic } from "@common/client";
+import { getRouteFromResourcePageLinkParams } from "@common/route";
+
 import TopicHierarchyNavRenderer, {
   type NavNode,
 } from "./TopicHierarchyNavRenderer.astro";
-import { getRouteFromResourcePageLinkParams } from "@common/route";
 
 type TopicFilter = {
   resourceType?: InternetResourceType;
@@ -81,10 +83,6 @@ const nodeTree = transformTopicHierarchyToNavNodes(
   countsLookup,
   props.filter
 );
-
-if (nodeTree.label === "Grief in the Workplace") {
-  console.dir(nodeTree, { levels: 12 });
-}
 ---
 
 {
