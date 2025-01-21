@@ -6,6 +6,7 @@ import type {
   InternetResourcePageListing,
   InternetResourceType,
 } from "@model/internetResource";
+import type { SanityImage } from "@model/image";
 
 import { getPopulationPagesData } from "@common/client";
 
@@ -18,6 +19,7 @@ import ResourcePageListings from "@ui/ResourcePageListing/ResourcePageListings.a
 
 interface Props {
   populationName: string;
+  image: SanityImage | null;
   resources: Array<InternetResourcePageListing>;
   applicableCategories: Array<Category>;
 }
@@ -70,6 +72,7 @@ export async function getStaticPaths() {
         params: { resourceType: type, population: pageData.slug },
         props: {
           populationName: pageData.name,
+          image: pageData.image,
           resources: resources,
           applicableCategories,
         },
@@ -88,7 +91,7 @@ const pageTitle = getResourcePageTitle({
 ---
 
 <MainLayout>
-  <PageHeader pageTitle={pageTitle} />
+  <PageHeader pageTitle={pageTitle} image={props.image ?? undefined} />
   <Container>
     <section class="p-3 lg:mb-6">
       <ResourcePageListings resources={props.resources} />

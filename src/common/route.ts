@@ -1,4 +1,16 @@
 import type { DynamicResourcePageLink } from "@model/contentBlock";
+import type { InternetResourceType } from "@model/internetResource";
+
+export type TopicFilter = {
+  resourceType: InternetResourceType;
+  population: string; // not sure about pop yet
+};
+
+export type ResourcePageLinkParams = {
+  resourceType?: InternetResourceType;
+  population?: string;
+  topic?: string;
+};
 
 export function getRouteFromDynamicResourcePageLink(
   pageLink: Omit<DynamicResourcePageLink, "label">,
@@ -8,4 +20,16 @@ export function getRouteFromDynamicResourcePageLink(
     .join("/");
 
   return `/${slugParts}`;
+}
+
+export function getRouteFromResourcePageLinkParams(
+  pageLinkParams: ResourcePageLinkParams,
+): string {
+  const linkParts = [
+    pageLinkParams.resourceType,
+    pageLinkParams.topic,
+    pageLinkParams.population,
+  ];
+
+  return linkParts.filter((part) => Boolean(part)).join("/");
 }

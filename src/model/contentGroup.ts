@@ -4,10 +4,15 @@ import groq from "groq";
 import { gContentBlocksProjection, zContentBlock } from "./contentBlock";
 import { zPortableText } from "./portableText";
 import { zExtendedResourceType } from "./internetResource";
+import { zImage } from "./image";
 
 export const gContentGroupProjection = groq`
   title,
   description,
+  image{
+    image,
+    "altText": alt
+  },
   "blocks": coalesce(contentBlocks[]->{
     title,
     description,
@@ -40,6 +45,7 @@ export const zContentGroup = z.object({
   title: z.string().nullable(),
   slug: z.string().nullable(),
   description: zPortableText.nullable(),
+  image: zImage.nullish(),
   blocks: z.array(zContentBlock),
   jumpLink: z
     .discriminatedUnion("jumpLinkType", [

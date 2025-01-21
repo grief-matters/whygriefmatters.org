@@ -1,125 +1,158 @@
 ---
 import pluralize from "pluralize";
 import startCase from "lodash/startCase";
-import sortBy from "lodash/sortBy";
 
-import type {
-  InternetResourcePageListing,
-  InternetResourceType,
-} from "@model/internetResource";
-import type { Category } from "@model/category";
-import type { Population } from "@model/population";
+import { internetResourceTypes } from "@model/internetResource";
+import type { ContentGroup } from "@model/contentGroup";
 
 import Text from "@ui/primitives/Text.astro";
 
-import {
-  getCategoriesByFilter,
-  getPopulations,
-  getResourceTypePagesData,
-} from "@common/client";
+import { getResourceTypePagesData } from "@common/client";
 
 import MainLayout from "@layouts/MainLayout.astro";
-import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
 
-import { getResourcePageTitle } from "@common/page";
 import PageHeader from "@ui/PageHeader.astro";
 import Heading from "@ui/primitives/Heading.astro";
-import MainNavLink from "@ui/MainNav/MainNavLink.astro";
+import Container from "@ui/primitives/Container.astro";
+import PortableTextContentBlock from "@ui/PortableTextContentBlock.astro";
+import TopicHierarchyNav from "@ui/TopicHierarchyNav/TopicHierarchyNav.astro";
+import Card from "@ui/primitives/Card.astro";
+import Link from "@ui/primitives/LinkNew.astro";
+import { getRouteFromDynamicResourcePageLink } from "@common/route";
 
 interface Props {
-  resources: Array<InternetResourcePageListing>;
-  applicablePopulations: Array<Population>;
-  applicableCategories: Array<Category>;
+  headPartContentGroup: ContentGroup | null;
+  templateContentGroup: ContentGroup;
 }
 
 export async function getStaticPaths() {
-  const resourceTypePagesData = await getResourceTypePagesData();
-  const populations = await getPopulations();
+  const { commonTemplateData, headPartsByType } =
+    await getResourceTypePagesData();
 
-  const pathPromises = Object.entries(resourceTypePagesData).map(
-    async ([resourceType, resources]: [
-      string,
-      Array<InternetResourcePageListing>,
-    ]) => {
-      const filteredPopulations = populations.filter((p) =>
-        resources.some((r) => r.populations?.includes(p.slug))
-      );
+  return internetResourceTypes.map((resourceType) => {
+    const props: Props = {
+      headPartContentGroup: headPartsByType[resourceType] ?? null,
+      templateContentGroup: commonTemplateData,
+    };
 
-      // This is less than ideal as means an additional request for each type
-      const categoriesByFilter = await getCategoriesByFilter({ resourceType });
-
-      return {
-        params: { resourceType },
-        props: {
-          resources,
-          applicablePopulations: filteredPopulations ?? [],
-          applicableCategories:
-            sortBy(categoriesByFilter, (s) => s.title) ?? [],
-        },
-      };
-    }
-  );
-
-  const paths = await Promise.all(pathPromises);
-
-  return paths.filter((x) => x.props.resources.length > 0);
+    return {
+      params: { resourceType },
+      props,
+    };
+  });
 }
 
 const params = Astro.params;
 const props = Astro.props;
 
-const resourceTypeLabel = `${startCase(pluralize(params.resourceType))}`;
-
-const pageTitle = getResourcePageTitle({
-  resourceType: params.resourceType as InternetResourceType,
-});
-
-let quantityText;
-
-switch (true) {
-  case props.resources.length > 1000:
-    quantityText = "over a thousand";
-    break;
-  case props.resources.length > 200:
-    quantityText = "hundreds of";
-    break;
-  case props.resources.length > 24:
-    quantityText = "dozens of";
-    break;
-  default:
-    quantityText = "a range of";
-    break;
-}
+const pageTitle =
+  props.headPartContentGroup?.title ??
+  `${startCase(pluralize(params.resourceType))}`;
 ---
 
 <MainLayout>
-  <ResourcePageLayout>
-    <PageHeader slot="header" pageTitle={pageTitle} />
-    <section slot="section" class="m-3 mb-12">
-      <Text class="mb-3">
-        {
-          `We have collected together ${quantityText} ${resourceTypeLabel.toLowerCase()} spanning a range of topics.`
-        }
-      </Text>
-      <Text class="mb-3">
-        {
-          `To see ${resourceTypeLabel.toLowerCase()} for a specific topic select from the list below.`
-        }
-      </Text>
-      <Heading as="h3" class:list={["mb-3 font-semibold"]}>Topics</Heading>
-      <ul class="p-3 lg:p-6 bg-white shadow-md sm:columns-2 lg:columns-3">
-        {
-          props.applicableCategories.map((category) => (
-            <li>
-              <MainNavLink
-                href={`/${params.resourceType}/${category.slug}`}
-                label={category.title}
-                variant="secondary"
-              />
-            </li>
-          ))
-        }
-      </ul>
+  <PageHeader
+    pageTitle={{
+      title: pageTitle,
+    }}
+    image={props.headPartContentGroup?.image ?? undefined}
+  />
+  <Container>
+    <section>
+      {
+        props.headPartContentGroup?.description && (
+          <div class="m-3">
+            <PortableTextContentBlock
+              portableText={props.headPartContentGroup.description}
+            />
+          </div>
+        )
+      }
+      {/* TODO - render out any blocks */}
     </section>
-  </ResourcePageLayout>
+    <section>
+      {/* TODO - render out any 'main' heading */}
+      {
+        props.templateContentGroup?.description && (
+          <div class="m-3">
+            <PortableTextContentBlock
+              portableText={props.templateContentGroup.description}
+            />
+          </div>
+        )
+      }
+      {
+        props.templateContentGroup.blocks.map((block) => (
+          <Card disableBorder additiveClasses={["m-3 pb-3"]}>
+            <section class="p-4 sm:px-5 mb-3">
+              {block.title && (
+                <Heading as="h2" size="xl2" class:list={["mb-2"]}>
+                  {block.title}
+                </Heading>
+              )}
+              {block.description && <Text>{block.description}</Text>}
+              {block.content.map((contentItem) => {
+                switch (contentItem.contentType) {
+                  case "topicContentBlock":
+                    return (
+                      <div class="mb-3">
+                        <TopicHierarchyNav
+                          topic={contentItem.topic}
+                          filter={{ resourceType: params.resourceType }}
+                        />
+                      </div>
+                    );
+                  case "topicCollectionContentBlockNew":
+                    return (
+                      <div class="mb-3">
+                        {contentItem.topics.map((t) => (
+                          <div>
+                            <TopicHierarchyNav
+                              topic={t.topic}
+                              filter={{ resourceType: params.resourceType }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  case "resourcePageLinks":
+                    return (
+                      <ul>
+                        {contentItem.links.map((link) => (
+                          <li>
+                            <Link
+                              classList={["inline-block mb-1"]}
+                              href={
+                                link.linkType === "relativeLink"
+                                  ? link.url
+                                  : getRouteFromDynamicResourcePageLink({
+                                      ...link,
+                                      type: params.resourceType,
+                                    })
+                              }
+                            >
+                              {link.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    );
+                  case "richTextContentBlock":
+                    return (
+                      <div class="mb-3">
+                        <PortableTextContentBlock
+                          portableText={contentItem.portableText}
+                        />
+                      </div>
+                    );
+                  default:
+                    break;
+                }
+              })}
+            </section>
+          </Card>
+        ))
+      }
+    </section>
+  </Container>
 </MainLayout>

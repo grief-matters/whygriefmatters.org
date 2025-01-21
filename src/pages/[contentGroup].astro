@@ -37,6 +37,7 @@ const props = Astro.props;
     pageTitle={{
       title: props.contentGroup.title ?? props.contentGroup.slug ?? "",
     }}
+    image={props.contentGroup.image ?? undefined}
   />
   <Container>
     {
