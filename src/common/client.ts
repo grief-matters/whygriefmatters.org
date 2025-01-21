@@ -36,9 +36,14 @@ import {
   zCategoryPageData,
 } from "@model/categoryPage";
 import {
-  type ResourceTypePageData,
-  gResourceTypePagesQuery,
+  gResourceTypeCountsByTopicQuery,
+  gResourceTypePageCommonTemplateQuery,
+  gResourceTypePageHeadPartsQuery,
+  zRawResourceCounts,
+  zResourceTypeCountsByTopic,
   zResourceTypePagesData,
+  type ResourceTypeCountsByTopic,
+  type ResourceTypePageData,
 } from "@model/resourceTypePage";
 import {
   type PopulationsPageData,
@@ -72,7 +77,7 @@ import {
   zContentGroup,
   type ContentGroup,
 } from "@model/contentGroup";
-import { isReservedSlug } from "./reserved-slugs";
+import { isReservedSlug, templatingSlugs } from "./reserved-slugs";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -316,11 +321,17 @@ export async function getPopulationPagesData(): Promise<
  */
 export async function getResourceTypePagesData(): Promise<ResourceTypePageData> {
   const client = getClient();
-  const resourceTypePageData = await client
-    .fetch(gResourceTypePagesQuery)
-    .then((result) => zResourceTypePagesData.parse(result));
+  const commonTemplateData = await client.fetch(
+    gResourceTypePageCommonTemplateQuery,
+    { contentSlug: templatingSlugs.exploreByTopicBlocksPart },
+  );
 
-  return resourceTypePageData;
+  const headPartsByType = await client.fetch(gResourceTypePageHeadPartsQuery);
+
+  return zResourceTypePagesData.parse({
+    commonTemplateData,
+    headPartsByType,
+  });
 }
 
 export async function getContentGroupPagesData(): Promise<ContentGroup[]> {
@@ -467,3 +478,35 @@ export async function createUserEvaluation(
     comment: comment ?? undefined,
   });
 }
+
+export async function getResourceCountsByTopic(): Promise<ResourceTypeCountsByTopic> {
+  if (!dataCache.resourceTypeCountsByTopic) {
+    const client = getClient();
+    const result = await client
+      .fetch(gResourceTypeCountsByTopicQuery)
+      .then((result) => {
+        const parsed = zRawResourceCounts.array().parse(result);
+
+        const obj: ResourceTypeCountsByTopic = {};
+
+        parsed.forEach(({ slug, ...rest }) => {
+          obj[slug] = { ...rest };
+        });
+
+        return obj;
+      })
+      .catch((err) =>
+        console.error(
+          "Could not parse result of 'gResourceTypeCountsByTopicQuery'",
+          err,
+        ),
+      );
+
+    const resourceCountsByTopic = zResourceTypeCountsByTopic.parse(result);
+    dataCache.resourceTypeCountsByTopic = resourceCountsByTopic;
+  }
+
+  return dataCache.resourceTypeCountsByTopic;
+}
+
+getResourceCountsByTopic();

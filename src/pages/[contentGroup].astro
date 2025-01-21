@@ -13,6 +13,7 @@ import CardLink from "@ui/CardLink.astro";
 import CardLinkListContainer from "@ui/CardLinkListContainer.astro";
 import { getRouteFromDynamicResourcePageLink } from "@common/route";
 import Heading from "@ui/primitives/Heading.astro";
+import { undefined } from "astro:schema";
 
 interface Props {
   contentGroup: ContentGroup;
@@ -37,6 +38,7 @@ const props = Astro.props;
     pageTitle={{
       title: props.contentGroup.title ?? props.contentGroup.slug ?? "",
     }}
+    image={props.contentGroup.image ?? undefined}
   />
   <Container>
     {

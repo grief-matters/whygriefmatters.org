@@ -1,0 +1,50 @@
+---
+import Link from "@ui/primitives/LinkNew.astro";
+import Text from "@ui/primitives/Text.astro";
+
+export type NavNode = {
+  slug: string;
+  label: string;
+  renderAsLink: boolean;
+  subtopics: Array<NavNode>;
+};
+
+interface Props {
+  navigationNodeTree: NavNode;
+  currentDepth?: number;
+}
+
+const { navigationNodeTree: currentNode, currentDepth = 1 } = Astro.props;
+
+const depthIndentationMap = new Map([
+  [1, ""],
+  [2, "ml-3"],
+  [3, "ml-4"],
+  [4, "ml-5"],
+  [5, "ml-6"],
+]);
+---
+
+{
+  currentNode.renderAsLink ? (
+    <Link classList={["inline-block mb-1"]} href={currentNode.slug}>
+      {currentNode.label}
+    </Link>
+  ) : (
+    <Text class="font-medium">{currentNode.label}</Text>
+  )
+}
+{
+  (currentNode.subtopics ?? []).length > 0 && (
+    <ul class:list={[depthIndentationMap.get(currentDepth)]}>
+      {currentNode.subtopics.map((subnode) => (
+        <li>
+          <Astro.self
+            navigationNodeTree={subnode}
+            currentDepth={currentDepth + 1}
+          />
+        </li>
+      ))}
+    </ul>
+  )
+}

@@ -1,0 +1,37 @@
+---
+import { wgmDesignSystem as ds } from "@common/design-system";
+
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"a"> {
+  external?: boolean;
+  classList?: Array<string>;
+}
+
+const { external = false, classList = [], ...attrs } = Astro.props;
+
+const externalLinkAttrs = external
+  ? {
+      rel: "noopener",
+      target: "_blank",
+    }
+  : {};
+
+const baseClassList = [
+  "underline",
+  "font-serif",
+  "underline underline-offset-4",
+  "decoration-dotted",
+  ds.decoration.color?.primary.hover,
+  ds.typography.color.primary,
+  ds.decoration.transition,
+];
+---
+
+<a
+  class:list={[...baseClassList, ...classList]}
+  {...attrs}
+  {...externalLinkAttrs}
+>
+  <slot />
+</a>
