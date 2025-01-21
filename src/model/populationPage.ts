@@ -21,6 +21,11 @@ export const zPopulationPageData = z.object({
     .nullable(),
 });
 
+/*
+issue-84: temp removal of 'book' and 'course'
+remove from (_type != 'crisisResource' && _type != 'book' && _type != 'course') 
+when type should be added back to site
+*/
 export const gPopulationsPageData = groq`
 *[_type == "population"]{
   name,
@@ -29,7 +34,7 @@ export const gPopulationsPageData = groq`
     image,
     "altText": alt
   },
-  "resources": *[^.slug.current in populations[]->slug.current && _type != 'crisisResource']{
+  "resources": *[^.slug.current in populations[]->slug.current && (_type != 'crisisResource' && _type != 'book' && _type != 'course')]{
     categories[]->{
       title,
       "slug": slug.current
