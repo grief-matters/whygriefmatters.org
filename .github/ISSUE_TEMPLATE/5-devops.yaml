@@ -1,0 +1,29 @@
+name: DevOps
+description: Create an Issue to track a DevOps related task.
+labels: ["devops", "website"]
+projects: ["grief-matters/1"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A **DevOps** issue should only be used to track DevOps related work e.g. creation of actions, workflows, deploy stuff etc.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe what is being specified - try to keep it high-level
+      placeholder: |
+        e.g...
+        We need to automate X so that Y
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What is the "Definition of Done" for this task?
+      placeholder: |
+        e.g...
+        1. A workflow should exist that does X
+    validations:
+      required: true

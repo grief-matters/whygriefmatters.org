@@ -1,7 +1,6 @@
 name: Project Requirements
 description: Create an Issue to track high-level Project Requirements (can be thought of as an 'Epic').
-title: "WEB > "
-labels: ["requirements"]
+labels: ["requirements", "website"]
 projects: ["grief-matters/1"]
 body:
   - type: markdown

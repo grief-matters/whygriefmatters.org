@@ -1,7 +1,6 @@
 name: Enhancement
 description: Create an Issue to track an Enhancement.
-title: "WEB > "
-labels: ["enhancement"]
+labels: ["enhancement", "website"]
 projects: ["grief-matters/1"]
 body:
   - type: markdown
