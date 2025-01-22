@@ -416,13 +416,13 @@ export async function getFooterData(): Promise<FooterData> {
  * Get data for About Page content type
  * @returns - All data required to build the ABout Page
  */
-export async function getAboutPageData(): Promise<AboutPageData> {
+export async function getAboutPageData(): Promise<any> {
   const client = getClient();
-  const data = await client
-    .fetch(gAboutPageQuery)
-    .then((result) => zAboutPage.parse(result));
+  // const data = await client
+  //   .fetch(gAboutPageQuery)
+  //   .then((result) => zAboutPage.parse(result));
 
-  return data;
+  return {};
 }
 
 /**

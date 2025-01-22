@@ -1,11 +1,7 @@
 ---
 import { getAboutPageData } from "@common/client";
 import MainLayout from "@layouts/MainLayout.astro";
-import PortableTextContentBlock from "@ui/PortableTextContentBlock.astro";
-import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
 import Heading from "@ui/primitives/Heading.astro";
-import Section from "@ui/primitives/Section.astro";
-import TeamMember from "@ui/TeamMember.astro";
 
 const data = await getAboutPageData();
 ---
@@ -14,6 +10,8 @@ const data = await getAboutPageData();
   <div class="mx-auto mt-6 max-w-4xl px-4">
     <Heading as="h1" size="xl4">About Us</Heading>
   </div>
+  {
+    /* All commented out as person schema is undergoing review
   <Section>
     <div class="mx-auto py-4 text-center">
       <Heading as="h2" size="xl3">
@@ -25,8 +23,7 @@ const data = await getAboutPageData();
       portableText={data.ourStory}
     />
   </Section>
-  <!-- TODO - No content for 'Intro' yet -->
-  <!-- <Section>
+  <Section>
     <div class="mx-auto py-4 text-center">
       <Heading as="h2" size="xl3">
         <EmphasizedEllipsisText text="Our Team" />
@@ -36,7 +33,7 @@ const data = await getAboutPageData();
       classList={["mx-auto max-w-4xl"]}
       portableText={data.teamIntro}
     />
-  </Section> -->
+  </Section>
   <Section>
     <div class="text-center">
       <Heading as="h2" size="xl3">
@@ -53,4 +50,7 @@ const data = await getAboutPageData();
     </div>
     {data.teamMembers.map((person) => <TeamMember person={person} />)}
   </Section>
+  
+  */
+  }
 </MainLayout>
