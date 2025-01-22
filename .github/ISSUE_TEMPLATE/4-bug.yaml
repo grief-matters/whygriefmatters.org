@@ -1,6 +1,7 @@
 name: Bug
 description: Create an Issue to track a Bug.
-labels: ["bug", "website"]
+labels: ["website"]
+type: Bug
 projects: ["grief-matters/1"]
 body:
   - type: textarea

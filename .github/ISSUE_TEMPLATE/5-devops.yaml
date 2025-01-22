@@ -1,6 +1,7 @@
 name: DevOps
 description: Create an Issue to track a DevOps related task.
-labels: ["devops", "website"]
+labels: ["website"]
+type: DevOps
 projects: ["grief-matters/1"]
 body:
   - type: markdown

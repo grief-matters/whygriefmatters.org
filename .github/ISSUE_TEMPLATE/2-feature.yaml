@@ -1,6 +1,7 @@
 name: Feature
 description: Create an Issue to track a Feature.
-labels: ["feature", "website"]
+labels: ["website"]
+type: Feature
 projects: ["grief-matters/1"]
 body:
   - type: textarea
