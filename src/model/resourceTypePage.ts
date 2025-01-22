@@ -11,9 +11,14 @@ export const zResourceTypePagesData = z.object({
   headPartsByType: z.record(zInternetResourceType, zContentGroup.nullable()),
 });
 
+/*
+issue-84: temp removal of 'book' and 'course'
+when book and course added back to site, remove the filter
+*/
 export const gResourceTypePageHeadPartsQuery = `
 {
 ${internetResourceTypes
+  .filter(ft => (ft !== 'book' && ft !== 'course'))
   .map(
     (t) => `
   "${t}": *[_type == "contentGroup" && slug.current == "${t}"][0]{

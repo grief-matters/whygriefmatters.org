@@ -52,10 +52,15 @@ export const zCategoryPageData = z
   // TODO - problematic recursive schema
   .extend({ subtopics: z.any() });
 
+/*
+issue-84: temp removal of 'book' and 'course'
+remove from (_type != 'crisisResource' && _type != 'book' && _type != 'course') 
+when type should be added back to site
+*/
 export const gCategoryPageQuery = groq`
 *[_type == "category"]{
     ${getRecursiveSubtopicsProjection()},
-    "resources": *[^.slug.current in categories[]->slug.current && _type != 'crisisResource']{
+    "resources": *[^.slug.current in categories[]->slug.current && (_type != 'crisisResource' && _type != 'book' && _type != 'course')]{
       ${gPageResourceListingProjection}
     },
     featuredArticles[]->{
