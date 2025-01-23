@@ -4,6 +4,14 @@ labels: ["website"]
 type: Feature
 projects: ["grief-matters/1"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        A **Feature** represents something new that unlocks value for us or our users.
+
+        If something is broken, then create a **Bug** issue instead. 
+
+        If this is to change or improve something that already exists, consider creating an **Enhancement** issue instead.
   - type: textarea
     id: feature-description
     attributes:
@@ -15,9 +23,9 @@ body:
     validations:
       required: true
   - type: textarea
-    id: additional-context
+    id: considerations
     attributes:
-      label: Additional Context
+      label: Considerations And Supporting Info
       description: Is there related information, existing features, screenshots, anything that might be relevant to arriving at the right solution?
       placeholder: |
         e.g...
@@ -36,13 +44,3 @@ body:
         3. Thing done should be reflected in an updated UI
     validations:
       required: true
-  - type: textarea
-    id: suggested-solution
-    attributes:
-      label: Suggested Solution
-      description: If there is already an idea of how this should be implemented, detail it here
-      placeholder: |
-        e.g...
-        Consider using Cloudflare Pages Functions to deliver the backend for this feature
-    validations:
-      required: false
