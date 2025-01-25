@@ -28,12 +28,55 @@ interface Props {}
 
 <script>
   class MobileCarousel extends HTMLElement {
-    // TODO - this code is intended to manage 'scrollInToView' code - but previous implementation wasn't working
+
+    activeSlideIndex: number;
+    slides: HTMLElement[];
+    controls: HTMLElement[];
+    container: HTMLElement | null;
+
     constructor() {
       super();
+      this.activeSlideIndex = 0;
+      this.slides = [];
+      this.controls = [];
+      this.container = null;
     }
 
-    connectedCallback() {}
+    connectedCallback() {
+      this.container = this.querySelector(".items-container");
+      this.slides = Array.from(this.querySelectorAll(".carousel-item"));
+      this.controls = Array.from(this.querySelectorAll(".carousel-control"));
+
+      if (this.container) {
+        this.container.addEventListener("scroll", this.handleScroll.bind(this));
+      }
+
+      this.updateActiveSlide(); // Initialize active slide
+    }
+
+    handleScroll() {
+      const scrollLeft = this.container ? this.container.scrollLeft : 0;
+      const slideWidth = this.slides[0].offsetWidth;
+
+      console.log(scrollLeft);
+
+      const index = Math.round(scrollLeft / slideWidth);
+      if (index !== this.activeSlideIndex) {
+        this.activeSlideIndex = index;
+        this.updateActiveSlide();
+      }
+    }
+
+    updateActiveSlide() {
+      // Update styles for controls
+      this.controls.forEach((control, idx) => {
+        if (idx === this.activeSlideIndex) {
+          control.classList.add("active");
+        } else {
+          control.classList.remove("active");
+        }
+      });
+    }
   }
 
   customElements.define("mobile-carousel", MobileCarousel);

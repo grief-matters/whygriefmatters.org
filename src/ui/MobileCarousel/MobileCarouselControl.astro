@@ -13,9 +13,16 @@ const { id } = Astro.props;
     "flex items-center justify-center w-7 h-7 rounded-full",
     "bg-slate-300",
     "border-2",
-    "text-sky-900 border-sky-900/25 bg-transparent hover:border-sky-900/50 hover:bg-white active:bg-white focus:bg-white",
+    "text-sky-900 border-sky-900/25 bg-transparent hover:border-sky-900/50 hover:bg-white focus:bg-white",
   ]}
   href={`#${id}--carousel-item`}
 >
   <slot />
 </a>
+
+<style>
+  .active {
+    background-color: white;
+    border-color: rgb(12 74 110 / 0.5);
+  }
+</style>
