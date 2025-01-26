@@ -29,10 +29,7 @@ We welcome contributions of all sizes and skill levels. There are a couple of di
     PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_[key]"
     CLERK_SECRET_KEY="sk_test_[key]"
    ```
-
-   > [!Note]
-   > Replacing the values with the ones you've been given
-
+   
 4. Create a file named `.dev.vars` in the root of your project with the contents:
 
    ```shell
@@ -40,12 +37,12 @@ We welcome contributions of all sizes and skill levels. There are a couple of di
    CLERK_SECRET_KEY="sk_test_[key]"
    ```
 
-   > [!Note]
-   > Replacing the values with the ones you've been given
-
 5. Run `npm install` at the root of the project to install all dependencies.
 6. Run `npm run dev` at the root of the project folder. This will build and run the website locally.
 7. Once the build is complete, you can head over to http://localhost:4321.
+
+> [!WARNING] 
+> When creating the files above be sure to replace the `[placeholder]` values with the ones you've been given
 
 ---
 
