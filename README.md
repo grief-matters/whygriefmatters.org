@@ -30,7 +30,8 @@ We welcome contributions of all sizes and skill levels. There are a couple of di
     CLERK_SECRET_KEY="sk_test_[key]"
    ```
 
-   > [!Note] Replacing the values with the ones you've been given
+   > [!Note]
+   > Replacing the values with the ones you've been given
 
 4. Create a file named `.dev.vars` in the root of your project with the contents:
 
@@ -39,7 +40,8 @@ We welcome contributions of all sizes and skill levels. There are a couple of di
    CLERK_SECRET_KEY="sk_test_[key]"
    ```
 
-   > [!Note] Replacing the values with the ones you've been given
+   > [!Note]
+   > Replacing the values with the ones you've been given
 
 5. Run `npm install` at the root of the project to install all dependencies.
 6. Run `npm run dev` at the root of the project folder. This will build and run the website locally.
