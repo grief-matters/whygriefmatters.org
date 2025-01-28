@@ -2,7 +2,6 @@
 import startCase from "lodash/startCase";
 
 import type { InternetResourcePageListing } from "@model/internetResource";
-import { wgmDesignSystem as ds } from "@common/design-system";
 
 import Tag from "@ui/primitives/Tag.astro";
 import TitleLink from "../primitives/TitleLink.astro";
@@ -23,6 +22,22 @@ const date = new Date(props.resource.lastUpdated).toLocaleDateString("en-US", {
 });
 
 const showTags = props.resource.hasSpanishVersion || props.resource.rating;
+
+const sourceUrlRegEx = /^(https?:\/\/(?:www\.)?[^\/]+)/i;
+const sourceNameRegEx = /^(?:https?:\/\/)?(?:www\.)?([^\/]+)/i;
+
+const source = props.resource.sourceWebsite ?? {
+  resourceUrl: props.resource.resourceUrl.match(sourceUrlRegEx)?.[1] ?? null,
+  name: props.resource.resourceUrl.match(sourceNameRegEx)?.[1] ?? null,
+};
+
+const urlsToExclude = ["https://apps.apple.com", "https://podcasts.apple.com"];
+
+// Ideally any resource that needed a source would have one but that will never be the case
+const showSource =
+  props.resource.type !== "website" &&
+  source.resourceUrl !== null &&
+  !urlsToExclude.includes(source.resourceUrl);
 ---
 
 <article>
@@ -37,11 +52,11 @@ const showTags = props.resource.hasSpanishVersion || props.resource.rating;
     target="_blank"
   />
   {
-    props.resource.sourceWebsite && (
+    showSource && (
       <Subtitle class="mt-1">
         {`From `}
         <a
-          href={props.resource.sourceWebsite.resourceUrl}
+          href={source.resourceUrl}
           rel="noopener"
           target="_blank"
           class:list={[
@@ -49,12 +64,11 @@ const showTags = props.resource.hasSpanishVersion || props.resource.rating;
             "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
           ]}
         >
-          {props.resource.sourceWebsite.name}
+          {source.name}
         </a>
       </Subtitle>
     )
   }
-
   {
     props.resource.description && (
       <div class="max-w-3xl">
