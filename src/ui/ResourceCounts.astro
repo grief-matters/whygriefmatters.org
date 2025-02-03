@@ -52,10 +52,12 @@ const sortFn = (a: InternetResourceType, b: InternetResourceType) => {
               cardProps={{ resourceType: resourceType ?? undefined }}
             >
               <span class="flex space-x-2">
-                <>
-                  <span>{pluralize(startCase(resourceType))}</span>
-                  <span>{props.resourceTypesCounts[resourceType]}</span>
-                </>
+                <span>
+                  {resourceType === "peerSupport"
+                    ? startCase(resourceType)
+                    : pluralize(startCase(resourceType))}
+                </span>
+                <span>{props.resourceTypesCounts[resourceType]}</span>
               </span>
             </CardLink>
           ))}
@@ -78,10 +80,8 @@ const sortFn = (a: InternetResourceType, b: InternetResourceType) => {
               cardProps={{ resourceType: resourceType ?? undefined }}
             >
               <span class="flex space-x-2">
-                <>
-                  <span>{pluralize(startCase(resourceType))}</span>
-                  <span>{props.resourceTypesCounts[resourceType]}</span>
-                </>
+                <span>{pluralize(startCase(resourceType))}</span>
+                <span>{props.resourceTypesCounts[resourceType]}</span>
               </span>
             </CardLink>
           ))}
