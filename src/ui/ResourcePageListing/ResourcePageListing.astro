@@ -41,34 +41,51 @@ const showSource =
 ---
 
 <article>
-  <FancyLabel
-    label={startCase(props.resource.type)}
-    resourceType={props.resource.type}
-  />
+  <div class:list={[
+    "flex justify-between"
+  ]}>
+    <FancyLabel
+      label={startCase(props.resource.type)}
+      resourceType={props.resource.type}
+    />
+    <div class:list={[
+      "flex flex-wrap justify-between",
+      "w-1/2"
+    ]}>
+      {
+        showSource && (
+          <Subtitle class="mt-1">
+            {`From `}
+            <a
+              href={source.resourceUrl}
+              rel="noopener"
+              target="_blank"
+              class:list={[
+                "underline underline-offset-2",
+                "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
+              ]}
+            >
+              {source.name}
+            </a>
+          </Subtitle>
+        )
+      }
+      <Subtitle class="mt-1" as="div">
+        <span>
+          {`Last reviewed: `}
+          <time datetime={props.resource.lastUpdated}>{date}</time>
+        </span>
+      </Subtitle>
+    </div>
+  </div>
+  
   <TitleLink
     label={props.resource.title}
     href={props.resource.resourceUrl}
     rel="noopener"
     target="_blank"
   />
-  {
-    showSource && (
-      <Subtitle class="mt-1">
-        {`From `}
-        <a
-          href={source.resourceUrl}
-          rel="noopener"
-          target="_blank"
-          class:list={[
-            "underline underline-offset-2",
-            "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
-          ]}
-        >
-          {source.name}
-        </a>
-      </Subtitle>
-    )
-  }
+  
   {
     props.resource.description && (
       <div class="max-w-3xl">
@@ -77,12 +94,7 @@ const showSource =
     )
   }
 
-  <Subtitle class="mt-1" as="div">
-    <span>
-      {`Last reviewed: `}
-      <time datetime={props.resource.lastUpdated}>{date}</time>
-    </span>
-  </Subtitle>
+  
 
   {
     showTags && (
