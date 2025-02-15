@@ -12,6 +12,14 @@ interface Props {
   contactMethod: ContactMethod;
 }
 
+function toTwelveHourFormat(time: string) {
+  let [hours, minutes] = time.split(":");
+  let formattedHours = parseInt(hours);
+  let timePeriod = formattedHours >= 12 ? "PM" : "AM";
+  formattedHours = formattedHours >= 13 ? formattedHours % 12 : formattedHours;
+  return `${formattedHours}:${minutes} ${timePeriod}`;
+}
+
 function getAvailabilityText(availability: Availability) {
   let dayText;
   switch (true) {
@@ -40,7 +48,7 @@ function getAvailabilityText(availability: Availability) {
   ) {
     timeText = "24 hours a day";
   } else {
-    timeText = `${availability.availableFrom} - ${availability.availableTo}`;
+    timeText = `${toTwelveHourFormat(availability.availableFrom)} - ${toTwelveHourFormat(availability.availableTo)}`;
   }
 
   return `${timeText}, ${dayText}`;
