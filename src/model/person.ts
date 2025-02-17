@@ -4,17 +4,26 @@ import { zSanityImage } from "./image";
 import { zPortableText } from "./portableText";
 
 export const gPersonProjection = groq`
-    fullName,
-    role,
-    avatar,
-    bio
+  fullName,
+  shortBio,
+  personalStory,
+  socials,
+  role,
+  avatar
 `;
+
+const zSocials = z.object({
+  linkedIn: z.string().url().nullable(),
+  email: z.string().email().nullable(),
+});
 
 export const zPerson = z.object({
   fullName: z.string(),
   role: z.string().nullable(),
-  bio: zPortableText,
+  shortBio: zPortableText,
+  personalStory: zPortableText.nullable(),
   avatar: zSanityImage.nullable(),
+  socials: zSocials.nullable(),
 });
 
 export type Person = z.infer<typeof zPerson>;
