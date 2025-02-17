@@ -30,6 +30,7 @@ export async function getStaticPaths() {
 }
 
 const props = Astro.props;
+console.dir(props.contentGroup, { depth: 6 });
 ---
 
 <MainLayout>
