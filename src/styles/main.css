@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   @font-face {
@@ -28,8 +26,8 @@
   }
 }
 
-@layer utilities {
-  .prose-balance p {
-    text-wrap: balance;
-  }
+@theme {
+  --font-serif: "Source Serif", Charter, "Bitstream Charter", "Sitka Text",
+    Cambria, serif;
+  --font-sans: Optima, Candara, "Noto Sans", source-sans-pro, sans-serif;
 }
