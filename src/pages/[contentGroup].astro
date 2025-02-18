@@ -8,11 +8,7 @@ import MainLayout from "@layouts/MainLayout.astro";
 import Container from "@ui/primitives/Container.astro";
 import PageHeader from "@ui/PageHeader.astro";
 import PortableTextContentBlock from "@ui/PortableTextContentBlock.astro";
-import FeaturedCrisisResource from "@ui/composites/FeaturedCrisisResource.astro";
-import CardLink from "@ui/CardLink.astro";
-import CardLinkListContainer from "@ui/CardLinkListContainer.astro";
-import { getRouteFromDynamicResourcePageLink } from "@common/route";
-import Heading from "@ui/primitives/Heading.astro";
+import ContentBlockRenderer from "@ui/ContentBlockRenderer.astro";
 
 interface Props {
   contentGroup: ContentGroup;
@@ -30,7 +26,6 @@ export async function getStaticPaths() {
 }
 
 const props = Astro.props;
-console.dir(props.contentGroup, { depth: 6 });
 ---
 
 <MainLayout>
@@ -40,73 +35,23 @@ console.dir(props.contentGroup, { depth: 6 });
     }}
     image={props.contentGroup.image ?? undefined}
   />
-  <Container>
-    {
-      props.contentGroup.description && (
-        <PortableTextContentBlock
-          portableText={props.contentGroup.description}
-        />
-      )
-    }
-    {
-      props.contentGroup.blocks.map((block) => (
-        <section class="p-3 lg:mb-6">
-          {block.title && (
-            <Heading as="h2" size="xl2" class:list={["mb-3"]}>
-              {block.title}
-            </Heading>
-          )}
-          {block.content.map((contentItem) => {
-            switch (contentItem.contentType) {
-              case "accessibleImage":
-                return <div>accessibleImage</div>;
-              case "featuredCrisisResource":
-                return (
-                  <div class="pb-6">
-                    <FeaturedCrisisResource
-                      crisisResource={contentItem.resource}
-                      showLogo={contentItem.showImage ?? false}
-                    />
-                  </div>
-                );
-              case "featuredResource":
-                return <div>featuredResource</div>;
-              case "resourceLinks":
-                return <div>resourceLinks</div>;
-              case "resourcePageLinks":
-                return (
-                  <CardLinkListContainer>
-                    {contentItem.links.map((pageLink) => (
-                      <CardLink
-                        href={
-                          pageLink.linkType === "relativeLink"
-                            ? pageLink.url
-                            : getRouteFromDynamicResourcePageLink(pageLink)
-                        }
-                      >
-                        {pageLink.label}
-                      </CardLink>
-                    ))}
-                  </CardLinkListContainer>
-                );
-              case "richTextContentBlock":
-                return <div>richTextContentBlock</div>;
-              case "rowOfThree":
-                return <div>rowOfThree</div>;
-              case "rowOfThreeFeaturedResources":
-                return <div>rowOfThreeFeaturedResources</div>;
-              case "topicCollectionContentBlockNew":
-                return <div>topicCollectionContentBlockNew</div>;
-              case "topicContentBlock":
-                return <div>topicContentBlock</div>;
-            }
-          })}
-        </section>
-      ))
-    }
-    {
-      // TODO
-      props.contentGroup.jumpLink && <div>[[FOOTER LINK]]</div>
-    }
-  </Container>
+
+  {
+    props.contentGroup.description && (
+      <PortableTextContentBlock portableText={props.contentGroup.description} />
+    )
+  }
+  {
+    props.contentGroup.blocks.map((contentBlock) => (
+      <section class="p-3 lg:mb-6 odd:bg-stone-100">
+        <Container>
+          <ContentBlockRenderer contentBlock={contentBlock} />
+        </Container>
+      </section>
+    ))
+  }
+  {
+    // TODO
+    props.contentGroup.jumpLink && <div>[[FOOTER LINK]]</div>
+  }
 </MainLayout>

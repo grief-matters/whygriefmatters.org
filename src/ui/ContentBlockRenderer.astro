@@ -1,0 +1,152 @@
+---
+import kebabCase from 'lodash/kebabCase';
+
+import { getImageUrlBuilder } from '@common/client';
+import { getRouteFromDynamicResourcePageLink } from '@common/route';
+
+import CardLink from './CardLink.astro';
+import CardLinkListContainer from './CardLinkListContainer.astro';
+import EmphasizedEllipsisText from './primitives/EmphasizedEllipsisText.astro';
+import FeaturedCrisisResource from './composites/FeaturedCrisisResource.astro';
+import Heading from './primitives/Heading.astro'
+import Link from './primitives/Link.astro';
+import PersonCard from './composites/PersonCard.astro';
+import RichTextContentBlock from "./PortableTextContentBlock.astro";
+import TopicCollectionContentBlock from './TopicCollectionContentBlock.astro';
+
+import type { ContentBlock } from '@model/contentBlock'
+
+interface Props {
+  contentBlock: ContentBlock
+}
+
+const { contentBlock } = Astro.props;
+---
+{contentBlock.title && (
+  <Heading as="h2" size="xl2" class:list={["mb-3 text-center"]}>
+    {contentBlock.title}
+  </Heading>
+)}
+{contentBlock.content.map((contentItem) => {
+  console.log(contentItem)
+  switch (contentItem.contentType) {
+    case "accessibleImage":
+      return (
+        <div class="p-3">
+          <img
+            src={getImageUrlBuilder(contentItem.image)
+              .width(640)
+              .height(450)
+              .url()}
+            alt={contentItem.altText}
+          />
+        </div>
+      )
+    case "featuredCrisisResource":
+      return (
+        <div class="pb-6">
+          <FeaturedCrisisResource
+            crisisResource={contentItem.resource}
+            showLogo={contentItem.showImage ?? false}
+          />
+        </div>
+      )
+    case "featuredResource":
+      return (<></>)
+    case "person":
+      return (
+        <>
+          <PersonCard person={contentItem}/>
+          {
+            contentItem.personalStory !== null && (
+              <div class="mx-auto max-w-fit">
+                <Link size='xl' href={`${kebabCase(contentItem.fullName)}`}>
+                  <EmphasizedEllipsisText text='Read More'/>
+                </Link>
+              </div>
+            )
+          }
+        </>
+      )
+      case "personGroup":
+        return (
+          <div>
+            <Heading as="h3" size="xl2">
+              {contentItem.name}
+            </Heading>
+          {contentItem.members.map(person => (
+            <>
+            <PersonCard person={person}/>
+            {
+              person.personalStory !== null && (
+                <div class="mx-auto max-w-fit mb-6">
+                  <Link size='xl' href={`${kebabCase(person.fullName)}`}>
+                    <EmphasizedEllipsisText text='Read More'/>
+                  </Link>
+                </div>
+              )
+            }
+            </>
+          ))}
+        </div>
+      )
+    case "relativeLink":
+      return (
+      <div class="mx-auto text-center pt-6 pb-3">
+        <Link href={contentItem.url} size="xl">
+          <EmphasizedEllipsisText
+            text={contentItem.label}
+          />
+        </Link>
+      </div>
+      )
+    case "resourceLinks":
+      return (
+      <div class:list={["flex flex-wrap justify-center gap-4", "p-3"]}>
+        {contentItem.resources.map((link) => (
+          <CardLink
+            href={link.url}
+            cardProps={{
+              resourceType: link.type ?? undefined
+            }}
+            external
+          >
+            {link.title}
+          </CardLink>
+        ))}
+      </div>
+      )
+    case "resourcePageLinks":
+      return (
+        <CardLinkListContainer>
+          {contentItem.links.map((pageLink) => (
+            <CardLink
+              href={
+                pageLink.linkType === "relativeLink"
+                  ? pageLink.url
+                  : getRouteFromDynamicResourcePageLink(pageLink)
+              }
+            >
+              {pageLink.label}
+            </CardLink>
+          ))}
+        </CardLinkListContainer>
+      )
+    case "richTextContentBlock":
+      return (
+        <RichTextContentBlock portableText={contentItem.portableText} classList={["text-center"]}/>
+      )
+    case "rowOfThree":
+      return (<></>)
+    case "rowOfThreeFeaturedResources":
+      return (<></>)
+    case "topicCollectionContentBlockNew":
+      return (
+        <div class="mx-3">
+          <TopicCollectionContentBlock topics={contentItem.topics} />
+        </div>
+      )
+    case "topicContentBlock":
+      return (<></>)
+  }
+})}

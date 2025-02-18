@@ -30,5 +30,12 @@ const borderColorClass = props.resourceType
     ...(props.additiveClasses ?? []),
   ]}
 >
-  <div class:list={["border border-b-0 border-slate-100 h-full"]}><slot /></div>
+  <div
+    class:list={[
+      "border border-b-0 border-slate-100",
+      props.fullHeight ? "h-full" : null,
+    ]}
+  >
+    <slot />
+  </div>
 </div>

@@ -12,6 +12,12 @@ export const gPersonProjection = groq`
   avatar
 `;
 
+export const gPersonPagesQuery = groq`
+  *[_type == "person" && defined(personalStory)]{
+    ${gPersonProjection}
+  }
+`;
+
 const zSocials = z.object({
   linkedIn: z.string().url().nullable(),
   email: z.string().email().nullable(),
