@@ -62,11 +62,6 @@ import {
   type CoreContentGroup,
 } from "@model/coreContentGroup";
 import {
-  gAboutPageQuery,
-  zAboutPage,
-  type AboutPageData,
-} from "@model/aboutPage";
-import {
   gUserEvaluation,
   zUserEvaluation,
   type UserEvaluation,
@@ -78,6 +73,7 @@ import {
   type ContentGroup,
 } from "@model/contentGroup";
 import { isReservedSlug, templatingSlugs } from "./reserved-slugs";
+import { gPersonPagesQuery, zPerson, type Person } from "@model/person";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -348,6 +344,15 @@ export async function getContentGroupPagesData(): Promise<ContentGroup[]> {
   return contentGroupPagesData;
 }
 
+export async function getPersonPagesData(): Promise<Person[]> {
+  const client = getClient();
+  const result = await client
+    .fetch(gPersonPagesQuery)
+    .then((result) => zPerson.array().parse(result));
+
+  return result;
+}
+
 /**
  * Given a Sanity image source, returns a Sanity ImageUrlBuilder object
  *
@@ -410,19 +415,6 @@ export async function getFooterData(): Promise<FooterData> {
     .then((result) => zFooterData.parse(result));
 
   return data;
-}
-
-/**
- * Get data for About Page content type
- * @returns - All data required to build the ABout Page
- */
-export async function getAboutPageData(): Promise<any> {
-  const client = getClient();
-  // const data = await client
-  //   .fetch(gAboutPageQuery)
-  //   .then((result) => zAboutPage.parse(result));
-
-  return {};
 }
 
 /**

@@ -14,6 +14,8 @@ import {
   zTopic,
 } from "./topic";
 import { gCrisisResourceProjection, zCrisisResource } from "./crisisResource";
+import { gPersonProjection, zPerson } from "./person";
+import { zPersonGroup } from "./personGroup";
 
 export const zRichTextContentBlock = z.object({
   portableText: zPortableText,
@@ -167,7 +169,25 @@ export const gContentBlocksProjection = groq`
     resource->{
       ${gCrisisResourceProjection}
     }
-  }
+  },
+  _type == "relativeLink" => {
+    "contentType": _type,
+    label,
+    url
+  },
+  _type == "reference" => @->{
+    _type == "person" => {
+      "contentType": _type,
+      ${gPersonProjection}
+    },
+    _type == "personGroup" => {
+      "contentType": _type,
+      name,
+      members[]->{
+        ${gPersonProjection}
+      }
+    }
+  },
 `;
 
 export const zTopicCollectionContentBlock = z.object({
@@ -193,6 +213,9 @@ export const zContent = z.discriminatedUnion("contentType", [
   zTopicCollectionContentBlock.extend({
     contentType: z.literal("topicCollectionContentBlockNew"),
   }),
+  zRelativePageLink.extend({ contentType: z.literal("relativeLink") }),
+  zPerson.extend({ contentType: z.literal("person") }),
+  zPersonGroup.extend({ contentType: z.literal("personGroup") }),
 ]);
 
 export const zContentBlock = z.object({

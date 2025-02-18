@@ -1,0 +1,56 @@
+---
+import kebabCase from "lodash/kebabCase";
+
+import { getPersonPagesData } from "@common/client";
+
+import MainLayout from "@layouts/MainLayout.astro";
+
+import Container from "@ui/primitives/Container.astro";
+import Heading from "@ui/primitives/Heading.astro";
+import PersonCard from "@ui/composites/PersonCard.astro";
+import PortableTextContentBlock from "@ui/PortableTextContentBlock.astro";
+
+import type { Person } from "@model/person";
+
+interface Props {
+  person: Person;
+}
+
+export async function getStaticPaths() {
+  const personPagesData = await getPersonPagesData();
+
+  return personPagesData.map((p) => ({
+    params: { person: kebabCase(p.fullName) },
+    props: {
+      person: p,
+    },
+  }));
+}
+
+const props = Astro.props;
+---
+
+<MainLayout>
+  <Container>
+    <div class="mt-3">
+      <PersonCard person={props.person} />
+    </div>
+  </Container>
+  <div class="bg-stone-100 p-4 py-6">
+    <Container>
+      {
+        props.person.personalStory && (
+          <>
+            <Heading as="h2" size="xl3" class:list={"text-center mb-3"}>
+              {"My Personal Journey"}
+            </Heading>
+            <PortableTextContentBlock
+              portableText={props.person.personalStory}
+              classList={["text-center"]}
+            />
+          </>
+        )
+      }
+    </Container>
+  </div>
+</MainLayout>
