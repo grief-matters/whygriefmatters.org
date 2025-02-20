@@ -27,3 +27,9 @@
         format("woff-variations");
   }
 }
+
+@layer utilities {
+  .prose-balance p {
+    text-wrap: balance;
+  }
+}

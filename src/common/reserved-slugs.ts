@@ -9,7 +9,6 @@ export const reservedSlugs: readonly string[] = [
   ...internetResourceTypes,
   ...Object.values(templatingSlugs),
   "contribute",
-  "about",
   "donate",
 ] as const;
 
