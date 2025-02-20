@@ -79,10 +79,10 @@ const bgClass = bgClasses[adjustedIndex];
 
             case "rowOfThree":
               return (
-                <div class="mb-3 p-3">
-                  <div class="image-carousel">
-                    {contentItem.images.map((image) => (
-                      <div class="carousel-item">
+              <div class:list={["mb-3 p-3"]}>
+                  <div class:list={["flex gap-6"]}>
+                    {contentItem.images.map((image, index) => (
+                      <div class:list={[`shrink-0 `]}>
                         <img
                           src={getImageUrlBuilder(image.image).width(640).height(450).url()}
                           alt={image.altText}
@@ -174,29 +174,3 @@ const bgClass = bgClasses[adjustedIndex];
     }
   </div>
 </section>
-<style>
-  .image-carousel {
-    display: flex;
-    overflow: hidden;
-    gap: 24px;
-  }
-
-  .carousel-item {
-    flex-shrink: 0;
-    width: 100%; /* Default: 1 image */
-  }
-
-  /* Show 2 images when screen width allows */
-  @media (min-width: 640px) {
-    .carousel-item {
-      width: calc(50% - 5px); /* Adjust for gap */
-    }
-  }
-
-  /* Show 3 images when screen width allows */
-  @media (min-width: 1024px) {
-    .carousel-item {
-      width: calc(33.33% - 7px); /* Adjust for gap */
-    }
-  }
-</style>
