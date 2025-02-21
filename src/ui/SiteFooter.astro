@@ -1,7 +1,9 @@
 ---
 import { getFooterData, getImageUrlBuilder } from "@common/client";
-import PortableTextContentBlock from "./typography/PortableTextContentBlock.astro";
 import { wgmDesignSystem as ds } from "@common/design-system";
+import PortableTextContentBlock from "./typography/PortableTextContentBlock.astro";
+import TextBlock from "./typography/TextBlock.astro";
+import type { BaseTextBlockProps } from "./typography/helpers";
 
 const footerData = await getFooterData();
 const lightHeaderLogo = footerData
@@ -14,11 +16,19 @@ const lightHeaderLogo = footerData
 const copyrightNotice = `\u00A9 ${footerData.copyrightDate.getFullYear()} ${
   footerData.copyrightNotice
 }`;
+
+const textBlockProps: BaseTextBlockProps = {
+  resetBaseClassLists: { p: true },
+  stylableElementClassLists: {
+    p: ["text-xs font-serif mb-3"],
+  },
+  variant: "contrast",
+};
 ---
 
 <footer class:list={[ds.background.color?.brand?.blue, "py-6 -z-10"]}>
   <div class="mx-auto container px-3">
-    <a href="/" class="block w-64 max-w-full">
+    <a href="/" class="block w-64 max-w-full mb-2">
       {
         lightHeaderLogo ? (
           <img
@@ -31,22 +41,20 @@ const copyrightNotice = `\u00A9 ${footerData.copyrightDate.getFullYear()} ${
         )
       }
     </a>
-    <p
-      class:list={[
-        "font-serif text-sm",
-        "mt-2 mb-6",
-        ds.typography.color.primary.contrast,
-      ]}
-    >
-      {copyrightNotice}
-    </p>
-    <div class="border-t-1 pt-6 border-white">
-      {/* TODO - theme/variants etc */}
+    <div class="border-t-1 border-white pt-3 pb-1">
+      <TextBlock {...textBlockProps}>
+        {footerData.nonprofitNotice}
+      </TextBlock>
+      <TextBlock {...textBlockProps}>
+        {copyrightNotice}
+      </TextBlock>
+    </div>
+    <div class="border-t-1 border-white pt-6">
       <PortableTextContentBlock
         portableText={footerData.legalText}
         resetBaseClassLists={{ p: true }}
         stylableElementClassLists={{
-          p: ["text-sm font-serif font-light mb-3"],
+          p: ["text-xs font-serif font-light mb-3"],
         }}
         variant="contrast"
       />

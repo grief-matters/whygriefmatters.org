@@ -5,11 +5,12 @@ import { zPortableText } from "./portableText";
 import { zImage } from "./image";
 
 export const zFooterData = z.object({
-    logo: zImage,
-    copyrightDate: z.coerce.date(),
-    copyrightNotice: z.string(),
-    organizationName: z.string(),
-    legalText: zPortableText,
+  logo: zImage,
+  copyrightDate: z.coerce.date(),
+  copyrightNotice: z.string(),
+  nonprofitNotice: z.string(),
+  organizationName: z.string(),
+  legalText: zPortableText,
 });
 
 export const gFooterDataQuery = groq`*[_id == "organization-singleton"][0]{
@@ -21,6 +22,7 @@ export const gFooterDataQuery = groq`*[_id == "organization-singleton"][0]{
     copyrightNotice,
     "organizationName": legalName,
     "legalText": smallPrint,
+    nonprofitNotice
   }`;
 
 export type FooterData = z.infer<typeof zFooterData>;
