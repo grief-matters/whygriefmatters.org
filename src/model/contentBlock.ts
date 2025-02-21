@@ -17,7 +17,7 @@ import { gCrisisResourceProjection, zCrisisResource } from "./crisisResource";
 import { gPersonProjection, zPerson } from "./person";
 import { zPersonGroup } from "./personGroup";
 
-export const zRichTextContentBlock = z.object({
+export const zPortableTextContentBlock = z.object({
   portableText: zPortableText,
 });
 
@@ -198,7 +198,7 @@ export const zContent = z.discriminatedUnion("contentType", [
   zImage.extend({ contentType: z.literal("accessibleImage") }),
   zResourceLinks.extend({ contentType: z.literal("resourceLinks") }),
   zResourcePageLinks.extend({ contentType: z.literal("resourcePageLinks") }),
-  zRichTextContentBlock.extend({
+  zPortableTextContentBlock.extend({
     contentType: z.literal("richTextContentBlock"),
   }),
   zRowOfThree.extend({ contentType: z.literal("rowOfThree") }),
@@ -226,7 +226,9 @@ export const zContentBlock = z.object({
 
 export type Content = z.infer<typeof zContent>;
 export type ContentBlock = z.infer<typeof zContentBlock>;
-export type RichTextContentBlock = z.infer<typeof zRichTextContentBlock>;
+export type PortableTextContentBlock = z.infer<
+  typeof zPortableTextContentBlock
+>;
 export type TopicContentBlock = z.infer<typeof zTopicContentBlock>;
 export type TopCollectionContentBlock = z.infer<
   typeof zTopicCollectionContentBlock

@@ -11,7 +11,7 @@ import FeaturedCrisisResource from './composites/FeaturedCrisisResource.astro';
 import Heading from './primitives/Heading.astro'
 import Link from './primitives/Link.astro';
 import PersonCard from './composites/PersonCard.astro';
-import RichTextContentBlock from "./PortableTextContentBlock.astro";
+import PortableTextContentBlock from "./typography/PortableTextContentBlock.astro";
 import TopicCollectionContentBlock from './TopicCollectionContentBlock.astro';
 
 import type { ContentBlock } from '@model/contentBlock'
@@ -28,7 +28,6 @@ const { contentBlock } = Astro.props;
   </Heading>
 )}
 {contentBlock.content.map((contentItem) => {
-  console.log(contentItem)
   switch (contentItem.contentType) {
     case "accessibleImage":
       return (
@@ -134,7 +133,7 @@ const { contentBlock } = Astro.props;
       )
     case "richTextContentBlock":
       return (
-        <RichTextContentBlock portableText={contentItem.portableText} classList={["text-center"]}/>
+        <PortableTextContentBlock portableText={contentItem.portableText} />
       )
     case "rowOfThree":
       return (<></>)

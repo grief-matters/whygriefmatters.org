@@ -1,4 +1,6 @@
 ---
+import TextBlock from "./typography/TextBlock.astro";
+
 interface Props {
   imageUrl: string;
   children: any;
@@ -9,8 +11,17 @@ const { imageUrl } = Astro.props;
 const bgVar = `url(${imageUrl})`;
 ---
 
-<section class:list={[`hero-img bg-center bg-no-repeat bg-cover `, "h-96"]}>
+<section
+  class:list={[`hero-img bg-center bg-no-repeat bg-cover `, "h-96", "relative"]}
+>
   <slot />
+  <p
+    class:list={[
+      "absolute bottom-0 text-stone-50/75 px-2 mb-1 uppercase text-sm",
+    ]}
+  >
+    {"A nonprofit organization"}
+  </p>
 </section>
 
 <style define:vars={{ bgVar }}>

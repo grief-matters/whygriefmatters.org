@@ -2,11 +2,11 @@
 import type { TopicContentBlock } from "@model/contentBlock";
 
 import CMSImage from "@ui/primitives/CMSImage.astro";
-import Text from "@ui/primitives/Text.astro";
 
 import MainNavLink from "./MainNavLink.astro";
 import MainNavRecursiveTopicTree from "./MainNavRecursiveTopicTree.astro";
 import Card from "@ui/primitives/Card.astro";
+import TextBlock from "@ui/typography/TextBlock.astro";
 
 interface Props {
   topicContentBlock: TopicContentBlock;
@@ -28,7 +28,7 @@ const { topicContentBlock } = Astro.props;
           href={`/${topicContentBlock.topic.slug}`}
         />
         {topicContentBlock.showDescription && (
-          <Text>{topicContentBlock.topic.description}</Text>
+          <TextBlock>{topicContentBlock.topic.description}</TextBlock>
         )}
       </>
     )

@@ -1,11 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   @font-face {
     font-family: "Source Serif";
-    font-weight: 200 900;
+    font-weight: 100 900;
     font-style: normal;
     font-stretch: normal;
     src:
@@ -17,7 +15,7 @@
 
   @font-face {
     font-family: "Source Serif";
-    font-weight: 200 900;
+    font-weight: 100 900;
     font-style: italic;
     font-stretch: normal;
     src:
@@ -28,8 +26,24 @@
   }
 }
 
-@layer utilities {
-  .prose-balance p {
-    text-wrap: balance;
+/* https://modernfontstacks.com */
+@theme {
+  /* Transitional font stack */
+  --font-serif: "Source Serif", "Charter", "Bitstream Charter", "Sitka Text",
+    "Cambria", serif;
+  /* Humanist font stack */
+  --font-sans: "Optima", "Candara", "Noto Sans", source-sans-pro, sans-serif;
+  /* Neo-grotesque font stack */
+  --font-ng: "Inter", "Roboto", "Helvetica Neue", "Arial Nova", "Nimbus Sans",
+    Arial, sans-serif;
+}
+
+.wgm-text-pretty {
+  text-wrap: pretty;
+}
+
+@supports not (text-wrap: pretty) {
+  .wgm-text-pretty {
+    text-wrap: balance; /* Fallback for Safari */
   }
 }

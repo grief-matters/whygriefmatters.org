@@ -2,7 +2,7 @@
 import { getImageUrlBuilder } from "@common/client";
 import { getRouteFromDynamicResourcePageLink } from "@common/route";
 
-import RichTextContentBlock from "./PortableTextContentBlock.astro";
+import PortableTextContentBlock from "./typography/PortableTextContentBlock.astro";
 import FeaturedResources from "./FeaturedResources.astro";
 import MobileCarousel from "./MobileCarousel/MobileCarousel.astro";
 import MobileCarouselItem from "./MobileCarousel/MobileCarouselItem.astro";
@@ -56,8 +56,7 @@ const featurePanelId = crypto.randomUUID();
     {
       featuredContent.description && (
         <Container>
-          <RichTextContentBlock
-            classList={["font-serif text-center prose", "max-w-4xl px-3 mx-auto mb-6"]}
+          <PortableTextContentBlock
             portableText={featuredContent.description}
           />
         </Container>
@@ -70,7 +69,7 @@ const featurePanelId = crypto.randomUUID();
             case "richTextContentBlock":
               return (
                 <div class="max-w-prose px-3 my-6 m-auto prose font-serif text-center text-sky-800">
-                  <RichTextContentBlock portableText={contentItem.portableText} />
+                  <PortableTextContentBlock portableText={contentItem.portableText} />
                 </div>
               );
 

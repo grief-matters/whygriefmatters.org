@@ -5,9 +5,6 @@ import {
   UserButton,
   SignInButton,
 } from "@clerk/astro/components";
-
-import { wgmDesignSystem as ds } from "@common/design-system";
-import Text from "@ui/primitives/Text.astro";
 ---
 
 <div>
@@ -20,21 +17,10 @@ import Text from "@ui/primitives/Text.astro";
           "text-start px-3",
           "rounded",
           "sm:w-full sm:text-center sm:py-1",
+          "text-stone-50 font-medium",
         ]}
       >
-        <Text
-          class:list={[
-            "font-bold",
-            ds.decoration.transition,
-            ds.decoration.color.primary.hover,
-            "hover:decoration-stone-50",
-            "text-stone-50 font-medium",
-            "text-base",
-          ]}
-          as="span"
-        >
-          {"Sign In"}
-        </Text>
+        {"Sign In"}
       </button>
     </SignInButton>
   </SignedOut>

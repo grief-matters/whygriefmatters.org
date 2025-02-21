@@ -12,6 +12,7 @@ import {
 import CardLink from "./CardLink.astro";
 import Text from "./primitives/Text.astro";
 import { getRouteFromDynamicResourcePageLink } from "@common/route";
+import TextBlock from "./typography/TextBlock.astro";
 
 export type ResourceTypesCounts = Partial<Record<InternetResourceType, number>>;
 
@@ -40,7 +41,7 @@ const sortFn = (a: InternetResourceType, b: InternetResourceType) => {
   {
     primary.length > 0 && (
       <>
-        <Text class="my-2">{"Primary resources"}</Text>
+        <TextBlock>{"Primary resources"}</TextBlock>
         <div class:list={["flex flex-wrap gap-4 mb-3"]}>
           {primary.sort(sortFn).map((resourceType) => (
             <CardLink
@@ -68,7 +69,7 @@ const sortFn = (a: InternetResourceType, b: InternetResourceType) => {
   {
     secondary.length > 0 && (
       <>
-        <Text class="my-2">{"Explore more options"}</Text>
+        <TextBlock>{"Explore more options"}</TextBlock>
         <div class:list={["flex flex-wrap gap-4 mb-3"]}>
           {secondary.map((resourceType) => (
             <CardLink

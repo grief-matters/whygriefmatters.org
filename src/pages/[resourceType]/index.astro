@@ -5,8 +5,6 @@ import startCase from "lodash/startCase";
 import { internetResourceTypes } from "@model/internetResource";
 import type { ContentGroup } from "@model/contentGroup";
 
-import Text from "@ui/primitives/Text.astro";
-
 import { getResourceTypePagesData } from "@common/client";
 
 import MainLayout from "@layouts/MainLayout.astro";
@@ -14,11 +12,12 @@ import MainLayout from "@layouts/MainLayout.astro";
 import PageHeader from "@ui/PageHeader.astro";
 import Heading from "@ui/primitives/Heading.astro";
 import Container from "@ui/primitives/Container.astro";
-import PortableTextContentBlock from "@ui/PortableTextContentBlock.astro";
+import PortableTextContentBlock from "@ui/typography/PortableTextContentBlock.astro";
 import TopicHierarchyNav from "@ui/TopicHierarchyNav/TopicHierarchyNav.astro";
 import Card from "@ui/primitives/Card.astro";
 import Link from "@ui/primitives/LinkNew.astro";
 import { getRouteFromDynamicResourcePageLink } from "@common/route";
+import TextBlock from "@ui/typography/TextBlock.astro";
 
 interface Props {
   headPartContentGroup: ContentGroup | null;
@@ -94,7 +93,7 @@ const pageTitle =
                   {block.title}
                 </Heading>
               )}
-              {block.description && <Text>{block.description}</Text>}
+              {block.description && <TextBlock>{block.description}</TextBlock>}
               {block.content.map((contentItem) => {
                 switch (contentItem.contentType) {
                   case "topicContentBlock":

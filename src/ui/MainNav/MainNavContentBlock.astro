@@ -4,7 +4,7 @@ import type { Content } from "@model/contentBlock";
 import { getRouteFromDynamicResourcePageLink } from "@common/route";
 import { getImageUrlBuilder } from "@common/client";
 
-import RichTextContentBlock from "@ui/PortableTextContentBlock.astro";
+import PortableTextContentBlock from "@ui/typography/PortableTextContentBlock.astro";
 
 import MainNavTopicCollectionContentBlock from "./MainNavTopicCollectionContentBlock.astro";
 import MainNavTopicContentBlock from "./MainNavTopicContentBlock.astro";
@@ -56,10 +56,7 @@ const { block } = Astro.props;
         case "richTextContentBlock":
           return (
             <div class="mb-3">
-              <RichTextContentBlock
-                classList={["font-serif italic text-xl leading-relaxed"]}
-                portableText={block.portableText}
-              />
+              <PortableTextContentBlock portableText={block.portableText} />
             </div>
           );
         case "rowOfThree":

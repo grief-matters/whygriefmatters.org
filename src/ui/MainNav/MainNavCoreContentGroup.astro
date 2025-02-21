@@ -5,9 +5,8 @@ import CollapsibleContentCloseButton from "@ui/Collapsible/CollapsibleContentClo
 import CollapsibleContentContent from "@ui/Collapsible/CollapsibleContentContent.astro";
 import Card from "@ui/primitives/Card.astro";
 import Heading from "@ui/primitives/Heading.astro";
-import Text from "@ui/primitives/Text.astro";
 import MainNavContentBlock from "./MainNavContentBlock.astro";
-import RichTextContentBlock from "@ui/PortableTextContentBlock.astro";
+import PortableTextContentBlock from "@ui/typography/PortableTextContentBlock.astro";
 import type { CoreContentGroup } from "@model/coreContentGroup";
 import { wgmDesignSystem as ds } from "@common/design-system";
 import { getImageUrlBuilder } from "@common/client";
@@ -37,7 +36,7 @@ const bgPosY = `${(bgImage.hotspot?.y ?? 0) * 100}%`;
     slot="button"
     classList={["block text-start py-3", "sm:w-full sm:text-center sm:py-1"]}
   >
-    <Text
+    <span
       class:list={[
         "font-bold",
         ds.decoration.underline,
@@ -47,12 +46,11 @@ const bgPosY = `${(bgImage.hotspot?.y ?? 0) * 100}%`;
         "decoration-dotted",
         "sm:text-stone-50 sm:font-medium",
         "sm:text-base",
+        "text-2xl",
       ]}
-      size="xl2"
-      as="span"
     >
       {ccg.title}
-    </Text>
+    </span>
   </CollapsibleContentButton>
   <CollapsibleContentContent slot="content">
     <div
@@ -119,7 +117,7 @@ const bgPosY = `${(bgImage.hotspot?.y ?? 0) * 100}%`;
             </Heading>
             <div
               class:list={[
-                "divide-y divide-dashed",
+                "divide-y divide-dashed divide-gray-200",
                 "md:divide-y-0 md:divide-x md:flex ",
               ]}
             >
@@ -163,9 +161,8 @@ const bgPosY = `${(bgImage.hotspot?.y ?? 0) * 100}%`;
                       </Heading>
                     )}
                     {ccg.supplementaryContent.description && (
-                      <RichTextContentBlock
+                      <PortableTextContentBlock
                         portableText={ccg.supplementaryContent.description}
-                        classList={["font-serif mb-3"]}
                       />
                     )}
                     {ccg.supplementaryContent.blocks.map((contentBlock) => (

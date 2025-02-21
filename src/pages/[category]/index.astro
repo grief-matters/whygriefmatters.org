@@ -23,7 +23,6 @@ import MainLayout from "@layouts/MainLayout.astro";
 import Container from "@ui/primitives/Container.astro";
 import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
 import Heading from "@ui/primitives/Heading.astro";
-import Text from "@ui/primitives/Text.astro";
 
 import CardLink from "@ui/CardLink.astro";
 import FeaturedResources from "@ui/FeaturedResources.astro";
@@ -33,6 +32,7 @@ import ResourceCounts, {
   type ResourceTypesCounts,
 } from "@ui/ResourceCounts.astro";
 import ResourcePageListings from "@ui/ResourcePageListing/ResourcePageListings.astro";
+import TextBlock from "@ui/typography/TextBlock.astro";
 
 type SubtopicResources = Record<
   string,
@@ -153,7 +153,7 @@ const showFeatured =
           <Heading as="h3" class:list={["mb-4 font-semibold"]}>
             Underserved Groups
           </Heading>
-          <Text class="mb-3">{`We have identified resources within this topic for the following groups`}</Text>
+          <TextBlock>{`We have identified resources within this topic for the following groups`}</TextBlock>
           <div class:list={["flex flex-wrap gap-4"]}>
             {props.applicablePopulations.map((population) => (
               <CardLink href={`/${params.category}/${population.slug}`}>
