@@ -2,7 +2,6 @@
 import { getCoreContentGroups } from "@common/client";
 import { wgmDesignSystem as ds } from "@common/design-system";
 
-import Text from "@ui/primitives/Text.astro";
 import CollapsibleContent from "@ui/Collapsible/CollapsibleContent.astro";
 import CollapsibleContentButton from "@ui/Collapsible/CollapsibleContentButton.astro";
 import CollapsibleContentCloseButton from "@ui/Collapsible/CollapsibleContentCloseButton.astro";
@@ -108,35 +107,35 @@ const coreContentGroups = await getCoreContentGroups();
             }
           </div>
           <div class="sm:hidden">
-            <a class="block py-1" href="/about">
-              <Text
-                class:list={[
-                  "font-bold",
-                  ds.decoration.underline,
-                  ds.decoration.transition,
-                  ds.decoration.color.primary.hover,
-                  "decoration-dotted",
-                ]}
-                size="xl"
-                as="span"
-              >
-                {"About Us"}
-              </Text>
+            <a
+              href="/about"
+              class:list={[
+                "block",
+                "py-1",
+                "font-bold",
+                ds.decoration.underline,
+                ds.decoration.transition,
+                ds.decoration.color.primary.hover,
+                "decoration-dotted",
+                "text-xl",
+              ]}
+            >
+              {"About Us"}
             </a>
-            <a class="block py-1" href="/contribute">
-              <Text
-                class:list={[
-                  "font-bold",
-                  ds.decoration.underline,
-                  ds.decoration.transition,
-                  ds.decoration.color.primary.hover,
-                  "decoration-dotted",
-                ]}
-                size="xl"
-                as="span"
-              >
-                {"Contribute"}
-              </Text>
+            <a
+              class:list={[
+                "block",
+                "py-1",
+                "font-bold",
+                ds.decoration.underline,
+                ds.decoration.transition,
+                ds.decoration.color.primary.hover,
+                "decoration-dotted",
+                "text-xl",
+              ]}
+              href="/contribute"
+            >
+              {"Contribute"}
             </a>
           </div>
         </div>

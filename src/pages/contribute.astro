@@ -9,8 +9,8 @@ import {
 import MainLayout from "@layouts/MainLayout.astro";
 import AccountButton from "@ui/AccountButton.astro";
 import Heading from "@ui/primitives/Heading.astro";
-import Text from "@ui/primitives/Text.astro";
 import ResourceEvaluation from "@ui/ResourceEvaluation/ResourceEvaluation.astro";
+import TextBlock from "@ui/typography/TextBlock.astro";
 
 const userId = Astro.locals.auth().userId;
 
@@ -34,7 +34,7 @@ export const prerender = false;
     </SignedIn>
     <SignedOut>
       <Heading as="h1" size="xl5">Contribute</Heading>
-      <Text>Contribute to the Why Grief Matters project</Text>
+      <TextBlock>{"Contribute to the Why Grief Matters project"}</TextBlock>
       <div class="w-64 mt-6">
         <AccountButton />
       </div>

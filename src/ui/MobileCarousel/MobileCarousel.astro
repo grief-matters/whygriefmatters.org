@@ -28,7 +28,6 @@ interface Props {}
 
 <script>
   class MobileCarousel extends HTMLElement {
-
     activeSlideIndex: number;
     slides: HTMLElement[];
     controls: HTMLElement[];
@@ -57,8 +56,6 @@ interface Props {}
     handleScroll() {
       const scrollLeft = this.container ? this.container.scrollLeft : 0;
       const slideWidth = this.slides[0].offsetWidth;
-
-      console.log(scrollLeft);
 
       const index = Math.round(scrollLeft / slideWidth);
       if (index !== this.activeSlideIndex) {

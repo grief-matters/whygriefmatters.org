@@ -6,7 +6,7 @@ import {
   zRowOfThreeFeaturedResources,
   zResourcePageLinks,
   zResourceLinks,
-  zRichTextContentBlock,
+  zPortableTextContentBlock,
   zDynamicResourcePageLink,
 } from "./contentBlock";
 
@@ -35,7 +35,7 @@ export const zFeaturedContentContent = z.discriminatedUnion("contentType", [
   zRowOfThreeFeaturedResources.extend({
     contentType: z.literal("rowOfThreeFeaturedResources"),
   }),
-  zRichTextContentBlock.extend({
+  zPortableTextContentBlock.extend({
     contentType: z.literal("richTextContentBlock"),
   }),
   zResourcePageLinks.extend({ contentType: z.literal("resourcePageLinks") }),

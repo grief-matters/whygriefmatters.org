@@ -3,13 +3,13 @@ import { getHomePageData, getImageUrlBuilder } from "@common/client";
 
 import MainLayout from "@layouts/MainLayout.astro";
 
-import RichTextContentBlock from "@ui/PortableTextContentBlock.astro";
+import PortableTextContentBlock from "@ui/typography/PortableTextContentBlock.astro";
 import FeaturePanel from "@ui/FeaturePanel.astro";
 import Hero from "@ui/Hero.astro";
 import Heading from "@ui/primitives/Heading.astro";
-import Text from "@ui/primitives/Text.astro";
 import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
 import Container from "@ui/primitives/Container.astro";
+import TextBlock from "@ui/typography/TextBlock.astro";
 
 const homePageData = await getHomePageData();
 
@@ -60,8 +60,10 @@ const coreValuesBgColors = [
         </Heading>
       </div>
 
-      <RichTextContentBlock
-        classList={["first:prose-p:text-lg", "text-center"]}
+      <PortableTextContentBlock
+        stylableElementClassLists={{
+          p: ["first-of-type:text-lg text-center wgm-text-pretty"],
+        }}
         portableText={homePageData?.org.mission}
       />
     </section>
@@ -97,9 +99,9 @@ const coreValuesBgColors = [
                   {coreValue.title}
                 </Heading>
                 <p class="font-light font-serif italic leading-loose mb-3" />
-                <Text colorScheme="primary" colorSchemeVariant="contrast">
+                <TextBlock variant="contrast">
                   {coreValue.description}
-                </Text>
+                </TextBlock>
               </div>
             </div>
           ))

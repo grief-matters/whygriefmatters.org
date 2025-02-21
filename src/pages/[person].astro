@@ -8,7 +8,7 @@ import MainLayout from "@layouts/MainLayout.astro";
 import Container from "@ui/primitives/Container.astro";
 import Heading from "@ui/primitives/Heading.astro";
 import PersonCard from "@ui/composites/PersonCard.astro";
-import PortableTextContentBlock from "@ui/PortableTextContentBlock.astro";
+import PortableTextContentBlock from "@ui/typography/PortableTextContentBlock.astro";
 
 import type { Person } from "@model/person";
 
@@ -46,7 +46,6 @@ const props = Astro.props;
             </Heading>
             <PortableTextContentBlock
               portableText={props.person.personalStory}
-              classList={["text-center"]}
             />
           </>
         )

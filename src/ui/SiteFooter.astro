@@ -1,6 +1,6 @@
 ---
 import { getFooterData, getImageUrlBuilder } from "@common/client";
-import RichTextContentBlock from "./PortableTextContentBlock.astro";
+import PortableTextContentBlock from "./typography/PortableTextContentBlock.astro";
 import { wgmDesignSystem as ds } from "@common/design-system";
 
 const footerData = await getFooterData();
@@ -40,10 +40,15 @@ const copyrightNotice = `\u00A9 ${footerData.copyrightDate.getFullYear()} ${
     >
       {copyrightNotice}
     </p>
-    <div class="border-t-2 pt-6 text-white">
-      <RichTextContentBlock
-        classList={["text-xs font-serif !prose-invert !max-w-none"]}
+    <div class="border-t-1 pt-6 border-white">
+      {/* TODO - theme/variants etc */}
+      <PortableTextContentBlock
         portableText={footerData.legalText}
+        resetBaseClassLists={{ p: true }}
+        stylableElementClassLists={{
+          p: ["text-sm font-serif font-light mb-3"],
+        }}
+        variant="contrast"
       />
     </div>
   </div>

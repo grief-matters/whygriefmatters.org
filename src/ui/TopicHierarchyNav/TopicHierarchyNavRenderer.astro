@@ -1,6 +1,6 @@
 ---
 import Link from "@ui/primitives/LinkNew.astro";
-import Text from "@ui/primitives/Text.astro";
+import TextBlock from "@ui/typography/TextBlock.astro";
 
 export type NavNode = {
   slug: string;
@@ -31,7 +31,7 @@ const depthIndentationMap = new Map([
       {currentNode.label}
     </Link>
   ) : (
-    <Text class="font-medium">{currentNode.label}</Text>
+    <TextBlock>{currentNode.label}</TextBlock>
   )
 }
 {

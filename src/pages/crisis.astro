@@ -13,7 +13,7 @@ import ResourcePageListingsContainer from "@ui/ResourcePageListing/ResourcePageL
 import ResourcePageListingsListItem from "@ui/ResourcePageListing/ResourcePageListingsListItem.astro";
 import partition from "lodash/partition";
 import ResourcePageLayout from "@layouts/ResourcePageLayout.astro";
-import RichTextContentBlock from "@ui/PortableTextContentBlock.astro";
+import PortableTextContentBlock from "@ui/typography/PortableTextContentBlock.astro";
 
 const crisisResources = await getCrisisResources();
 
@@ -51,7 +51,9 @@ const [[suicide], rest] = partition(crisisResources, (cr) =>
                 </a>
                 {
                   suicide?.description && (
-                    <RichTextContentBlock portableText={suicide.description} />
+                    <PortableTextContentBlock
+                      portableText={suicide.description}
+                    />
                   )
                 }
                 <ul>
@@ -99,8 +101,7 @@ const [[suicide], rest] = partition(crisisResources, (cr) =>
                     </Subtitle>
                   )}
                   {resource.description && (
-                    <RichTextContentBlock
-                      classList={["prose prose-wgm font-serif"]}
+                    <PortableTextContentBlock
                       portableText={resource.description}
                     />
                   )}

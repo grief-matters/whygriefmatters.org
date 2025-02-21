@@ -6,8 +6,8 @@ import type { InternetResourcePageListing } from "@model/internetResource";
 import Tag from "@ui/primitives/Tag.astro";
 import TitleLink from "../primitives/TitleLink.astro";
 import Subtitle from "../primitives/Subtitle.astro";
-import Text from "@ui/primitives/Text.astro";
 import FancyLabel from "@ui/primitives/FancyLabel.astro";
+import TextBlock from "@ui/typography/TextBlock.astro";
 
 interface Props {
   resource: InternetResourcePageListing;
@@ -72,7 +72,7 @@ const showSource =
   {
     props.resource.description && (
       <div class="max-w-3xl">
-        <Text>{props.resource.description}</Text>
+        <TextBlock>{props.resource.description}</TextBlock>
       </div>
     )
   }

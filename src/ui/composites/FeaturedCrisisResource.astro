@@ -2,7 +2,7 @@
 import { getImageUrlBuilder } from "@common/client";
 import type { CrisisResource } from "@model/crisisResource";
 import ContactMethodCardLink from "@ui/ContactMethodCardLink.astro";
-import PortableTextContentBlock from "@ui/PortableTextContentBlock.astro";
+import PortableTextContentBlock from "@ui/typography/PortableTextContentBlock.astro";
 import Card from "@ui/primitives/Card.astro";
 import Subtitle from "@ui/primitives/Subtitle.astro";
 import TitleLink from "@ui/primitives/TitleLink.astro";
@@ -61,7 +61,6 @@ const { crisisResource, showLogo } = Astro.props;
         {
           crisisResource.description && (
             <PortableTextContentBlock
-              classList={["w-100 mt-2 sm:pb-3"]}
               portableText={crisisResource.description}
             />
           )

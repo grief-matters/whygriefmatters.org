@@ -1,0 +1,22 @@
+---
+/**
+ * If we ever need to modify the classes on inline elements within the 'slot' we could use 'jsdom'
+ * For now this is a hypothetical use case that does not need solving for. This component should almost always be plain text
+ */
+import { getTextBlockClassList, type BaseTextBlockProps } from "./helpers";
+
+type Props = BaseTextBlockProps;
+
+const { variant = "default", ...props } = Astro.props;
+
+const pClassList = getTextBlockClassList(
+  "p",
+  props.resetBaseClassLists?.p,
+  props.stylableElementClassLists?.p,
+  variant
+);
+---
+
+<p class:list={pClassList}>
+  <slot />
+</p>
