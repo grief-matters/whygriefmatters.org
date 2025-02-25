@@ -79,13 +79,13 @@ const bgClass = bgClasses[adjustedIndex];
 
             case "rowOfThree":
               return (
-              <div class:list={["mb-3 p-3 flex-col"]}>
-                  <div class:list={["flex lg:flex-wrap gap-6"]}>
+              <div class:list={["mb-3 p-3"]}>
+                  <div class:list={["flex flex-wrap justify-center gap-6"]}>
                     {contentItem.images.map((image, index) => (
                       <div class:list={["shrink-0 w-full sm:w-[calc(50%-24px)] lg:w-[calc(33.33%-16px)]",
                                         `${index === 0 ? "block" : "hidden"}`, 
                                         `${index === 1 ? "sm:block" : ""}`, 
-                                        `${index === 2 ? "lg:block" : ""}`
+                                        `${index >=  2 ? "lg:block" : ""}`
                                       ]}>
                         <img
                           src={getImageUrlBuilder(image.image).width(640).height(450).url()}
