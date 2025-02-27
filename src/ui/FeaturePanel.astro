@@ -77,7 +77,11 @@ const bgClass = bgClasses[adjustedIndex];
               );
 
             case "rowOfThree":
-              return <ImageRow images={contentItem.images} />;
+              return (
+                <div class:list={["mb-6 px-3"]}>
+                  <ImageRow images={contentItem.images} />
+                </div>
+              );
 
             case "resourceLinks":
               return (
