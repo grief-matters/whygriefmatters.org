@@ -13,7 +13,7 @@ import Link from './primitives/Link.astro';
 import PersonCard from './composites/PersonCard.astro';
 import PortableTextContentBlock from "./typography/PortableTextContentBlock.astro";
 import TopicCollectionContentBlock from './TopicCollectionContentBlock.astro';
-
+import ImageRow from './ImageRow.astro';
 import type { ContentBlock } from '@model/contentBlock'
 
 interface Props {
@@ -136,7 +136,13 @@ const { contentBlock } = Astro.props;
         <PortableTextContentBlock portableText={contentItem.portableText} />
       )
     case "rowOfThree":
-      return (<></>)
+      return (
+        <div class:list={["mb-6 px-3"]}>
+          <ImageRow images={contentItem.images} />
+        </div>
+      );
+                
+              
     case "rowOfThreeFeaturedResources":
       return (<></>)
     case "topicCollectionContentBlockNew":
