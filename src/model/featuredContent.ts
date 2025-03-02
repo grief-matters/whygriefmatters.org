@@ -8,6 +8,7 @@ import {
   zResourceLinks,
   zPortableTextContentBlock,
   zDynamicResourcePageLink,
+  zImageRow,
 } from "./contentBlock";
 
 const topicCollectionDisplayOptions = ["none", "topThree", "all"] as const;
@@ -32,6 +33,7 @@ export const zTopicCollectionContentBlock = z.object({
 
 export const zFeaturedContentContent = z.discriminatedUnion("contentType", [
   zRowOfThree.extend({ contentType: z.literal("rowOfThree") }),
+  zImageRow.extend({ contentType: z.literal("imageRow") }),
   zRowOfThreeFeaturedResources.extend({
     contentType: z.literal("rowOfThreeFeaturedResources"),
   }),
@@ -57,6 +59,7 @@ export type FeaturedContent = z.infer<typeof zFeaturedContent>;
 export type ResourceLinks = z.infer<typeof zResourceLinks>;
 export type ResourcePageLinks = z.infer<typeof zResourcePageLinks>;
 export type RowOfThree = z.infer<typeof zRowOfThree>;
+export type ImageRow = z.infer<typeof zImageRow>;
 export type TopicCollectionDisplayOption = z.infer<
   typeof zTopicCollectionDisplayOption
 >;
