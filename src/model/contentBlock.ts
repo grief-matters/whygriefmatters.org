@@ -51,6 +51,10 @@ export const zRowOfThree = z.object({
   images: z.array(zImage),
 });
 
+export const zImageRow = z.object({
+  images: z.array(zImage),
+});
+
 export const zRowOfThreeFeaturedResources = z.object({
   resources: z.array(zFeaturedResource),
 });
@@ -117,6 +121,13 @@ export const gContentBlocksProjection = groq`
     portableText
   },
   _type == "rowOfThree" => {
+    "contentType": _type,
+    images[]{
+      image,
+      "altText": alt
+    }
+  },
+  _type == "imageRow" => {
     "contentType": _type,
     images[]{
       image,
@@ -202,6 +213,7 @@ export const zContent = z.discriminatedUnion("contentType", [
     contentType: z.literal("richTextContentBlock"),
   }),
   zRowOfThree.extend({ contentType: z.literal("rowOfThree") }),
+  zImageRow.extend({ contentType: z.literal("imageRow") }),
   zRowOfThreeFeaturedResources.extend({
     contentType: z.literal("rowOfThreeFeaturedResources"),
   }),
