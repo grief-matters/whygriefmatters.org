@@ -3,7 +3,7 @@ name: Cloudflare Deploy Hook
 on:
   schedule:
     # Runs at 7:00 AM UTC every day (1am EDT)
-    - cron: "0 7 * * *"
+    - cron: "0 7 * * 1"
   workflow_dispatch: # Allows for manual trigger via GitHub UI
 
 jobs:
