@@ -232,7 +232,7 @@ export const zContent = z.discriminatedUnion("contentType", [
 
 export const zContentBlock = z.object({
   title: z.string().nullable(),
-  description: z.string().nullable(),
+  description: zPortableText.nullable(),
   content: z.array(zContent),
 });
 
