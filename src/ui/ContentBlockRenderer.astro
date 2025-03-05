@@ -135,14 +135,12 @@ const { contentBlock } = Astro.props;
       return (
         <PortableTextContentBlock portableText={contentItem.portableText} />
       )
-    case "rowOfThree":
+    case "imageRow":
       return (
         <div class:list={["mb-6 px-3"]}>
           <ImageRow images={contentItem.images} />
         </div>
       );
-                
-              
     case "rowOfThreeFeaturedResources":
       return (<></>)
     case "topicCollectionContentBlockNew":
