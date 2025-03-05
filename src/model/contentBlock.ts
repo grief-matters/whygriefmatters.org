@@ -47,7 +47,7 @@ export const zResourcePageLink = z.discriminatedUnion("linkType", [
 export type DynamicResourcePageLink = z.infer<typeof zDynamicResourcePageLink>;
 export type ResourcePageLink = z.infer<typeof zResourcePageLink>;
 
-export const zRowOfThree = z.object({
+export const zImageRow = z.object({
   images: z.array(zImage),
 });
 
@@ -116,7 +116,7 @@ export const gContentBlocksProjection = groq`
     "contentType": _type,
     portableText
   },
-  _type == "rowOfThree" => {
+  _type == "imageRow" => {
     "contentType": _type,
     images[]{
       image,
@@ -201,7 +201,7 @@ export const zContent = z.discriminatedUnion("contentType", [
   zPortableTextContentBlock.extend({
     contentType: z.literal("richTextContentBlock"),
   }),
-  zRowOfThree.extend({ contentType: z.literal("rowOfThree") }),
+  zImageRow.extend({ contentType: z.literal("imageRow") }),
   zRowOfThreeFeaturedResources.extend({
     contentType: z.literal("rowOfThreeFeaturedResources"),
   }),
@@ -220,7 +220,7 @@ export const zContent = z.discriminatedUnion("contentType", [
 
 export const zContentBlock = z.object({
   title: z.string().nullable(),
-  description: z.string().nullable(),
+  description: zPortableText.nullable(),
   content: z.array(zContent),
 });
 

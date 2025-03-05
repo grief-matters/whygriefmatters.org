@@ -1,12 +1,8 @@
 ---
-import { getImageUrlBuilder } from "@common/client";
 import { getRouteFromDynamicResourcePageLink } from "@common/route";
 
 import PortableTextContentBlock from "./typography/PortableTextContentBlock.astro";
 import FeaturedResources from "./FeaturedResources.astro";
-import MobileCarousel from "./MobileCarousel/MobileCarousel.astro";
-import MobileCarouselItem from "./MobileCarousel/MobileCarouselItem.astro";
-import MobileCarouselControl from "./MobileCarousel/MobileCarouselControl.astro";
 import TopicCollectionContentBlock from "./TopicCollectionContentBlock.astro";
 import Heading from "./primitives/Heading.astro";
 import EmphasizedEllipsisText from "./primitives/EmphasizedEllipsisText.astro";
@@ -14,6 +10,7 @@ import Link from "./primitives/Link.astro";
 import CardLink from "./CardLink.astro";
 import type { ContentGroup } from "@model/contentGroup";
 import Container from "./primitives/Container.astro";
+import ImageRow from "./ImageRow.astro";
 
 interface Props {
   featuredContent: ContentGroup;
@@ -38,7 +35,6 @@ const adjustedIndex = getAdjustedIndex(bgClasses.length, indexInCollection);
 
 const bgClass = bgClasses[adjustedIndex];
 
-const featurePanelId = crypto.randomUUID();
 ---
 
 <section class:list={["py-4", bgClass]}>
@@ -63,7 +59,7 @@ const featurePanelId = crypto.randomUUID();
       )
     }
     {
-      featuredContent.blocks.map((block, panelIdx) =>
+      featuredContent.blocks.map((block) =>
         block.content.map((contentItem) => {
           switch (contentItem.contentType) {
             case "richTextContentBlock":
@@ -80,37 +76,10 @@ const featurePanelId = crypto.randomUUID();
                 </div>
               );
 
-            case "rowOfThree":
+            case "imageRow":
               return (
-                <div class="mb-3">
-                  <MobileCarousel>
-                    <Fragment slot="items">
-                      {contentItem.images.map((image, imgIdx) => (
-                        <MobileCarouselItem
-                          id={`${featurePanelId}-${panelIdx}-${imgIdx}`}
-                        >
-                          <div class="p-3">
-                            <img
-                              src={getImageUrlBuilder(image.image)
-                                .width(640)
-                                .height(450)
-                                .url()}
-                              alt={image.altText}
-                            />
-                          </div>
-                        </MobileCarouselItem>
-                      ))}
-                    </Fragment>
-                    <Fragment slot="controls">
-                      {Array.from({ length: 3 }, (_, i) => (
-                        <MobileCarouselControl
-                          id={`${featurePanelId}-${panelIdx}-${i}`}
-                        >
-                          {i + 1}
-                        </MobileCarouselControl>
-                      ))}
-                    </Fragment>
-                  </MobileCarousel>
+                <div class:list={["mb-6 px-3"]}>
+                  <ImageRow images={contentItem.images} />
                 </div>
               );
 
