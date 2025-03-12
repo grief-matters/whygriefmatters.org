@@ -137,6 +137,21 @@ const coreContentGroups = await getCoreContentGroups();
             >
               {"Contribute"}
             </a>
+            <a
+              class:list={[
+                "block",
+                "py-1",
+                "font-bold",
+                ds.decoration.underline,
+                ds.decoration.transition,
+                ds.decoration.color.primary.hover,
+                "decoration-dotted",
+                "text-xl",
+              ]}
+              href="/donate"
+              >
+              {"Donate"}
+            </a>
           </div>
         </div>
         <div class="flex justify-end p-3 mt-3 sm:hidden">
