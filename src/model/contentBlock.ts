@@ -80,6 +80,42 @@ export const zTopicContentBlock = z.object({
   showSubtopics: z.boolean(),
 });
 
+const zFormFieldInputType = z.enum([
+  "text",
+  "email",
+  "number",
+  "textarea",
+  "checkbox",
+  "select",
+  "radio",
+]);
+
+const zFormFieldBase = z.object({
+  type: z.enum(["text", "email", "number", "textarea", "checkbox"]),
+  required: z.boolean(),
+  name: z.string(),
+  label: z.string(),
+  description: z.string().nullable(),
+  inputOptions: z.null(),
+});
+
+const zFormFieldWithOptions = zFormFieldBase.extend({
+  type: z.enum(["select", "radio"]),
+  inputOptions: z.array(z.string()),
+});
+
+const zFormField = z.discriminatedUnion("type", [
+  zFormFieldBase,
+  zFormFieldWithOptions,
+]);
+
+export const zForm = z.object({
+  title: z.string(),
+  description: z.string().nullable(),
+  submitAction: z.string(), // enum?
+  fields: zFormField.array(),
+});
+
 // TODO - break this up - it's very difficult to debug
 export const gContentBlocksProjection = groq`
   _type == "accessibleImage" => {
@@ -186,6 +222,20 @@ export const gContentBlocksProjection = groq`
       members[]->{
         ${gPersonProjection}
       }
+    },
+    _type == 'form' => {
+      "contentType": _type,
+      title,
+      description,
+      submitAction,
+      fields[]{
+        type,
+        required,
+        name,
+        label,
+        description,
+        inputOptions
+      }
     }
   },
 `;
@@ -216,6 +266,7 @@ export const zContent = z.discriminatedUnion("contentType", [
   zRelativePageLink.extend({ contentType: z.literal("relativeLink") }),
   zPerson.extend({ contentType: z.literal("person") }),
   zPersonGroup.extend({ contentType: z.literal("personGroup") }),
+  zForm.extend({ contentType: z.literal("form") }),
 ]);
 
 export const zContentBlock = z.object({
@@ -233,3 +284,5 @@ export type TopicContentBlock = z.infer<typeof zTopicContentBlock>;
 export type TopCollectionContentBlock = z.infer<
   typeof zTopicCollectionContentBlock
 >;
+export type Form = z.infer<typeof zForm>;
+export type FormField = z.infer<typeof zFormField>;

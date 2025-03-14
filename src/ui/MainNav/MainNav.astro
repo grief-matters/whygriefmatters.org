@@ -123,6 +123,7 @@ const coreContentGroups = await getCoreContentGroups();
               {"About Us"}
             </a>
             <a
+              href="/contact"
               class:list={[
                 "block",
                 "py-1",
@@ -133,15 +134,38 @@ const coreContentGroups = await getCoreContentGroups();
                 "decoration-dotted",
                 "text-xl",
               ]}
-              href="/contribute"
             >
-              {"Contribute"}
+              {"Contact"}
             </a>
+            {
+              // Will be hidden in production until we need it
+              process.env.NODE_ENV === "development" && (
+                <a
+                  class:list={[
+                    "block",
+                    "py-1",
+                    "font-bold",
+                    ds.decoration.underline,
+                    ds.decoration.transition,
+                    ds.decoration.color.primary.hover,
+                    "decoration-dotted",
+                    "text-xl",
+                  ]}
+                  href="/contribute"
+                >
+                  {"Contribute"}
+                </a>
+              )
+            }
           </div>
         </div>
-        <div class="flex justify-end p-3 mt-3 sm:hidden">
-          <AccountButton />
-        </div>
+        {
+          process.env.NODE_ENV === "development" && (
+            <div class="flex justify-end p-3 mt-3 sm:hidden">
+              <AccountButton />
+            </div>
+          )
+        }
       </div>
     </div>
   </CollapsibleContentContent>

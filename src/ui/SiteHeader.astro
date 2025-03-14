@@ -90,7 +90,6 @@ const darkUrl = `url(${darkHeaderLogo?.url})`;
           >
             {"About Us"}
           </a>
-
           <a
             class:list={[
               "font-serif font-semibold",
@@ -100,11 +99,30 @@ const darkUrl = `url(${darkHeaderLogo?.url})`;
               ds.decoration.underline,
               ds.decoration.transition,
             ]}
-            href="/contribute"
+            href="/contact"
           >
-            {"Contribute"}
+            {"Contact"}
           </a>
-          <AccountButton />
+          {
+            process.env.NODE_ENV === "development" && (
+              <>
+                <a
+                  class:list={[
+                    "font-serif font-semibold",
+                    "text-blue-900",
+                    "decoration-blue-800/30 hover:decoration-blue-900",
+                    "decoration-dotted",
+                    ds.decoration.underline,
+                    ds.decoration.transition,
+                  ]}
+                  href="/contribute"
+                >
+                  {"Contribute"}
+                </a>
+                <AccountButton />
+              </>
+            )
+          }
         </div>
       </div>
     </div>
