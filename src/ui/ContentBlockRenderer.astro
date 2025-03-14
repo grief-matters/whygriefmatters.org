@@ -15,6 +15,7 @@ import PortableTextContentBlock from "./typography/PortableTextContentBlock.astr
 import TopicCollectionContentBlock from './TopicCollectionContentBlock.astro';
 import ImageRow from './ImageRow.astro';
 import type { ContentBlock } from '@model/contentBlock'
+import FormRenderer from './FormRenderer.astro';
 
 interface Props {
   contentBlock: ContentBlock
@@ -151,5 +152,11 @@ const { contentBlock } = Astro.props;
       )
     case "topicContentBlock":
       return (<></>)
+    case "form":
+      return (
+        <div class:list={["p-3 sm:max-w-xl sm:mx-auto"]}>
+          <FormRenderer form={contentItem} />
+        </div>
+      )
   }
 })}
