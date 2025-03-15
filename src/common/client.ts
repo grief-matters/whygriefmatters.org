@@ -69,6 +69,7 @@ import {
 import { gFooterDataQuery, zFooterData, type FooterData } from "@model/footer";
 import {
   gContentGroupPagesQuery,
+  gContentGroupProjection,
   zContentGroup,
   type ContentGroup,
 } from "@model/contentGroup";
@@ -343,6 +344,27 @@ export async function getContentGroupPagesData(): Promise<ContentGroup[]> {
 
   return contentGroupPagesData;
 }
+
+/**
+ * Gets the data for a specific Category Page
+*/
+
+export async function getContentGroup(slug: string): Promise<ContentGroup> {
+  const client = getClient();
+
+  // GROQ query to fetch a single ContentGroup based on the slug
+  const query = groq`
+    *[_type == "contentGroup" && slug.current == $slug][0] {
+      ${gContentGroupProjection} 
+    }
+  `;
+
+  const contentGroup = await client.fetch(query, { slug });
+
+  return zContentGroup.parse(contentGroup);
+}
+
+
 
 export async function getPersonPagesData(): Promise<Person[]> {
   const client = getClient();

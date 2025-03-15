@@ -1,19 +1,29 @@
 ---
 import startCase from "lodash/startCase";
 import { internetResourceTypes } from "@model/internetResource";
-import type { ResourceEvaluationData } from "@model/resourceEvaluation";
 import { wgmDesignSystem as ds } from "@common/design-system";
+import { getClient } from "@common/client";
+import {
+  getResourceEvaluationDataQuery,
+  zResourceEvaluationData,
+} from "@model/resourceEvaluation";
 
-interface Props {
-  evaluationData: ResourceEvaluationData;
-}
+interface Props {}
 
-const { evaluationData } = Astro.props;
+const userId = Astro.locals.auth().userId;
+
+const client = getClient(false);
+
+const promise = userId
+  ? client
+      .fetch(getResourceEvaluationDataQuery(userId))
+      .then((result) => zResourceEvaluationData.parse(result))
+  : null;
+
+const data = await Promise.resolve(promise);
 ---
 
-<resource-evaluation-table
-  data-evaluation-data={JSON.stringify(evaluationData)}
->
+<resource-evaluation-table data-evaluation-data={JSON.stringify(data)}>
   <div
     id="table-data-controls"
     class:list={["sm:flex sm:justify-between sm:items-end mb-6"]}
