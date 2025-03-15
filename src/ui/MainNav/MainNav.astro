@@ -134,10 +134,44 @@ const coreContentGroups = await getCoreContentGroups();
                 "decoration-dotted",
                 "text-xl",
               ]}
-              href="/contribute"
             >
-              {"Contribute"}
+              {"Contact"}
             </a>
+            {
+              // Will be hidden in production until we need it
+              process.env.NODE_ENV === "development" && (
+                <a
+                  class:list={[
+                    "block",
+                    "py-1",
+                    "font-bold",
+                    ds.decoration.underline,
+                    ds.decoration.transition,
+                    ds.decoration.color.primary.hover,
+                    "decoration-dotted",
+                    "text-xl",
+                  ]}
+                  href="/contribute"
+                >
+                  {"Contribute"}
+                </a>
+                   <a
+                  class:list={[
+                    "block",
+                    "py-1",
+                    "font-bold",
+                    ds.decoration.underline,
+                    ds.decoration.transition,
+                    ds.decoration.color.primary.hover,
+                    "decoration-dotted",
+                    "text-xl",
+                  ]}
+                  href="/donate"
+                >
+                  {"Donate"}
+                </a>
+              )
+            }
           </div>
         </div>
         {

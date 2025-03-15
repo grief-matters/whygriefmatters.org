@@ -2,45 +2,27 @@
 import MainLayout from "@layouts/MainLayout.astro";
 import { getContentGroup } from "@common/client";
 import ContentBlockRenderer from "@ui/ContentBlockRenderer.astro";
-import PortableTextContentBlock from "@ui/typography/PortableTextContentBlock.astro";
+import Heading from "@ui/primitives/Heading.astro";
+import TextBlock from "@ui/typography/TextBlock.astro";
+import type { ContentBlock } from "@model/contentBlock";
 
 const donateContent = await getContentGroup("donate");
-console.log("🚀 Debugging Donate Page Content:", donateContent);
 ---
 
 <MainLayout>
   <div class="xl:max-w-screen-lg xl:mx-auto p-3">
-    <section class="container mx-auto px-6 py-12">
-      <!-- ✅ Page Title -->
-      <h1 class="text-4xl font-bold text-center text-blue-900">
-        {donateContent.title}
-      </h1>
-<!--     
-      ✅ Cover Image
-      {donateContent.image && getImageUrl(donateContent.image) && (
-        <img
-          src={getImageUrl(donateContent.image)}
-          alt={donateContent.image.altText || "Donate Page Image"}
-          class="mx-auto my-6 rounded-lg shadow-lg"
-        />
-      )} -->
-    
-      <!-- ✅ Description -->
-      {donateContent.description && (
-        <PortableTextContentBlock portableText={donateContent.description} />
-      )}
-    
-      <!-- ✅ Content Blocks -->
+    <Heading as="h1" size="xl5">{donateContent.title}</Heading>
+    <TextBlock>
       {donateContent.blocks.length > 0 ? (
-        donateContent.blocks.map((contentBlock) => (
-          <section class="p-3 lg:mb-6 odd:bg-stone-100">
+        donateContent.blocks.map((contentBlock : ContentBlock) => (
+          <section class="p-2 lg:mb-6 odd:bg-stone-100">
             <ContentBlockRenderer contentBlock={contentBlock} />
           </section>
         ))
       ) : (
-        <p class="text-center mt-4 text-gray-600">No content available.</p>
+        <p>{"No content available."}</p>
       )}
-    </section>
+    </TextBlock>
   </div>
 </MainLayout>
 ---

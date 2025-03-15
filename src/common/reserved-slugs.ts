@@ -9,7 +9,7 @@ export const reservedSlugs: readonly string[] = [
   ...internetResourceTypes,
   ...Object.values(templatingSlugs),
   "contribute",
-  // "donate",
+  "donate",
 ] as const;
 
 export function isReservedSlug(

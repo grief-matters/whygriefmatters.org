@@ -346,24 +346,20 @@ export async function getContentGroupPagesData(): Promise<ContentGroup[]> {
 }
 
 /**
- * Gets the data for a specific Category Page
+ * Fetchs a single Content Group
 */
 
-export async function getContentGroup(slug: string): Promise<ContentGroup> {
+export async function getContentGroup(slug: string) {
   const client = getClient();
 
-  // GROQ query to fetch a single ContentGroup based on the slug
-  const query = groq`
-    *[_type == "contentGroup" && slug.current == $slug][0] {
-      ${gContentGroupProjection} 
-    }
-  `;
-
-  const contentGroup = await client.fetch(query, { slug });
-
-  return zContentGroup.parse(contentGroup);
+  const query = `
+  *[_type == "contentGroup" && slug.current == 'donate'][0] {
+    ${gContentGroupProjection}
+  }
+`;
+  const result = await client.fetch(query, { slug });
+  return result;
 }
-
 
 
 export async function getPersonPagesData(): Promise<Person[]> {

@@ -103,23 +103,6 @@ const darkUrl = `url(${darkHeaderLogo?.url})`;
           >
             {"Contact"}
           </a>
-<<<<<<< HEAD
-
-          <a
-            class:list={[
-              "font-serif font-semibold",
-              "text-blue-900",
-              "decoration-blue-800/30 hover:decoration-blue-900",
-              "decoration-dotted",
-              ds.decoration.underline,
-              ds.decoration.transition,
-            ]}
-            href="/donate"
-          >
-            {"Donate"}
-          </a>
-          <AccountButton />
-=======
           {
             process.env.NODE_ENV === "development" && (
               <>
@@ -136,11 +119,23 @@ const darkUrl = `url(${darkHeaderLogo?.url})`;
                 >
                   {"Contribute"}
                 </a>
+                <a
+                  class:list={[
+                    "font-serif font-semibold",
+                    "text-blue-900",
+                    "decoration-blue-800/30 hover:decoration-blue-900",
+                    "decoration-dotted",
+                    ds.decoration.underline,
+                    ds.decoration.transition,
+                  ]}
+                  href="/donate"
+                >
+                  {"Donate"}
+                </a>
                 <AccountButton />
               </>
             )
           }
->>>>>>> 8d5a8ddab66657fc7b07b8d204f73a9c99786237
         </div>
       </div>
     </div>
