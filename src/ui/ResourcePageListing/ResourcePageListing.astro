@@ -36,16 +36,29 @@ const showTags = props.resource.hasSpanishVersion || props.resource.rating;
     rel="noopener"
     target="_blank"
   />
-  {
-    props.resource.type !== "website" && (
-      <Subtitle class="mt-1">
-        {`From `}
-        <SourceLink
-          source={props.resource.sourceWebsite ?? props.resource.resourceUrl}
-        />
-      </Subtitle>
-    )
-  }
+  <div class="flex flex-wrap space-x-1 sm:space-x-2 mb-2">
+    {
+      props.resource.type !== "website" && (
+        <>
+          <Subtitle class="mt-1">
+            {`From `}
+            <SourceLink
+              source={
+                props.resource.sourceWebsite ?? props.resource.resourceUrl
+              }
+            />
+            <span>{", "}</span>
+          </Subtitle>
+        </>
+      )
+    }
+    <Subtitle class="mt-1" as="div">
+      <span>
+        {`Reviewed: `}
+        <time datetime={props.resource.lastUpdated}>{date}</time>
+      </span>
+    </Subtitle>
+  </div>
   {
     props.resource.description && (
       <div class="max-w-3xl">
@@ -53,14 +66,6 @@ const showTags = props.resource.hasSpanishVersion || props.resource.rating;
       </div>
     )
   }
-
-  <Subtitle class="mt-1" as="div">
-    <span>
-      {`Last reviewed: `}
-      <time datetime={props.resource.lastUpdated}>{date}</time>
-    </span>
-  </Subtitle>
-
   {
     showTags && (
       <div class="my-3">
