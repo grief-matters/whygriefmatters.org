@@ -48,7 +48,11 @@ const avatarImage = props.person.avatar
       </h1>
       <Subtitle class:list={"mb-2"}>{props.person.role}</Subtitle>
     </div>
-    <PortableTextContentBlock portableText={props.person.shortBio} />
+    {
+      props.person.shortBio && (
+        <PortableTextContentBlock portableText={props.person.shortBio} />
+      )
+    }
     {
       props.person.socials && (
         <div class="flex mt-3">

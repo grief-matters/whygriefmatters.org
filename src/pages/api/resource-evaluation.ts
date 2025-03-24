@@ -20,7 +20,8 @@ export const POST: APIRoute = async (context: APIContext) => {
   }
 
   try {
-    const body = await context.request.json();
+    // TODO - fix any
+    const body: any = await context.request.json();
 
     const rating = Number(body.rating);
     if (Number.isNaN(rating)) {
