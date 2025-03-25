@@ -6,6 +6,7 @@ import EmphasizedEllipsisText from "./primitives/EmphasizedEllipsisText.astro";
 import Heading from "./primitives/Heading.astro";
 import Link from "./primitives/Link.astro";
 import TextBlock from "./typography/TextBlock.astro";
+import Card from "./primitives/Card.astro";
 
 interface Props {
   personGroup: PersonGroup;
@@ -22,7 +23,7 @@ const {
 } = Astro.props;
 ---
 
-<div>
+<div class:list={["sm:p-3 lg:p-6"]}>
   {
     showGroupName && (
       <Heading as="h3" size="xl2">
@@ -31,18 +32,33 @@ const {
     )
   }
   {showGroupDescription && <TextBlock>{personGroup.description}</TextBlock>}
-  {
-    personGroup.members.map((person) => (
-      <>
-        <PersonCard person={person} />
-        {person.personalStory !== null && (
-          <div class="mx-auto max-w-fit mb-12">
-            <Link size="xl" href={`${kebabCase(person.fullName)}`}>
-              <EmphasizedEllipsisText text="Read More" />
-            </Link>
+  <div class:list={!featured ? [
+    "grid",
+    "sm:grid-cols-1",
+    "md:grid-cols-2",
+    "lg:grid-cols-3",
+    "gap-4"
+  ] : []}>
+    {
+      featured ? 
+        personGroup.members.map((person) => (
+          <div>
+            <PersonCard person={person} giveImportance={featured} />
+            {person.personalStory !== null && (
+              <div class="mx-auto max-w-fit mb-12">
+                <Link size="xl" href={`${kebabCase(person.fullName)}`}>
+                  <EmphasizedEllipsisText text="Read More" />
+                </Link>
+              </div>
+            )}
           </div>
-        )}
-      </>
-    ))
-  }
+        ))
+      :
+      personGroup.members.map((person) => (
+        <Card disableBorder={true}>
+          <PersonCard person={person} giveImportance={featured} />
+        </Card>
+      ))
+    }
+  </div>
 </div>
