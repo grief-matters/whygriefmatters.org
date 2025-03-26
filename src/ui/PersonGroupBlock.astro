@@ -33,11 +33,11 @@ const {
   }
   {showGroupDescription && <TextBlock>{personGroup.description}</TextBlock>}
   <div class:list={!featured ? [
-    "grid",
+    "grid gap-4",
     "sm:grid-cols-1",
     "md:grid-cols-2",
     "lg:grid-cols-3",
-    "gap-4"
+    "p-4"
   ] : []}>
     {
       featured ? 
@@ -55,7 +55,7 @@ const {
         ))
       :
       personGroup.members.map((person) => (
-        <Card disableBorder={true}>
+        <Card disableBorder={true} additiveClasses={["flex-1 p-4"]}>
           <PersonCard person={person} giveImportance={featured} />
         </Card>
       ))
