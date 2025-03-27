@@ -353,7 +353,7 @@ export async function getContentGroup(slug: string) {
   const client = getClient();
 
   const query = `
-  *[_type == "contentGroup" && slug.current == 'donate'][0] {
+  *[_type == "contentGroup" && slug.current == $slug][0] {
     ${gContentGroupProjection}
   }
 `;
