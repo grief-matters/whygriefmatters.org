@@ -140,7 +140,8 @@ const data = await Promise.resolve(promise);
     currentPage: number;
     totalPages: number;
 
-    resourceTypeSelect?: HTMLSelectElement | null;
+    // resourceTypeSelect?: HTMLSelectElement | null;
+    resourceTypeSelect?: any;
     searchInput?: HTMLInputElement | null;
     resourcesTableBody?: HTMLElement | null;
     prevBtn?: HTMLButtonElement | null;
@@ -292,7 +293,8 @@ const data = await Promise.resolve(promise);
       const resourceId = row?.dataset.resourceId;
       const ratingSelect = row?.querySelector(
         ".rating-select"
-      ) as HTMLSelectElement;
+        // ) as HTMLSelectElement;
+      ) as any;
       const rating = ratingSelect?.value;
       const successIndicator = row?.querySelector(".success-indicator");
 
@@ -333,7 +335,8 @@ const data = await Promise.resolve(promise);
           throw new Error("Failed to save evaluation");
         }
 
-        const updatedRow = await res.json();
+        // TODO - fix any
+        const updatedRow: any = await res.json();
 
         // TODO - typeguard this to ensure we have a valid type
         const resourceType: InternetResourceType = this.resourceTypeSelect

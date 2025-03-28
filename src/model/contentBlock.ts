@@ -116,6 +116,13 @@ export const zForm = z.object({
   fields: zFormField.array(),
 });
 
+export const zPersonGroupBlock = z.object({
+  featured: z.boolean(),
+  showName: z.boolean(),
+  showDescription: z.boolean(),
+  group: zPersonGroup,
+});
+
 // TODO - break this up - it's very difficult to debug
 export const gContentBlocksProjection = groq`
   _type == "accessibleImage" => {
@@ -211,18 +218,20 @@ export const gContentBlocksProjection = groq`
     label,
     url
   },
-  _type == "reference" => @->{
-    _type == "person" => {
-      "contentType": _type,
-      ${gPersonProjection}
-    },
-    _type == "personGroup" => {
-      "contentType": _type,
+  _type == "personGroupBlock" => {
+    "contentType": _type,
+    "group": group->{
       name,
+      description,
       members[]->{
         ${gPersonProjection}
       }
     },
+    featured,
+    showName,
+    showDescription
+  },
+  _type == "reference" => @->{
     _type == 'form' => {
       "contentType": _type,
       title,
@@ -264,6 +273,7 @@ export const zContent = z.discriminatedUnion("contentType", [
     contentType: z.literal("topicCollectionContentBlockNew"),
   }),
   zRelativePageLink.extend({ contentType: z.literal("relativeLink") }),
+  zPersonGroupBlock.extend({ contentType: z.literal("personGroupBlock") }),
   zPerson.extend({ contentType: z.literal("person") }),
   zPersonGroup.extend({ contentType: z.literal("personGroup") }),
   zForm.extend({ contentType: z.literal("form") }),

@@ -6,6 +6,7 @@ import Subtitle from "./primitives/Subtitle.astro";
 import Card from "./primitives/Card.astro";
 import CMSImage from "./primitives/CMSImage.astro";
 import TextBlock from "./typography/TextBlock.astro";
+import SourceLink from "./SourceLink.astro";
 
 interface Props {
   featuredResource: CategoryPageFeaturedResource;
@@ -21,24 +22,13 @@ const props = Astro.props;
       label={props.featuredResource.title}
       href={props.featuredResource.resourceUrl}
     />
-    {
-      props.featuredResource.sourceWebsite && (
-        <Subtitle class="mb-2">
-          {`From `}
-          <a
-            href={props.featuredResource.sourceWebsite.resourceUrl}
-            rel="noopener"
-            target="_blank"
-            class:list={[
-              "underline underline-offset-2",
-              "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
-            ]}
-          >
-            {props.featuredResource.sourceWebsite.name}
-          </a>
-        </Subtitle>
-      )
-    }
+    <Subtitle class="mt-1 mb-2">
+      {`From `}
+      <SourceLink
+        source={props.featuredResource.sourceWebsite ??
+          props.featuredResource.resourceUrl}
+      />
+    </Subtitle>
     {
       props.featuredResource.description && (
         <TextBlock>{props.featuredResource.description}</TextBlock>

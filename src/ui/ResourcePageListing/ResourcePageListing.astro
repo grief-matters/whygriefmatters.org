@@ -8,6 +8,7 @@ import TitleLink from "../primitives/TitleLink.astro";
 import Subtitle from "../primitives/Subtitle.astro";
 import FancyLabel from "@ui/primitives/FancyLabel.astro";
 import TextBlock from "@ui/typography/TextBlock.astro";
+import SourceLink from "@ui/SourceLink.astro";
 
 interface Props {
   resource: InternetResourcePageListing;
@@ -22,22 +23,6 @@ const date = new Date(props.resource.lastUpdated).toLocaleDateString("en-US", {
 });
 
 const showTags = props.resource.hasSpanishVersion || props.resource.rating;
-
-const sourceUrlRegEx = /^(https?:\/\/(?:www\.)?[^\/]+)/i;
-const sourceNameRegEx = /^(?:https?:\/\/)?(?:www\.)?([^\/]+)/i;
-
-const source = props.resource.sourceWebsite ?? {
-  resourceUrl: props.resource.resourceUrl.match(sourceUrlRegEx)?.[1] ?? null,
-  name: props.resource.resourceUrl.match(sourceNameRegEx)?.[1] ?? null,
-};
-
-const urlsToExclude = ["https://apps.apple.com", "https://podcasts.apple.com"];
-
-// Ideally any resource that needed a source would have one but that will never be the case
-const showSource =
-  props.resource.type !== "website" &&
-  source.resourceUrl !== null &&
-  !urlsToExclude.includes(source.resourceUrl);
 ---
 
 <article>
@@ -51,24 +36,29 @@ const showSource =
     rel="noopener"
     target="_blank"
   />
-  {
-    showSource && (
-      <Subtitle class="mt-1">
-        {`From `}
-        <a
-          href={source.resourceUrl}
-          rel="noopener"
-          target="_blank"
-          class:list={[
-            "underline underline-offset-2",
-            "decoration-slate-800/30 hover:decoration-sky-900 transition-decoration duration-300",
-          ]}
-        >
-          {source.name}
-        </a>
-      </Subtitle>
-    )
-  }
+  <div class="flex flex-wrap space-x-1 sm:space-x-2 mb-2">
+    {
+      props.resource.type !== "website" && (
+        <>
+          <Subtitle class="mt-1">
+            {`From `}
+            <SourceLink
+              source={
+                props.resource.sourceWebsite ?? props.resource.resourceUrl
+              }
+            />
+            <span>{", "}</span>
+          </Subtitle>
+        </>
+      )
+    }
+    <Subtitle class="mt-1" as="div">
+      <span>
+        {`Reviewed: `}
+        <time datetime={props.resource.lastUpdated}>{date}</time>
+      </span>
+    </Subtitle>
+  </div>
   {
     props.resource.description && (
       <div class="max-w-3xl">
@@ -76,14 +66,6 @@ const showSource =
       </div>
     )
   }
-
-  <Subtitle class="mt-1" as="div">
-    <span>
-      {`Last reviewed: `}
-      <time datetime={props.resource.lastUpdated}>{date}</time>
-    </span>
-  </Subtitle>
-
   {
     showTags && (
       <div class="my-3">

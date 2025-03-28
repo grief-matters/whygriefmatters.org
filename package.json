@@ -52,6 +52,6 @@
     "groq": "^3.20.1",
     "prettier": "3.0.3",
     "prettier-plugin-astro": "^0.12.0",
-    "wrangler": "^3.83.0"
+    "wrangler": "4.2.0"
   }
 }

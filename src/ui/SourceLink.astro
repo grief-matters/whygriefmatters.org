@@ -1,0 +1,61 @@
+---
+import LinkNew from "./primitives/LinkNew.astro";
+
+type Source = { resourceUrl: string; name: string };
+
+interface Props {
+  classList?: Array<string>;
+  source: string | Source;
+}
+
+const props = Astro.props;
+
+/**
+ * Type guard function to determine if a value is a Source object
+ * @param source - The value to check
+ * @returns True if the source is a Source object, false if it's a string
+ */
+function isSource(source: string | Source): source is Source {
+  return (
+    typeof source === "object" &&
+    source !== null &&
+    "resourceUrl" in source &&
+    "name" in source
+  );
+}
+
+const excludedUrls: Record<string, string> = {
+  "https://apps.apple.com": "Apple App Store",
+  "https://podcasts.apple.com": "Apple Podcasts",
+  "https://youtube.com": "YouTube",
+  "https://www.youtube.com": "YouTube",
+};
+
+const sourceUrlRegEx = /^(https?:\/\/(?:www\.)?[^\/]+)/i;
+const sourceNameRegEx = /^(?:https?:\/\/)?(?:www\.)?([^\/]+)/i;
+
+const source = isSource(props.source)
+  ? props.source
+  : {
+      resourceUrl: props.source.match(sourceUrlRegEx)?.[1] ?? props.source,
+      name: props.source.match(sourceNameRegEx)?.[1] ?? props.source,
+    };
+
+let textOnly;
+if (
+  typeof source.resourceUrl !== "undefined" &&
+  Object.keys(excludedUrls).includes(source.resourceUrl)
+) {
+  textOnly = excludedUrls[source.resourceUrl];
+}
+---
+
+{
+  textOnly ? (
+    <span>{textOnly}</span>
+  ) : (
+    <LinkNew external href={source.resourceUrl} classList={props.classList}>
+      {source.name}
+    </LinkNew>
+  )
+}

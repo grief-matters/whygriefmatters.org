@@ -1,0 +1,48 @@
+---
+import type { PersonGroup } from "@model/personGroup";
+import kebabCase from "lodash/kebabCase";
+import PersonCard from "./composites/PersonCard.astro";
+import EmphasizedEllipsisText from "./primitives/EmphasizedEllipsisText.astro";
+import Heading from "./primitives/Heading.astro";
+import Link from "./primitives/Link.astro";
+import TextBlock from "./typography/TextBlock.astro";
+
+interface Props {
+  personGroup: PersonGroup;
+  featured?: boolean;
+  showGroupName?: boolean;
+  showGroupDescription?: boolean;
+}
+
+const {
+  personGroup,
+  featured = false,
+  showGroupName = true,
+  showGroupDescription = true,
+} = Astro.props;
+---
+
+<div>
+  {
+    showGroupName && (
+      <Heading as="h3" size="xl2">
+        {personGroup.name}
+      </Heading>
+    )
+  }
+  {showGroupDescription && <TextBlock>{personGroup.description}</TextBlock>}
+  {
+    personGroup.members.map((person) => (
+      <>
+        <PersonCard person={person} />
+        {person.personalStory !== null && (
+          <div class="mx-auto max-w-fit mb-12">
+            <Link size="xl" href={`${kebabCase(person.fullName)}`}>
+              <EmphasizedEllipsisText text="Read More" />
+            </Link>
+          </div>
+        )}
+      </>
+    ))
+  }
+</div>

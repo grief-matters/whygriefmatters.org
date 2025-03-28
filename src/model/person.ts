@@ -26,7 +26,7 @@ const zSocials = z.object({
 export const zPerson = z.object({
   fullName: z.string(),
   role: z.string().nullable(),
-  shortBio: zPortableText,
+  shortBio: zPortableText.nullable(),
   personalStory: zPortableText.nullable(),
   avatar: zSanityImage.nullable(),
   socials: zSocials.nullable(),
