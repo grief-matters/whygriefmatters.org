@@ -34,22 +34,6 @@ export default defineConfig({
         context: "server",
         access: "secret",
       }),
-      MAILGUN_API_KEY: envField.string({
-        context: "server",
-        access: "secret",
-      }),
-      MAILGUN_DOMAIN: envField.string({
-        context: "server",
-        access: "public",
-      }),
-      MAILGUN_FROM: envField.string({
-        context: "server",
-        access: "public",
-      }),
-      MAILGUN_TO: envField.string({
-        context: "server",
-        access: "public",
-      }),
     },
   },
 });
