@@ -1,5 +1,11 @@
 import Mailgun from "mailgun.js";
 
+import {
+  MAILGUN_API_KEY,
+  MAILGUN_DOMAIN,
+  MAILGUN_FROM,
+  MAILGUN_TO,
+} from "astro:env/server";
 import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
 
@@ -15,36 +21,17 @@ export const contact = defineAction({
   accept: "form",
   input: zContactInput,
   handler: async (input) => {
-    if (
-      typeof process.env.MAILGUN_API_KEY === "undefined" ||
-      typeof process.env.MAILGUN_DOMAIN === "undefined" ||
-      typeof process.env.MAILGUN_FROM === "undefined" ||
-      typeof process.env.MAILGUN_TO === "undefined"
-    ) {
-      // todo - handle
-      const valueTable = {
-        MAILGUN_API_KEY: typeof process.env.MAILGUN_API_KEY,
-        MAILGUN_DOMAIN: process.env.MAILGUN_DOMAIN,
-        MAILGUN_FROM: process.env.MAILGUN_FROM,
-        MAILGUN_TO: process.env.MAILGUN_TO,
-      };
-
-      console.error(".env value undefined");
-      console.error(valueTable);
-      return;
-    }
-
     const mailgun = new Mailgun(FormData);
     const mg = mailgun.client({
       username: "api",
-      key: process.env.MAILGUN_API_KEY,
+      key: MAILGUN_API_KEY,
     });
 
     try {
       // todo - save response to a database/crm platform
-      await mg.messages.create(process.env.MAILGUN_DOMAIN, {
-        from: process.env.MAILGUN_FROM,
-        to: [process.env.MAILGUN_TO],
+      await mg.messages.create(MAILGUN_DOMAIN, {
+        from: MAILGUN_FROM,
+        to: [MAILGUN_TO],
         subject: "Contact Form Submission",
         text: getEmailContent(input),
       });
