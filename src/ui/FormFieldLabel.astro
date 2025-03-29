@@ -1,0 +1,24 @@
+---
+interface Props {
+  fieldName: string;
+  label: string;
+  description?: string;
+  required?: boolean;
+}
+
+const props = Astro.props;
+---
+
+<label
+  class:list={[
+    "block",
+    {
+      "after:content-['*'] after:text-pink-500 after:-ml-0.5": props.required,
+    },
+  ]}
+  for={props.fieldName}
+>
+  {props.label}
+  {props.required && <span class="sr-only">{"(required)"}</span>}
+</label>
+{props.description && <p class="font-sans text-sm">{props.description}</p>}
