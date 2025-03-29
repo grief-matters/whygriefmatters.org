@@ -38,6 +38,14 @@ export default defineConfig({
         context: "server",
         access: "secret",
       }),
+      RESEND_FROM_ADDRESS: envField.string({
+        context: "server",
+        access: "public",
+      }),
+      RESEND_TO_ADDRESS: envField.string({
+        context: "server",
+        access: "public",
+      }),
     },
   },
 });

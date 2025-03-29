@@ -1,6 +1,10 @@
 import { Resend } from "resend";
 
-import { RESEND_API_KEY } from "astro:env/server";
+import {
+  RESEND_API_KEY,
+  RESEND_FROM_ADDRESS,
+  RESEND_TO_ADDRESS,
+} from "astro:env/server";
 import { ActionError, defineAction } from "astro:actions";
 import { z } from "astro:schema";
 
@@ -19,8 +23,8 @@ export const contact = defineAction({
   input: zContactInput,
   handler: async (input) => {
     const { data, error } = await resend.emails.send({
-      from: "system@noreply.whygriefmatters.org",
-      to: ["contact@whygriefmatters.org"],
+      from: RESEND_FROM_ADDRESS,
+      to: [RESEND_TO_ADDRESS],
       subject: "Contact Form Submission",
       text: getEmailContent(input),
     });
