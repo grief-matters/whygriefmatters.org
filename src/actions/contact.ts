@@ -17,12 +17,12 @@ const resend = new Resend(RESEND_API_KEY);
 export const contact = defineAction({
   accept: "form",
   input: zContactInput,
-  handler: async () => {
+  handler: async (input) => {
     const { data, error } = await resend.emails.send({
-      from: "onboarding@resend.dev",
-      to: ["danlechambre@icloud.com"],
-      subject: "Hello world",
-      html: "<strong>It works!</strong>",
+      from: "system@noreply.whygriefmatters.org",
+      to: ["contact@whygriefmatters.org"],
+      subject: "Contact Form Submission",
+      text: getEmailContent(input),
     });
 
     if (error) {
