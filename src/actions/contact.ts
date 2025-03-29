@@ -39,6 +39,14 @@ export const contact = defineAction({
       console.log("Message Send Successful...");
     } catch (error) {
       // todo - handle system errors
+      console.log("Went wrong with...");
+      console.log(
+        "API Key is defined: ",
+        typeof MAILGUN_API_KEY !== "undefined",
+      );
+      console.log("MAILGUN_DOMAIN", MAILGUN_DOMAIN);
+      console.log("MAILGUN_FROM", MAILGUN_FROM);
+      console.log("MAILGUN_TO", MAILGUN_TO);
       console.error(error); //logs any error
     }
   },
