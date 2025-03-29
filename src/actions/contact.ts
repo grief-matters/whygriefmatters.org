@@ -1,4 +1,7 @@
-import { defineAction } from "astro:actions";
+import { Resend } from "resend";
+
+import { RESEND_API_KEY } from "astro:env/server";
+import { ActionError, defineAction } from "astro:actions";
 import { z } from "astro:schema";
 
 const zContactInput = z.object({
@@ -9,11 +12,27 @@ const zContactInput = z.object({
 
 type ContactInput = z.infer<typeof zContactInput>;
 
+const resend = new Resend(RESEND_API_KEY);
+
 export const contact = defineAction({
   accept: "form",
   input: zContactInput,
-  handler: async (input) => {
-    console.log("not implemented. processing: ", input);
+  handler: async () => {
+    const { data, error } = await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: ["danlechambre@icloud.com"],
+      subject: "Hello world",
+      html: "<strong>It works!</strong>",
+    });
+
+    if (error) {
+      throw new ActionError({
+        code: "BAD_REQUEST",
+        message: error.message,
+      });
+    }
+
+    return data;
   },
 });
 
