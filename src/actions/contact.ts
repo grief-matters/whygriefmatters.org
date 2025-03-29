@@ -22,15 +22,15 @@ export const contact = defineAction({
       typeof process.env.MAILGUN_TO === "undefined"
     ) {
       // todo - handle
-      const valueTable = [
-        ["MAILGUN_API_KEY", typeof process.env.MAILGUN_API_KEY],
-        ["MAILGUN_DOMAIN", process.env.MAILGUN_DOMAIN],
-        ["MAILGUN_FROM", process.env.MAILGUN_FROM],
-        ["MAILGUN_TO", process.env.MAILGUN_TO],
-      ];
+      const valueTable = {
+        MAILGUN_API_KEY: typeof process.env.MAILGUN_API_KEY,
+        MAILGUN_DOMAIN: process.env.MAILGUN_DOMAIN,
+        MAILGUN_FROM: process.env.MAILGUN_FROM,
+        MAILGUN_TO: process.env.MAILGUN_TO,
+      };
 
       console.error(".env value undefined");
-      console.table(valueTable);
+      console.error(valueTable);
       return;
     }
 
