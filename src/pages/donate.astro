@@ -7,43 +7,54 @@ import type { ContentBlock } from "@model/contentBlock";
 import Container from "@ui/primitives/Container.astro";
 import TextBlock from "@ui/typography/TextBlock.astro";
 
+const deprecatedAttributes = {
+  allowpaymentrequest: "allowpaymentrequest",
+  scrolling: "no"
+};
+
 const donateContent = await getContentGroup("donate");
 ---
 
 <MainLayout>
   <Container>
-    <Heading as="h1" size="xl5">
+    <Heading as="h1" size="xl5" class="mb-6 mt-6">
       {donateContent.title}
     </Heading>
-
-    <TextBlock>
-    {donateContent.blocks.map((contentBlock: ContentBlock) => (
-      <section class="p-2 lg:mb-6 odd:bg-stone-100">
-        <ContentBlockRenderer contentBlock={contentBlock} />
-      </section>
-    ))}
-    </TextBlock>
-
-    <!-- Donorbox Embedded Form -->
-    <div class="mt-11 mb-11 flex justify-center">
-      <div class="w-full max-w-xl px-4">
-        <Fragment set:html={`
-          <script src="https://donorbox.org/widget.js" paypalExpress="false"></script>
-          <iframe
-            title="Donation form for Why Grief Matters"
-            src="https://donorbox.org/embed/why-grief-matters-a-vision-for-tomorrow"
-            name="donorbox"
-            allowpaymentrequest
-            frameborder="0"
-            scrolling="no"
-            seamless="seamless"
-            height="685px"
-            width="100%"
-            style="border: none;"
-          ></iframe>
-        `} />
-      </div>
-    </div>
   </Container>
+
+  <TextBlock>
+  {donateContent.blocks.map((contentBlock: ContentBlock) => (
+    <section class="p-2 lg:mb-6 odd:bg-stone-100">
+      <Container>
+        <ContentBlockRenderer contentBlock={contentBlock} />
+      </Container>
+    </section>
+  ))}
+  </TextBlock>
+
+  <!-- Donorbox Embedded Form -->
+  <div class="mt-11 mb-11 flex justify-center">
+    <div class="w-full max-w-xl px-4">
+        <iframe
+          class:list={[
+          "max-w-[500px]",
+          "min-w-[250px]",
+          "h-[900px]",
+          "max-h-none", 
+          "overflow-auto",
+          "border-0",
+          "w-full",
+          ]}
+          title="Donation form for Why Grief Matters"
+          src="https://donorbox.org/embed/why-grief-matters-a-vision-for-tomorrow"
+          name="donorbox"
+          allow = "payment"
+          {...deprecatedAttributes as any}
+        ></iframe>
+    </div>
+  </div>
 </MainLayout>
 
+<script is:inline src="https://donorbox.org/widget.js">
+  script.setAttribute("paypalExpress", "false");
+</script>
