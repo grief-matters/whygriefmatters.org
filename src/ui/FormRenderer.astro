@@ -12,7 +12,7 @@ const { form } = Astro.props;
 
 const baseInputClasses = [
   "block w-full px-3 py-1 mt-2",
-  "border-1 border-stone-200 rounded-sm",
+  "border border-stone-200 rounded-sm",
   "focus:outline-blue-500/75",
   "font-ng",
 ];
@@ -21,7 +21,18 @@ const baseInputClasses = [
 <cms-form data-submit-action={form.submitAction}>
   {form.title && <Heading class:list={["mb-3"]}>{form.title}</Heading>}
   {form.description && <TextBlock>{form.description}</TextBlock>}
-  <form id="cms-form">
+  <form id="cms-form" novalidate>
+    <div class="hidden">
+      {/* Honeypot Field */}
+      <label for="referralSource">How Did You Hear About Us?</label>
+      <input
+        id="referralSource"
+        name="referralSource"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+      />
+    </div>
     {
       form.fields.map((f) => (
         <div class="mb-4">
@@ -127,38 +138,146 @@ const baseInputClasses = [
 
 <script>
   import { actions } from "astro:actions";
+  import { inputSchemaMap } from "@common/input-schema-map";
+  import { isActionKey, type ActionKey } from "@common/action-keys";
+
+  import type { ZodSchema } from "astro:schema";
+  type Action = (formData: any) => Promise<any>;
 
   class CmsForm extends HTMLElement {
+    private action: Action | null = null;
+    private validator: ZodSchema<any> | null = null;
+    private validationResults: Record<string, string> = {};
+    private form: HTMLFormElement | null = null;
+    private submitButton: Element | null = null;
+
+    constructor() {
+      super();
+    }
+
     connectedCallback() {
+      this.initialize();
+
+      if (this.action === null) {
+        // todo - set an error on the form
+        return;
+      }
+    }
+
+    private initialize() {
+      const key = this.getActionKeyOrNull();
+      const action = key ? this.getActionOrNull(key) : null;
+      const validator = key ? this.getValidatorOrNull(key) : null;
+
       const form = document.querySelector("form");
       const button = document.querySelector('button[type="submit"]');
 
-      const handler = this.dataset.submitAction;
-      if (typeof handler === "undefined") {
-        // TODO - handle
-        return;
-      }
+      this.action = action;
+      this.validator = validator;
+      this.form = form;
+      this.submitButton = button;
 
-      form?.addEventListener("submit", async (e) => {
-        button?.setAttribute("disabled", "true");
+      this.setupFormListener();
+    }
 
+    private getActionKeyOrNull() {
+      const key = this.dataset.submitAction;
+      return isActionKey(key) ? key : null;
+    }
+
+    private getActionOrNull(actionKey: ActionKey) {
+      return actions[actionKey] ?? null;
+    }
+
+    private getValidatorOrNull(actionKey: ActionKey) {
+      return inputSchemaMap[actionKey] ?? null;
+    }
+
+    private setupFormListener() {
+      this.form?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const formData = new FormData(form);
 
-        const action = actions[handler as keyof typeof actions];
-        if (typeof action === "undefined") {
-          // TODO - handle
+        if (!this.form || !this.submitButton) {
+          console.error("[CmsForm] could not get form elements");
           return;
         }
 
-        const { error } = await action(formData);
+        this.submitButton?.setAttribute("disabled", "true");
 
-        form.reset();
-        button?.removeAttribute("disabled");
-        if (!error) {
-          console.log("Submitted yay!");
+        const formData = new FormData(this.form);
+
+        if (!formData) {
+          console.error("[CmsForm] could not get 'formData'");
         }
+
+        const formEntries = Object.fromEntries(formData.entries());
+
+        const { success, data } = this.validate(formEntries);
+        if (!success) {
+          // todo - set form level error
+          this.displayValidationErrors();
+          this.submitButton.removeAttribute("disabled");
+          return;
+        }
+
+        const { error } = await this.action?.(data);
+
+        if (!error) {
+          this.form.reset();
+          // todo - set confirmation message
+        }
+
+        this.submitButton.removeAttribute("disabled");
       });
+    }
+
+    private validate(dataToValidate: any) {
+      if (!this.validator) {
+        console.error("[CmsForm] no validator set");
+        return { success: true, data: dataToValidate };
+      }
+
+      const { success, data, error } = this.validator.safeParse(dataToValidate);
+      if (!success) {
+        const fieldErrors = Object.entries(error.flatten().fieldErrors);
+
+        for (let i = 0; i < fieldErrors.length; i++) {
+          const [fieldName, errors] = fieldErrors[i];
+          this.validationResults[fieldName] = errors?.join(", ") ?? "Invalid";
+        }
+      }
+
+      return { success, data };
+    }
+
+    private displayValidationErrors() {
+      if (!this.form) {
+        console.error(
+          "[CmsForm] cannot get form elements to 'displayValidationErrors'"
+        );
+        return;
+      }
+
+      const formElements = this.form.elements;
+
+      if (Object.keys(this.validationResults).length > 0) {
+        Object.entries(this.validationResults).forEach(
+          ([fieldId, errorMessage]) => {
+            const input = formElements.namedItem(fieldId) as Element;
+            if (input) {
+              // todo - tidy
+              input.classList.remove("border", "border-stone-200");
+              input.classList.add("border-2", "border-pink-500");
+
+              let newElement = document.createElement("p");
+              newElement.classList.add("text-sm", "text-pink-500", "pt-2");
+              newElement.textContent = errorMessage;
+
+              input.parentNode?.insertBefore(newElement, input.nextSibling);
+            }
+          }
+        );
+      }
     }
   }
 

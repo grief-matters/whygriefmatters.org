@@ -19,6 +19,12 @@ const props = Astro.props;
   for={props.fieldName}
 >
   {props.label}
-  {props.required && <span class="sr-only">{"(required)"}</span>}
+  {
+    props.required && (
+      <span title="Required" class="sr-only">
+        {"(required)"}
+      </span>
+    )
+  }
 </label>
 {props.description && <p class="font-sans text-sm">{props.description}</p>}

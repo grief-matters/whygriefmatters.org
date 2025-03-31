@@ -6,23 +6,20 @@ import {
   RESEND_TO_ADDRESS,
 } from "astro:env/server";
 import { ActionError, defineAction } from "astro:actions";
-import { z } from "astro:schema";
-
-const zContactInput = z.object({
-  name: z.string(),
-  email: z.string().email(),
-  message: z.string(),
-});
-
-type ContactInput = z.infer<typeof zContactInput>;
+import { zContactInput, type ContactInput } from "@model/contactFormInput";
 
 const resend = new Resend(RESEND_API_KEY);
 
 export const contact = defineAction({
-  accept: "form",
   input: zContactInput,
   handler: async (input) => {
-    const { data, error } = await resend.emails.send({
+    console.log("submitting... ", input);
+    if ((input.referralSource ?? "").length > 0) {
+      // Honeypot field was completed - exit quietly
+      return;
+    }
+
+    const { error, data } = await resend.emails.send({
       from: RESEND_FROM_ADDRESS,
       to: [RESEND_TO_ADDRESS],
       subject: "Contact Form Submission",
@@ -36,7 +33,7 @@ export const contact = defineAction({
       });
     }
 
-    return data;
+    return;
   },
 });
 
