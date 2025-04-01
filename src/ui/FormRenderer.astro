@@ -2,6 +2,7 @@
 import type { Form } from "@model/contentBlock";
 import Heading from "./primitives/Heading.astro";
 import TextBlock from "./typography/TextBlock.astro";
+import FormFieldLabel from "./FormFieldLabel.astro";
 
 interface Props {
   form: Form;
@@ -17,45 +18,53 @@ const baseInputClasses = [
 ];
 ---
 
-<div>
+<cms-form data-submit-action={form.submitAction}>
   {form.title && <Heading class:list={["mb-3"]}>{form.title}</Heading>}
   {form.description && <TextBlock>{form.description}</TextBlock>}
-  <form>
+  <form id="cms-form">
     {
       form.fields.map((f) => (
         <div class="mb-4">
-          <label
-            class:list={[
-              "block",
-              {
-                "after:content-['*'] after:text-pink-500 after:-ml-0.5":
-                  f.required,
-              },
-            ]}
-            for={f.name}
-          >
-            {f.label}
-            {f.required && <span class="sr-only">{"(required)"}</span>}
-          </label>
-          {f.description && <p class="font-sans text-sm">{f.description}</p>}
           {() => {
             switch (f.type) {
               case "textarea":
-                return <textarea rows="3" class:list={baseInputClasses} />;
+                return (
+                  <>
+                    <FormFieldLabel
+                      fieldName={f.name}
+                      label={f.label}
+                      description={f.description ?? undefined}
+                      required={f.required}
+                    />
+                    <textarea
+                      name={f.name}
+                      rows="3"
+                      class:list={baseInputClasses}
+                    />
+                  </>
+                );
               case "select":
                 return (
-                  <select
-                    name={f.name}
-                    id={f.name}
-                    class:list={baseInputClasses}
-                  >
-                    {f.required && (
-                      <option value="">{"Select an option"}</option>
-                    )}
-                    {f.inputOptions.map((o) => (
-                      <option value={o}>{o}</option>
-                    ))}
-                  </select>
+                  <>
+                    <FormFieldLabel
+                      fieldName={f.name}
+                      label={f.label}
+                      description={f.description ?? undefined}
+                      required={f.required}
+                    />
+                    <select
+                      name={f.name}
+                      id={f.name}
+                      class:list={baseInputClasses}
+                    >
+                      {f.required && (
+                        <option value="">{"Select an option"}</option>
+                      )}
+                      {f.inputOptions.map((o) => (
+                        <option value={o}>{o}</option>
+                      ))}
+                    </select>
+                  </>
                 );
               case "radio":
                 return (
@@ -81,17 +90,77 @@ const baseInputClasses = [
                 );
               default:
                 return (
-                  <input
-                    class:list={baseInputClasses}
-                    type={f.type}
-                    name={f.name}
-                    id={f.name}
-                  />
+                  <>
+                    <FormFieldLabel
+                      fieldName={f.name}
+                      label={f.label}
+                      description={f.description ?? undefined}
+                      required={f.required}
+                    />
+                    <input
+                      class:list={baseInputClasses}
+                      type={f.type}
+                      name={f.name}
+                      id={f.name}
+                    />
+                  </>
                 );
             }
           }}
         </div>
       ))
     }
+    <button
+      class:list={[
+        "hover:shadow-md hover:shadow-blue-800/30 transition duration-300",
+        "bg-blue-900",
+        "text-start px-3",
+        "rounded",
+        "sm:w-full sm:text-center sm:py-1",
+        "text-stone-50 font-medium",
+        "disabled:bg-blue-900/50",
+      ]}
+      type="submit">{"Submit"}</button
+    >
   </form>
-</div>
+</cms-form>
+
+<script>
+  import { actions } from "astro:actions";
+
+  class CmsForm extends HTMLElement {
+    connectedCallback() {
+      const form = document.querySelector("form");
+      const button = document.querySelector('button[type="submit"]');
+
+      const handler = this.dataset.submitAction;
+      if (typeof handler === "undefined") {
+        // TODO - handle
+        return;
+      }
+
+      form?.addEventListener("submit", async (e) => {
+        button?.setAttribute("disabled", "true");
+
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        const action = actions[handler as keyof typeof actions];
+        if (typeof action === "undefined") {
+          // TODO - handle
+          return;
+        }
+
+        const { error } = await action(formData);
+
+        form.reset();
+        button?.removeAttribute("disabled");
+        if (!error) {
+          console.log("Submitted yay!");
+        }
+      });
+    }
+  }
+
+  customElements.define("cms-form", CmsForm);
+</script>
