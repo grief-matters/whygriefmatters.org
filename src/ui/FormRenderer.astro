@@ -151,6 +151,9 @@ const baseInputClasses = [
     private form: HTMLFormElement | null = null;
     private submitButton: Element | null = null;
 
+    private fieldBorderClassList = ["border", "border-stone-200"];
+    private fieldErrorBorderClassList = ["border-2", "border-pink-500"];
+
     constructor() {
       super();
     }
@@ -196,6 +199,8 @@ const baseInputClasses = [
     private setupFormListener() {
       this.form?.addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        this.clearValidation();
 
         if (!this.form || !this.submitButton) {
           console.error("[CmsForm] could not get form elements");
@@ -253,7 +258,7 @@ const baseInputClasses = [
     private displayValidationErrors() {
       if (!this.form) {
         console.error(
-          "[CmsForm] cannot get form elements to 'displayValidationErrors'"
+          "[CmsForm] cannot get form elements to 'displayValidationErrors'",
         );
         return;
       }
@@ -264,20 +269,53 @@ const baseInputClasses = [
         Object.entries(this.validationResults).forEach(
           ([fieldId, errorMessage]) => {
             const input = formElements.namedItem(fieldId) as Element;
+            console.log(input);
             if (input) {
-              // todo - tidy
-              input.classList.remove("border", "border-stone-200");
-              input.classList.add("border-2", "border-pink-500");
+              input.classList.remove(...this.fieldBorderClassList);
+              input.classList.add(...this.fieldErrorBorderClassList);
 
-              let newElement = document.createElement("p");
-              newElement.classList.add("text-sm", "text-pink-500", "pt-2");
-              newElement.textContent = errorMessage;
+              const errorElement =
+                this.createValidationErrorElement(errorMessage);
 
-              input.parentNode?.insertBefore(newElement, input.nextSibling);
+              input.parentNode?.insertBefore(errorElement, input.nextSibling);
             }
-          }
+          },
         );
       }
+    }
+
+    private createValidationErrorElement(errorMessage: string) {
+      let newElement = document.createElement("p");
+      newElement.classList.add(
+        "validation-error",
+        "text-sm",
+        "text-pink-500",
+        "pt-2",
+      );
+      newElement.textContent = errorMessage;
+      return newElement;
+    }
+
+    private clearValidation() {
+      const formElements = this.form?.elements;
+      if (!formElements) {
+        console.error(
+          "[CmsForm] cannot get form elements in 'clearValidation'",
+        );
+      }
+
+      Object.keys(this.validationResults).forEach((fieldName) => {
+        // todo - deal with RadioNodeList
+        const input = (formElements?.namedItem(fieldName) as Element) ?? null;
+        if (input) {
+          input.classList.remove(...this.fieldErrorBorderClassList);
+          input.classList.add(...this.fieldBorderClassList);
+        }
+      });
+
+      this.validationResults = {};
+      const currentErrorElements = this.querySelectorAll(".validation-error");
+      currentErrorElements.forEach((el) => el.remove());
     }
   }
 
