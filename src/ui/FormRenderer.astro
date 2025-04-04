@@ -15,6 +15,7 @@ const baseInputClasses = [
   "border border-stone-200 rounded-sm",
   "focus:outline-blue-500/75",
   "font-ng",
+  "form-input",
 ];
 ---
 
@@ -48,8 +49,9 @@ const baseInputClasses = [
                       required={f.required}
                     />
                     <textarea
+                      id={f.name}
                       name={f.name}
-                      rows="3"
+                      rows="5"
                       class:list={baseInputClasses}
                     />
                   </>
@@ -78,6 +80,7 @@ const baseInputClasses = [
                   </>
                 );
               case "radio":
+                // TODO - not being used yet - but not finished
                 return (
                   <fieldset>
                     <legend
@@ -258,7 +261,7 @@ const baseInputClasses = [
     private displayValidationErrors() {
       if (!this.form) {
         console.error(
-          "[CmsForm] cannot get form elements to 'displayValidationErrors'",
+          "[CmsForm] cannot get form elements to 'displayValidationErrors'"
         );
         return;
       }
@@ -279,7 +282,7 @@ const baseInputClasses = [
 
               input.parentNode?.insertBefore(errorElement, input.nextSibling);
             }
-          },
+          }
         );
       }
     }
@@ -290,7 +293,7 @@ const baseInputClasses = [
         "validation-error",
         "text-sm",
         "text-pink-500",
-        "pt-2",
+        "pt-2"
       );
       newElement.textContent = errorMessage;
       return newElement;
@@ -300,7 +303,7 @@ const baseInputClasses = [
       const formElements = this.form?.elements;
       if (!formElements) {
         console.error(
-          "[CmsForm] cannot get form elements in 'clearValidation'",
+          "[CmsForm] cannot get form elements in 'clearValidation'"
         );
       }
 
