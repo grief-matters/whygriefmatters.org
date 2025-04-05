@@ -1,5 +1,6 @@
 ---
 import sortBy from "lodash/sortBy";
+import differenceBy from "lodash/differenceBy";
 
 import type {
   CategoryPageData,
@@ -83,12 +84,22 @@ export async function getStaticPaths() {
       };
     });
 
+    const featuredArticles = data.featuredArticles ?? [];
+    const featuredStories = data.featuredStories ?? [];
+    const featuredResources = [...featuredArticles, ...featuredStories];
+
+    const filteredResources = differenceBy(
+      data.resources,
+      featuredResources,
+      "resourceUrl"
+    );
+
     return {
       params: { category: data.slug },
       props: {
         title: fullTitle,
         image: data.image,
-        resources: sortBy(data.resources, ["type", "title"]),
+        resources: sortBy(filteredResources, ["type", "title"]),
         subtopicResources: subtopicResources,
         featuredArticles: data.featuredArticles,
         featuredStories: data.featuredStories,
@@ -117,16 +128,6 @@ props.applicableTypes.forEach(
 
 const showFeatured =
   Array.isArray(props.featuredStories) || Array.isArray(props.featuredArticles);
- 
-const featureUrls = [
-  ...(props.featuredArticles?.map((f) => f.resourceUrl) ?? []),
-  ...(props.featuredStories?.map((f) => f.resourceUrl) ?? []),
-];
-
-// Exclude featured resources from the main resource list to avoid duplication
-const nonFeaturedResources = props.resources.filter(
-  (r) => !featureUrls.includes(r.resourceUrl)
-);
 ---
 
 <MainLayout>
@@ -224,7 +225,7 @@ const nonFeaturedResources = props.resources.filter(
           >
             {"Resources On This Topic"}
           </Heading>
-          <ResourcePageListings resources={nonFeaturedResources} />
+          <ResourcePageListings resources={props.resources} />
         </section>
       </Container>
     )
