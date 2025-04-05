@@ -117,6 +117,16 @@ props.applicableTypes.forEach(
 
 const showFeatured =
   Array.isArray(props.featuredStories) || Array.isArray(props.featuredArticles);
+ 
+const featureUrls = [
+  ...(props.featuredArticles?.map((f) => f.resourceUrl) ?? []),
+  ...(props.featuredStories?.map((f) => f.resourceUrl) ?? []),
+];
+
+// Exclude featured resources from the main resource list to avoid duplication
+const nonFeaturedResources = props.resources.filter(
+  (r) => !featureUrls.includes(r.resourceUrl)
+);
 ---
 
 <MainLayout>
@@ -214,7 +224,7 @@ const showFeatured =
           >
             {"Resources On This Topic"}
           </Heading>
-          <ResourcePageListings resources={props.resources} />
+          <ResourcePageListings resources={nonFeaturedResources} />
         </section>
       </Container>
     )
