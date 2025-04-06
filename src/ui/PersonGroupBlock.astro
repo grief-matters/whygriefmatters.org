@@ -1,12 +1,12 @@
 ---
 import type { PersonGroup } from "@model/personGroup";
 import kebabCase from "lodash/kebabCase";
-import PersonCard from "./composites/PersonCard.astro";
+import FeaturedPerson from "./composites/FeaturedPerson.astro";
+import Person from "./composites/Person.astro";
 import EmphasizedEllipsisText from "./primitives/EmphasizedEllipsisText.astro";
 import Heading from "./primitives/Heading.astro";
 import Link from "./primitives/Link.astro";
 import TextBlock from "./typography/TextBlock.astro";
-import Card from "./primitives/Card.astro";
 
 interface Props {
   personGroup: PersonGroup;
@@ -43,7 +43,7 @@ const {
       featured ? 
         personGroup.members.map((person) => (
           <div>
-            <PersonCard person={person} giveImportance={featured} />
+            <FeaturedPerson person={person} />
             {person.personalStory !== null && (
               <div class="mx-auto max-w-fit mb-12">
                 <Link size="xl" href={`${kebabCase(person.fullName)}`}>
@@ -54,11 +54,7 @@ const {
           </div>
         ))
       :
-      personGroup.members.map((person) => (
-        <Card disableBorder={true} additiveClasses={["flex-1 p-4"]}>
-          <PersonCard person={person} giveImportance={featured} />
-        </Card>
-      ))
+      personGroup.members.map((person) => <Person person={person} />)
     }
   </div>
 </div>
