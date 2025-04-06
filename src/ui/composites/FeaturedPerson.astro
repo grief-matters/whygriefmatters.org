@@ -7,6 +7,7 @@ import Subtitle from "@ui/primitives/Subtitle.astro";
 
 import linkedInImg from "../../img/linkedin.svg";
 import fallbackImg from "../../img/avatar.svg";
+import EmailIcon from "@ui/icons/EmailIcon.astro";
 
 interface Props {
   person: Person;
@@ -67,15 +68,7 @@ const avatarImage = person.avatar
             </a>
           )}
           {person.socials.email && (
-            <a href={`mailto:${person.socials.email}`} rel="nofollow">
-              <span
-                role="presentation"
-                class="text-3xl text-indigo-300/50 ml-1.5 font-semibold font-sans"
-              >
-                @
-              </span>
-              <span class="sr-only">{person.socials.email}</span>
-            </a>
+            <EmailIcon link={`mailto:${person.socials.email}`} />
           )}
         </div>
       )
