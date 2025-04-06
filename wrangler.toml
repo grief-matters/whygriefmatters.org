@@ -9,3 +9,21 @@ PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_YWRlcXVhdGUtbW9uYXJjaC01NS5jbGVyay5hY2Nv
 SANITY_STUDIO_API_VERSION = "2023-07-16"
 SANITY_STUDIO_DATASET = "production"
 SANITY_STUDIO_PROJECT_ID = "vg3sb730"
+RESEND_FROM_ADDRESS="system@noreply.whygriefmatters.org"
+RESEND_TO_ADDRESS="contact@whygriefmatters.org"
+
+[env.preview.vars]
+PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_YWRlcXVhdGUtbW9uYXJjaC01NS5jbGVyay5hY2NvdW50cy5kZXYk"
+SANITY_STUDIO_API_VERSION = "2023-07-16"
+SANITY_STUDIO_DATASET = "production"
+SANITY_STUDIO_PROJECT_ID = "vg3sb730"
+RESEND_FROM_ADDRESS="Why Grief Matters(DEV) <system@noreply.whygriefmatters.org>"
+RESEND_TO_ADDRESS="dev@whygriefmatters.org"
+
+[env.production.vars]
+PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_YWRlcXVhdGUtbW9uYXJjaC01NS5jbGVyay5hY2NvdW50cy5kZXYk"
+SANITY_STUDIO_API_VERSION = "2023-07-16"
+SANITY_STUDIO_DATASET = "production"
+SANITY_STUDIO_PROJECT_ID = "vg3sb730"
+RESEND_FROM_ADDRESS="Why Grief Matters <system@noreply.whygriefmatters.org>"
+RESEND_TO_ADDRESS="contact@whygriefmatters.org"

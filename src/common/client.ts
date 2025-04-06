@@ -69,6 +69,7 @@ import {
 import { gFooterDataQuery, zFooterData, type FooterData } from "@model/footer";
 import {
   gContentGroupPagesQuery,
+  gContentGroupProjection,
   zContentGroup,
   type ContentGroup,
 } from "@model/contentGroup";
@@ -343,6 +344,23 @@ export async function getContentGroupPagesData(): Promise<ContentGroup[]> {
 
   return contentGroupPagesData;
 }
+
+/**
+ * Fetchs a single Content Group
+*/
+
+export async function getContentGroup(slug: string) {
+  const client = getClient();
+
+  const query = `
+  *[_type == "contentGroup" && slug.current == $slug][0] {
+    ${gContentGroupProjection}
+  }
+`;
+  const result = await client.fetch(query, { slug });
+  return result;
+}
+
 
 export async function getPersonPagesData(): Promise<Person[]> {
   const client = getClient();
