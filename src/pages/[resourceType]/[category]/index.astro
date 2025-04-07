@@ -17,12 +17,14 @@ import Container from "@ui/primitives/Container.astro";
 
 import PageHeader from "@ui/PageHeader.astro";
 import ResourcePageListings from "@ui/ResourcePageListing/ResourcePageListings.astro";
+import TopicHierarchyNav from "@ui/TopicHierarchyNav/TopicHierarchyNav.astro";
 
 interface Props {
   resources: Array<InternetResourcePageListing>;
   applicablePopulations: Array<Population>;
   categoryTitle: string;
   image: SanityImage | null;
+  subtopics: any;
 }
 
 export async function getStaticPaths() {
@@ -30,35 +32,26 @@ export async function getStaticPaths() {
   const populations = await getPopulations();
 
   return internetResourceTypes.flatMap((resourceType) =>
-    categoryPagesData
-      .filter(
-        (categoryPageData) =>
-          categoryPageData.resources &&
-          categoryPageData.resources.some(
-            (resource) => resource.type === resourceType
-          )
-      )
-      .map((catPage) => {
-        const resourcesFilteredByType = catPage.resources.filter(
-          (r) => r.type === resourceType
-        );
+    categoryPagesData.map((catPage) => {
+      const resourcesFilteredByType = catPage.resources.filter(
+        (r) => r.type === resourceType
+      );
 
-        const filteredPopulations = populations.filter((p) =>
-          resourcesFilteredByType.some((r) => r.populations?.includes(p.slug))
-        );
+      const filteredPopulations = populations.filter((p) =>
+        resourcesFilteredByType.some((r) => r.populations?.includes(p.slug))
+      );
 
-        return {
-          params: { category: catPage.slug, resourceType },
-          props: {
-            resources: sortBy(resourcesFilteredByType, [
-              "lastUpdated",
-            ]).reverse(),
-            applicablePopulations: filteredPopulations,
-            categoryTitle: catPage.title,
-            image: catPage.image,
-          },
-        };
-      })
+      return {
+        params: { category: catPage.slug, resourceType },
+        props: {
+          resources: sortBy(resourcesFilteredByType, ["lastUpdated"]).reverse(),
+          applicablePopulations: filteredPopulations,
+          categoryTitle: catPage.title,
+          image: catPage.image,
+          subtopics: catPage.subtopics,
+        },
+      };
+    })
   );
 }
 
@@ -77,6 +70,19 @@ const pageTitle = getResourcePageTitle({
   <PageHeader pageTitle={pageTitle} image={props.image ?? undefined} />
   <Container>
     {/* TODO - Add populations */}
+    {
+      (props.subtopics ?? []).length > 0 && (
+        <section class="m-3 p-4 sm:px-5 bg-white shadow-md">
+          {props.subtopics.map((st: any) => (
+            <TopicHierarchyNav
+              topic={st}
+              filter={{ resourceType: params.resourceType }}
+            />
+          ))}
+        </section>
+      )
+    }
+
     <section class="p-3 lg:mb-6">
       <ResourcePageListings resources={props.resources} />
     </section>
