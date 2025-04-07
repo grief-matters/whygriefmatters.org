@@ -34,7 +34,6 @@ const bgClasses = ["bg-stone-50", "bg-stone-100"];
 const adjustedIndex = getAdjustedIndex(bgClasses.length, indexInCollection);
 
 const bgClass = bgClasses[adjustedIndex];
-
 ---
 
 <section class:list={["py-4", bgClass]}>
@@ -53,6 +52,9 @@ const bgClass = bgClasses[adjustedIndex];
       featuredContent.description && (
         <Container>
           <PortableTextContentBlock
+            stylableElementClassLists={{
+              p: ["text-center"],
+            }}
             portableText={featuredContent.description}
           />
         </Container>
@@ -65,14 +67,18 @@ const bgClass = bgClasses[adjustedIndex];
             case "richTextContentBlock":
               return (
                 <div class="max-w-prose px-3 my-6 m-auto prose font-serif text-center text-sky-800">
-                  <PortableTextContentBlock portableText={contentItem.portableText} />
+                  <PortableTextContentBlock
+                    portableText={contentItem.portableText}
+                  />
                 </div>
               );
 
             case "rowOfThreeFeaturedResources":
               return (
                 <div class="mb-3">
-                  <FeaturedResources featuredResources={contentItem.resources} />
+                  <FeaturedResources
+                    featuredResources={contentItem.resources}
+                  />
                 </div>
               );
 
@@ -85,34 +91,46 @@ const bgClass = bgClasses[adjustedIndex];
 
             case "resourceLinks":
               return (
-                <>
-                  <div
-                    class:list={["flex flex-wrap justify-center gap-4", "p-3"]}
-                  >
-                    {contentItem.resources.map((link) => (
-                      <CardLink
-                        href={link.url}
-                        cardProps={{
-                          resourceType: link.type ?? undefined
-                        }}
-                        external
-                      >
-                        {link.title}
-                      </CardLink>
-                    ))}
-                  </div>
-                </>
+                <div
+                  class:list={["flex flex-wrap justify-center gap-4", "p-3"]}
+                >
+                  {contentItem.resources.map((link) => (
+                    <CardLink
+                      href={link.url}
+                      cardProps={{
+                        resourceType: link.type ?? undefined,
+                      }}
+                      external
+                    >
+                      {link.title}
+                    </CardLink>
+                  ))}
+                </div>
               );
 
             case "resourcePageLinks":
               return (
                 <div
-                  class:list={["max-w-4xl mx-auto flex", "flex-wrap", "justify-center", "gap-4"]}
+                  class:list={[
+                    "max-w-4xl mx-auto flex",
+                    "flex-wrap",
+                    "justify-center",
+                    "gap-4",
+                  ]}
                 >
                   {contentItem.links.map((pageLink) => (
-                    <CardLink 
-                      href={pageLink.linkType === 'resourcePageLink' ? getRouteFromDynamicResourcePageLink(pageLink) : pageLink.url} 
-                      cardProps={{resourceType: pageLink.linkType === 'resourcePageLink' ? pageLink.type : undefined}}
+                    <CardLink
+                      href={
+                        pageLink.linkType === "resourcePageLink"
+                          ? getRouteFromDynamicResourcePageLink(pageLink)
+                          : pageLink.url
+                      }
+                      cardProps={{
+                        resourceType:
+                          pageLink.linkType === "resourcePageLink"
+                            ? pageLink.type
+                            : undefined,
+                      }}
                     >
                       {pageLink.label}
                     </CardLink>
@@ -140,7 +158,12 @@ const bgClass = bgClasses[adjustedIndex];
             case "resourcePageLink":
               return (
                 <div class="mx-auto text-center pt-6 pb-3">
-                  <Link href={getRouteFromDynamicResourcePageLink(featuredContent.jumpLink)} size="xl">
+                  <Link
+                    href={getRouteFromDynamicResourcePageLink(
+                      featuredContent.jumpLink
+                    )}
+                    size="xl"
+                  >
                     <EmphasizedEllipsisText
                       text={featuredContent.jumpLink.label}
                     />
@@ -157,8 +180,6 @@ const bgClass = bgClasses[adjustedIndex];
                   </Link>
                 </div>
               );
-            default: 
-              return (<></>)
           }
         })
     }
