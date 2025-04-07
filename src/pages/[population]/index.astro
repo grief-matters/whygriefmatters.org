@@ -21,6 +21,8 @@ import ResourceCounts, {
 } from "@ui/ResourceCounts.astro";
 import Container from "@ui/primitives/Container.astro";
 import Heading from "@ui/primitives/Heading.astro";
+import type { Topic } from "@model/topic";
+import TopicHierarchyNav from "@ui/TopicHierarchyNav/TopicHierarchyNav.astro";
 
 interface Props {
   populationName: string;
@@ -76,6 +78,18 @@ props.applicableTypes.forEach(
 <MainLayout>
   <PageHeader pageTitle={pageTitle} image={props.image ?? undefined} />
   <Container>
+    {
+      props.applicableCategories?.length > 0 && (
+        <section class="m-3 p-4 sm:px-5 bg-white shadow-md">
+          {props.applicableCategories.map((subTopic: Topic) => (
+            <TopicHierarchyNav
+              topic={subTopic}
+              filter={{ population: params.population }}
+            />
+          ))}
+        </section>
+      )
+    }
     {
       props.applicableTypes.length > 1 && (
         <section class="p-3 lg:mb-6">
