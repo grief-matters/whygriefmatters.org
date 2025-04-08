@@ -7,17 +7,18 @@ import Subtitle from "@ui/primitives/Subtitle.astro";
 
 import linkedInImg from "../../img/linkedin.svg";
 import fallbackImg from "../../img/avatar.svg";
+import EmailIcon from "@ui/icons/EmailIcon.astro";
 
 interface Props {
   person: Person;
 }
 
-const props = Astro.props;
+const {person} = Astro.props;
 
-const avatarImage = props.person.avatar
+const avatarImage = person.avatar
   ? {
-      src: getImageUrlBuilder(props.person.avatar).width(640).height(640).url(),
-      alt: `Profile photo of ${props.person.fullName}`,
+      src: getImageUrlBuilder(person.avatar).width(640).height(640).url(),
+      alt: `Profile photo of ${person.fullName}`,
     }
   : {
       src: fallbackImg.src,
@@ -44,38 +45,30 @@ const avatarImage = props.person.avatar
   >
     <div class:list={["border-b-2 border-indigo-500/25 mb-3"]}>
       <h1 class:list={["font-serif text-sky-800 font-semibold text-4xl"]}>
-        {props.person.fullName}
+        {person.fullName}
       </h1>
-      <Subtitle class:list={"mb-2"}>{props.person.role}</Subtitle>
+      <Subtitle class:list={"mb-2"}>{person.role}</Subtitle>
     </div>
     {
-      props.person.shortBio && (
-        <PortableTextContentBlock portableText={props.person.shortBio} />
+      person.shortBio && (
+        <PortableTextContentBlock portableText={person.shortBio} />
       )
     }
     {
-      props.person.socials && (
+      person.socials && (
         <div class="flex mt-3">
-          {props.person.socials.linkedIn && (
+          {person.socials.linkedIn && (
             <a
-              href={props.person.socials.linkedIn}
+              href={person.socials.linkedIn}
               rel="nofollow"
               class="block"
             >
               <img src={linkedInImg.src} class="w-10 h-10 inline-block" />
-              <span class="sr-only">{props.person.socials.linkedIn}</span>
+              <span class="sr-only">{person.socials.linkedIn}</span>
             </a>
           )}
-          {props.person.socials.email && (
-            <a href={`mailto:${props.person.socials.email}`} rel="nofollow">
-              <span
-                role="presentation"
-                class="text-3xl text-indigo-300/50 ml-1.5 font-semibold font-sans"
-              >
-                @
-              </span>
-              <span class="sr-only">{props.person.socials.email}</span>
-            </a>
+          {person.socials.email && (
+            <EmailIcon link={`mailto:${person.socials.email}`} />
           )}
         </div>
       )

@@ -1,7 +1,8 @@
 ---
 import type { PersonGroup } from "@model/personGroup";
 import kebabCase from "lodash/kebabCase";
-import PersonCard from "./composites/PersonCard.astro";
+import FeaturedPerson from "./composites/FeaturedPerson.astro";
+import Person from "./composites/Person.astro";
 import EmphasizedEllipsisText from "./primitives/EmphasizedEllipsisText.astro";
 import Heading from "./primitives/Heading.astro";
 import Link from "./primitives/Link.astro";
@@ -22,7 +23,7 @@ const {
 } = Astro.props;
 ---
 
-<div>
+<div class:list={["sm:p-3 lg:p-6"]}>
   {
     showGroupName && (
       <Heading as="h3" size="xl2">
@@ -31,18 +32,29 @@ const {
     )
   }
   {showGroupDescription && <TextBlock>{personGroup.description}</TextBlock>}
-  {
-    personGroup.members.map((person) => (
-      <>
-        <PersonCard person={person} />
-        {person.personalStory !== null && (
-          <div class="mx-auto max-w-fit mb-12">
-            <Link size="xl" href={`${kebabCase(person.fullName)}`}>
-              <EmphasizedEllipsisText text="Read More" />
-            </Link>
+  <div class:list={!featured ? [
+    "grid",
+    "sm:grid-cols-1",
+    "md:grid-cols-2",
+    "lg:grid-cols-3",
+    "p-4"
+  ] : []}>
+    {
+      featured ? 
+        personGroup.members.map((person) => (
+          <div>
+            <FeaturedPerson person={person} />
+            {person.personalStory !== null && (
+              <div class="mx-auto max-w-fit mb-12">
+                <Link size="xl" href={`${kebabCase(person.fullName)}`}>
+                  <EmphasizedEllipsisText text="Read More" />
+                </Link>
+              </div>
+            )}
           </div>
-        )}
-      </>
-    ))
-  }
+        ))
+      :
+      personGroup.members.map((person) => <Person person={person} />)
+    }
+  </div>
 </div>
