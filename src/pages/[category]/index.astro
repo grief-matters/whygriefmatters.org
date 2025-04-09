@@ -54,6 +54,7 @@ interface Props {
   image: SanityImage | null;
   topic: Topic;
   subtopics: Array<Topic>;
+  resourceTypesCounts: ResourceTypesCounts;
 }
 
 export async function getStaticPaths() {
@@ -94,6 +95,15 @@ export async function getStaticPaths() {
       "resourceUrl"
     );
 
+    const resourceTypesCounts: ResourceTypesCounts = {};
+    const applicableTypes = filteredTypes.sort() ?? [];
+    applicableTypes.forEach(
+      (t) =>
+        (resourceTypesCounts[t] = filteredResources.filter(
+          (x) => x.type === t
+        ).length)
+    );
+
     return {
       params: { category: data.slug },
       props: {
@@ -104,8 +114,9 @@ export async function getStaticPaths() {
         featuredArticles: data.featuredArticles,
         featuredStories: data.featuredStories,
         applicablePopulations: filteredPopulations ?? [],
-        applicableTypes: filteredTypes.sort() ?? [],
+        applicableTypes: applicableTypes,
         subtopics: data.subtopics,
+        resourceTypesCounts,
       },
     };
   });
@@ -118,13 +129,6 @@ const pageTitle = getResourcePageTitle({
   categoryName: props.title,
 });
 
-const resourceTypesCounts: ResourceTypesCounts = {};
-props.applicableTypes.forEach(
-  (t) =>
-    (resourceTypesCounts[t] = props.resources.filter(
-      (x) => x.type === t
-    ).length)
-);
 
 const showFeatured =
   Array.isArray(props.featuredStories) || Array.isArray(props.featuredArticles);
@@ -152,7 +156,7 @@ const showFeatured =
             {`Types of Resources on This Topic`}
           </Heading>
           <ResourceCounts
-            resourceTypesCounts={resourceTypesCounts}
+            resourceTypesCounts={props.resourceTypesCounts}
             category={params.category}
           />
         </section>
