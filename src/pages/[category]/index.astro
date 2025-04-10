@@ -99,11 +99,11 @@ export async function getStaticPaths() {
     const applicableTypes = filteredTypes.sort() ?? [];
     applicableTypes.forEach(
       (t) =>
-        (resourceTypesCounts[t] = filteredResources.filter(
+        (resourceTypesCounts[t] = data.resources.filter(
           (x) => x.type === t
         ).length)
     );
-
+    
     return {
       params: { category: data.slug },
       props: {
