@@ -10,6 +10,7 @@ import Heading from "@ui/primitives/Heading.astro";
 import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
 import Container from "@ui/primitives/Container.astro";
 import TextBlock from "@ui/typography/TextBlock.astro";
+import SearchBar from "@ui/SearchBar.astro";
 
 const homePageData = await getHomePageData();
 
@@ -52,6 +53,14 @@ const coreValuesBgColors = [
       </div>
     </div>
   </Hero>
+
+  <Container>
+    <Heading as="h2" size="xl2" class="mb-4 text-center">Search the Site</Heading>
+    <div class="max-w-3xl mx-auto">
+      <SearchBar />
+    </div>
+  </Container>
+  
   <Container>
     <section class="px-4 pb-8">
       <div class="mx-auto py-4 text-center lg:py-6">

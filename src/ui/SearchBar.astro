@@ -1,0 +1,36 @@
+---
+---
+
+<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+
+
+<div id="search"></div>
+
+
+<script src="/pagefind/pagefind-ui.js" is:inline></script>
+
+<script>
+  declare global {
+    interface Window {
+      PagefindUI?: any;
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    if (window.PagefindUI) {
+      new window.PagefindUI({
+        element: "#search",
+        showSubResults: true,
+        uiOptions: {
+          primary: "#2563EB",
+          background: "#FFFFFF88",
+          text: "#1E293B",
+          placeholder: "#64748B",
+          border: "#E2E8F0",
+          borderRadius: "12px",
+          font: "Quicksand, sans-serif",
+        },
+      });
+    }
+  });
+</script>
