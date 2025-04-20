@@ -21,16 +21,56 @@
       new window.PagefindUI({
         element: "#search",
         showSubResults: true,
-        uiOptions: {
-          primary: "#2563EB",
-          background: "#FFFFFF88",
-          text: "#1E293B",
-          placeholder: "#64748B",
-          border: "#E2E8F0",
-          borderRadius: "12px",
-          font: "Quicksand, sans-serif",
-        },
       });
     }
   });
 </script>
+
+<style is:global>
+
+  #search input {
+    background: rgba(255,255,255,0.5) !important;
+    border: 1px solid rgba(203,212,225,0.6) !important;
+    border-radius: 8px !important;
+    padding: 0.30rem 0.75rem 0.5rem 2.25rem !important;
+    font-weight: 400 !important;
+    font-size: 1rem !important;
+  }
+
+  #search input::placeholder {
+    color: rgba(100,116,139,0.6) !important;
+  }
+
+  #search .pagefind-clear {
+    opacity: 0.6 !important;
+  }
+
+  #search ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  #search li {
+    border: 1px solid rgba(203,212,225,0.4) !important;
+    border-radius: 8px !important;
+    margin-bottom: 0.5rem !important;
+    padding: 0.75rem 1rem !important;
+    box-shadow: none !important;
+  }
+
+  #search li a {
+    color: #1F2937 !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+  }
+  #search li a:hover {
+    text-decoration: underline !important;
+  }
+
+  #search .pagefind-stats {
+    color: rgba(31,41,55,0.7) !important;
+    font-weight: 400 !important;
+  }
+</style>
+
