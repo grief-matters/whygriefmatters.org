@@ -7,7 +7,7 @@
     "dev": "wrangler types && astro dev",
     "dev-host": "wrangler types && astro dev --host",
     "start": "wrangler types && astro dev",
-    "build": "wrangler types && astro check && astro build && pagefind --site ./dist && cpx \"dist/pagefind/**/*\" public/pagefind",
+    "build": "wrangler types && astro check && astro build",
     "preview": "wrangler types && wrangler pages dev ./dist"
   },
   "repository": {
@@ -48,12 +48,10 @@
     "@tailwindcss/typography": "^0.5.10",
     "@types/sanitize-html": "^2.13.0",
     "@typescript-eslint/parser": "^6.14.0",
-    "cpx": "^1.5.0",
     "eslint": "^8.56.0",
     "eslint-plugin-astro": "^0.31.0",
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "groq": "^3.20.1",
-    "pagefind": "^1.3.0",
     "prettier": "3.0.3",
     "prettier-plugin-astro": "^0.12.0",
     "wrangler": "4.2.0"
