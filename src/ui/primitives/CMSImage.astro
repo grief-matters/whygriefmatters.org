@@ -1,32 +1,44 @@
 ---
 import sample from "lodash/sample";
-
 import { getFallbackImageCollection, getImageUrlBuilder } from "@common/client";
-
 import type { SanityImage } from "@model/image";
-
-import fallbackImg from "../../img/fallback.jpg";
 
 interface Props {
   image: SanityImage | null;
+  width?: number;
+  height?: number;
+  class?: string;
+  srcset?: string;
+  sizes?: string;
 }
 const props = Astro.props;
 
 let imageToGet = props.image;
-
 if (imageToGet === null) {
   const fallbacks = await getFallbackImageCollection();
-  imageToGet = sample(fallbacks) ?? null;
+  imageToGet = sample(fallbacks) as SanityImage;
 }
 
-const imgSrc = imageToGet
-  ? getImageUrlBuilder(imageToGet.image).width(640).height(450).url()
-  : fallbackImg.src;
+const smImgUrl = getImageUrlBuilder(imageToGet).width(640).height(320).url()
+const mdImgUrl = getImageUrlBuilder(imageToGet).width(1024).height(512).url()
+const lgImgUrl = getImageUrlBuilder(imageToGet).width(1280).height(640).url()
+const xlImgUrl = getImageUrlBuilder(imageToGet).width(1400).height(650).url()
+
+const baseBuilder = getImageUrlBuilder(imageToGet)
+                      .width(props.width ? props.width : 640)
+                      .height(props.height ? props.height : 450);
+const webpSrc = baseBuilder.format("webp").url();
+const fallbackSrc = baseBuilder.url();
 ---
 
-<img
-  src={imgSrc}
-  alt={imageToGet?.altText ??
-    "Looking through reeds over a tranquil lake on a sunny day."}
-  loading="lazy"
-/>
+<picture>
+  <source srcset={webpSrc} type="image/webp" />
+  <img
+    src={fallbackSrc}
+    alt={imageToGet.altText}
+    class={props.class}
+    srcset={props.srcset ?? `${smImgUrl} 640w, ${mdImgUrl} 1024w, ${lgImgUrl} 1280w, ${xlImgUrl} 1560w`}
+    sizes={props.sizes ?? "(max-width: 640px) 640px, (max-width: 1024px) 1024px, (max-width: 1280px) 1280px, 100vw"}
+    loading="lazy"
+  />
+</picture>
