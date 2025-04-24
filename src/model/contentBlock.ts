@@ -39,9 +39,27 @@ export const zRelativePageLink = z.object({
   url: z.string(),
 });
 
+export const zSmartCollectionLink = z.object({
+  label: z.string(),
+  url: z.string(),
+});
+
+export const zLinkType = z.enum([
+  "relativeLink",
+  "resourcePageLink",
+  "smartCollectionLink",
+]);
+
 export const zResourcePageLink = z.discriminatedUnion("linkType", [
-  zRelativePageLink.extend({ linkType: z.literal("relativeLink") }),
-  zDynamicResourcePageLink.extend({ linkType: z.literal("resourcePageLink") }),
+  zRelativePageLink.extend({
+    linkType: z.literal(zLinkType.Enum.relativeLink),
+  }),
+  zDynamicResourcePageLink.extend({
+    linkType: z.literal(zLinkType.Enum.resourcePageLink),
+  }),
+  zSmartCollectionLink.extend({
+    linkType: z.literal(zLinkType.Enum.smartCollectionLink),
+  }),
 ]);
 
 export type DynamicResourcePageLink = z.infer<typeof zDynamicResourcePageLink>;
@@ -153,6 +171,11 @@ export const gContentBlocksProjection = groq`
         "category": category -> slug.current,
         "population": population -> slug.current
       },
+      _type == "smartCollectionLink" => {
+        "linkType": _type,
+        label,
+        "url": smartCollection -> slug.current
+      }
     },
   },
   _type == "richTextContentBlock" => {
@@ -296,3 +319,4 @@ export type TopCollectionContentBlock = z.infer<
 >;
 export type Form = z.infer<typeof zForm>;
 export type FormField = z.infer<typeof zFormField>;
+export type ResourcePageLinkType = z.infer<typeof zLinkType>;
