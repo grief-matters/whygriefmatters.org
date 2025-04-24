@@ -60,7 +60,7 @@ when type should be added back to site
 export const gCategoryPageQuery = groq`
 *[_type == "category"]{
     ${getRecursiveSubtopicsProjection()},
-    "resources": *[^.slug.current in categories[]->slug.current && (_type != 'crisisResource' && _type != 'book' && _type != 'course')]{
+    "resources": *[^.slug.current in categories[]->slug.current && (_type != 'crisisResource' && _type != 'book' && _type != 'course' && _type != 'smartResourceCollection')]{
       ${gPageResourceListingProjection}
     },
     featuredArticles[]->{

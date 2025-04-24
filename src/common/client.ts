@@ -57,24 +57,32 @@ import {
   zCrisisResource,
 } from "@model/crisisResource";
 import {
+  type CoreContentGroup,
   gCoreContentGroupsQuery,
   zCoreContentGroup,
-  type CoreContentGroup,
 } from "@model/coreContentGroup";
 import {
+  type UserEvaluation,
   gUserEvaluation,
   zUserEvaluation,
-  type UserEvaluation,
 } from "@model/resourceEvaluation";
 import { gFooterDataQuery, zFooterData, type FooterData } from "@model/footer";
 import {
+  type ContentGroup,
   gContentGroupPagesQuery,
   gContentGroupProjection,
   zContentGroup,
-  type ContentGroup,
 } from "@model/contentGroup";
 import { isReservedSlug, templatingSlugs } from "./reserved-slugs";
 import { gPersonPagesQuery, zPerson, type Person } from "@model/person";
+import {
+  type SmartCollectionPage,
+  getQueryForCollectionResources,
+  gSmartCollectionPagesQuery,
+  zSmartCollection,
+  zSmartCollectionPage,
+} from "@model/smartCollection";
+import { zInternetResourcePageListing } from "@model/internetResource";
 
 type ClientQueryParams = {
   resourceType?: string;
@@ -347,7 +355,7 @@ export async function getContentGroupPagesData(): Promise<ContentGroup[]> {
 
 /**
  * Fetchs a single Content Group
-*/
+ */
 
 export async function getContentGroup(slug: string) {
   const client = getClient();
@@ -360,7 +368,6 @@ export async function getContentGroup(slug: string) {
   const result = await client.fetch(query, { slug });
   return result;
 }
-
 
 export async function getPersonPagesData(): Promise<Person[]> {
   const client = getClient();
@@ -517,6 +524,44 @@ export async function getResourceCountsByTopic(): Promise<ResourceTypeCountsByTo
   }
 
   return dataCache.resourceTypeCountsByTopic;
+}
+
+export async function getSmartCollectionPagesData(): Promise<
+  SmartCollectionPage[]
+> {
+  const client = getClient();
+
+  try {
+    // Get the raw collections
+    const smartCollections = await client
+      .fetch(gSmartCollectionPagesQuery)
+      .then((result) => zSmartCollection.array().parse(result));
+
+    // Map over the collections and return a promise for each enriched collection
+    const smartCollectionPagesPromises = smartCollections.map(
+      async (sCollection) => {
+        const query = getQueryForCollectionResources(sCollection);
+
+        const resources = await client.fetch(query).then((result) => {
+          return zInternetResourcePageListing.array().parse(result);
+        });
+
+        return {
+          ...sCollection,
+          resources,
+        };
+      },
+    );
+
+    const results = await Promise.all(smartCollectionPagesPromises);
+
+    return zSmartCollectionPage.array().parse(results);
+  } catch (err) {
+    console.error("Error in [getSmartCollectionPagesData]:");
+    console.error(err);
+  }
+
+  return [];
 }
 
 getResourceCountsByTopic();
