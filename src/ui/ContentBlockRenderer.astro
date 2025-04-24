@@ -95,9 +95,9 @@ const { contentBlock } = Astro.props;
             {contentItem.links.map((pageLink) => (
               <CardLink
                 href={
-                  pageLink.linkType === "relativeLink"
-                    ? pageLink.url
-                    : getRouteFromDynamicResourcePageLink(pageLink)
+                  pageLink.linkType === "resourcePageLink"
+                    ? getRouteFromDynamicResourcePageLink(pageLink)
+                    : pageLink.url
                 }
               >
                 {pageLink.label}
