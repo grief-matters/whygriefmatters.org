@@ -126,12 +126,9 @@ const pageTitle =
                             <Link
                               classList={["inline-block mb-1"]}
                               href={
-                                link.linkType === "relativeLink"
-                                  ? link.url
-                                  : getRouteFromDynamicResourcePageLink({
-                                      ...link,
-                                      type: params.resourceType,
-                                    })
+                                link.linkType === "resourcePageLink"
+                                  ? getRouteFromDynamicResourcePageLink(link)
+                                  : link.url
                               }
                             >
                               {link.label}

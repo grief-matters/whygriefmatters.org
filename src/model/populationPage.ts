@@ -25,6 +25,8 @@ export const zPopulationPageData = z.object({
 issue-84: temp removal of 'book' and 'course'
 remove from (_type != 'crisisResource' && _type != 'book' && _type != 'course') 
 when type should be added back to site
+
+we need to change how we're doing this to be inclusive (use 'in') rather than exclsuive
 */
 export const gPopulationsPageData = groq`
 *[_type == "population"]{
@@ -34,7 +36,7 @@ export const gPopulationsPageData = groq`
     image,
     "altText": alt
   },
-  "resources": *[^.slug.current in populations[]->slug.current && (_type != 'crisisResource' && _type != 'book' && _type != 'course')]{
+  "resources": *[^.slug.current in populations[]->slug.current && (_type != 'smartResourceCollection' && _type != 'crisisResource' && _type != 'book' && _type != 'course')]{
     categories[]->{
       title,
       "slug": slug.current

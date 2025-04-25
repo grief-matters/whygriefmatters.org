@@ -1,0 +1,57 @@
+---
+import {
+  type SmartCollection,
+  type SmartCollectionPage,
+} from "@model/smartCollection";
+
+import { getSmartCollectionPagesData } from "@common/client";
+import { wgmDesignSystem as ds } from "@common/design-system";
+
+import MainLayout from "@layouts/MainLayout.astro";
+import PageHeader from "@ui/PageHeader.astro";
+import Container from "@ui/primitives/Container.astro";
+import Heading from "@ui/primitives/Heading.astro";
+import ResourcePageListings from "@ui/ResourcePageListing/ResourcePageListings.astro";
+
+interface Props {
+  smartCollection: SmartCollectionPage;
+}
+
+export async function getStaticPaths() {
+  const smartCollections = await getSmartCollectionPagesData();
+
+  return smartCollections.map((smartCollection) => ({
+    params: { smartCollection: smartCollection.slug },
+    props: {
+      smartCollection,
+    },
+  }));
+}
+
+const props = Astro.props;
+---
+
+<MainLayout>
+  <PageHeader pageTitle={{ title: props.smartCollection.title }} />
+  <Container>
+    {
+      props.smartCollection.resources.length > 0 && (
+        <Container>
+          <section class="p-3 lg:mb-6">
+            <Heading
+              as="h2"
+              size="xl2"
+              class:list={[
+                "mb-6 font-semibold",
+                ds.typography.color.primary.defaultLight,
+              ]}
+            >
+              {"Resources In This Collection"}
+            </Heading>
+            <ResourcePageListings resources={props.smartCollection.resources} />
+          </section>
+        </Container>
+      )
+    }
+  </Container>
+</MainLayout>
