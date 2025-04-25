@@ -19,12 +19,13 @@ if (imageToGet === null) {
   imageToGet = sample(fallbacks) as SanityImage;
 }
 
-const smImgUrl = getImageUrlBuilder(imageToGet).width(640).height(320).url()
-const mdImgUrl = getImageUrlBuilder(imageToGet).width(1024).height(512).url()
-const lgImgUrl = getImageUrlBuilder(imageToGet).width(1280).height(640).url()
-const xlImgUrl = getImageUrlBuilder(imageToGet).width(1400).height(650).url()
+const sanityImage = imageToGet.image;
+const smImgUrl = getImageUrlBuilder(sanityImage).width(640).height(320).url()
+const mdImgUrl = getImageUrlBuilder(sanityImage).width(1024).height(512).url()
+const lgImgUrl = getImageUrlBuilder(sanityImage).width(1280).height(640).url()
+const xlImgUrl = getImageUrlBuilder(sanityImage).width(1400).height(650).url()
 
-const baseBuilder = getImageUrlBuilder(imageToGet)
+const baseBuilder = getImageUrlBuilder(sanityImage)
                       .width(props.width ? props.width : 640)
                       .height(props.height ? props.height : 450);
 const webpSrc = baseBuilder.format("webp").url();
