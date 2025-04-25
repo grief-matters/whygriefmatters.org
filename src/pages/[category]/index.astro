@@ -103,7 +103,7 @@ export async function getStaticPaths() {
           (x) => x.type === t
         ).length)
     );
-    
+
     return {
       params: { category: data.slug },
       props: {
@@ -128,7 +128,6 @@ const props = Astro.props;
 const pageTitle = getResourcePageTitle({
   categoryName: props.title,
 });
-
 
 const showFeatured =
   Array.isArray(props.featuredStories) || Array.isArray(props.featuredArticles);
