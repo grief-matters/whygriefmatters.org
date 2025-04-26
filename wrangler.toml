@@ -5,7 +5,7 @@ compatibility_date = "2024-10-26"
 compatibility_flags = [ "nodejs_compat_v2" ]
 
 [vars]
-PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_YWRlcXVhdGUtbW9uYXJjaC01NS5jbGVyay5hY2NvdW50cy5kZXYk"
+PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_c3dlZXBpbmctdG91Y2FuLTQxLmNsZXJrLmFjY291bnRzLmRldiQ"
 SANITY_STUDIO_API_VERSION = "2023-07-16"
 SANITY_STUDIO_DATASET = "production"
 SANITY_STUDIO_PROJECT_ID = "vg3sb730"
@@ -13,7 +13,7 @@ RESEND_FROM_ADDRESS="system@noreply.whygriefmatters.org"
 RESEND_TO_ADDRESS="contact@whygriefmatters.org"
 
 [env.preview.vars]
-PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_YWRlcXVhdGUtbW9uYXJjaC01NS5jbGVyay5hY2NvdW50cy5kZXYk"
+PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_c3dlZXBpbmctdG91Y2FuLTQxLmNsZXJrLmFjY291bnRzLmRldiQ"
 SANITY_STUDIO_API_VERSION = "2023-07-16"
 SANITY_STUDIO_DATASET = "production"
 SANITY_STUDIO_PROJECT_ID = "vg3sb730"
@@ -21,7 +21,7 @@ RESEND_FROM_ADDRESS="Why Grief Matters(DEV) <system@noreply.whygriefmatters.org>
 RESEND_TO_ADDRESS="dev@whygriefmatters.org"
 
 [env.production.vars]
-PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_Y2xlcmsud2h5Z3JpZWZtYXR0ZXJzLW9yZy5wYWdlcy5kZXYk"
+PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_Y2xlcmsud2h5Z3JpZWZtYXR0ZXJzLm9yZyQ"
 SANITY_STUDIO_API_VERSION = "2023-07-16"
 SANITY_STUDIO_DATASET = "production"
 SANITY_STUDIO_PROJECT_ID = "vg3sb730"
