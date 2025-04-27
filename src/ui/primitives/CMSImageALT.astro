@@ -1,0 +1,70 @@
+---
+import { getImageUrlBuilder } from "@common/client";
+import type { SanityImage } from "@model/image";
+
+type Format = "avif" | "webp" | "jpg";
+
+interface Props {
+  image: SanityImage;
+  altText?: string;
+  classList?: Array<string>;
+  maxWidth?: number;
+  priority?: boolean;
+}
+
+const { maxWidth = 2500, ...props } = Astro.props;
+
+const baseBuilder = getImageUrlBuilder(props.image.image);
+
+const mediaMimeTypeMap: Record<Format, string> = {
+  avif: "image/avif",
+  webp: "image/webp",
+  jpg: "image/jpeg",
+};
+
+const getSrcSet = (format: Format): string => {
+  const set = selectedWidths.map(
+    (w) =>
+      `${
+        format === "avif"
+          ? baseBuilder.width(w).auto("format").url()
+          : baseBuilder.width(w).format(format).url()
+      } ${w}w`
+  );
+
+  return set.join(", ");
+};
+
+const widths = [2500, 1536, 1024, 768, 640, 320];
+const selectedWidths = widths.filter((w) => w <= maxWidth);
+
+const sourceFormats: Array<Format> = ["avif", "jpg"];
+const sources = sourceFormats.map((f) => ({
+  srcSet: getSrcSet(f),
+  type: mediaMimeTypeMap[f],
+}));
+
+const imgConfig = {
+  // Fallback image - select reasonable res image
+  src: baseBuilder.width(768).format("jpg").url(),
+  srcSet: getSrcSet("jpg"),
+  sizes: selectedWidths
+    .map((w, i) =>
+      i !== selectedWidths.length - 1
+        ? `(min-width: ${selectedWidths[i + 1]}px) ${w}px`
+        : `${w}px`
+    )
+    .join(", "),
+};
+---
+
+<picture>
+  {sources.map((s) => <source srcset={s.srcSet} type={s.type} />)}
+  <img
+    src={imgConfig.src}
+    alt={props.image.altText}
+    srcset={imgConfig.srcSet}
+    sizes={imgConfig.sizes}
+    loading={props.priority ? "eager" : "lazy"}
+  />
+</picture>
