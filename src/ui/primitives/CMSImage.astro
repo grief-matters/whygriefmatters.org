@@ -10,57 +10,59 @@ interface Props {
   maxWidth?: number;
   priority?: boolean;
 }
+
 const props = Astro.props;
 
 let sanityImage;
 let alt;
+let isSanity = false;
+
 if (typeof props.image === 'string') {
   sanityImage = props.image;
-  alt = props.altText ? props.altText : null;
-} else {
+  alt = props.altText ?? "Image";
+  isSanity = false;
+} else if (props.image?.image) {
   sanityImage = props.image.image;
-  alt = props.image.altText;
+  alt = props.image.altText ?? "Image";
+  isSanity = true;
+} else {
+  const fallbacks = await getFallbackImageCollection();
+  const fallbackImage = sample(fallbacks) as SanityImage;
+  sanityImage = fallbackImage.image;
+  alt = fallbackImage.altText ?? "Fallback image";
+  isSanity = true;
 }
 
-// if (imageToGet === null) {
-//   const fallbacks = await getFallbackImageCollection();
-//   imageToGet = sample(fallbacks) as SanityImage;
-// }
+const allWidths = [320, 480, 640, 768, 1024, 1280, 1536, 2048, 2500];
+const maxWidth = props.maxWidth && props.maxWidth >= 320 ? props.maxWidth : 2500;
+const selectedWidths = allWidths.filter(w => w <= maxWidth);
 
-const widths = [320, 480, 640, 768, 1024, 1280, 1536, 2048, 2500];
-let maxWidth = props.maxWidth === undefined || props.maxWidth < 320 ? 2500 : props.maxWidth;
-let webpSrcs = [];
-let i = 0;
+let webpSources: string[] = [];
+let fallbackSrc = '';
 
-while (i < widths.length && widths[i] <= maxWidth) {
-  const imgUrl = getImageUrlBuilder(sanityImage).width(widths[i]);
-  const webpSrc = imgUrl.format("webp").url();
-  webpSrcs.push(webpSrc);
-  i++;
+if (isSanity) {
+  webpSources = selectedWidths.map(width => 
+    getImageUrlBuilder(sanityImage).width(width).format("webp").url()
+  ).reverse();
+  fallbackSrc = getImageUrlBuilder(sanityImage).width(maxWidth).url();
+} else {
+  fallbackSrc = String(sanityImage);
 }
-
-const fallbackSrc = getImageUrlBuilder(sanityImage).url();
 ---
-
 <picture>
-  {webpSrcs.map((webpSrc, i) => (
+  {isSanity && webpSources.map((webpSource, i) => (
     <source 
-      media={`(min-width: ${widths[i]}px)`} 
-      srcset={webpSrc} 
-      class:list={props.classList} 
-      type="image/webp" 
+      type="image/webp"
+      media={`(min-width: ${selectedWidths[selectedWidths.length - 1 - i]}px)`}
+      srcset={webpSource}
     />
   ))}
-    <img
-    src={fallbackSrc}
+  <img 
+    src={fallbackSrc} 
     alt={alt}
-  />
-  <!-- <img
-    src={fallbackSrc}
-    alt={alt}
-    class={props.imgClass}
-    srcset={props.srcset ?? `${smImgUrl} 640w, ${mdImgUrl} 1024w, ${lgImgUrl} 1280w, ${xlImgUrl} 1560w`}
-    sizes={props.sizes ?? "(max-width: 640px) 640px, (max-width: 1024px) 1024px, (max-width: 1280px) 1280px, 100vw"}
+    class:list={props.classList}
     loading={props.priority ? "eager" : "lazy"}
-  /> -->
+    decoding="async"
+    style="width: 100%; height: auto;"
+  />
 </picture>
