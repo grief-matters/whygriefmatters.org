@@ -4,42 +4,63 @@ import { getFallbackImageCollection, getImageUrlBuilder } from "@common/client";
 import type { SanityImage } from "@model/image";
 
 interface Props {
-  image: SanityImage | null;
-  width?: number;
-  height?: number;
-  class?: string;
-  srcset?: string;
-  sizes?: string;
+  image: SanityImage | string;
+  altText?: string;
+  classList?: Array<string>;
+  maxWidth?: number;
+  priority?: boolean;
 }
 const props = Astro.props;
 
-let imageToGet = props.image;
-if (imageToGet === null) {
-  const fallbacks = await getFallbackImageCollection();
-  imageToGet = sample(fallbacks) as SanityImage;
+let sanityImage;
+let alt;
+if (typeof props.image === 'string') {
+  sanityImage = props.image;
+  alt = props.altText ? props.altText : null;
+} else {
+  sanityImage = props.image.image;
+  alt = props.image.altText;
 }
 
-const sanityImage = imageToGet.image;
-const smImgUrl = getImageUrlBuilder(sanityImage).width(640).height(320).url()
-const mdImgUrl = getImageUrlBuilder(sanityImage).width(1024).height(512).url()
-const lgImgUrl = getImageUrlBuilder(sanityImage).width(1280).height(640).url()
-const xlImgUrl = getImageUrlBuilder(sanityImage).width(1400).height(650).url()
+// if (imageToGet === null) {
+//   const fallbacks = await getFallbackImageCollection();
+//   imageToGet = sample(fallbacks) as SanityImage;
+// }
 
-const baseBuilder = getImageUrlBuilder(sanityImage)
-                      .width(props.width ? props.width : 640)
-                      .height(props.height ? props.height : 450);
-const webpSrc = baseBuilder.format("webp").url();
-const fallbackSrc = baseBuilder.url();
+const widths = [320, 480, 640, 768, 1024, 1280, 1536, 2048, 2500];
+let maxWidth = props.maxWidth === undefined || props.maxWidth < 320 ? 2500 : props.maxWidth;
+let webpSrcs = [];
+let i = 0;
+
+while (i < widths.length && widths[i] <= maxWidth) {
+  const imgUrl = getImageUrlBuilder(sanityImage).width(widths[i]);
+  const webpSrc = imgUrl.format("webp").url();
+  webpSrcs.push(webpSrc);
+  i++;
+}
+
+const fallbackSrc = getImageUrlBuilder(sanityImage).url();
 ---
 
 <picture>
-  <source srcset={webpSrc} type="image/webp" />
-  <img
+  {webpSrcs.map((webpSrc, i) => (
+    <source 
+      media={`(min-width: ${widths[i]}px)`} 
+      srcset={webpSrc} 
+      class:list={props.classList} 
+      type="image/webp" 
+    />
+  ))}
+    <img
     src={fallbackSrc}
-    alt={imageToGet.altText}
-    class={props.class}
+    alt={alt}
+  />
+  <!-- <img
+    src={fallbackSrc}
+    alt={alt}
+    class={props.imgClass}
     srcset={props.srcset ?? `${smImgUrl} 640w, ${mdImgUrl} 1024w, ${lgImgUrl} 1280w, ${xlImgUrl} 1560w`}
     sizes={props.sizes ?? "(max-width: 640px) 640px, (max-width: 1024px) 1024px, (max-width: 1280px) 1280px, 100vw"}
-    loading="lazy"
-  />
+    loading={props.priority ? "eager" : "lazy"}
+  /> -->
 </picture>
