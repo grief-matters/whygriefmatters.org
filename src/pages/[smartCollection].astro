@@ -1,4 +1,12 @@
 ---
+import startCase from "lodash/startCase";
+import pluralize from "pluralize";
+
+import {
+  internetResourceTypes,
+  type InternetResourceType,
+} from "@model/internetResource";
+
 import {
   type SmartCollection,
   type SmartCollectionPage,
@@ -12,6 +20,9 @@ import PageHeader from "@ui/PageHeader.astro";
 import Container from "@ui/primitives/Container.astro";
 import Heading from "@ui/primitives/Heading.astro";
 import ResourcePageListings from "@ui/ResourcePageListing/ResourcePageListings.astro";
+import { getRouteFromDynamicResourcePageLink } from "@common/route";
+import CardLink from "@ui/CardLink.astro";
+import { type ResourceTypesCounts } from "@ui/ResourceCounts.astro";
 
 interface Props {
   smartCollection: SmartCollectionPage;
@@ -29,11 +40,65 @@ export async function getStaticPaths() {
 }
 
 const props = Astro.props;
+
+const filteredTypes = props.smartCollection.types.filter((t) =>
+  internetResourceTypes.includes(t as InternetResourceType)
+);
+
+// Quick and dirty to get a similar experience to category page
+const showCountLinks =
+  (props.smartCollection.categories.length === 1 ||
+    props.smartCollection.populations.length === 1) &&
+  filteredTypes.length > 1;
+
+// const countEntries: Array<[string, number]> = filteredTypes.map((t) => [
+//   t,
+//   props.smartCollection.resources.filter((r) => r.type === t).length,
+// ]);
+const resourceCounts = filteredTypes.reduce((acc, curr) => {
+  console.log(acc, curr);
+  const resourceCount = props.smartCollection.resources.filter(
+    (r) => r.type === curr
+  ).length;
+  if (resourceCount > 0) {
+    acc[curr as InternetResourceType] = resourceCount;
+  }
+  return acc;
+}, {} as ResourceTypesCounts);
 ---
 
 <MainLayout>
   <PageHeader pageTitle={{ title: props.smartCollection.title }} />
   <Container>
+    {
+      showCountLinks && (
+        <section class="p-3 lg:mb-6">
+          <Heading as="h3" class:list={["mb-4 font-semibold"]}>
+            {`Types of Resources`}
+          </Heading>
+          <div class:list={["flex flex-wrap gap-4 mb-3"]}>
+            {Object.keys(resourceCounts).map((type) => (
+              <CardLink
+                href={getRouteFromDynamicResourcePageLink({
+                  category: props.smartCollection.categories?.[0]?.slug ?? null,
+                  population:
+                    props.smartCollection.populations?.[0]?.slug ?? null,
+                  type: type as InternetResourceType,
+                })}
+                cardProps={{
+                  resourceType: (type as InternetResourceType) ?? undefined,
+                }}
+              >
+                <span class="flex space-x-2">
+                  <span>{pluralize(startCase(type))}</span>
+                  <span>{resourceCounts[type as InternetResourceType]}</span>
+                </span>
+              </CardLink>
+            ))}
+          </div>
+        </section>
+      )
+    }
     {
       props.smartCollection.resources.length > 0 && (
         <Container>
