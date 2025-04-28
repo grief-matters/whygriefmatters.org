@@ -97,7 +97,7 @@ const { contentBlock } = Astro.props;
                 href={
                   pageLink.linkType === "resourcePageLink"
                     ? getRouteFromDynamicResourcePageLink(pageLink)
-                    : pageLink.url
+                    : `/${pageLink.url}`
                 }
               >
                 {pageLink.label}
