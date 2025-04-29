@@ -1,68 +1,62 @@
 ---
-import sample from "lodash/sample";
-import { getFallbackImageCollection, getImageUrlBuilder } from "@common/client";
+import { getImageUrlBuilder } from "@common/client";
 import type { SanityImage } from "@model/image";
 
+type Format = "webp" | "jpg";
+
 interface Props {
-  image: SanityImage | string;
-  altText?: string;
+  image: SanityImage;
   classList?: Array<string>;
   maxWidth?: number;
   priority?: boolean;
 }
 
-const props = Astro.props;
+const { maxWidth = 2500, ...props } = Astro.props;
 
-let sanityImage;
-let alt;
-let isSanity = false;
+const baseBuilder = getImageUrlBuilder(props.image.image);
 
-if (typeof props.image === 'string') {
-  sanityImage = props.image;
-  alt = props.altText ?? "Image";
-  isSanity = false;
-} else if (props.image?.image) {
-  sanityImage = props.image.image;
-  alt = props.image.altText ?? "Image";
-  isSanity = true;
-} else {
-  const fallbacks = await getFallbackImageCollection();
-  const fallbackImage = sample(fallbacks) as SanityImage;
-  sanityImage = fallbackImage.image;
-  alt = fallbackImage.altText ?? "Fallback image";
-  isSanity = true;
-}
+const mediaMimeTypeMap: Record<Format, string> = {
+  webp: "image/webp",
+  jpg: "image/jpeg",
+};
 
-const allWidths = [320, 480, 640, 768, 1024, 1280, 1536, 2048, 2500];
-const maxWidth = props.maxWidth && props.maxWidth >= 320 ? props.maxWidth : 2500;
-const selectedWidths = allWidths.filter(w => w <= maxWidth);
+const getSrcSet = (format: Format): string => {
+  const set = selectedWidths.map((w) => 
+    `${baseBuilder.width(w).format(format).url()} ${w}w`
+  );
 
-let webpSources: string[] = [];
-let fallbackSrc = '';
+  return set.join(", ");
+};
 
-if (isSanity) {
-  webpSources = selectedWidths.map(width => 
-    getImageUrlBuilder(sanityImage).width(width).format("webp").url()
-  ).reverse();
-  fallbackSrc = getImageUrlBuilder(sanityImage).width(maxWidth).url();
-} else {
-  fallbackSrc = String(sanityImage);
-}
+const widths = [2500, 2048, 1536, 1024, 768, 640, 480, 320];
+const selectedWidths = widths.filter((w) => w <= maxWidth);
+
+const sourceFormats: Array<Format> = ["webp", "jpg"];
+const sources = sourceFormats.map((f) => ({
+  srcSet: getSrcSet(f),
+  type: mediaMimeTypeMap[f],
+}));
+
+const fallbackImgConfig = {
+  src: baseBuilder.width(768).format("jpg").url(),
+  srcSet: getSrcSet("jpg"),
+  sizes: selectedWidths
+    .map((w, i) =>
+      i !== selectedWidths.length - 1
+        ? `(min-width: ${selectedWidths[i + 1]}px) ${w}px`
+        : `${w}px`
+    )
+    .join(", "),
+};
+
 ---
 <picture>
-  {isSanity && webpSources.map((webpSource, i) => (
-    <source 
-      type="image/webp"
-      media={`(min-width: ${selectedWidths[selectedWidths.length - 1 - i]}px)`}
-      srcset={webpSource}
-    />
-  ))}
-  <img 
-    src={fallbackSrc} 
-    alt={alt}
-    class:list={props.classList}
+  {sources.map((s) => <source srcset={s.srcSet} type={s.type} />)}
+  <img
+    src={fallbackImgConfig.src}
+    alt={props.image.altText}
+    srcset={fallbackImgConfig.srcSet}
+    sizes={fallbackImgConfig.sizes}
     loading={props.priority ? "eager" : "lazy"}
-    decoding="async"
-    style="width: 100%; height: auto;"
   />
 </picture>
