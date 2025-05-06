@@ -30,9 +30,9 @@ import TextBlock from "@ui/typography/TextBlock.astro";
   >
     <SiteHeader />
     <main class="flex-grow">
-      {/* Temporary login during user testing */}
-      {process.env.NODE_ENV === "development" && <slot />}
+      <slot />
       {
+        /*
         process.env.NODE_ENV === "production" && (
           <>
             <SignedIn>
@@ -63,6 +63,7 @@ import TextBlock from "@ui/typography/TextBlock.astro";
             </SignedOut>
           </>
         )
+      */
       }
     </main>
     <SiteFooter />

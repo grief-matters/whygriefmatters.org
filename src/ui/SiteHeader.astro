@@ -49,6 +49,7 @@ const darkUrl = `url(${darkHeaderLogo?.url})`;
   </div>
   {/* This is temporary whilst we carry out user-testing */}
   {
+    /*
     process.env.NODE_ENV === "production" && (
       <SignedIn>
         <div class="w-full bg-yellow-200">
@@ -69,27 +70,26 @@ const darkUrl = `url(${darkHeaderLogo?.url})`;
         </div>
       </SignedIn>
     )
+  */
   }
-  {
-    process.env.NODE_ENV === "development" && (
-      <div class="w-full bg-yellow-200">
-        <nav class="flex justify-end xl:container xl:mx-auto">
-          <a
-            class:list={[
-              "font-serif font-bold",
-              "lg:text-lg",
-              "sm:bg-blue-900 sm:text-yellow-200 px-2 sm:px-6",
-              "underline-offset-2 hover:underline decoration-dotted decoration-sky-800/30",
-              ds.decoration.transition,
-            ]}
-            href="/crisis-resources"
-          >
-            Help! I'm In Crisis
-          </a>
-        </nav>
-      </div>
-    )
-  }
+
+  <div class="w-full bg-yellow-200">
+    <nav class="flex justify-end xl:container xl:mx-auto">
+      <a
+        class:list={[
+          "font-serif font-bold",
+          "lg:text-lg",
+          "sm:bg-blue-900 sm:text-yellow-200 px-2 sm:px-6",
+          "underline-offset-2 hover:underline decoration-dotted decoration-sky-800/30",
+          ds.decoration.transition,
+        ]}
+        href="/crisis-resources"
+      >
+        Help! I'm In Crisis
+      </a>
+    </nav>
+  </div>
+
   <div class:list={["flex items-center justify-between", "sm:block"]}>
     <div class:list={["xl:container xl:mx-auto"]}>
       <div class="sm:flex sm:justify-between">
@@ -165,18 +165,20 @@ const darkUrl = `url(${darkHeaderLogo?.url})`;
           >
             {"Donate"}
           </a>
-          <AccountButton />
+          {process.env.NODE_ENV === "development" && <AccountButton />}
         </div>
       </div>
     </div>
     {
+      /*
       process.env.NODE_ENV === "production" && (
         <SignedIn>
           <MainNav />
         </SignedIn>
       )
+    */
     }
-    {process.env.NODE_ENV === "development" && <MainNav />}
+    <MainNav />
   </div>
 </header>
 
