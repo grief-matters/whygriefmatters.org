@@ -15,6 +15,7 @@ import TopicCollectionContentBlock from "./TopicCollectionContentBlock.astro";
 import ImageRow from "./ImageRow.astro";
 import FormRenderer from "./FormRenderer.astro";
 import PersonGroupBlock from "./PersonGroupBlock.astro";
+import CMSImage from "./primitives/CMSImage.astro";
 
 interface Props {
   contentBlock: ContentBlock;
@@ -36,13 +37,7 @@ const { contentBlock } = Astro.props;
       case "accessibleImage":
         return (
           <div class="p-3">
-            <img
-              src={getImageUrlBuilder(contentItem.image)
-                .width(640)
-                .height(450)
-                .url()}
-              alt={contentItem.altText}
-            />
+            <CMSImage image={contentItem} priority={true} maxWidth={640} />
           </div>
         );
       case "featuredCrisisResource":

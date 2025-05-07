@@ -1,6 +1,7 @@
 ---
 import { getImageUrlBuilder } from '@common/client';
 import type { SanityImage } from '@model/image';
+import CMSImage from './primitives/CMSImage.astro';
 
 
 // Would likely have to change this once we finish issue #49
@@ -24,11 +25,7 @@ const { images = [] } = Astro.props;
         }
       ]}
     >
-      <img
-        class="sm:p-3"
-        src={getImageUrlBuilder(image.image).width(640).height(450).url()}
-        alt={image.altText}
-      />
+      <CMSImage image={image} maxWidth={640} classList={["sm:p-3"]} />
     </div>
   ))}
 </div>

@@ -6,16 +6,19 @@ import { getImage } from "astro:assets";
 
 type Format = "webp" | "jpg" | "png"
 
+interface ImageSources {
+  srcSet: string,
+  type: string
+};
+
 interface Props {
-  image: SanityImage;
+  image: SanityImage | null;
   classList?: Array<string>;
   maxWidth?: number;
   priority?: boolean;
 }
 
 const { maxWidth = 2500, ...props } = Astro.props;
-
-const baseBuilder = getImageUrlBuilder(props.image.image);
 
 const mediaMimeTypeMap: Record<Format, string> = {
   webp: "image/webp",
@@ -26,19 +29,23 @@ const mediaMimeTypeMap: Record<Format, string> = {
 const widths = [2500, 2048, 1536, 1024, 768, 640, 480, 320];
 const selectedWidths = widths.filter((w) => w <= maxWidth);
 
-const getSrcSet = (format: Format): string => {
-  const set = selectedWidths.map((w) => 
-    `${baseBuilder.width(w).format(format).url()} ${w}w`
-  );
+let sources: ImageSources[] = [];
+if (props.image?.image) {
+  const baseBuilder = props.image?.image ? getImageUrlBuilder(props.image.image) : null;
+  const getSrcSet = (format: Format): string => {
+    const set = selectedWidths.map((w) => 
+      `${baseBuilder?.width(w).format(format).url()} ${w}w`
+    );
 
-  return set.join(", ");
-};
+    return set.join(", ");
+  };
 
-const sourceFormats: Array<Format> = ["webp", "jpg", "png"];
-const sources = sourceFormats.map((f) => ({
-  srcSet: getSrcSet(f),
-  type: mediaMimeTypeMap[f],
-}));
+  const sourceFormats: Array<Format> = ["webp", "jpg", "png"];
+  sources = props.image?.image ? sourceFormats.map((f) => ({
+    srcSet: getSrcSet(f),
+    type: mediaMimeTypeMap[f],
+  })) : [];
+}
 
 const sortedSelectedwidths = selectedWidths.toSorted();
 const optimizedFallback = await getImage({
@@ -60,7 +67,7 @@ const optimizedFallbackImgConfig = {
 };
 
 ---
-<picture>
+<picture class:list={props.classList}>
   {sources.map((s) => <source srcset={s.srcSet} type={s.type} />)}
   <img
     src={optimizedFallbackImgConfig.src}
