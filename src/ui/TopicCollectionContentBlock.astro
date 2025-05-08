@@ -71,7 +71,10 @@ const visibleImagesCount = props.topics.findLastIndex((t) => t.showImage) + 1;
           <Card hoverable>
             <a href={topicContentBlock.topic.slug} class="block h-full">
               <CMSImage
-                classList={getImageClasses(i, visibleImagesCount)}
+                classList={[
+                  "object-cover aspect-4/3",
+                  ...getImageClasses(i, visibleImagesCount),
+                ]}
                 image={topicContentBlock.topic.image ?? null}
                 maxWidth={640}
               />
