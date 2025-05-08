@@ -1,32 +1,79 @@
 ---
-import sample from "lodash/sample";
-
-import { getFallbackImageCollection, getImageUrlBuilder } from "@common/client";
-
+import { getImageUrlBuilder } from "@common/client";
 import type { SanityImage } from "@model/image";
-
 import fallbackImg from "../../img/fallback.jpg";
+import { getImage } from "astro:assets";
+
+type Format = "webp" | "jpg" | "png"
+
+interface ImageSources {
+  srcSet: string,
+  type: string
+};
 
 interface Props {
   image: SanityImage | null;
-}
-const props = Astro.props;
-
-let imageToGet = props.image;
-
-if (imageToGet === null) {
-  const fallbacks = await getFallbackImageCollection();
-  imageToGet = sample(fallbacks) ?? null;
+  classList?: Array<string>;
+  maxWidth?: number;
+  priority?: boolean;
 }
 
-const imgSrc = imageToGet
-  ? getImageUrlBuilder(imageToGet.image).width(640).height(450).url()
-  : fallbackImg.src;
+const { maxWidth = 2500, ...props } = Astro.props;
+
+const mediaMimeTypeMap: Record<Format, string> = {
+  webp: "image/webp",
+  jpg: "image/jpeg",
+  png: "image/png"
+};
+
+const widths = [2500, 2048, 1536, 1024, 768, 640, 480, 320];
+const selectedWidths = widths.filter((w) => w <= maxWidth);
+
+let sources: ImageSources[] = [];
+if (props.image?.image) {
+  const baseBuilder = props.image?.image ? getImageUrlBuilder(props.image.image) : null;
+  const getSrcSet = (format: Format): string => {
+    const set = selectedWidths.map((w) => 
+      `${baseBuilder?.width(w).format(format).url()} ${w}w`
+    );
+
+    return set.join(", ");
+  };
+
+  const sourceFormats: Array<Format> = ["webp", "jpg", "png"];
+  sources = props.image?.image ? sourceFormats.map((f) => ({
+    srcSet: getSrcSet(f),
+    type: mediaMimeTypeMap[f],
+  })) : [];
+}
+
+const sortedSelectedwidths = selectedWidths.toSorted();
+const optimizedFallback = await getImage({
+  src: fallbackImg,
+  widths: sortedSelectedwidths,
+  formats: ["webp", "jpg", "png"],
+});
+
+const optimizedFallbackImgConfig = {
+  src: optimizedFallback.src,
+  srcSet: optimizedFallback.srcSet.values.map((value, i) => `${value.url} ${sortedSelectedwidths[i]}w`).join(", "),
+  sizes: sortedSelectedwidths
+    .map((w, i) =>
+      i !== sortedSelectedwidths.length - 1
+        ? `(min-width: ${w}px) ${sortedSelectedwidths[i + 1]}px`
+        : `${w}px`
+    )
+    .join(", ")
+};
+
 ---
-
-<img
-  src={imgSrc}
-  alt={imageToGet?.altText ??
-    "Looking through reeds over a tranquil lake on a sunny day."}
-  loading="lazy"
-/>
+<picture class:list={props.classList}>
+  {sources.map((s) => <source srcset={s.srcSet} type={s.type} />)}
+  <img
+    src={optimizedFallbackImgConfig.src}
+    alt="Looking through reeds over a tranquil lake on a sunny day."
+    srcset={optimizedFallbackImgConfig.srcSet}
+    sizes={optimizedFallbackImgConfig.sizes}
+    loading={props.priority ? "eager" : "lazy"}
+  />
+</picture>
