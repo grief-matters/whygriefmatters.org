@@ -36,10 +36,11 @@ const fallbackImages = useFallback ? await getFallbackImageCollection() : [];
 
 let sources: ImageSources[] = [];
 
-const sanityImageSource =
-  props.image ?? useFallback
+const sanityImageSource: SanityImage | null =
+  props.image ??
+  (useFallback
     ? fallbackImages[Math.floor(Math.random() * fallbackImages.length)]
-    : null;
+    : null);
 
 if (sanityImageSource) {
   const baseBuilder = sanityImageSource
@@ -83,6 +84,11 @@ const optimizedFallbackImgConfig = {
 };
 
 const returnFragment = sanityImageSource === null && !useFallback;
+
+const hotspotX = `${(sanityImageSource?.image.hotspot?.x ?? 0.5) * 100}%`;
+const hotspotY = `${(sanityImageSource?.image.hotspot?.y ?? 0.5) * 100}%`;
+
+console.log(hotspotX, hotspotY);
 ---
 
 {
@@ -104,3 +110,9 @@ const returnFragment = sanityImageSource === null && !useFallback;
     </picture>
   )
 }
+
+<style define:vars={{ hotspotX, hotspotY }}>
+  .hotspot {
+    object-position: var(--hotspotX) var(--hotspotY);
+  }
+</style>
