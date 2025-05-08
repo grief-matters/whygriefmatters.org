@@ -4,12 +4,12 @@ import type { SanityImage } from "@model/image";
 import fallbackImg from "../../img/fallback.jpg";
 import { getImage } from "astro:assets";
 
-type Format = "webp" | "jpg" | "png"
+type Format = "webp" | "jpg" | "png";
 
 interface ImageSources {
-  srcSet: string,
-  type: string
-};
+  srcSet: string;
+  type: string;
+}
 
 interface Props {
   image: SanityImage | null;
@@ -23,7 +23,7 @@ const { maxWidth = 2500, ...props } = Astro.props;
 const mediaMimeTypeMap: Record<Format, string> = {
   webp: "image/webp",
   jpg: "image/jpeg",
-  png: "image/png"
+  png: "image/png",
 };
 
 const widths = [2500, 2048, 1536, 1024, 768, 640, 480, 320];
@@ -31,42 +31,48 @@ const selectedWidths = widths.filter((w) => w <= maxWidth);
 
 let sources: ImageSources[] = [];
 if (props.image?.image) {
-  const baseBuilder = props.image?.image ? getImageUrlBuilder(props.image.image) : null;
+  const baseBuilder = props.image?.image
+    ? getImageUrlBuilder(props.image.image)
+    : null;
   const getSrcSet = (format: Format): string => {
-    const set = selectedWidths.map((w) => 
-      `${baseBuilder?.width(w).format(format).url()} ${w}w`
+    const set = selectedWidths.map(
+      (w) => `${baseBuilder?.width(w).format(format).url()} ${w}w`
     );
 
     return set.join(", ");
   };
 
   const sourceFormats: Array<Format> = ["webp", "jpg", "png"];
-  sources = props.image?.image ? sourceFormats.map((f) => ({
-    srcSet: getSrcSet(f),
-    type: mediaMimeTypeMap[f],
-  })) : [];
+  sources = props.image?.image
+    ? sourceFormats.map((f) => ({
+        srcSet: getSrcSet(f),
+        type: mediaMimeTypeMap[f],
+      }))
+    : [];
 }
 
-const sortedSelectedwidths = selectedWidths.toSorted();
+const sortedSelectedWidths = selectedWidths.toSorted();
 const optimizedFallback = await getImage({
   src: fallbackImg,
-  widths: sortedSelectedwidths,
+  widths: sortedSelectedWidths,
   formats: ["webp", "jpg", "png"],
 });
 
 const optimizedFallbackImgConfig = {
   src: optimizedFallback.src,
-  srcSet: optimizedFallback.srcSet.values.map((value, i) => `${value.url} ${sortedSelectedwidths[i]}w`).join(", "),
-  sizes: sortedSelectedwidths
+  srcSet: optimizedFallback.srcSet.values
+    .map((value, i) => `${value.url} ${sortedSelectedWidths[i]}w`)
+    .join(", "),
+  sizes: sortedSelectedWidths
     .map((w, i) =>
-      i !== sortedSelectedwidths.length - 1
-        ? `(min-width: ${w}px) ${sortedSelectedwidths[i + 1]}px`
+      i !== sortedSelectedWidths.length - 1
+        ? `(min-width: ${w}px) ${sortedSelectedWidths[i + 1]}px`
         : `${w}px`
     )
-    .join(", ")
+    .join(", "),
 };
-
 ---
+
 <picture class:list={props.classList}>
   {sources.map((s) => <source srcset={s.srcSet} type={s.type} />)}
   <img
