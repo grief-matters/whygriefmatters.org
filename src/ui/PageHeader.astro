@@ -1,5 +1,4 @@
 ---
-import { getFallbackImageCollection, getImageUrlBuilder } from "@common/client";
 import { wgmDesignSystem as ds } from "@common/design-system";
 import type { PageTitle } from "@common/page";
 import type { SanityImage } from "@model/image";
@@ -11,19 +10,18 @@ interface Props {
   image?: SanityImage;
 }
 
-const fallbackImages = await getFallbackImageCollection();
-
 const props = Astro.props;
-
-const image =
-  props.image ??
-  fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
 ---
 
 <header class={ds.background.color.neutral.defaultLighter}>
   <Container>
     <div class:list={["md:mx-3 md:p-3 md:bg-white md:shadow-lg"]}>
-      <CMSImage image={image} maxWidth={1280} priority={true} />
+      <CMSImage
+        image={props.image}
+        priority
+        classList={["object-cover aspect-16/8 hotspot"]}
+        maxWidth={1024}
+      />
     </div>
     <h1 class:list={["mx-3 -mt-8 md:mx-10 mb-3 md:mb-6"]}>
       {

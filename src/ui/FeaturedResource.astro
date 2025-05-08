@@ -16,7 +16,10 @@ const props = Astro.props;
 ---
 
 <Card fullHeight hoverable resourceType={props.featuredResource.type}>
-  <CMSImage image={props.featuredResource.image} />
+  <CMSImage
+    image={props.featuredResource.image}
+    classList={["object-cover aspect-4/3"]}
+  />
   <div class="p-3">
     <TitleLink
       label={props.featuredResource.title}

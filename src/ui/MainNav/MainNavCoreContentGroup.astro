@@ -24,6 +24,7 @@ const bgImage = ccg.coverImage?.image
   ? ccg.coverImage?.image
   : fallbackImages[Math.floor(Math.random() * fallbackImages.length)].image;
 
+// TODO - we need to optimise these images - but CMSImage will not work here
 const bgImageUrl = getImageUrlBuilder(bgImage).width(675).height(675).url();
 const bgVar = `url(${bgImageUrl})`;
 
