@@ -11,6 +11,50 @@ interface Props {
 }
 
 const props = Astro.props;
+
+/**
+ * Get a list of display classes for an image based on its index within a collection,
+ * the content author's intent (e.g. 'showImage'),
+ * and the desired presentation at different breakpoints
+ *
+ * @param i The index of the image in the array
+ * @returns array of classes to be added to the element
+ */
+function getImageClasses(i: number, count: number): Array<string> {
+  // Always show first item
+  if (i === 0) {
+    return [];
+  }
+
+  const classes: Array<string> = ["hidden"];
+
+  // Always show at least two images at 'sm' breakpoint
+  if (i === 1) {
+    classes.push("sm:block");
+  }
+
+  // ALways show at least three images at 'lg' breakpoint
+  if (i === 2) {
+    classes.push("lg:block");
+  }
+
+  // Show an additional row of two at 'sm' breakpoint if wanted - but no more than that
+  if (i >= 2 && i < 4 && count >= Math.ceil((i + 1) / 2) * 2) {
+    classes.push("sm:block");
+  }
+
+  // At 'lg' breakpoint show whatever the author intends
+  if (i >= 3 && count >= Math.ceil((i + 1) / 3) * 3) {
+    classes.push("lg:block");
+  }
+
+  return classes;
+}
+
+// We don't want gaps - we interpret a gap as an authoring mistake,
+// assume that we want to show all images between the first topic
+// and the last topic that specifies it should be shown
+const visibleImagesCount = props.topics.findLastIndex((t) => t.showImage) + 1;
 ---
 
 <div>
@@ -23,12 +67,14 @@ const props = Astro.props;
           "lg:grid-cols-3",
         ]}
       >
-        {props.topics.map((topicContentBlock) => (
+        {props.topics.map((topicContentBlock, i) => (
           <Card hoverable>
             <a href={topicContentBlock.topic.slug} class="block h-full">
-              {topicContentBlock.showImage && (
-                <CMSImage image={topicContentBlock.topic.image ?? null} />
-              )}
+              <CMSImage
+                classList={getImageClasses(i, visibleImagesCount)}
+                image={topicContentBlock.topic.image ?? null}
+                maxWidth={640}
+              />
               <div class="p-3">
                 <Heading as="h3" class="mb-1">
                   {topicContentBlock.displayTitle ??
