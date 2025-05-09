@@ -51,12 +51,7 @@ const showCountLinks =
     props.smartCollection.populations.length === 1) &&
   filteredTypes.length > 1;
 
-// const countEntries: Array<[string, number]> = filteredTypes.map((t) => [
-//   t,
-//   props.smartCollection.resources.filter((r) => r.type === t).length,
-// ]);
 const resourceCounts = filteredTypes.reduce((acc, curr) => {
-  console.log(acc, curr);
   const resourceCount = props.smartCollection.resources.filter(
     (r) => r.type === curr
   ).length;
@@ -68,7 +63,10 @@ const resourceCounts = filteredTypes.reduce((acc, curr) => {
 ---
 
 <MainLayout>
-  <PageHeader pageTitle={{ title: props.smartCollection.title }} />
+  <PageHeader
+    pageTitle={{ title: props.smartCollection.title }}
+    image={props.smartCollection.image ?? undefined}
+  />
   <Container>
     {
       showCountLinks && (

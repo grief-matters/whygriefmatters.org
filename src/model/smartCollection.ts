@@ -6,6 +6,7 @@ import {
   zExtendedResourceType,
   zInternetResourcePageListing,
 } from "./internetResource";
+import { zImage } from "./image";
 
 export function getQueryForCollectionResources(collection: SmartCollection) {
   const queryFilter = [
@@ -34,6 +35,10 @@ export function getQueryForCollectionResources(collection: SmartCollection) {
 export const gSmartCollectionProjection = groq`
   title,
   "slug": slug.current,
+  image{
+    image,
+    "altText": alt
+  },
   "categories": coalesce(categories[]->{
     "slug": slug.current,
     title
@@ -55,6 +60,7 @@ export const gSmartCollectionPagesQuery = groq`
 export const zSmartCollection = z.object({
   title: z.string(),
   slug: z.string(),
+  image: zImage.nullish(),
   categories: z.array(
     z.object({
       slug: z.string(),
