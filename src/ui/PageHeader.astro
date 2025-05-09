@@ -15,9 +15,9 @@ const props = Astro.props;
 
 <header class={ds.background.color.neutral.defaultLighter}>
   <Container>
-    <div class:list={["md:mx-3 md:p-3 md:bg-white md:shadow-lg"]}>
+    <div class:list={["md:mx-3 md:p-3 md:bg-white md:shadow-lg aspect-16/8"]}>
       <CMSImage
-        image={props.image}
+        image={props.image ?? null}
         priority
         classList={["object-cover aspect-16/8 hotspot"]}
         maxWidth={1024}
