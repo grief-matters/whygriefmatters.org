@@ -272,7 +272,6 @@ const baseInputClasses = [
         Object.entries(this.validationResults).forEach(
           ([fieldId, errorMessage]) => {
             const input = formElements.namedItem(fieldId) as Element;
-            console.log(input);
             if (input) {
               input.classList.remove(...this.fieldBorderClassList);
               input.classList.add(...this.fieldErrorBorderClassList);
