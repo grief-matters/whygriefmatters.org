@@ -52,12 +52,14 @@ const { contentBlock } = Astro.props;
         return <div />;
       case "personGroupBlock":
         return (
-          <PersonGroupBlock
-            featured={contentItem.featured}
-            personGroup={contentItem.group}
-            showGroupName={contentItem.showName}
-            showGroupDescription={contentItem.showDescription}
-          />
+          <div class="mb-6">
+            <PersonGroupBlock
+              featured={contentItem.featured}
+              personGroup={contentItem.group}
+              showGroupName={contentItem.showName}
+              showGroupDescription={contentItem.showDescription}
+            />
+          </div>
         );
       case "relativeLink":
         return (
