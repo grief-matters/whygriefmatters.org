@@ -1,7 +1,6 @@
 ---
 import type { ContentBlock } from "@model/contentBlock";
 
-import { getImageUrlBuilder } from "@common/client";
 import { getRouteFromDynamicResourcePageLink } from "@common/route";
 
 import CardLink from "./CardLink.astro";
@@ -15,6 +14,7 @@ import TopicCollectionContentBlock from "./TopicCollectionContentBlock.astro";
 import ImageRow from "./ImageRow.astro";
 import FormRenderer from "./FormRenderer.astro";
 import PersonGroupBlock from "./PersonGroupBlock.astro";
+import CMSImage from "./primitives/CMSImage.astro";
 
 interface Props {
   contentBlock: ContentBlock;
@@ -36,13 +36,7 @@ const { contentBlock } = Astro.props;
       case "accessibleImage":
         return (
           <div class="p-3">
-            <img
-              src={getImageUrlBuilder(contentItem.image)
-                .width(640)
-                .height(450)
-                .url()}
-              alt={contentItem.altText}
-            />
+            <CMSImage image={contentItem} priority={true} maxWidth={640} />
           </div>
         );
       case "featuredCrisisResource":
@@ -58,12 +52,14 @@ const { contentBlock } = Astro.props;
         return <div />;
       case "personGroupBlock":
         return (
-          <PersonGroupBlock
-            featured={contentItem.featured}
-            personGroup={contentItem.group}
-            showGroupName={contentItem.showName}
-            showGroupDescription={contentItem.showDescription}
-          />
+          <div class="mb-6">
+            <PersonGroupBlock
+              featured={contentItem.featured}
+              personGroup={contentItem.group}
+              showGroupName={contentItem.showName}
+              showGroupDescription={contentItem.showDescription}
+            />
+          </div>
         );
       case "relativeLink":
         return (
@@ -91,19 +87,21 @@ const { contentBlock } = Astro.props;
         );
       case "resourcePageLinks":
         return (
-          <CardLinkListContainer>
-            {contentItem.links.map((pageLink) => (
-              <CardLink
-                href={
-                  pageLink.linkType === "resourcePageLink"
-                    ? getRouteFromDynamicResourcePageLink(pageLink)
-                    : pageLink.url
-                }
-              >
-                {pageLink.label}
-              </CardLink>
-            ))}
-          </CardLinkListContainer>
+          <div class="mb-6">
+            <CardLinkListContainer>
+              {contentItem.links.map((pageLink) => (
+                <CardLink
+                  href={
+                    pageLink.linkType === "resourcePageLink"
+                      ? getRouteFromDynamicResourcePageLink(pageLink)
+                      : `/${pageLink.url}`
+                  }
+                >
+                  {pageLink.label}
+                </CardLink>
+              ))}
+            </CardLinkListContainer>
+          </div>
         );
       case "richTextContentBlock":
         return (

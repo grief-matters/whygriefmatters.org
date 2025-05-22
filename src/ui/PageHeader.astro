@@ -1,45 +1,26 @@
 ---
-import { getFallbackImageCollection, getImageUrlBuilder } from "@common/client";
 import { wgmDesignSystem as ds } from "@common/design-system";
 import type { PageTitle } from "@common/page";
 import type { SanityImage } from "@model/image";
 import Container from "./primitives/Container.astro";
+import CMSImage from "./primitives/CMSImage.astro";
 
 interface Props {
   pageTitle: PageTitle;
   image?: SanityImage;
 }
 
-const fallbackImages = await getFallbackImageCollection();
-
 const props = Astro.props;
-
-const image =
-  props.image ??
-  fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
-
-const smImgUrl = image
-  ? getImageUrlBuilder(image.image).width(640).height(320).url()
-  : null;
-const mdImgUrl = image
-  ? getImageUrlBuilder(image.image).width(1024).height(512).url()
-  : null;
-const lgImgUrl = image
-  ? getImageUrlBuilder(image.image).width(1280).height(640).url()
-  : null;
-const xlImgUrl = image
-  ? getImageUrlBuilder(image.image).width(1400).height(650).url()
-  : null;
 ---
 
 <header class={ds.background.color.neutral.defaultLighter}>
   <Container>
-    <div class:list={["md:mx-3 md:p-3 md:bg-white md:shadow-lg"]}>
-      <img
-        srcset={`${smImgUrl} 640w, ${mdImgUrl} 1024w, ${lgImgUrl} 1280w, ${xlImgUrl} 1560w`}
-        sizes="(max-width: 640px) 640px, (max-width: 1024px) 1024px, (max-width: 1280px) 1280px, 100vw"
-        alt={image.altText}
-        src={xlImgUrl}
+    <div class:list={["md:mx-3 md:p-3 md:bg-white md:shadow-lg aspect-16/8"]}>
+      <CMSImage
+        image={props.image ?? null}
+        priority
+        classList={["object-cover aspect-16/8 hotspot"]}
+        maxWidth={1024}
       />
     </div>
     <h1 class:list={["mx-3 -mt-8 md:mx-10 mb-3 md:mb-6"]}>

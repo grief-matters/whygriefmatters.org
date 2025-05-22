@@ -5,9 +5,9 @@
  */
 import { getTextBlockClassList, type BaseTextBlockProps } from "./helpers";
 
-type Props = BaseTextBlockProps;
+type Props = BaseTextBlockProps & { classList?: string[] };
 
-const { variant = "default", ...props } = Astro.props;
+const { variant = "default", classList = [], ...props } = Astro.props;
 
 const pClassList = getTextBlockClassList(
   "p",
@@ -17,6 +17,6 @@ const pClassList = getTextBlockClassList(
 );
 ---
 
-<p class:list={pClassList}>
+<p class:list={[pClassList, ...classList]}>
   <slot />
 </p>

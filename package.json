@@ -24,15 +24,15 @@
   "homepage": "https://github.com/grief-matters/whygriefmatters.org#readme",
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/cloudflare": "^12.2.2",
-    "@clerk/astro": "^2.2.1",
+    "@astrojs/cloudflare": "^12.5.1",
+    "@clerk/astro": "2.6.8",
     "@portabletext/to-html": "^2.0.5",
     "@sanity/client": "^6.4.12",
     "@sanity/image-url": "^1.0.2",
     "@tailwindcss/vite": "^4.0.6",
     "@types/lodash": "^4.14.202",
     "@types/pluralize": "^0.0.33",
-    "astro": "^5.3.1",
+    "astro": "^5.7.5",
     "astro-pagefind": "^1.8.3",
     "libphonenumber-js": "^1.11.12",
     "lodash": "^4.17.21",
@@ -55,6 +55,6 @@
     "groq": "^3.20.1",
     "prettier": "3.0.3",
     "prettier-plugin-astro": "^0.12.0",
-    "wrangler": "4.2.0"
+    "wrangler": "4.13.2"
   }
 }

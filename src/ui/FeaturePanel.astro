@@ -123,7 +123,7 @@ const bgClass = bgClasses[adjustedIndex];
                       href={
                         pageLink.linkType === "resourcePageLink"
                           ? getRouteFromDynamicResourcePageLink(pageLink)
-                          : pageLink.url
+                          : `/${pageLink.url}`
                       }
                       cardProps={{
                         resourceType:

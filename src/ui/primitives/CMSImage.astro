@@ -1,32 +1,116 @@
 ---
-import sample from "lodash/sample";
+import { getImage } from "astro:assets";
 
 import { getFallbackImageCollection, getImageUrlBuilder } from "@common/client";
-
 import type { SanityImage } from "@model/image";
 
 import fallbackImg from "../../img/fallback.jpg";
 
-interface Props {
+type Format = "webp" | "jpg" | "png";
+
+interface ImageSources {
+  srcSet: string;
+  type: string;
+}
+
+export interface CMSImageProps {
   image: SanityImage | null;
-}
-const props = Astro.props;
-
-let imageToGet = props.image;
-
-if (imageToGet === null) {
-  const fallbacks = await getFallbackImageCollection();
-  imageToGet = sample(fallbacks) ?? null;
+  classList?: Array<string>;
+  maxWidth?: number;
+  priority?: boolean;
+  useFallback?: boolean;
 }
 
-const imgSrc = imageToGet
-  ? getImageUrlBuilder(imageToGet.image).width(640).height(450).url()
-  : fallbackImg.src;
+const { maxWidth = 2500, useFallback = true, ...props } = Astro.props;
+
+const mediaMimeTypeMap: Record<Format, string> = {
+  webp: "image/webp",
+  jpg: "image/jpeg",
+  png: "image/png",
+};
+
+const widths = [2500, 2048, 1536, 1024, 768, 640, 480, 320];
+const selectedWidths = widths.filter((w) => w <= maxWidth);
+
+const fallbackImages = useFallback ? await getFallbackImageCollection() : [];
+
+let sources: ImageSources[] = [];
+
+const sanityImageSource: SanityImage | null =
+  props.image ??
+  (useFallback
+    ? fallbackImages[Math.floor(Math.random() * fallbackImages.length)]
+    : null);
+
+if (sanityImageSource) {
+  const baseBuilder = sanityImageSource
+    ? getImageUrlBuilder(sanityImageSource.image)
+    : null;
+
+  const getSrcSet = (format: Format): string => {
+    const set = selectedWidths.map(
+      (w) => `${baseBuilder?.width(w).format(format).url()} ${w}w`
+    );
+
+    return set.join(", ");
+  };
+
+  const sourceFormats: Array<Format> = ["webp", "jpg", "png"];
+  sources = sourceFormats.map((f) => ({
+    srcSet: getSrcSet(f),
+    type: mediaMimeTypeMap[f],
+  }));
+}
+
+const sortedSelectedWidths = selectedWidths.toSorted();
+const optimizedFallback = await getImage({
+  src: fallbackImg,
+  widths: sortedSelectedWidths,
+  formats: ["webp", "jpg", "png"],
+});
+
+const optimizedFallbackImgConfig = {
+  src: optimizedFallback.src,
+  srcSet: optimizedFallback.srcSet.values
+    .map((value, i) => `${value.url} ${sortedSelectedWidths[i]}w`)
+    .join(", "),
+  sizes: sortedSelectedWidths
+    .map((w, i) =>
+      i !== sortedSelectedWidths.length - 1
+        ? `(min-width: ${w}px) ${sortedSelectedWidths[i + 1]}px`
+        : `${w}px`
+    )
+    .join(", "),
+};
+
+const returnFragment = sanityImageSource === null && !useFallback;
+
+const hotspotX = `${(sanityImageSource?.image.hotspot?.x ?? 0.5) * 100}%`;
+const hotspotY = `${(sanityImageSource?.image.hotspot?.y ?? 0.5) * 100}%`;
 ---
 
-<img
-  src={imgSrc}
-  alt={imageToGet?.altText ??
-    "Looking through reeds over a tranquil lake on a sunny day."}
-  loading="lazy"
-/>
+{
+  returnFragment ? (
+    <Fragment />
+  ) : (
+    <picture>
+      {sources.map((s) => (
+        <source srcset={s.srcSet} type={s.type} />
+      ))}
+      <img
+        class:list={props.classList}
+        src={optimizedFallbackImgConfig.src}
+        alt="Looking through reeds over a tranquil lake on a sunny day."
+        srcset={optimizedFallbackImgConfig.srcSet}
+        sizes={optimizedFallbackImgConfig.sizes}
+        loading={props.priority ? "eager" : "lazy"}
+      />
+    </picture>
+  )
+}
+
+<style define:vars={{ hotspotX, hotspotY }}>
+  .hotspot {
+    object-position: var(--hotspotX) var(--hotspotY);
+  }
+</style>

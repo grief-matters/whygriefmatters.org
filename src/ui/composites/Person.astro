@@ -7,27 +7,19 @@ interface Props {
   person: Person;
 }
 
-const {person} = Astro.props;
+const { person } = Astro.props;
 ---
 
-<div class:list={["sm:flex"]}>
-  <div
-    class:list={[
-      "max-w-sm mx-auto sm:max-w-none sm:mx-3 md:mx-6",
-      "sm:flex-shrink sm:basis-2/3",
-      "sm:my-3",
-    ]}
-  >
-    <div class:list={["border-b-2 border-indigo-500/25 mb-3"]}>
-      <h1 class:list={["font-serif text-sky-800 text-2xl"]}>
-        {person.fullName}
-      </h1>
-      <Subtitle class:list={"mb-2"}>{person.role}</Subtitle>
-    </div>
-    {
-      person.shortBio && (
-        <PortableTextContentBlock portableText={person.shortBio} />
-      )
-    }
+<div>
+  <div class:list={["border-b-2 border-indigo-500/25 mb-3"]}>
+    <h1 class:list={["font-serif text-sky-800 text-2xl"]}>
+      {person.fullName}
+    </h1>
+    <Subtitle class:list={"mb-2"}>{person.role}</Subtitle>
   </div>
+  {
+    person.shortBio && (
+      <PortableTextContentBlock portableText={person.shortBio} />
+    )
+  }
 </div>
