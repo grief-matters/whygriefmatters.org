@@ -3,9 +3,10 @@ import { defineConfig, envField } from "astro/config";
 import clerk from "@clerk/astro";
 import cloudflare from "@astrojs/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
+import pagefind from 'astro-pagefind';
 
 export default defineConfig({
-  integrations: [clerk()],
+  integrations: [clerk(), pagefind()],
   vite: {
     plugins: [tailwindcss()],
   },

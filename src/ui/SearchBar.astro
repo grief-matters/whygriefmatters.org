@@ -1,0 +1,256 @@
+---
+const { searchId = "search" } = Astro.props;
+---
+
+<!-- Search Bar Wrapper -->
+<div id="search-wrapper">
+  <div
+    id={searchId}
+    class="w-full search-root"
+    data-search-id={searchId}
+  ></div>
+</div>
+
+<!-- Pagefind UI Script -->
+<script src="/pagefind/pagefind-ui.js" is:inline></script>
+<script>
+  declare global {
+    interface Window {
+      PagefindUI?: any;
+    }
+  }
+
+  // Wait for Pagefind UI to be available, then initialize for all search bars
+  function initializePagefindUI() {
+    if (window.PagefindUI) {
+      document.querySelectorAll('[data-search-id]').forEach(searchDiv => {
+        const id = searchDiv.getAttribute('data-search-id');
+        if (id && searchDiv instanceof HTMLElement && !searchDiv.dataset.pagefindInitialized) {
+          new window.PagefindUI({
+            element: `#${id}`,
+            showSubResults: true,
+            resetStyles: false,
+            showImages: false,
+          });
+          searchDiv.dataset.pagefindInitialized = 'true';
+        }
+      });
+    } else {
+      setTimeout(initializePagefindUI, 200);
+    }
+  }
+  window.addEventListener("DOMContentLoaded", initializePagefindUI);
+</script>
+
+<style is:global>
+  /* Desktop Styles */
+  .search-root { min-height: 2rem; }
+  .search-root-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  .search-root .pagefind-ui__form {
+    display: inline-flex !important;
+    align-items: center !important;
+    height: 2rem !important;
+    padding: 0 0.5rem !important;
+    background: #fff !important;
+    border: 1px solid #312b2b !important;
+    border-radius: 6px !important;
+    max-width: 250px !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+  }
+  .search-root .pagefind-ui__search-input {
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    padding: 0 0.5rem !important;
+    background: transparent !important;
+    border: none !important;
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+    color: #1f2937 !important;
+    font-family: inherit !important;
+  }
+  .search-root .pagefind-ui__search-input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  .search-root .pagefind-ui__search-clear {
+    margin-left: 0.5rem !important;
+    opacity: 0.5 !important;
+    font-size: 0.75rem !important;
+    background: none !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    color: #000 !important;
+    font-weight: 600 !important;
+  }
+  .search-root .pagefind-ui__search-clear.pagefind-ui__suppressed {
+    display: none !important;
+  }
+  .search-root .pagefind-ui__drawer {
+    position: absolute !important;
+    top: 70% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 65ch !important;         
+    max-width: 1100px !important;
+    min-width: 320px !important;
+    background: #fff !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.12) !important;
+    padding: 0.75rem !important;
+    z-index: 200 !important;
+    overflow-y: auto !important;
+    max-height: 450px !important;
+    margin-top: -6px !important;
+    scrollbar-width: thin;
+    scrollbar-color: #d4d4d4 transparent;
+  }
+
+  .search-root .pagefind-ui__drawer.pagefind-ui__hidden {
+    display: none !important;
+  }
+  .search-root .pagefind-ui__result {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: #fafafa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+    word-wrap: break-word;
+    overflow: visible !important;
+  }
+  .search-root .pagefind-ui__result:hover {
+    background: #f0f4ff !important;
+  }
+  .search-root .pagefind-ui__result-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #1e3a8a;
+    margin-bottom: 0.25rem;
+    text-decoration: none;
+    white-space: normal;
+    word-break: break-word;
+  }
+  .search-root .pagefind-ui__result-title:hover {
+    text-decoration: underline !important;
+  }
+  .search-root .pagefind-ui__result-content {
+    flex: 1 1 auto !important;
+    display: flex;
+    flex-direction: column;
+  }
+  .search-root .pagefind-ui__result-excerpt {
+    font-size: 0.875rem;
+    color: #374151;
+    line-height: 1.4;
+    white-space: normal;
+    word-break: break-word;
+  }
+  .search-root .pagefind-ui__result-thumb {
+    display: none !important;
+  }
+
+  .search-root .pagefind-ui__result-inner {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    width: 100% !important;
+  }
+  .search-root mark {
+    background-color: #fde68a !important;
+    color: inherit !important;
+    padding: 0.1em 0.25em;
+    border-radius: 4px;
+  }
+
+  /* Tablet Styles */
+  @media (max-width: 940px) {
+    .search-root .pagefind-ui__drawer {
+      width: 90% !important;
+      max-width: 896px !important;
+    }
+  }
+
+  /* Mobile Styles */
+  @media (max-width: 640px) {
+    .search-root {
+      position: relative !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      width: 100vw !important;
+      background: transparent !important;
+      min-height: 2rem !important;
+      padding: 0 !important;
+      border: none !important;
+    }
+    .search-root .pagefind-ui__form {
+      width: 90vw !important;
+      max-width: 420px !important;
+      min-width: 0 !important;
+      margin: 0 auto !important;
+      border-radius: 7px !important;
+      background: #fff !important;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.10) !important;
+      border: none !important;
+      height: 2.3rem !important;
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 1rem !important;
+    }
+    .search-root .pagefind-ui__search-input {
+      width: 100% !important;
+      height: 100% !important;
+      font-size: 1.1rem !important;
+      padding: 0 !important;
+      border: none !important;
+      background: transparent !important;
+      color: #1f2937 !important;
+      border-radius: 7px !important;
+    }
+    .search-root .pagefind-ui__search-clear {
+      font-size: 0.9rem !important;
+      color: #1f2937 !important;
+      opacity: 0.5 !important;
+    }
+    .search-root .pagefind-ui__drawer {
+      position: absolute !important;
+      top: 110% !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: 90vw !important;
+      max-width: 420px !important;
+      min-width: 0 !important;
+      border-radius: 10px !important;
+      margin: 0 !important;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12) !important;
+      z-index: 200 !important;
+      background: #fff !important;
+      padding: 0.75rem !important;
+      overflow-y: auto !important;
+      max-height: 60vh !important;
+    }
+  }
+
+  /* Foldable/Large Mobile Styles */
+  @media (max-width: 640px) and (min-width: 480px) {
+    .search-root .pagefind-ui__form,
+    .search-root .pagefind-ui__drawer {
+      max-width: 600px !important;
+      width: 95vw !important;
+    }
+  }
+</style>
+

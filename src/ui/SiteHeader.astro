@@ -5,6 +5,7 @@ import { SignedIn } from "@clerk/astro/components";
 
 import MainNav from "./MainNav/MainNav.astro";
 import AccountButton from "./AccountButton.astro";
+import SearchBar from "./SearchBar.astro";
 
 const logoSet = await getLogoSet();
 
@@ -107,6 +108,9 @@ const darkUrl = `url(${darkHeaderLogo?.url})`;
           }
         </a>
         <div class="hidden sm:flex sm:p-2 sm:items-center sm:space-x-4">
+          <div>
+            <SearchBar searchId="search-desktop" />
+          </div> 
           <a
             class:list={[
               "font-serif font-semibold",
@@ -181,6 +185,12 @@ const darkUrl = `url(${darkHeaderLogo?.url})`;
     <MainNav />
   </div>
 </header>
+
+<div class="sm:hidden w-full bg-blue-900 px-4 py-3">
+  <div class="flex justify-center w-full">
+    <SearchBar searchId="search-mobile" />
+  </div>
+</div>
 
 <style define:vars={{ lightUrl, darkUrl }}>
   header.scroll-down {

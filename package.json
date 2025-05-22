@@ -8,7 +8,8 @@
     "dev-host": "wrangler types && astro dev --host",
     "start": "wrangler types && astro dev",
     "build": "wrangler types && astro check && astro build",
-    "preview": "wrangler types && wrangler pages dev ./dist"
+    "preview": "wrangler types && wrangler pages dev ./dist",
+    "pagefind": "pagefind --site dist && cp -r dist/pagefind public/"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
     "@types/lodash": "^4.14.202",
     "@types/pluralize": "^0.0.33",
     "astro": "^5.7.5",
+    "astro-pagefind": "^1.8.3",
     "libphonenumber-js": "^1.11.12",
     "lodash": "^4.17.21",
     "node-html-parser": "^6.1.13",
