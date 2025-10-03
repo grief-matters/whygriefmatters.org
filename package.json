@@ -24,7 +24,7 @@
   "homepage": "https://github.com/grief-matters/whygriefmatters.org#readme",
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/cloudflare": "^12.5.5",
+    "@astrojs/cloudflare": "^12.6.9",
     "@clerk/astro": "2.6.8",
     "@portabletext/to-html": "^2.0.5",
     "@sanity/client": "^6.4.12",
@@ -32,7 +32,7 @@
     "@tailwindcss/vite": "^4.0.6",
     "@types/lodash": "^4.14.202",
     "@types/pluralize": "^0.0.33",
-    "astro": "^5.9.4",
+    "astro": "^5.14.1",
     "astro-pagefind": "^1.8.3",
     "libphonenumber-js": "^1.11.12",
     "lodash": "^4.17.21",
