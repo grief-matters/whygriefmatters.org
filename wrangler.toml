@@ -1,6 +1,7 @@
 name = "grief-matters-web"
 main = "./dist/_worker.js/index.js"
-compatibility_date = "2024-10-26"
+compatibility_flags = [ "nodejs_compat" ]
+compatibility_date = "2024-09-23"
 preview_urls = false
 
 [assets]

@@ -8,7 +8,7 @@
     "dev-host": "wrangler types && astro dev --host",
     "start": "wrangler types && astro dev",
     "build": "wrangler types && astro check && astro build",
-    "preview": "wrangler types && wrangler dev",
+    "preview": "wrangler types && wrangler dev --env dev",
     "pagefind": "pagefind --site dist && cp -r dist/pagefind public/"
   },
   "repository": {
