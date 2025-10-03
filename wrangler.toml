@@ -1,4 +1,4 @@
-name = "whygriefmatters-org"
+name = "grief-matters-web"
 main = "./dist/_worker.js/index.js"
 compatibility_date = "2024-10-26"
 preview_urls = false
