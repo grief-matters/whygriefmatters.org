@@ -141,6 +141,7 @@ export function getAuthedClient(useCdn: boolean = false): SanityClient {
       apiVersion: SANITY_STUDIO_API_VERSION,
       token: SANITY_AUTH_TOKEN,
       useCdn: useCdn,
+      perspective: "published",
     });
     authedClient = c;
   }
@@ -155,6 +156,7 @@ export function getClient(useCdn: boolean = true): SanityClient {
       dataset: SANITY_STUDIO_DATASET,
       apiVersion: SANITY_STUDIO_API_VERSION,
       useCdn: useCdn,
+      perspective: "published",
     });
     client = c;
   }
