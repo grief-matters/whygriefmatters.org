@@ -26,16 +26,57 @@
   }
 }
 
-/* https://modernfontstacks.com */
 @theme {
+  /* https://modernfontstacks.com */
   /* Transitional font stack */
-  --font-serif: "Source Serif", "Charter", "Bitstream Charter", "Sitka Text",
-    "Cambria", serif;
+  --font-serif: "Charter", "Bitstream Charter", "Sitka Text", "Cambria", serif;
   /* Humanist font stack */
   --font-sans: "Optima", "Candara", "Noto Sans", source-sans-pro, sans-serif;
   /* Neo-grotesque font stack */
   --font-ng: "Inter", "Roboto", "Helvetica Neue", "Arial Nova", "Nimbus Sans",
     Arial, sans-serif;
+
+  --color-blue-25: #23375c;
+  --color-blue-30: #173d85;
+  --color-blue-42: #3059a6;
+  --color-blue-52: #4270c8;
+  --color-blue-55: #5e80ba;
+  --color-blue-79: #99b8fa;
+  --color-blue-89: #bccffa;
+  --color-blue-91: #d6e1fa;
+  --color-blue-95: #e9effc;
+  --color-blue-97: #f1f5fe;
+  --color-green-79: #c0d3c0;
+  --color-green-87: #d6e5d6;
+  --color-green-90: #e0ebe0;
+  --color-green-95: #f1f4f1;
+  --color-green-98: #f8faf8;
+  --color-pink-80: #fd9ab1;
+  --color-pink-87: #f5c5d0;
+  --color-pink-92: #f7dfe4;
+  --color-pink-95: #f7eef0;
+  --color-pink-97: #faf5f6;
+  --color-brown-40: #696363;
+  --color-brown-46: #7b6f6f;
+  --color-brown-58: #9c8b8b;
+  --color-brown-70: #b9acac;
+  --color-brown-80: #d1c7c7;
+  --color-brown-90: #e8e3e3;
+  --color-stone-96: #f5f3f3;
+  --color-stone-97: #f8f7f7;
+  --color-stone-98: #fafafa;
+  --color-stone-99: #fcfcfc;
+  --color-slate-62: #909aaa;
+  --color-aqua-70: #69fafc;
+  --color-aqua-80: #9bfcfd;
+  --color-aqua-90: #cdfdfe;
+  --color-sky-57: #4687db;
+  --color-yellow-82: #fcefa4;
+
+  --color-brand-dark-blue: #173d85;
+  --color-brand-powder-blue: #d6e1fa;
+  --color-brand-sky-blue: #4687db;
+  --color-cornflower-yellow: #fcefa4;
 }
 
 .wgm-text-pretty {

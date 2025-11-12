@@ -1,0 +1,76 @@
+{
+  "color": {
+    "blue": {
+      "25": "#23375C",
+      "30": "#173D85",
+      "42": "#3059A6",
+      "52": "#4270C8",
+      "55": "#5E80BA",
+      "79": "#99B8FA",
+      "89": "#BCCFFA",
+      "91": "#D6E1FA",
+      "95": "#E9EFFC",
+      "97": "#F1F5FE"
+    },
+    "green": {
+      "79": "#C0D3C0",
+      "87": "#D6E5D6",
+      "90": "#E0EBE0",
+      "95": "#F1F4F1",
+      "98": "#F8FAF8"
+    },
+    "pink": {
+      "80": "#FD9AB1",
+      "87": "#F5C5D0",
+      "92": "#F7DFE4",
+      "95": "#F7EEF0",
+      "97": "#FAF5F6"
+    },
+    "brown": {
+      "40": "#696363",
+      "46": "#7B6F6F",
+      "58": "#9C8B8B",
+      "70": "#B9ACAC",
+      "80": "#D1C7C7",
+      "90": "#E8E3E3"
+    },
+    "stone": {
+      "96": "#F5F3F3",
+      "97": "#F8F7F7",
+      "98": "#FAFAFA",
+      "99": "#FCFCFC"
+    },
+    "slate": {
+      "62": "#909AAA"
+    },
+    "aqua": {
+      "70": "#69FAFC",
+      "80": "#9BFCFD",
+      "90": "#CDFDFE"
+    },
+    "sky": {
+      "57": "#4687DB"
+    },
+    "yellow": {
+      "82": "#FCEFA4"
+    }
+  },
+  "typeface": {
+    "serif-stack": [
+      "Charter",
+      "Bitstream Charter",
+      "Sitka Text",
+      "Cambria",
+      "serif"
+    ],
+    "sans-stack": [
+      "Seravek",
+      "Gill Sans Nova",
+      "Ubuntu",
+      "Calibri",
+      "DejaVu Sans",
+      "source-sans-pro",
+      "sans-serif"
+    ]
+  }
+}

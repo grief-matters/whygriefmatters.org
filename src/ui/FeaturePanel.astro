@@ -12,6 +12,8 @@ import type { ContentGroup } from "@model/contentGroup";
 import Container from "./primitives/Container.astro";
 import ImageRow from "./ImageRow.astro";
 
+import tokens from "../styles/semantic-token-map";
+
 interface Props {
   featuredContent: ContentGroup;
   indexInCollection?: number;
@@ -29,7 +31,10 @@ function getAdjustedIndex(arrLength: number, index: number) {
 
 const { featuredContent, indexInCollection = 0 } = Astro.props;
 
-const bgClasses = ["bg-stone-50", "bg-stone-100"];
+const bgClasses = [
+  tokens.color.layoutSurface.neutral.muted,
+  tokens.color.layoutSurface.neutral.mutedAlt,
+];
 
 const adjustedIndex = getAdjustedIndex(bgClasses.length, indexInCollection);
 
