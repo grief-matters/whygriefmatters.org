@@ -1,9 +1,9 @@
 ---
 import { getFooterData, getImageUrlBuilder } from "@common/client";
-import { wgmDesignSystem as ds } from "@common/design-system";
 import PortableTextContentBlock from "./typography/PortableTextContentBlock.astro";
 import TextBlock from "./typography/TextBlock.astro";
 import type { BaseTextBlockProps } from "./typography/helpers";
+import tokens from "../styles/semantic-token-map";
 
 const footerData = await getFooterData();
 const lightHeaderLogo = footerData
@@ -26,7 +26,12 @@ const textBlockProps: BaseTextBlockProps = {
 };
 ---
 
-<footer class:list={[ds.background.color?.brand?.blue, "py-6 -z-10"]}>
+<footer
+  class:list={[
+    tokens.color.layoutSurface.primary.contrastProminent,
+    "py-6 -z-10",
+  ]}
+>
   <div class="mx-auto container px-3">
     <a href="/" class="block w-64 max-w-full mb-2">
       {
