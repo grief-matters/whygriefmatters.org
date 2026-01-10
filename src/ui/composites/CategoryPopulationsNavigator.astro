@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  category: CollectionEntry<"categories">;
+  populations: Array<CollectionEntry<"populations">>;
+}
+
+const props = Astro.props;
+---
+
+<aside>
+  <h2>{"Underserved Groups"}</h2>
+  <p>
+    {
+      `We've identified resources in this topic that are more centered to the unique needs and perspectives of the following communities.`
+    }
+  </p>
+  <ul>
+    {
+      props.populations.map((p) => (
+        <a href={`/${props.category.data.slug}/${p.data.slug}`}>
+          {p.data.name}
+        </a>
+      ))
+    }
+  </ul>
+</aside>

@@ -1,0 +1,25 @@
+---
+// import "@styles/main.css";
+import designTokens from "@styles/semantic-token-map";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Why Grief Matters</title>
+  </head>
+
+  <body
+    class:list={[
+      "min-h-screen",
+      "flex flex-col",
+      designTokens.color.layoutSurface.neutral.default,
+      designTokens.color.text.onLayoutSurface.default,
+    ]}
+  >
+    <main class="flex-grow">
+      <slot />
+    </main>
+  </body>
+</html>

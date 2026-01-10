@@ -1,108 +1,113 @@
 ---
-import type {
-  InternetResourcePageListing,
-  InternetResourceType,
-} from "@model/internetResource";
-import type { CategoryPageData } from "@model/categoryPage";
-import type { Population } from "@model/population";
-import type { SanityImage } from "@model/image";
-
-import { getCategoryPagesData, getPopulations } from "@common/client";
-import { getFilteredTypesFromResources } from "@common/resourceType";
-import { getResourcePageTitle } from "@common/page";
-
-import MainLayout from "@layouts/MainLayout.astro";
-
-import Container from "@ui/primitives/Container.astro";
-
-import PageHeader from "@ui/PageHeader.astro";
-import Heading from "@ui/primitives/Heading.astro";
-import ResourceCounts, {
-  type ResourceTypesCounts,
-} from "@ui/ResourceCounts.astro";
-import ResourcePageListings from "@ui/ResourcePageListing/ResourcePageListings.astro";
+import {
+  internetResourceCollectionKeys,
+  type InternetResourceEntries,
+} from "@content/collections";
+import type { PopulationSlug } from "@content/model/population";
+import Shell from "@ui/layouts/Shell.astro";
+import InternetResourceListingRenderer from "@ui/orchestrators/InternetResourceListingRenderer.astro";
+import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+import startCase from "lodash/startCase";
 
 interface Props {
-  categoryTitle: string;
-  resources: Array<InternetResourcePageListing>;
-  populationData: Population;
-  applicableTypes: Array<InternetResourceType>;
-  image: SanityImage | null;
+  categoryEntry: CollectionEntry<"categories">;
+  populationEntry: CollectionEntry<"populations">;
+  internetResources: InternetResourceEntries;
 }
+
+const labelMakerFnMap: Record<PopulationSlug, (name: string) => string> = {
+  "latino-and-hispanic-americans": (name: string) => `Resources for ${name}`,
+  "african-american-black": (name: string) => `Resources for ${name}`,
+  "asian-american-and-pacific-islander": (name: string) =>
+    `Resources for ${name}`,
+  "people-with-disabilities": (name: string) => `Resources for ${name}`,
+  "lgbtq-community": (name: string) => `Resources for the ${name}`,
+  "indigenous-communities": (name: string) => `Resources for ${name}`,
+};
 
 export async function getStaticPaths() {
-  const categoryPagesData = await getCategoryPagesData();
-  const populations = await getPopulations();
+  const categoryEntries = await getCollection("categories");
+  const populationEntries = await getCollection("populations");
 
-  return categoryPagesData.flatMap((data: CategoryPageData) => {
-    const filteredPopulations = populations.filter((p) =>
-      data.resources.some((r) => r.populations?.includes(p.slug))
-    );
+  const staticPaths = [];
 
-    return filteredPopulations
-      .map((population) => {
-        const resources = data.resources.filter((r) =>
-          r.populations?.includes(population.slug)
+  for (const categoryEntry of categoryEntries) {
+    for (const populationEntry of populationEntries) {
+      const internetResources: InternetResourceEntries = {};
+      for (const key of internetResourceCollectionKeys) {
+        const resourcesForKey = await getCollection(
+          key,
+          ({ data }) =>
+            data.categories.some((c) => c.id === categoryEntry.id) &&
+            data.populations.some((p) => p.id === populationEntry.id)
         );
 
-        const filteredTypes = getFilteredTypesFromResources(resources);
+        if (resourcesForKey.length > 0) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (internetResources as any)[key] = resourcesForKey;
+        }
+      }
 
-        return {
-          params: { category: data.slug, population: population.slug },
-          props: {
-            categoryTitle: data.title,
-            image: data.image,
-            populationData: population,
-            resources,
-            applicableTypes: filteredTypes ?? [],
-          },
-        };
-      })
-      .filter((pop) => pop.props.resources.length > 0);
-  });
+      if (Object.values(internetResources).flat().length === 0) {
+        continue;
+      }
+
+      staticPaths.push({
+        params: {
+          category: categoryEntry.data.slug,
+          population: populationEntry.data.slug,
+        },
+        props: {
+          categoryEntry,
+          populationEntry,
+          internetResources,
+        },
+      });
+    }
+  }
+
+  return staticPaths;
 }
 
-const params = Astro.params;
 const props = Astro.props;
+const params = Astro.params;
 
-const fullCategoryTitle = props.categoryTitle;
-
-const pageTitle = getResourcePageTitle({
-  categoryName: fullCategoryTitle,
-  populationName: props.populationData.name,
-});
-
-const resourceTypesCounts: ResourceTypesCounts = {};
-props.applicableTypes.forEach(
-  (t) =>
-    (resourceTypesCounts[t] = props.resources.filter(
-      (x) => x.type === t
-    ).length)
-);
+const labelMaker = labelMakerFnMap[props.populationEntry.data.slug];
 ---
 
-<MainLayout>
-  <PageHeader
-    pageTitle={pageTitle}
-    image={props.image ? props.image : undefined}
-  />
-  <Container>
+<Shell>
+  <header>
+    <h1>
+      {props.categoryEntry.data.displayTitle ?? props.categoryEntry.data.title}
+    </h1>
     {
-      props.applicableTypes.length > 1 && (
-        <section class="p-3 lg:mb-6">
-          <Heading as="h3" class:list={["mb-4 font-semibold"]}>
-            {`Types of Resources for ${props.populationData.name} on This Topic`}
-          </Heading>
-          <ResourceCounts
-            resourceTypesCounts={resourceTypesCounts}
-            population={params.population}
-            category={params.category}
-          />
-        </section>
+      props.categoryEntry.data.shortDescription && (
+        <p>{props.categoryEntry.data.shortDescription}</p>
       )
     }
-    <section class="p-3 lg:mb-6">
-      <ResourcePageListings resources={props.resources} />
-    </section>
-  </Container>
-</MainLayout>
+    <p>{labelMaker(props.populationEntry.data.name)}</p>
+    <a href={`/${params.category}`}>{"See all resources for this topic"}</a>
+  </header>
+  {
+    props.categoryEntry.data.description && (
+      <PortableTextContentBlock
+        portableText={props.categoryEntry.data.description}
+      />
+    )
+  }
+  <section>
+    {
+      Object.entries(props.internetResources).map(
+        ([resourceType, resourceEntries]) => (
+          <div>
+            <h2>{startCase(resourceType)}</h2>
+            {resourceEntries.map((entry) => (
+              <InternetResourceListingRenderer entry={entry} />
+            ))}
+          </div>
+        )
+      )
+    }
+  </section>
+</Shell>

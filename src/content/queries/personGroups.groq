@@ -1,0 +1,6 @@
+*[_type == "personGroup"]{
+  "id": _id,
+  name,
+  description,
+  "members": coalesce(members[]->._id, [])
+}

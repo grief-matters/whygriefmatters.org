@@ -1,0 +1,11 @@
+*[_type == 'population'] {
+  "id": _id,
+  name,
+  "slug": slug.current,
+  description,
+  underserved,
+  image{
+    image,
+    "altText": alt
+  },
+}

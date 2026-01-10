@@ -1,0 +1,29 @@
+---
+import { getLocaleDateStringFromIsoString } from "@ui/utils";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"websites">;
+}
+
+const props = Astro.props;
+
+const lastReviewedDate = getLocaleDateStringFromIsoString(
+  props.entry.data.updatedAt
+);
+---
+
+<article>
+  <header>
+    <h3>{props.entry.data.name}</h3>
+    {
+      lastReviewedDate && (
+        <p>
+          {"Last Reviewed "}
+          <time datetime={props.entry.data.updatedAt}>{lastReviewedDate}</time>
+        </p>
+      )
+    }
+  </header>
+  <p>{props.entry.data.description}</p>
+</article>

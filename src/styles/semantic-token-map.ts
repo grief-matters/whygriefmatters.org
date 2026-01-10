@@ -4,6 +4,14 @@
  * Can be used with the Astro `class:list` directive for better DX/more consistent design token application
  */
 export default {
+  typography: {
+    size: {
+      body: {
+        default: "text-base",
+        prominent: "text-lg",
+      },
+    },
+  },
   color: {
     layoutSurface: {
       neutral: {

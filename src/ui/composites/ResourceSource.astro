@@ -1,0 +1,25 @@
+---
+import { isLink, isNonEmptyString, type Link } from "@ui/utils";
+
+interface Props {
+  source: string | Link;
+  prefaceTextOverride?: string;
+}
+
+const { source, prefaceTextOverride } = Astro.props;
+---
+
+<p>
+  {isNonEmptyString(prefaceTextOverride) ? `${prefaceTextOverride} ` : "From "}
+  {
+    isLink(source) ? (
+      // Render a link if we managed to process one
+      <a href={source.url} rel="noopener" target="_blank">
+        {source.label}
+      </a>
+    ) : (
+      // Render just text if we fail to get a linkable source
+      <span>{source}</span>
+    )
+  }
+</p>

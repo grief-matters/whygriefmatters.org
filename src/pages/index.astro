@@ -1,119 +1,45 @@
 ---
-import { getHomePageData, getImageUrlBuilder } from "@common/client";
+import { getEntry } from "astro:content";
 
-import MainLayout from "@layouts/MainLayout.astro";
+import Shell from "@ui/layouts/Shell.astro";
+import HeroSection from "@ui/composites/HeroSection.astro";
+import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
+import { getOrganization } from "@content/loaders/organizationLoader";
+import ContentBlockRenderer from "@ui/orchestrators/ContentBlockRenderer.astro";
 
-import PortableTextContentBlock from "@ui/typography/PortableTextContentBlock.astro";
-import FeaturePanel from "@ui/FeaturePanel.astro";
-import Hero from "@ui/Hero.astro";
-import Heading from "@ui/primitives/Heading.astro";
-import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
-import Container from "@ui/primitives/Container.astro";
-import TextBlock from "@ui/typography/TextBlock.astro";
+const org = await getOrganization();
+if (!org) {
+  throw new Error('Failed to [getOrganization] for "src/pages/index.astro"');
+}
 
-const homePageData = await getHomePageData();
+const homePageEntry = await getEntry("contentGroups", "home");
+if (!homePageEntry) {
+  throw new Error('Could not get content entry: ["contentGroups", "home"]');
+}
 
-const heroImg = {
-  url: getImageUrlBuilder(homePageData.heroImage.image).url(),
-  alt: homePageData.heroImage.altText,
-};
+if (!homePageEntry.data.image) {
+  throw new Error("Essential content missing: [homePageEntry.data.image]");
+}
 
-const logo = {
-  url: getImageUrlBuilder(homePageData.org.logo.image).url(),
-  alt: homePageData.org.logo.altText,
-};
+const heroImgUrl = getImageUrlBuilder(homePageEntry.data.image?.image).url();
 
-const coreValuesBgColors = [
-  "bg-sky-700",
-  "bg-sky-600",
-  "bg-sky-500",
-  "bg-sky-400",
-  "bg-sky-300",
-];
+const logoUrl = org.logos.onDark
+  ? getImageUrlBuilder(org.logos.onDark).url()
+  : null;
 ---
 
-<MainLayout>
-  <Hero imageUrl={heroImg.url}>
-    <div class="p-4 flex justify-center items-center flex-col h-full">
-      <div class="">
-        <img class="h-24 lg:h-32" src={logo.url} alt={homePageData?.org.name} />
-        <div class:list={[""]}>
-          <span
-            class:list={[
-              "text-white font-serif italic lowercase",
-              "text-lg",
-              `before:content-["..."]`,
-              `block text-right`,
-              "indent-20 -mt-3",
-              "lg:indent-32",
-            ]}>{homePageData?.org.slogan}</span
-          >
-        </div>
-      </div>
-    </div>
-  </Hero>
-
-  <Container>
-    <section class="px-4 pb-8">
-      <div class="mx-auto py-4 text-center lg:py-6">
-        <Heading as="h2" size="xl3">
-          <EmphasizedEllipsisText text="Our Mission" />
-        </Heading>
-      </div>
-
-      <PortableTextContentBlock
-        stylableElementClassLists={{
-          p: ["first-of-type:text-lg text-center wgm-text-pretty"],
-        }}
-        portableText={homePageData?.org.mission}
-      />
-    </section>
-  </Container>
-
-  <section>
-    <div class="bg-gradient-to-r from-sky-700 from-50% to-sky-400 to-50%">
-      <div class="mx-auto py-4 text-center bg-sky-800">
-        <Heading colorSchemeVariant="contrast" as="h2" size="xl3">
-          <EmphasizedEllipsisText text="Our Values" />
-        </Heading>
-      </div>
-      <div class="mx-auto sm:grid sm:grid-cols-2 xl:grid-cols-4 xl:container">
-        {
-          homePageData.org.coreValues.map((coreValue, i) => (
-            <div
-              class:list={[
-                "flex",
-                "flex-1",
-                "text-slate-50",
-                "p-8",
-                coreValuesBgColors[i],
-              ]}
-            >
-              <div class="text-center mb-2">
-                <Heading
-                  as="h3"
-                  size="xl2"
-                  colorScheme="primary"
-                  colorSchemeVariant="contrast"
-                  class:list={["mb-3 font-medium"]}
-                >
-                  {coreValue.title}
-                </Heading>
-                <p class="font-light font-serif italic leading-loose mb-3" />
-                <TextBlock variant="contrast">
-                  {coreValue.description}
-                </TextBlock>
-              </div>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
+<Shell>
+  <HeroSection imageUrl={heroImgUrl}>
+    {/* Need to sr-only the header if we have the logo */}
+    <h1>{org.name}</h1>
+    {logoUrl && <img src={logoUrl} alt={`${org.name} logo`} />}
+    <p>{org.slogan}</p>
+  </HeroSection>
   {
-    homePageData?.featurePanels.map((featuredContent, i) => (
-      <FeaturePanel featuredContent={featuredContent} indexInCollection={i} />
+    homePageEntry.data.contentBlocks.map((block) => (
+      <section>
+        <ContentBlockRenderer contentBlockRef={block} />
+      </section>
     ))
   }
-</MainLayout>
+</Shell>

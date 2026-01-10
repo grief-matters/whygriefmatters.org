@@ -1,0 +1,64 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import type { BasicInternetResourceCollectionKey } from "@content/collections";
+import { getLocaleDateStringFromIsoString, isLink } from "@ui/utils";
+import { getEntry } from "astro:content";
+
+import { getSourceFromResourceUrl, type Link } from "@ui/utils";
+
+interface Props {
+  entry: CollectionEntry<BasicInternetResourceCollectionKey>;
+}
+
+const props = Astro.props;
+
+const lastReviewedDate = getLocaleDateStringFromIsoString(
+  props.entry.data.updatedAt
+);
+
+let source: Link | null = null;
+if (props.entry.data.sourceWebsiteId) {
+  const sourceWebsiteEntry = await getEntry(props.entry.data.sourceWebsiteId);
+  source = {
+    label: sourceWebsiteEntry.data.name,
+    url: sourceWebsiteEntry.data.resourceUrl,
+  };
+}
+
+const processedSource =
+  source ?? getSourceFromResourceUrl(props.entry.data.resourceUrl);
+---
+
+<article>
+  <header>
+    <h3>{props.entry.data.title}</h3>
+    {
+      processedSource !== null && (
+        <p>
+          {"From "}
+          {isLink(processedSource) ? (
+            // Render a link if we managed to process one
+            <a href={processedSource.url} rel="noopener" target="_blank">
+              {processedSource.label}
+            </a>
+          ) : (
+            // Render just text if we fail to get a linkable source
+            <p>here</p>
+            <span>{processedSource}</span>
+          )}
+        </p>
+      )
+    }
+
+    {
+      lastReviewedDate && (
+        <p>
+          {"Last Reviewed "}
+          <time datetime={props.entry.data.updatedAt}>{lastReviewedDate}</time>
+        </p>
+      )
+    }
+  </header>
+  <p>{props.entry.data.description}</p>
+</article>

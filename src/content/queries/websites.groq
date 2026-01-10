@@ -1,0 +1,10 @@
+*[_type == 'website']{
+  "id": _id,
+  "updatedAt": _updatedAt,
+  resourceUrl,
+  name,
+  description,
+  logo,
+  "categories": coalesce(categories[]->._id, []),
+  "populations": coalesce(populations[]->._id, []),
+}

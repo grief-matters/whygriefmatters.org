@@ -1,0 +1,14 @@
+*[_type == 'category'] {
+  "id": _id,
+  title,
+  displayTitle,
+  "slug": slug.current,
+  shortDescription,
+  description,
+  image{
+    image,
+    "altText": alt
+  },
+  "subcategories": coalesce(subtopics[]->._id, []),
+  "featuredResources": coalesce(featuredResources[]->{"refType": _type,"refId": _id}, [])
+}

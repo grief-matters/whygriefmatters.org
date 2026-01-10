@@ -1,0 +1,76 @@
+---
+import { getEntry, type ReferenceDataEntry } from "astro:content";
+
+import type { InternetResourceType } from "@content/model/internetResource";
+
+import { isNonEmptyString } from "@ui/utils";
+
+import EmphasizedPageLink from "@ui/primitives/EmphasizedPageLink.astro";
+import PageLink from "@ui/primitives/PageLink.astro";
+
+interface BaseProps {
+  emphasized?: boolean;
+  categoryRef: ReferenceDataEntry<"categories", string>;
+}
+
+interface CategoryLinkProps extends BaseProps {
+  linkType: "categoryPageLink";
+  label?: string | null;
+}
+
+interface ResourcePageLinkProps extends BaseProps {
+  label: string;
+  linkType: "resourcePageLink";
+  populationRef?: ReferenceDataEntry<"populations", string> | null;
+  resourceTypes?: Array<InternetResourceType> | null;
+}
+
+type Props = CategoryLinkProps | ResourcePageLinkProps;
+
+const props = Astro.props as Props;
+
+const urlParts: Array<string> = [];
+
+const category = await getEntry(props.categoryRef);
+if (!category) {
+  throw new Error(
+    `[DynamicPageLink] Could not get category for: ${props.categoryRef.id}`
+  );
+}
+
+urlParts.push(category.data.slug);
+
+if (props.linkType === "resourcePageLink" && props.populationRef) {
+  const population = await getEntry(props.populationRef);
+  if (!population) {
+    throw new Error(
+      `[DynamicPageLink] Could not get population for: ${props.populationRef.id}`
+    );
+  }
+
+  urlParts.push(population.data.slug);
+}
+
+const resolvedLabel =
+  props.linkType === "categoryPageLink" && !isNonEmptyString(props.label)
+    ? category.data.displayTitle ?? category.data.title
+    : props.label;
+
+if (!isNonEmptyString(resolvedLabel)) {
+  throw new Error(
+    `[DynamicPageLink] Could not generate label for: ${props.categoryRef.id}`
+  );
+}
+
+const url = `/${urlParts.join("/")}`;
+
+// TODO - resource types
+---
+
+{
+  props.emphasized ? (
+    <EmphasizedPageLink to={url} label={resolvedLabel} />
+  ) : (
+    <PageLink to={url} label={resolvedLabel} />
+  )
+}

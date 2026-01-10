@@ -1,0 +1,102 @@
+---
+import sanitizeHtml, { type AllowedAttribute } from "sanitize-html";
+import { toHTML } from "@portabletext/to-html";
+import { clsx } from "clsx";
+
+import designTokens from "@styles/semantic-token-map";
+import type { PortableText } from "@content/model/portableText";
+
+interface Props {
+  portableText: PortableText;
+  emphasized?: boolean;
+  centered?: boolean;
+}
+
+const props = Astro.props;
+
+// Whitelists of elements and attributes - right now, all we need is `class` on a few elements, so we'll keep it simple
+// If we need to vary which attributes get stripped on a per element basis, we'll likely need a record-like data structure
+const permittedElements = [
+  "p",
+  "ul",
+  "ol",
+  "strong",
+  "em",
+  "span",
+  "a",
+  "s",
+] as const;
+const defaultPermittedAttributes = ["class"] as const;
+
+const permittedAttributesByElement: Partial<
+  Record<(typeof permittedElements)[number], AllowedAttribute[]>
+> = {
+  // Warning! This needs to be tightly controlled if we ever start pulling user-generated content from the CMS!
+  a: [...defaultPermittedAttributes, "href"],
+};
+
+const classListMap = {
+  block: {
+    normal: clsx([
+      "leading-relaxed",
+      "mb-6",
+      props.emphasized && designTokens.typography.size.body.prominent,
+      props.centered && "text-center",
+    ]),
+  },
+  list: {
+    bullet: clsx(["mb-6", "list-disc"]),
+    number: clsx(["mb-6"]),
+  },
+  marks: {
+    strong: "font-bold",
+    em: "italic",
+    underline: "underline",
+    "strike-through": "",
+    link: clsx([
+      "underline underline-offset-2 hover:underline-offset-3",
+      "decoration-dotted",
+      "transition-decoration duration-200",
+    ]),
+  },
+} as const;
+
+const htmlString = toHTML(props.portableText, {
+  components: {
+    block: {
+      normal: ({ children }) =>
+        `<p class="${classListMap.block.normal}">${children}</p>`,
+    },
+    list: {
+      bullet: ({ children }) =>
+        `<ul class="${classListMap.list.bullet}">${children}</ul>`,
+      number: ({ children }) =>
+        `<ol class="${classListMap.list.number}">${children}</ul>`,
+    },
+    marks: {
+      underline: ({ children }) =>
+        `<span class="${classListMap.marks.underline}">${children}</span>`,
+      em: ({ children }) =>
+        `<em class=${classListMap.marks.em}>${children}</em>`,
+      strong: ({ children }) =>
+        `<strong class=${classListMap.marks.strong}>${children}</strong>`,
+      "strike-through": ({ children }) =>
+        `<s class="${classListMap.marks["strike-through"]}">${children}</s>`,
+      link: ({ children, value }) =>
+        `<a class="${classListMap.marks.link}" href="${value.href}">${children}</a>`,
+    },
+    hardBreak: false,
+  },
+});
+
+const safeHtmlString = sanitizeHtml(htmlString, {
+  allowedAttributes: Object.fromEntries(
+    permittedElements.map((el) => [
+      el,
+      permittedAttributesByElement[el] ?? [...defaultPermittedAttributes],
+    ])
+  ),
+});
+---
+
+<Fragment set:html={safeHtmlString} />

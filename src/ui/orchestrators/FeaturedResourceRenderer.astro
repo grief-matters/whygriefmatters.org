@@ -1,0 +1,77 @@
+---
+import type { InternetResourceType } from "@content/model/internetResource";
+import { resourceTypeToCollectionKeyMap } from "@content/collections";
+
+import BasicFeaturedResource from "@ui/composites/featured-resources/BasicFeaturedResource.astro";
+import FeaturedApp from "@ui/composites/featured-resources/FeaturedApp.astro";
+import FeaturedWebsite from "@ui/composites/featured-resources/FeaturedWebsite.astro";
+
+interface Props {
+  resourceRef: string;
+  resourceType: InternetResourceType;
+}
+
+const props = Astro.props;
+
+const safeCollectionKey = resourceTypeToCollectionKeyMap[props.resourceType];
+if (!safeCollectionKey) {
+  throw new Error(
+    `[FeaturedResource] could not match "${props.resourceType}" to a collection`
+  );
+}
+---
+
+{
+  () => {
+    switch (safeCollectionKey) {
+      // case "brochures":
+      // case "community":
+      // case "memorials":
+      // case "webinars":
+      case "articles":
+      case "blogs":
+      case "booklets":
+      case "books":
+      case "courses":
+      case "forums":
+      case "peerSupports":
+      case "podcastEpisodes":
+      case "podcasts":
+      case "stories":
+      case "supportGroups":
+      case "therapyResources":
+      case "videos":
+        return (
+          <BasicFeaturedResource
+            resourceRef={{
+              collection: safeCollectionKey,
+              id: props.resourceRef,
+            }}
+          />
+        );
+      case "apps":
+        return (
+          <FeaturedApp
+            appRef={{
+              collection: "apps",
+              id: props.resourceRef,
+            }}
+          />
+        );
+      case "websites":
+        return (
+          <FeaturedWebsite
+            websiteRef={{
+              collection: "websites",
+              id: props.resourceRef,
+            }}
+          />
+        );
+      default:
+        const _exhaustiveCheck: never = safeCollectionKey;
+        throw new Error(
+          `[FeaturedResource] Unknown 'collection' specified: '${safeCollectionKey}'`
+        );
+    }
+  }
+}
