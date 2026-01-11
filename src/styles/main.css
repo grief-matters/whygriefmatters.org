@@ -11,6 +11,9 @@
     "Inter", "Roboto", "Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial,
     sans-serif;
 
+  /* This wipes out default Tailwind colors */
+  --color-*: initial;
+
   --color-blue-25: #23375c;
   --color-blue-30: #173d85;
   --color-blue-42: #3059a6;

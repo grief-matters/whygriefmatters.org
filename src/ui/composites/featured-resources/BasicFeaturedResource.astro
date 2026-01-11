@@ -2,6 +2,7 @@
 import { getEntry, type ReferenceDataEntry } from "astro:content";
 
 import type { BasicInternetResourceCollectionKey } from "@content/collections";
+import designTokens from "@styles/semantic-token-map";
 
 import SanityImage from "@ui/primitives/SanityImage.astro";
 import {
@@ -9,7 +10,7 @@ import {
   getSourceLinkFromWebsiteRef,
 } from "@ui/utils";
 import ResourceSource from "../ResourceSource.astro";
-import FeaturedResourceContainer from "./FeaturedResourceContainer.astro";
+import Link from "@ui/primitives/Link.astro";
 
 interface Props {
   resourceRef: ReferenceDataEntry<BasicInternetResourceCollectionKey, string>;
@@ -31,12 +32,7 @@ const source = data.sourceWebsiteId
 const safeSource = source ?? getSourceFromResourceUrl(data.resourceUrl);
 ---
 
-<FeaturedResourceContainer>
-  <a href={data.resourceUrl} target="_blank" rel="noopener">
-    <h3>{data.title}</h3>
-  </a>
-  {safeSource !== null && <ResourceSource source={safeSource} />}
-  {data.description && <p>{data.description}</p>}
+<article class:list={[designTokens.shadow.large]}>
   {
     data.image && (
       <SanityImage
@@ -47,4 +43,21 @@ const safeSource = source ?? getSourceFromResourceUrl(data.resourceUrl);
       />
     )
   }
-</FeaturedResourceContainer>
+  <div class:list={["pt-3 px-4 pb-5"]}>
+    <h3 class="text-balance">
+      <Link
+        external
+        to={data.resourceUrl}
+        label={data.title}
+        variant="primary"
+        size={2}
+      />
+    </h3>
+    {safeSource !== null && <ResourceSource source={safeSource} />}
+    {
+      data.description && (
+        <p class="font-serif leading-relaxed">{data.description}</p>
+      )
+    }
+  </div>
+</article>

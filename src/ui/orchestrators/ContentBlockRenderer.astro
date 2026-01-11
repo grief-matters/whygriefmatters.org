@@ -76,12 +76,14 @@ const contentBlock = await getEntry(contentBlockRef);
       case "featuredResources":
         return (
           <Container padded size={2}>
-            {contentItem.resources.map((resource) => (
-              <FeaturedResourceRenderer
-                resourceRef={resource.refId}
-                resourceType={resource.refType}
-              />
-            ))}
+            <div>
+              {contentItem.resources.map((resource) => (
+                <FeaturedResourceRenderer
+                  resourceRef={resource.refId}
+                  resourceType={resource.refType}
+                />
+              ))}
+            </div>
           </Container>
         );
       case "featuredWebsite":

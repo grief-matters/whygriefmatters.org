@@ -1,0 +1,60 @@
+---
+import designTokens from "@styles/semantic-token-map";
+
+type TextSize = 1 | 2 | 3;
+const textSizeToClass: Record<TextSize, string> = {
+  1: "",
+  2: "text-xl font-bold",
+  3: "text-2xl",
+};
+
+const pageLinkVariants = {
+  primary: [
+    designTokens.color.text.onContentSurface.primary.default,
+    designTokens.color.decoration.onContentSurface.primary.interactive,
+  ],
+  neutral: [],
+} as const;
+
+type PageLinkVariant = keyof typeof pageLinkVariants;
+
+interface Props {
+  to: string;
+  label: string;
+  variant: PageLinkVariant;
+  size?: TextSize;
+  external?: boolean;
+}
+
+const {
+  to,
+  label,
+  variant,
+  size = 1,
+  external = false,
+  ...attrs
+} = Astro.props;
+
+const externalLinkAttrs = external
+  ? {
+      rel: "noopener",
+      target: "_blank",
+    }
+  : {};
+---
+
+<a
+  class:list={[
+    "underline decoration-dotted",
+    textSizeToClass[size],
+    designTokens.decoration.textUnderlineOffset.default,
+    "transition",
+    designTokens.motion.transition.default,
+    pageLinkVariants[variant],
+    "font-serif",
+  ]}
+  href={to}
+  set:text={label}
+  {...attrs}
+  {...externalLinkAttrs}
+/>

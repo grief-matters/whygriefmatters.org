@@ -19,9 +19,15 @@ interface Props {
   maxWidth?: number;
   priority?: boolean;
   useFallback?: boolean;
+  objectFit?: "contain" | "cover";
 }
 
-const { maxWidth = 2500, useFallback = true, ...props } = Astro.props;
+const {
+  maxWidth = 2500,
+  useFallback = true,
+  objectFit = "cover",
+  ...props
+} = Astro.props;
 
 const mediaMimeTypeMap: Record<Format, string> = {
   webp: "image/webp",
@@ -109,6 +115,10 @@ const hotspotY = `${(sanityImageSource?.image.hotspot?.y ?? 0.5) * 100}%`;
         srcset={optimizedFallbackImgConfig.srcSet}
         sizes={optimizedFallbackImgConfig.sizes}
         loading={props.priority ? "eager" : "lazy"}
+        class:list={[
+          "aspect-7/5",
+          objectFit === "cover" ? "object-cover" : "object-contain",
+        ]}
       />
     </picture>
   )

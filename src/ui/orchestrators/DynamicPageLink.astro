@@ -6,7 +6,7 @@ import type { InternetResourceType } from "@content/model/internetResource";
 import { isNonEmptyString } from "@ui/utils";
 
 import EmphasizedPageLink from "@ui/primitives/EmphasizedPageLink.astro";
-import PageLink from "@ui/primitives/PageLink.astro";
+import Link from "@ui/primitives/Link.astro";
 
 interface BaseProps {
   emphasized?: boolean;
@@ -71,6 +71,6 @@ const url = `/${urlParts.join("/")}`;
   props.emphasized ? (
     <EmphasizedPageLink to={url} label={resolvedLabel} />
   ) : (
-    <PageLink variant="primary" to={url} label={resolvedLabel} />
+    <Link variant="primary" to={url} label={resolvedLabel} />
   )
 }

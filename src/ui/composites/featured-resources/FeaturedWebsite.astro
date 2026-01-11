@@ -20,7 +20,9 @@ if (!websiteEntry) {
 
 <FeaturedResourceContainer>
   <a href={websiteEntry.data.resourceUrl} target="_blank" rel="noopener">
-    <h3>{websiteEntry.data.name}</h3>
+    <h3 class:list={[websiteEntry.data.logo && "sr-only"]}>
+      {websiteEntry.data.name}
+    </h3>
     {
       websiteEntry.data.logo && (
         <SanityImage
@@ -28,6 +30,7 @@ if (!websiteEntry) {
             image: websiteEntry.data.logo,
             altText: "",
           }}
+          objectFit="contain"
         />
       )
     }
