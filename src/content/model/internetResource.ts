@@ -50,8 +50,10 @@ export const basicInternetResourceTypes: Array<InternetResourceType> = [
   "article",
   "blog",
   "book",
+  "community",
   "course",
   "forum",
+  "memorial",
   "peerSupport",
   "podcast",
   "podcastEpisode",
@@ -60,8 +62,6 @@ export const basicInternetResourceTypes: Array<InternetResourceType> = [
   "supportGroup",
   "therapyResource",
   "video",
-  "community",
-  "memorial",
   "webinar",
 ] as const;
 

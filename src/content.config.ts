@@ -28,19 +28,19 @@ export const collections = {
   articles: getBasicInternetResourceCollectionDef("article"),
   blogs: getBasicInternetResourceCollectionDef("blog"),
   books: getBasicInternetResourceCollectionDef("book"),
+  communities: getBasicInternetResourceCollectionDef("community"),
   courses: getBasicInternetResourceCollectionDef("course"),
   forums: getBasicInternetResourceCollectionDef("forum"),
+  memorials: getBasicInternetResourceCollectionDef("memorial"),
   peerSupports: getBasicInternetResourceCollectionDef("peerSupport"),
-  podcasts: getBasicInternetResourceCollectionDef("podcast"),
   podcastEpisodes: getBasicInternetResourceCollectionDef("podcastEpisode"),
-  printedMaterial: getBasicInternetResourceCollectionDef("printedMaterial"),
+  podcasts: getBasicInternetResourceCollectionDef("podcast"),
+  printedMaterials: getBasicInternetResourceCollectionDef("printedMaterial"),
   stories: getBasicInternetResourceCollectionDef("story"),
   supportGroups: getBasicInternetResourceCollectionDef("supportGroup"),
   therapyResources: getBasicInternetResourceCollectionDef("therapyResource"),
   videos: getBasicInternetResourceCollectionDef("video"),
   webinars: getBasicInternetResourceCollectionDef("webinar"),
-  community: getBasicInternetResourceCollectionDef("community"),
-  memorials: getBasicInternetResourceCollectionDef("memorial"),
   apps: defineCollection({
     loader: async () =>
       loadSanityQuery({

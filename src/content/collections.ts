@@ -10,21 +10,20 @@ export const collectionKeys: CollectionKey[] = [
 export const basicInternetResourceCollectionKeys = [
   "articles",
   "blogs",
-  "booklets",
   "books",
+  "communities",
   "courses",
   "forums",
+  "memorials",
   "peerSupports",
   "podcastEpisodes",
   "podcasts",
+  "printedMaterials",
   "stories",
   "supportGroups",
   "therapyResources",
   "videos",
-  // "memorials",
-  // "community",
-  // "brochures",
-  // "webinars",
+  "webinars",
 ] as const satisfies readonly CollectionKey[];
 export type BasicInternetResourceCollectionKey =
   (typeof basicInternetResourceCollectionKeys)[number];
@@ -42,24 +41,23 @@ export type InternetResourceEntries = Partial<{
 }>;
 
 export const resourceTypeToCollectionKeyMap = {
-  // brochure: "brochures",
-  // community: "communities",
-  // memorial: "memorials",
-  // webinar: "webinars",
   app: "apps",
   article: "articles",
   blog: "blogs",
   book: "books",
-  booklet: "booklets",
+  community: "communities",
   course: "courses",
   forum: "forums",
+  memorial: "memorials",
   peerSupport: "peerSupports",
   podcast: "podcasts",
   podcastEpisode: "podcastEpisodes",
+  printedMaterial: "printedMaterials",
   story: "stories",
   supportGroup: "supportGroups",
   therapyResource: "therapyResources",
   video: "videos",
+  webinar: "webinars",
   website: "websites",
 } as const satisfies Record<InternetResourceType, CollectionKey>;
 
