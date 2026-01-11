@@ -2,10 +2,14 @@
 import { getEntry } from "astro:content";
 
 import Shell from "@ui/layouts/Shell.astro";
-import HeroSection from "@ui/composites/HeroSection.astro";
+import Section from "@ui/primitives/Section.astro";
 import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
 import { getOrganization } from "@content/loaders/organizationLoader";
 import ContentBlockRenderer from "@ui/orchestrators/ContentBlockRenderer.astro";
+import designTokens, {
+  type LayoutSurfaceColor,
+} from "@styles/semantic-token-map";
+import Stack from "@ui/primitives/Stack.astro";
 
 const org = await getOrganization();
 if (!org) {
@@ -26,20 +30,67 @@ const heroImgUrl = getImageUrlBuilder(homePageEntry.data.image?.image).url();
 const logoUrl = org.logos.onDark
   ? getImageUrlBuilder(org.logos.onDark).url()
   : null;
+
+const bgVar = `url(${heroImgUrl})`;
+
+const layoutSurfaceBgValues: Array<keyof LayoutSurfaceColor["neutral"]> = [
+  "default",
+  "muted",
+  "mutedAlt",
+];
 ---
 
 <Shell>
-  <HeroSection imageUrl={heroImgUrl}>
-    {/* Need to sr-only the header if we have the logo */}
-    <h1>{org.name}</h1>
-    {logoUrl && <img src={logoUrl} alt={`${org.name} logo`} />}
-    <p>{org.slogan}</p>
-  </HeroSection>
+  <div
+    slot="in-header"
+    class:list={[
+      "px-4 flex justify-center items-center flex-col h-96 2xl:h-148",
+      "hero",
+      "bg-center bg-no-repeat bg-cover",
+    ]}
+  >
+    <h1 class:list={[logoUrl && "sr-only"]}>{org.name}</h1>
+    <div>
+      {
+        logoUrl && (
+          <img
+            class="h-24 lg:h-32 2xl:h-48"
+            src={logoUrl}
+            alt={`${org.name} logo`}
+          />
+        )
+      }
+      <p
+        class:list={[
+          designTokens.color.text.onDark,
+          "font-serif italic lowercase",
+          "text-sm sm:text-base 2xl:text-2xl",
+          `before:content-["..."]`,
+          `text-right 2xl:text-left`,
+          "indent-28 lg:indent-40 2xl:indent-60",
+          "-mt-3 2xl:-mt-6",
+        ]}
+        set:text={org.slogan}
+      />
+    </div>
+  </div>
   {
-    homePageEntry.data.contentBlocks.map((block) => (
-      <section>
-        <ContentBlockRenderer contentBlockRef={block} />
-      </section>
+    homePageEntry.data.contentBlocks.map((block, i) => (
+      <Section
+        backgroundColor={(t) =>
+          t.neutral[layoutSurfaceBgValues[i % layoutSurfaceBgValues.length]]
+        }
+      >
+        <Stack>
+          <ContentBlockRenderer contentBlockRef={block} />
+        </Stack>
+      </Section>
     ))
   }
 </Shell>
+
+<style define:vars={{ bgVar }}>
+  .hero {
+    background-image: var(--bgVar);
+  }
+</style>
