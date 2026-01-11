@@ -1,9 +1,34 @@
 ---
+import designTokens from "@styles/semantic-token-map";
+
+const pageLinkVariants = {
+  primary: [
+    designTokens.color.text.onLayoutSurface.default,
+    designTokens.color.decoration.onLayoutSurface.interactive,
+  ],
+  neutral: [],
+} as const;
+
+type PageLinkVariant = keyof typeof pageLinkVariants;
+
 interface Props {
   to: string;
   label: string;
+  variant: PageLinkVariant;
 }
-const { to, label } = Astro.props;
+
+const { to, label, variant } = Astro.props;
 ---
 
-<a href={to}>{label}</a>
+<a
+  class:list={[
+    // "inline-block",
+    "underline decoration-dotted",
+    designTokens.decoration.textUnderlineOffset.default,
+    "transition",
+    designTokens.motion.transition.default,
+    pageLinkVariants[variant],
+  ]}
+  href={to}
+  set:text={label}
+/>

@@ -1,5 +1,5 @@
 ---
-// import "@styles/main.css";
+import "@styles/main.css";
 import designTokens from "@styles/semantic-token-map";
 ---
 
@@ -18,8 +18,15 @@ import designTokens from "@styles/semantic-token-map";
       designTokens.color.text.onLayoutSurface.default,
     ]}
   >
-    <main class="flex-grow">
+    <header>
+      {/* This will be where the nav goes */}
+      <slot name="in-header" />
+    </header>
+    <main class="grow">
       <slot />
     </main>
+    <footer>
+      {/* Footer content will always be the same */}
+    </footer>
   </body>
 </html>

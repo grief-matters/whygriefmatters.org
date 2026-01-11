@@ -1,0 +1,35 @@
+---
+type HeadingHTMLTags = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+
+type HeadingSize = 1 | 2 | 3;
+const headingSizeToClass: Record<HeadingSize, string> = {
+  1: "text-xl",
+  2: "text-2xl",
+  3: "text-3xl",
+};
+
+interface Props {
+  as?: HeadingHTMLTags;
+  text: string;
+  size: HeadingSize;
+  textAlign?: "center" | "left"; // Not doing anything specific with left as that's the default in Tailwind
+}
+
+const {
+  as: Tag = "h1",
+  text,
+  size,
+  textAlign = "center",
+  ...attrs
+}: Props = Astro.props;
+---
+
+<Tag
+  class:list={[
+    headingSizeToClass[size],
+    "font-bold font-serif",
+    textAlign === "center" && "text-center",
+  ]}
+  set:text={text}
+  {...attrs}
+/>

@@ -53,7 +53,7 @@ if (props.linkType === "resourcePageLink" && props.populationRef) {
 
 const resolvedLabel =
   props.linkType === "categoryPageLink" && !isNonEmptyString(props.label)
-    ? category.data.displayTitle ?? category.data.title
+    ? (category.data.displayTitle ?? category.data.title)
     : props.label;
 
 if (!isNonEmptyString(resolvedLabel)) {
@@ -71,6 +71,6 @@ const url = `/${urlParts.join("/")}`;
   props.emphasized ? (
     <EmphasizedPageLink to={url} label={resolvedLabel} />
   ) : (
-    <PageLink to={url} label={resolvedLabel} />
+    <PageLink variant="primary" to={url} label={resolvedLabel} />
   )
 }

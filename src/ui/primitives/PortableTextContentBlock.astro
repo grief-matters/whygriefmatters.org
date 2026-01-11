@@ -9,7 +9,7 @@ import type { PortableText } from "@content/model/portableText";
 interface Props {
   portableText: PortableText;
   emphasized?: boolean;
-  centered?: boolean;
+  textAlign?: "center" | "left"; // Not doing anything specific with left as that's the default in Tailwind
 }
 
 const props = Astro.props;
@@ -38,10 +38,11 @@ const permittedAttributesByElement: Partial<
 const classListMap = {
   block: {
     normal: clsx([
+      "font-serif",
       "leading-relaxed",
       "mb-6",
       props.emphasized && designTokens.typography.size.body.prominent,
-      props.centered && "text-center",
+      props.textAlign === "center" && "text-center",
     ]),
   },
   list: {
@@ -99,4 +100,6 @@ const safeHtmlString = sanitizeHtml(htmlString, {
 });
 ---
 
-<Fragment set:html={safeHtmlString} />
+<div class="*:last:mb-0">
+  <Fragment set:html={safeHtmlString} />
+</div>

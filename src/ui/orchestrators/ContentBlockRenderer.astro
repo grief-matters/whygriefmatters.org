@@ -2,83 +2,111 @@
 import type { ReferenceDataEntry } from "astro:content";
 import { getEntry } from "astro:content";
 
+import Container from "@ui/primitives/Container.astro";
+import FeaturedWebsite from "@ui/composites/featured-resources/FeaturedWebsite.astro";
+import Heading from "@ui/primitives/Heading.astro";
 import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
 import SanityImage from "@ui/primitives/SanityImage.astro";
-import PageLinksRenderer from "./PageLinksRenderer.astro";
+
 import DynamicPageLink from "./DynamicPageLink.astro";
-import FeaturedWebsite from "@ui/composites/featured-resources/FeaturedWebsite.astro";
 import FeaturedResourceRenderer from "./FeaturedResourceRenderer.astro";
+import PageLinksRenderer from "./PageLinksRenderer.astro";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
+  textAlign?: "center" | "left";
 }
 
-const { contentBlockRef } = Astro.props;
+const { contentBlockRef, textAlign = "center" } = Astro.props;
 
 const contentBlock = await getEntry(contentBlockRef);
 ---
 
-<div>
-  {
-    contentBlock.data.content.map((contentItem) => {
-      switch (contentItem.contentType) {
-        case "headingText":
-          return <h2>{contentItem.text}</h2>;
-        case "richTextContentBlock":
-          return (
+{
+  contentBlock.data.content.map((contentItem) => {
+    switch (contentItem.contentType) {
+      case "headingText":
+        return <Heading as="h2" size={2} text={contentItem.text} />;
+      case "richTextContentBlock":
+        return (
+          <Container padded>
             <PortableTextContentBlock
-              centered
+              textAlign={textAlign}
               portableText={contentItem.portableText}
               emphasized={contentItem.emphasized}
             />
-          );
-        case "richTextWithHeading":
-          return (
-            <>
-              <h3>{contentItem.headingText}</h3>
-              <PortableTextContentBlock
-                centered
-                portableText={contentItem.portableText}
-              />
-            </>
-          );
-        case "accessibleImage":
-          return (
+          </Container>
+        );
+      case "richTextWithHeading":
+        return (
+          <Container padded>
+            <Heading as="h3" size={1} text={contentItem.headingText} />
+            <PortableTextContentBlock
+              textAlign={textAlign}
+              portableText={contentItem.portableText}
+            />
+          </Container>
+        );
+      case "accessibleImage":
+        return (
+          <Container>
             <SanityImage
               image={{ image: contentItem.image, altText: contentItem.altText }}
             />
-          );
-        case "imageRow":
-          // TODO - this will need it's own component when we style
-          return contentItem.images.map((img) => <SanityImage image={img} />);
-        case "featuredResource":
-          return (
+          </Container>
+        );
+      case "imageRow":
+        // TODO - this will need it's own component when we style
+        return (
+          <Container size={2}>
+            {contentItem.images.map((img) => (
+              <SanityImage image={img} />
+            ))}
+          </Container>
+        );
+      case "featuredResource":
+        return (
+          <Container padded>
             <FeaturedResourceRenderer
               resourceRef={contentItem.refId}
               resourceType={contentItem.refType}
             />
-          );
-        case "featuredResources":
-          return contentItem.resources.map((resource) => (
-            <FeaturedResourceRenderer
-              resourceRef={resource.refId}
-              resourceType={resource.refType}
-            />
-          ));
-        case "featuredWebsite":
-          return <FeaturedWebsite websiteRef={contentItem.refId} />;
-        case "featuredWebsites":
-          return contentItem.websites.map((w) => (
-            <FeaturedWebsite websiteRef={w} />
-          ));
-        case "featuredCrisisResource":
-          return <div>[Still to implement `{contentItem.contentType}`]</div>;
-        case "resourceLinks":
-          return <div>[Still to implement `{contentItem.contentType}`]</div>;
-        case "relativeLink":
-          return <div>[Still to implement `{contentItem.contentType}`]</div>;
-        case "resourcePageLink":
-          return (
+          </Container>
+        );
+      case "featuredResources":
+        return (
+          <Container padded size={2}>
+            {contentItem.resources.map((resource) => (
+              <FeaturedResourceRenderer
+                resourceRef={resource.refId}
+                resourceType={resource.refType}
+              />
+            ))}
+          </Container>
+        );
+      case "featuredWebsite":
+        return (
+          <Container padded>
+            <FeaturedWebsite websiteRef={contentItem.refId} />
+          </Container>
+        );
+      case "featuredWebsites":
+        return (
+          <Container padded size={2}>
+            {contentItem.websites.map((w) => (
+              <FeaturedWebsite websiteRef={w} />
+            ))}
+          </Container>
+        );
+      case "featuredCrisisResource":
+        return <div>[Still to implement `{contentItem.contentType}`]</div>;
+      case "resourceLinks":
+        return <div>[Still to implement `{contentItem.contentType}`]</div>;
+      case "relativeLink":
+        return <div>[Still to implement `{contentItem.contentType}`]</div>;
+      case "resourcePageLink":
+        return (
+          <Container padded>
             <DynamicPageLink
               linkType={contentItem.contentType}
               label={contentItem.label}
@@ -86,138 +114,32 @@ const contentBlock = await getEntry(contentBlockRef);
               populationRef={contentItem.population ?? undefined}
               resourceTypes={contentItem.resourceTypes ?? undefined}
             />
-          );
-        case "categoryPageLink":
-          return (
+          </Container>
+        );
+      case "categoryPageLink":
+        return (
+          <Container padded>
             <DynamicPageLink
               linkType={contentItem.contentType}
               label={contentItem.label}
               categoryRef={contentItem.category}
             />
-          );
-        case "pageLinks":
-          return (
+          </Container>
+        );
+      case "pageLinks":
+        return (
+          <Container padded>
             <PageLinksRenderer
               emphasized={contentItem.emphasized}
               links={contentItem.links}
             />
-          );
-        default:
-          const _exhaustiveCheck: never = contentItem;
-          throw new Error(
-            `[ContentBlockRenderer] Unknown content type in data entry: \n${contentItem}`
-          );
-      }
-    })
-  }
-</div>
-<!-- 
-{
-  contentBlock.title && (
-    <Heading as="h2" size="xl2" class:list={["mb-3 text-center"]}>
-      {contentBlock.title}
-    </Heading>
-  )
-}
-{
-  contentBlock.content.map((contentItem) => {
-    switch (contentItem.contentType) {
-      case "accessibleImage":
-        return (
-          <div class="p-3">
-            <CMSImage image={contentItem} priority={true} maxWidth={640} />
-          </div>
+          </Container>
         );
-      case "featuredCrisisResource":
-        return (
-          <div class="pb-6">
-            <FeaturedCrisisResource
-              crisisResource={contentItem.resource}
-              showLogo={contentItem.showImage ?? false}
-            />
-          </div>
-        );
-      case "featuredResource":
-        return <div />;
-      case "personGroupBlock":
-        return (
-          <div class="mb-6">
-            <PersonGroupBlock
-              featured={contentItem.featured}
-              personGroup={contentItem.group}
-              showGroupName={contentItem.showName}
-              showGroupDescription={contentItem.showDescription}
-            />
-          </div>
-        );
-      case "relativeLink":
-        return (
-          <div class="mx-auto text-center pt-6 pb-3">
-            <Link href={contentItem.url} size="xl">
-              <EmphasizedEllipsisText text={contentItem.label} />
-            </Link>
-          </div>
-        );
-      case "resourceLinks":
-        return (
-          <div class:list={["flex flex-wrap justify-center gap-4", "p-3"]}>
-            {contentItem.resources.map((link) => (
-              <CardLink
-                href={link.url}
-                cardProps={{
-                  resourceType: link.type ?? undefined,
-                }}
-                external
-              >
-                {link.title}
-              </CardLink>
-            ))}
-          </div>
-        );
-      case "resourcePageLinks":
-        return (
-          <div class="mb-6">
-            <CardLinkListContainer>
-              {contentItem.links.map((pageLink) => (
-                <CardLink
-                  href={
-                    pageLink.linkType === "resourcePageLink"
-                      ? getRouteFromDynamicResourcePageLink(pageLink)
-                      : `/${pageLink.url}`
-                  }
-                >
-                  {pageLink.label}
-                </CardLink>
-              ))}
-            </CardLinkListContainer>
-          </div>
-        );
-      case "richTextContentBlock":
-        return (
-          <PortableTextContentBlock portableText={contentItem.portableText} />
-        );
-      case "imageRow":
-        return (
-          <div class:list={["mb-6 px-3"]}>
-            <ImageRow images={contentItem.images} />
-          </div>
-        );
-      case "rowOfThreeFeaturedResources":
-        return <div />;
-      case "topicCollectionContentBlockNew":
-        return (
-          <div class="mx-3">
-            <TopicCollectionContentBlock topics={contentItem.topics} />
-          </div>
-        );
-      case "topicContentBlock":
-        return <div />;
-      case "form":
-        return (
-          <div class:list={["p-3 sm:max-w-xl sm:mx-auto"]}>
-            <FormRenderer form={contentItem} />
-          </div>
+      default:
+        const _exhaustiveCheck: never = contentItem;
+        throw new Error(
+          `[ContentBlockRenderer] Unknown content type in data entry: \n${contentItem}`
         );
     }
   })
-} -->
+}

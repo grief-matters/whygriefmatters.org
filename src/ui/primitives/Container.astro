@@ -1,0 +1,20 @@
+---
+type ContainerSize = 1 | 2;
+const containerSizeToTWClass: Record<ContainerSize, string> = {
+  1: "max-w-4xl",
+  2: "max-w-6xl",
+};
+
+interface Props {
+  size?: ContainerSize;
+  padded?: boolean;
+}
+
+const { size, padded } = Astro.props;
+---
+
+<div
+  class:list={[containerSizeToTWClass[size ?? 1], "mx-auto", padded && "px-3"]}
+>
+  <slot />
+</div>

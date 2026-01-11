@@ -1,0 +1,20 @@
+---
+import {
+  layoutSurfaceColor,
+  type LayoutSurfaceColor,
+} from "@styles/semantic-token-map";
+
+interface Props {
+  backgroundColor?: (tokens: LayoutSurfaceColor) => string;
+}
+
+const { backgroundColor } = Astro.props;
+
+const bgColor = backgroundColor
+  ? backgroundColor(layoutSurfaceColor)
+  : layoutSurfaceColor.neutral.default;
+---
+
+<section class:list={[bgColor, "py-6"]}>
+  <slot />
+</section>

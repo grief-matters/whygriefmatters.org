@@ -1,4 +1,5 @@
 ---
+import designTokens from "@styles/semantic-token-map";
 interface Props {
   to: string;
   label: string;
@@ -6,4 +7,17 @@ interface Props {
 const { to, label } = Astro.props;
 ---
 
-<a href={to}>{label}</a>
+<a
+  class:list={[
+    designTokens.color.contentSurface.neutral.prominent,
+    "inline-block",
+    "py-1 px-3",
+    "italic font-semibold",
+    "border-b-3",
+    designTokens.color.border.tertiary.interactive,
+    designTokens.shadow.interactive,
+    designTokens.motion.transition.default,
+    "font-serif",
+  ]}
+  href={to}>{label}</a
+>
