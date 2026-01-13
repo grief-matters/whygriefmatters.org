@@ -11,6 +11,8 @@ import SanityImage from "@ui/primitives/SanityImage.astro";
 import DynamicPageLink from "./DynamicPageLink.astro";
 import FeaturedResourceRenderer from "./FeaturedResourceRenderer.astro";
 import PageLinksRenderer from "./PageLinksRenderer.astro";
+import Slider from "@ui/layouts/slider/Slider.astro";
+import Slide from "@ui/layouts/slider/Slide.astro";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
@@ -75,16 +77,40 @@ const contentBlock = await getEntry(contentBlockRef);
         );
       case "featuredResources":
         return (
-          <Container padded size={2}>
-            <div>
-              {contentItem.resources.map((resource) => (
+          <Slider>
+            {contentItem.resources.map((resource) => (
+              <Slide>
                 <FeaturedResourceRenderer
                   resourceRef={resource.refId}
                   resourceType={resource.refType}
                 />
-              ))}
-            </div>
-          </Container>
+              </Slide>
+            ))}
+            {contentItem.resources.map((resource) => (
+              <Slide>
+                <FeaturedResourceRenderer
+                  resourceRef={resource.refId}
+                  resourceType={resource.refType}
+                />
+              </Slide>
+            ))}
+            {contentItem.resources.map((resource) => (
+              <Slide>
+                <FeaturedResourceRenderer
+                  resourceRef={resource.refId}
+                  resourceType={resource.refType}
+                />
+              </Slide>
+            ))}
+            {contentItem.resources.map((resource) => (
+              <Slide>
+                <FeaturedResourceRenderer
+                  resourceRef={resource.refId}
+                  resourceType={resource.refType}
+                />
+              </Slide>
+            ))}
+          </Slider>
         );
       case "featuredWebsite":
         return (

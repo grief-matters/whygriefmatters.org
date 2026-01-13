@@ -1,0 +1,14 @@
+---
+import designTokens from "@styles/semantic-token-map";
+---
+
+<div
+  class:list={[
+    "basis-xs max-w-sm shrink-0 snap-center",
+    designTokens.shadow.large,
+    designTokens.color.contentSurface.neutral.prominent,
+    "rounded-sm overflow-hidden",
+  ]}
+>
+  <slot />
+</div>

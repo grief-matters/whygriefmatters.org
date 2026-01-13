@@ -2,7 +2,6 @@
 import { getEntry, type ReferenceDataEntry } from "astro:content";
 
 import type { BasicInternetResourceCollectionKey } from "@content/collections";
-import designTokens from "@styles/semantic-token-map";
 
 import SanityImage from "@ui/primitives/SanityImage.astro";
 import {
@@ -32,7 +31,7 @@ const source = data.sourceWebsiteId
 const safeSource = source ?? getSourceFromResourceUrl(data.resourceUrl);
 ---
 
-<article class:list={[designTokens.shadow.large]}>
+<article>
   {
     data.image && (
       <SanityImage
