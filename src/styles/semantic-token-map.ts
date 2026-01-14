@@ -1,5 +1,153 @@
+/** Prominence Type - signifies a styling variant's prominence in UI */
+export type Prominence = "prominent" | "default" | "muted";
+
+/** Color Variant Type - signifies a styling variant for a component's interface */
+export type ColorVariant = "neutral" | "primary" | "secondary" | "tertiary";
+
+/** A set of classes keyed by prominence level */
+type ProminenceSet = Record<Prominence, string>;
+
+/** A map of variants, each containing a prominence set */
+type VariantMap = Record<ColorVariant, ProminenceSet>;
+
+type TextSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+
 /**
- * Tokens to do with animation and transitions
+ * =============================================================================
+ * CORE TOKENS
+ * =============================================================================
+ * These token objects have a guaranteed shape for use in primitives.
+ * Primitives can safely access [variant][prominence] without type errors.
+ */
+
+/**
+ * Core content surface background colors.
+ * Use this in primitives that need consistent variant/prominence access.
+ */
+export const contentSurfaceColor: VariantMap = {
+  neutral: {
+    prominent: "bg-stone-99",
+    default: "bg-stone-98",
+    muted: "bg-stone-97",
+  },
+  primary: {
+    prominent: "bg-blue-91",
+    default: "bg-blue-95",
+    muted: "bg-blue-97",
+  },
+  secondary: {
+    prominent: "bg-green-90",
+    default: "bg-green-95",
+    muted: "bg-green-98",
+  },
+  tertiary: {
+    prominent: "bg-pink-87",
+    default: "bg-pink-95",
+    muted: "bg-pink-97",
+  },
+} as const;
+
+/**
+ * Core border colors that pair with content surfaces.
+ * Use this in primitives that need consistent variant/prominence access.
+ */
+export const borderColorCore: VariantMap = {
+  neutral: {
+    prominent: "border-brown-70",
+    default: "border-brown-80",
+    muted: "border-brown-90",
+  },
+  primary: {
+    prominent: "border-blue-79",
+    default: "border-blue-89",
+    muted: "border-blue-91",
+  },
+  secondary: {
+    prominent: "border-green-79",
+    default: "border-green-87",
+    muted: "border-green-90",
+  },
+  tertiary: {
+    prominent: "border-pink-80",
+    default: "border-pink-87",
+    muted: "border-pink-92",
+  },
+} as const;
+
+/**
+ * Core text sizes for body text.
+ * Maps prominence to font size classes.
+ */
+export const textSize: ProminenceSet = {
+  prominent: "text-lg",
+  default: "text-base",
+  muted: "text-sm",
+} as const;
+
+/**
+ * Heading size type and mappings.
+ */
+export type HeadingSize = 1 | 2 | 3;
+export const headingSize: Record<HeadingSize, string> = {
+  1: "text-xl",
+  2: "text-2xl",
+  3: "text-3xl",
+} as const;
+
+/**
+ * =============================================================================
+ * EXTENDED TOKENS
+ * =============================================================================
+ * These include additional keys beyond the core shape.
+ * Use these for special cases (brand colors, contrast variants, interactive states).
+ */
+
+/**
+ * Extended content surface colors including brand and contrast variants.
+ */
+export const contentSurfaceColorExtended = {
+  ...contentSurfaceColor,
+  brand: {
+    donate: {
+      prominent: "bg-aqua-70",
+      default: "bg-aqua-80",
+      muted: "bg-aqua-90",
+    },
+  },
+  primary: {
+    ...contentSurfaceColor.primary,
+    contrastProminent: "bg-blue-30",
+    contrastDefault: "bg-blue-42",
+    contrastMuted: "bg-blue-52",
+  },
+} as const;
+
+/**
+ * Extended border colors including brand and interactive variants.
+ */
+export const borderColorExtended = {
+  ...borderColorCore,
+  brand: {
+    accent: "border-cornflower-yellow",
+  },
+  primary: {
+    ...borderColorCore.primary,
+    contrastDefault: "border-blue-30",
+  },
+  tertiary: {
+    ...borderColorCore.tertiary,
+    interactive: "border-pink-92 hover:border-pink-80",
+  },
+} as const;
+
+/**
+ * =============================================================================
+ * OTHER TOKENS
+ * =============================================================================
+ */
+
+/**
+ * Animation and transition tokens
  */
 const motion = {
   transition: {
@@ -13,9 +161,21 @@ const motion = {
 const shadow = {
   default: "shadow-md",
   large: "shadow-xl",
-  interactive: `shadow-md hover:shadow-lg`,
+  interactive: "shadow-md hover:shadow-lg",
 } as const;
 
+/**
+ * Border width tokens
+ */
+const border = {
+  width: {
+    default: "border",
+  },
+} as const;
+
+/**
+ * Layout surface colors (for page-level sections)
+ */
 export const layoutSurfaceColor = {
   neutral: {
     prominent: "bg-stone-99",
@@ -36,73 +196,9 @@ export const layoutSurfaceColor = {
   },
 } as const;
 
-/**
- * Content Surface Colors
- */
-const contentSurfaceColor = {
-  brand: {
-    donate: {
-      prominent: "bg-aqua-70",
-      default: "bg-aqua-80",
-      muted: "bg-aqua-90",
-    },
-  },
-  neutral: {
-    prominent: "bg-stone-99",
-    default: "bg-stone-98",
-    muted: "bg-stone-97",
-  },
-  primary: {
-    prominent: "bg-blue-91",
-    default: "bg-blue-95",
-    muted: "bg-blue-97",
-    contrastProminent: "bg-blue-30",
-    contrastDefault: "bg-blue-42",
-    contrastMuted: "bg-blue-52",
-  },
-  secondary: {
-    prominent: "bg-green-90",
-    default: "bg-green-95",
-    muted: "bg-green-98",
-  },
-  tertiary: {
-    prominent: "bg-pink-87",
-    default: "bg-pink-95",
-    muted: "bg-pink-97",
-  },
-};
-
 export const decoration = {
   textUnderlineOffset: {
     default: "underline-offset-4",
-  },
-} as const;
-
-export const borderColor = {
-  brand: {
-    accent: "border-cornflower-yellow",
-  },
-  neutral: {
-    prominent: "border-brown-70",
-    default: "border-brown-80",
-    muted: "border-brown-90",
-  },
-  primary: {
-    prominent: "border-blue-79",
-    default: "border-blue-89",
-    muted: "border-blue-91",
-    contrastDefault: "border-blue-30",
-  },
-  secondary: {
-    prominent: "border-green-79",
-    default: "border-green-87",
-    muted: "border-green-90",
-  },
-  tertiary: {
-    prominent: "border-pink-80",
-    default: "border-pink-87",
-    muted: "border-pink-92",
-    interactive: `border-pink-92 hover:border-pink-80`,
   },
 } as const;
 
@@ -196,13 +292,17 @@ const outlineColor = {
 } as const;
 
 /**
- * Mappings between our semantic design tokens and custom Tailwind utility classes.
- *
- * Can be used with the Astro `class:list` directive for better DX/more consistent design token application
+ * =============================================================================
+ * DEFAULT EXPORT
+ * =============================================================================
+ * The main token map for general use.
+ * For primitives needing type-safe variant/prominence access,
+ * import the named exports (contentSurfaceColor, borderColorCore) instead.
  */
 export default {
   motion,
   shadow,
+  border,
   decoration,
   typography: {
     size: {
@@ -214,10 +314,10 @@ export default {
   },
   color: {
     layoutSurface: layoutSurfaceColor,
-    contentSurface: contentSurfaceColor,
+    contentSurface: contentSurfaceColorExtended,
     decoration: textDecorationColor,
     text: textColor,
-    border: borderColor,
+    border: borderColorExtended,
     outline: outlineColor,
     stroke: {
       primary: "stroke-blue-55",

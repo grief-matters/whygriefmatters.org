@@ -1,19 +1,17 @@
 ---
-type HeadingHTMLTags = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+import type { Polymorphic } from "astro/types";
+import { headingSize, type HeadingSize } from "@styles/semantic-token-map";
 
-type HeadingSize = 1 | 2 | 3;
-const headingSizeToClass: Record<HeadingSize, string> = {
-  1: "text-xl",
-  2: "text-2xl",
-  3: "text-3xl",
-};
+type HeadingElement = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
-interface Props {
-  as?: HeadingHTMLTags;
+interface HeadingOwnProps {
+  as: HeadingElement;
   text: string;
   size: HeadingSize;
-  textAlign?: "center" | "left"; // Not doing anything specific with left as that's the default in Tailwind
+  textAlign?: "center" | "left";
 }
+
+type Props = Polymorphic<HeadingOwnProps>;
 
 const {
   as: Tag = "h1",
@@ -21,12 +19,15 @@ const {
   size,
   textAlign = "center",
   ...attrs
-}: Props = Astro.props;
+} = Astro.props;
+
+const safeSize: HeadingSize = size;
+const sizeClass = headingSize[safeSize];
 ---
 
 <Tag
   class:list={[
-    headingSizeToClass[size],
+    sizeClass,
     "font-bold font-serif",
     textAlign === "center" && "text-center",
   ]}

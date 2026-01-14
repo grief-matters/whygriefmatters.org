@@ -3,13 +3,13 @@ import { getEntry, type ReferenceDataEntry } from "astro:content";
 
 import type { BasicInternetResourceCollectionKey } from "@content/collections";
 
-import SanityImage from "@ui/primitives/SanityImage.astro";
 import {
   getSourceFromResourceUrl,
   getSourceLinkFromWebsiteRef,
 } from "@ui/utils";
+import Card from "@ui/composites/Card.astro";
 import ResourceSource from "../ResourceSource.astro";
-import Link from "@ui/primitives/Link.astro";
+import Text from "@ui/primitives/Text.astro";
 
 interface Props {
   resourceRef: ReferenceDataEntry<BasicInternetResourceCollectionKey, string>;
@@ -20,7 +20,7 @@ const props = Astro.props;
 const { data } = await getEntry(props.resourceRef);
 if (!data) {
   throw new Error(
-    `[FeaturedWebsite] could not get website from reference: ${props.resourceRef.id}`
+    `[BasicFeaturedResource] could not get resource from reference: ${props.resourceRef.id}`
   );
 }
 
@@ -29,34 +29,18 @@ const source = data.sourceWebsiteId
   : null;
 
 const safeSource = source ?? getSourceFromResourceUrl(data.resourceUrl);
+
+const image = data.image
+  ? { image: data.image.image, altText: "" }
+  : null;
 ---
 
-<article>
-  {
-    data.image && (
-      <SanityImage
-        image={{
-          image: data.image.image,
-          altText: "",
-        }}
-      />
-    )
-  }
-  <div class:list={["pt-3 px-4 pb-5"]}>
-    <h3 class="text-balance">
-      <Link
-        external
-        to={data.resourceUrl}
-        label={data.title}
-        variant="primary"
-        size={2}
-      />
-    </h3>
-    {safeSource !== null && <ResourceSource source={safeSource} />}
-    {
-      data.description && (
-        <p class="font-serif leading-relaxed">{data.description}</p>
-      )
-    }
-  </div>
-</article>
+<Card
+  image={image}
+  title={data.title}
+  titleHref={data.resourceUrl}
+  external
+>
+  {safeSource && <ResourceSource source={safeSource} />}
+  {data.description && <Text>{data.description}</Text>}
+</Card>

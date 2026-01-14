@@ -21,21 +21,20 @@ const { entry } = Astro.props;
       switch (entry.collection) {
         case "articles":
         case "blogs":
-        case "booklets":
         case "books":
-        // case "brochures":
-        // case "community":
+        case "communities":
         case "courses":
         case "forums":
-        // case "memorials":
+        case "memorials":
         case "peerSupports":
         case "podcastEpisodes":
         case "podcasts":
+        case "printedMaterials":
         case "stories":
         case "supportGroups":
         case "therapyResources":
         case "videos":
-          // case "webinars":
+        case "webinars":
           return <BasicInternetResourceListing entry={entry} />;
         case "apps":
           return <AppListing entry={entry} />;

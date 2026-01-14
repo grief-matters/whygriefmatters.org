@@ -1,0 +1,57 @@
+---
+import designTokens from "@styles/semantic-token-map";
+
+type ButtonVariant = "primary" | "secondary" | "tertiary";
+type ButtonSize = 1 | 2;
+
+const variantStyles: Record<ButtonVariant, string[]> = {
+  primary: [
+    designTokens.color.contentSurface.primary.prominent,
+    designTokens.color.border.primary.prominent,
+  ],
+  secondary: [
+    designTokens.color.contentSurface.secondary.prominent,
+    designTokens.color.border.secondary.prominent,
+  ],
+  tertiary: [
+    designTokens.color.contentSurface.tertiary.prominent,
+    designTokens.color.border.tertiary.prominent,
+  ],
+};
+
+const sizeStyles: Record<ButtonSize, string> = {
+  1: "py-2 px-4 text-base",
+  2: "py-3 px-6 text-lg",
+};
+
+interface Props {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  type?: "button" | "submit";
+}
+
+const {
+  variant = "primary",
+  size = 1,
+  type = "button",
+  ...attrs
+}: Props = Astro.props;
+---
+
+<button
+  type={type}
+  class:list={[
+    ...variantStyles[variant],
+    sizeStyles[size],
+    "inline-block",
+    "font-serif font-semibold",
+    "border-b-3",
+    "rounded",
+    "cursor-pointer",
+    designTokens.shadow.interactive,
+    designTokens.motion.transition.default,
+  ]}
+  {...attrs}
+>
+  <slot />
+</button>

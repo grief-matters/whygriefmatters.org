@@ -1,6 +1,6 @@
 ---
 import designTokens from "@styles/semantic-token-map";
-import Subtitle from "@ui/primitives/Subtitle.astro";
+import Text from "@ui/primitives/Text.astro";
 import { isLink, isNonEmptyString, type Link } from "@ui/utils";
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 const { source, prefaceTextOverride } = Astro.props;
 ---
 
-<Subtitle>
+<Text as="p" size="muted">
   {isNonEmptyString(prefaceTextOverride) ? `${prefaceTextOverride} ` : "From "}
   {
     isLink(source) ? (
@@ -33,4 +33,4 @@ const { source, prefaceTextOverride } = Astro.props;
       source
     )
   }
-</Subtitle>
+</Text>

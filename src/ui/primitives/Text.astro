@@ -1,0 +1,35 @@
+---
+import type { Polymorphic } from "astro/types";
+import { textSize, type Prominence } from "@styles/semantic-token-map";
+
+type TextElement = "p" | "span";
+
+interface TextOwnProps {
+  as: TextElement;
+  size?: Prominence;
+  textAlign?: "center" | "left";
+}
+
+type Props = Polymorphic<TextOwnProps>;
+
+const {
+  as: Tag = "p",
+  size = "default",
+  textAlign = "left",
+  ...attrs
+} = Astro.props;
+
+const safeSize: Prominence = size;
+const sizeClass = textSize[safeSize];
+---
+
+<Tag
+  class:list={[
+    sizeClass,
+    "font-serif leading-relaxed",
+    textAlign === "center" && "text-center",
+  ]}
+  {...attrs}
+>
+  <slot />
+</Tag>

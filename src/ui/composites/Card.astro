@@ -1,0 +1,59 @@
+---
+import type { SanityImage } from "@content/model/image";
+
+import Surface from "@ui/primitives/Surface.astro";
+import SanityImagePrimitive from "@ui/primitives/SanityImage.astro";
+import Link from "@ui/primitives/Link.astro";
+import designTokens, {
+  type ColorVariant,
+  type Prominence,
+} from "@styles/semantic-token-map";
+
+interface Props {
+  variant?: ColorVariant;
+  prominence?: Prominence;
+  // Content props
+  image?: SanityImage | null;
+  title: string;
+  titleHref?: string;
+  external?: boolean;
+}
+
+const {
+  variant = "neutral",
+  prominence = "default",
+  image,
+  title,
+  titleHref,
+  external = false,
+} = Astro.props;
+---
+
+<Surface
+  as="article"
+  variant={variant}
+  prominence={prominence}
+  class:list={[designTokens.shadow.default]}
+>
+  {image && <SanityImagePrimitive image={image} />}
+
+  <div class="pt-3 px-4 pb-5">
+    <h3 class="text-balance">
+      {
+        titleHref ? (
+          <Link
+            to={titleHref}
+            label={title}
+            variant="primary"
+            size={2}
+            external={external}
+          />
+        ) : (
+          <span class="text-2xl font-bold font-serif">{title}</span>
+        )
+      }
+    </h3>
+
+    <slot />
+  </div>
+</Surface>

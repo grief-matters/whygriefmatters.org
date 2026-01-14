@@ -1,0 +1,46 @@
+---
+import type { Polymorphic } from "astro/types";
+import designTokens, {
+  contentSurfaceColor,
+  borderColorCore,
+  type ColorVariant,
+  type Prominence,
+} from "@styles/semantic-token-map";
+
+type SurfaceElement = "div" | "article" | "aside" | "section";
+
+interface SurfaceOwnProps {
+  as: SurfaceElement;
+  variant?: ColorVariant;
+  prominence?: Prominence;
+  rounded?: boolean;
+}
+
+type Props = Polymorphic<SurfaceOwnProps>;
+
+const {
+  as: Tag = "div",
+  variant = "neutral",
+  prominence = "default",
+  rounded = true,
+  ...attrs
+} = Astro.props;
+
+const safeVariant: ColorVariant = variant;
+const safeProminence: Prominence = prominence;
+
+const bgColor = contentSurfaceColor[safeVariant][safeProminence];
+const border = borderColorCore[safeVariant][safeProminence];
+---
+
+<Tag
+  class:list={[
+    bgColor,
+    border,
+    designTokens.border.width.default,
+    rounded && "rounded-lg overflow-hidden",
+  ]}
+  {...attrs}
+>
+  <slot />
+</Tag>
