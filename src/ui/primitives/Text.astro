@@ -1,26 +1,20 @@
 ---
 import type { Polymorphic } from "astro/types";
-import { textSize, type Prominence } from "@styles/semantic-token-map";
+import { textSizeMap, type TextSize } from "@styles/semantic-token-map";
 
 type TextElement = "p" | "span";
 
 interface TextOwnProps {
   as: TextElement;
-  size?: Prominence;
+  size?: TextSize;
   textAlign?: "center" | "left";
 }
 
 type Props = Polymorphic<TextOwnProps>;
 
-const {
-  as: Tag = "p",
-  size = "default",
-  textAlign = "left",
-  ...attrs
-} = Astro.props;
+const { as: Tag = "p", size = 2, textAlign = "left", ...attrs } = Astro.props;
 
-const safeSize: Prominence = size;
-const sizeClass = textSize[safeSize];
+const sizeClass = textSizeMap[size];
 ---
 
 <Tag

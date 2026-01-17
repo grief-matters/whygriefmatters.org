@@ -23,7 +23,7 @@ import Card from "@ui/composites/Card.astro";
       <Container size={1}>
         <Stack>
           <Heading as="h1" text="Design System" size={3} />
-          <Text size="prominent" textAlign="center">
+          <Text size={1} textAlign="center">
             A reference for UI primitives and composites used throughout the site.
           </Text>
         </Stack>
@@ -38,7 +38,7 @@ import Card from "@ui/composites/Card.astro";
 
           <Surface variant="neutral" class:list={["p-4", designTokens.shadow.default]}>
             <Stack>
-              <Text as="p" size="muted">Heading</Text>
+              <Text as="p" size={1}>Heading</Text>
               <Heading as="h3" text="Heading size={3}" size={3} textAlign="left" />
               <Heading as="h3" text="Heading size={2}" size={2} textAlign="left" />
               <Heading as="h3" text="Heading size={1}" size={1} textAlign="left" />
@@ -47,20 +47,20 @@ import Card from "@ui/composites/Card.astro";
 
           <Surface variant="neutral" class:list={["p-4", designTokens.shadow.default]}>
             <Stack>
-              <Text as="p" size="muted">Text</Text>
-              <Text size="prominent">
-                Text size="prominent" - For emphasized body copy that needs to stand out.
+              <Text as="p" size={1}>Text</Text>
+              <Text size={1}>
+                Text size={1} - For emphasized body copy that needs to stand out.
               </Text>
               <Text>
-                Text size="default" (default) - Standard body text for general content and paragraphs.
+                Text size={1} (default) - Standard body text for general content and paragraphs.
               </Text>
             </Stack>
           </Surface>
 
           <Surface variant="neutral" class:list={["p-4", designTokens.shadow.default]}>
             <Stack>
-              <Text as="p" size="muted">Text size="muted"</Text>
-              <Text as="p" size="muted">Small muted text for labels and secondary information</Text>
+              <Text as="p" size={1}>Text size={1}</Text>
+              <Text as="p" size={1}>Small muted text for labels and secondary information</Text>
             </Stack>
           </Surface>
         </Stack>
@@ -75,7 +75,7 @@ import Card from "@ui/composites/Card.astro";
 
           <Surface variant="neutral" class:list={["p-4", designTokens.shadow.default]}>
             <Stack>
-              <Text as="p" size="muted">Container</Text>
+              <Text as="p" size={1}>Container</Text>
               <Text>
                 Container constrains content width and centers it. size={1} = max-w-4xl, size={2} = max-w-6xl.
               </Text>
@@ -89,7 +89,7 @@ import Card from "@ui/composites/Card.astro";
 
           <Surface variant="neutral" class:list={["p-4", designTokens.shadow.default]}>
             <Stack>
-              <Text as="p" size="muted">Stack</Text>
+              <Text as="p" size={1}>Stack</Text>
               <Text>Stack arranges children vertically with consistent gap spacing.</Text>
               <div class="border border-dashed border-brown-70 p-2">
                 <Stack>
@@ -103,7 +103,7 @@ import Card from "@ui/composites/Card.astro";
 
           <Surface variant="neutral" class:list={["p-4", designTokens.shadow.default]}>
             <Stack>
-              <Text as="p" size="muted">Section</Text>
+              <Text as="p" size={1}>Section</Text>
               <Text>Section provides semantic structure with background color options.</Text>
             </Stack>
           </Surface>
@@ -153,7 +153,7 @@ import Card from "@ui/composites/Card.astro";
 
           <Surface variant="neutral" class:list={["p-4", designTokens.shadow.default]}>
             <Stack>
-              <Text as="p" size="muted">Link</Text>
+              <Text as="p" size={1}>Link</Text>
               <div class="flex flex-wrap gap-4 items-baseline">
                 <Link to="#" label="Primary size={1}" variant="primary" size={1} />
                 <Link to="#" label="Primary size={2}" variant="primary" size={2} />
@@ -169,7 +169,7 @@ import Card from "@ui/composites/Card.astro";
 
           <Surface variant="neutral" class:list={["p-4", designTokens.shadow.default]}>
             <Stack>
-              <Text as="p" size="muted">EmphasizedPageLink</Text>
+              <Text as="p" size={1}>EmphasizedPageLink</Text>
               <div>
                 <EmphasizedPageLink to="#" label="Call to action" />
               </div>
@@ -187,51 +187,51 @@ import Card from "@ui/composites/Card.astro";
 
           <Surface variant="neutral" class:list={["p-4", designTokens.shadow.default]}>
             <Stack>
-              <Text as="p" size="muted">Surface</Text>
+              <Text as="p" size={1}>Surface</Text>
               <Text>
                 Surface is a polymorphic primitive for content backgrounds. It automatically
                 pairs contentSurfaceColor with matching borderColor. Always bordered by design intent.
               </Text>
-              <Text size="muted">Props: as (div, article, aside, section), variant, prominence, rounded</Text>
+              <Text size={1}>Props: as (div, article, aside, section), variant, prominence, rounded</Text>
             </Stack>
           </Surface>
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Surface variant="neutral" prominence="prominent" class="p-4">
-              <Text as="p" size="muted">neutral / prominent</Text>
+              <Text as="p" size={1}>neutral / prominent</Text>
             </Surface>
             <Surface variant="neutral" prominence="default" class="p-4">
-              <Text as="p" size="muted">neutral / default</Text>
+              <Text as="p" size={1}>neutral / default</Text>
             </Surface>
             <Surface variant="neutral" prominence="muted" class="p-4">
-              <Text as="p" size="muted">neutral / muted</Text>
+              <Text as="p" size={1}>neutral / muted</Text>
             </Surface>
             <Surface variant="primary" prominence="prominent" class="p-4">
-              <Text as="p" size="muted">primary / prominent</Text>
+              <Text as="p" size={1}>primary / prominent</Text>
             </Surface>
             <Surface variant="primary" prominence="default" class="p-4">
-              <Text as="p" size="muted">primary / default</Text>
+              <Text as="p" size={1}>primary / default</Text>
             </Surface>
             <Surface variant="primary" prominence="muted" class="p-4">
-              <Text as="p" size="muted">primary / muted</Text>
+              <Text as="p" size={1}>primary / muted</Text>
             </Surface>
             <Surface variant="secondary" prominence="prominent" class="p-4">
-              <Text as="p" size="muted">secondary / prominent</Text>
+              <Text as="p" size={1}>secondary / prominent</Text>
             </Surface>
             <Surface variant="secondary" prominence="default" class="p-4">
-              <Text as="p" size="muted">secondary / default</Text>
+              <Text as="p" size={1}>secondary / default</Text>
             </Surface>
             <Surface variant="secondary" prominence="muted" class="p-4">
-              <Text as="p" size="muted">secondary / muted</Text>
+              <Text as="p" size={1}>secondary / muted</Text>
             </Surface>
             <Surface variant="tertiary" prominence="prominent" class="p-4">
-              <Text as="p" size="muted">tertiary / prominent</Text>
+              <Text as="p" size={1}>tertiary / prominent</Text>
             </Surface>
             <Surface variant="tertiary" prominence="default" class="p-4">
-              <Text as="p" size="muted">tertiary / default</Text>
+              <Text as="p" size={1}>tertiary / default</Text>
             </Surface>
             <Surface variant="tertiary" prominence="muted" class="p-4">
-              <Text as="p" size="muted">tertiary / muted</Text>
+              <Text as="p" size={1}>tertiary / muted</Text>
             </Surface>
           </div>
         </Stack>
@@ -246,13 +246,13 @@ import Card from "@ui/composites/Card.astro";
 
           <Surface variant="neutral" class:list={["p-4", designTokens.shadow.default]}>
             <Stack>
-              <Text as="p" size="muted">Card</Text>
+              <Text as="p" size={1}>Card</Text>
               <Text>
                 Card is a structured content composite built on Surface. It accepts image, title,
                 and titleHref props. If titleHref is provided, the title renders as a Link;
                 otherwise it renders as a Heading.
               </Text>
-              <Text size="muted">Props: variant, prominence, image, title, titleHref, external</Text>
+              <Text size={1}>Props: variant, prominence, image, title, titleHref, external</Text>
             </Stack>
           </Surface>
 
@@ -263,7 +263,7 @@ import Card from "@ui/composites/Card.astro";
               <Text>Body content goes in the default slot.</Text>
             </Card>
             <Card title="Card with content" titleHref="#">
-              <Text as="p" size="muted">With meta content</Text>
+              <Text as="p" size={1}>With meta content</Text>
               <Text>And description text.</Text>
             </Card>
           </div>
@@ -279,7 +279,7 @@ import Card from "@ui/composites/Card.astro";
 
           <Surface variant="neutral" class:list={["p-4", designTokens.shadow.default]}>
             <Stack>
-              <Text as="p" size="muted">Button</Text>
+              <Text as="p" size={1}>Button</Text>
               <Text>Button for interactive actions. Distinct from Link which is for navigation.</Text>
 
               <div class="flex flex-wrap gap-4 items-center">

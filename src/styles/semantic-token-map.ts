@@ -5,12 +5,13 @@ export type Prominence = "prominent" | "default" | "muted";
 export type ColorVariant = "neutral" | "primary" | "secondary" | "tertiary";
 
 /** A set of classes keyed by prominence level */
-type ProminenceSet = Record<Prominence, string>;
+type ProminenceMap = Record<Prominence, string>;
 
 /** A map of variants, each containing a prominence set */
-type VariantMap = Record<ColorVariant, ProminenceSet>;
+type VariantMap = Record<ColorVariant, ProminenceMap>;
 
-type TextSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+export type TextSize = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+type TextSizeMap = Record<TextSize, string>;
 
 /**
  * =============================================================================
@@ -76,12 +77,16 @@ export const borderColorCore: VariantMap = {
 
 /**
  * Core text sizes for body text.
- * Maps prominence to font size classes.
+ * Maps 'TextSize' type to font size classes.
  */
-export const textSize: ProminenceSet = {
-  prominent: "text-lg",
-  default: "text-base",
-  muted: "text-sm",
+export const textSizeMap: TextSizeMap = {
+  1: "text-sm",
+  2: "text-base",
+  3: "text-lg",
+  4: "text-xl",
+  5: "text-2xl",
+  6: "text-3xl",
+  7: "text-4xl",
 } as const;
 
 /**
@@ -307,9 +312,10 @@ export default {
   typography: {
     size: {
       body: {
-        default: "text-base",
-        prominent: "text-lg",
+        default: textSizeMap[2],
+        prominent: textSizeMap[3],
       },
+      heading: {},
     },
   },
   color: {
