@@ -1,13 +1,24 @@
 ---
+import {
+  paddingXSettingMap,
+  paddingYSettingMap,
+  type PaddingSetting,
+} from "@ui/utils/styles";
 
+interface Props {
+  paddingX?: PaddingSetting;
+  paddingY?: PaddingSetting;
+}
+
+const { paddingX, paddingY } = Astro.props;
 ---
 
 <div
   class:list={[
-    "basis-xs max-w-sm shrink-0 snap-center",
-    // designTokens.shadow.large,
-    // designTokens.color.contentSurface.neutral.prominent,
-    "rounded-sm overflow-hidden",
+    "basis-xs shrink-0 grow snap-center",
+    "overflow-hidden",
+    paddingX ? paddingXSettingMap[paddingX] : null,
+    paddingY ? paddingYSettingMap[paddingY] : null,
   ]}
 >
   <slot />

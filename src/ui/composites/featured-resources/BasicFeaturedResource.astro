@@ -13,6 +13,7 @@ import Typography from "@ui/primitives/Typography.astro";
 
 interface Props {
   resourceRef: ReferenceDataEntry<BasicInternetResourceCollectionKey, string>;
+  fullHeight?: boolean;
 }
 
 const props = Astro.props;
@@ -33,7 +34,13 @@ const safeSource = source ?? getSourceFromResourceUrl(data.resourceUrl);
 const image = data.image ? { image: data.image.image, altText: "" } : null;
 ---
 
-<Card image={image} title={data.title} titleHref={data.resourceUrl} external>
+<Card
+  external
+  fullHeight={props.fullHeight}
+  image={image}
+  title={data.title}
+  titleHref={data.resourceUrl}
+>
   {safeSource && <ResourceSource source={safeSource} />}
   {data.description && <Typography>{data.description}</Typography>}
 </Card>

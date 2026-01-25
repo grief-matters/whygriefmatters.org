@@ -8,6 +8,7 @@ import { zContentType } from "./contentType";
 export default z.object({
   contentType: z.literal(zContentType.Enum.pageLinks),
   emphasized: z.boolean(),
+  showImages: z.boolean(),
   links: z.array(
     z.discriminatedUnion("contentType", [
       zCategoryPageLinkContentItem,
@@ -16,3 +17,10 @@ export default z.object({
     ]),
   ),
 });
+
+export type CategoryPageLinkContentItem = z.infer<
+  typeof zCategoryPageLinkContentItem
+>;
+export type ResourcePageLinkContentItem = z.infer<
+  typeof zResourcePageLinkContentItem
+>;

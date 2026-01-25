@@ -1,38 +1,39 @@
 ---
 import type { SanityImage } from "@content/model/image";
 
-import ContentSurface from "@ui/primitives/ContentSurface.astro";
+import ContentSurface, {
+  type ContentSurfaceVariant,
+} from "@ui/primitives/ContentSurface.astro";
 import SanityImagePrimitive from "@ui/primitives/SanityImage.astro";
 import Link from "@ui/primitives/Link.astro";
-import type { ColorVariant, Prominence } from "@ui/utils/styles";
 import Typography from "@ui/primitives/Typography.astro";
 
 interface Props {
-  variant?: ColorVariant;
-  prominence?: Prominence;
+  variant?: ContentSurfaceVariant;
   // Content props
   image?: SanityImage | null;
   title: string;
   titleHref?: string;
   external?: boolean;
+  fullHeight?: boolean;
 }
 
 const {
   variant = "neutral",
-  prominence = "default",
   image,
   title,
   titleHref,
   external = false,
+  fullHeight,
 } = Astro.props;
 
 const colorVariant = variant === "neutral" ? "coolNeutral" : "primary";
 ---
 
-<ContentSurface as="article" variant={variant} prominence={prominence}>
+<ContentSurface fullHeight={fullHeight} as="article" variant="featureCard">
   {image && <SanityImagePrimitive image={image} />}
 
-  <div class="pt-3 px-4 pb-5">
+  <div class="pt-3 px-5 pb-5">
     {
       titleHref ? (
         <Link

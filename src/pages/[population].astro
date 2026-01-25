@@ -1,0 +1,39 @@
+---
+import type { PopulationSlug } from "@content/model/population";
+import Shell from "@ui/layouts/Shell.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+
+interface Props {
+  populationEntry: CollectionEntry<"populations">;
+}
+
+const labelMakerFnMap: Record<PopulationSlug, (name: string) => string> = {
+  "latino-and-hispanic-americans": (name: string) => `Resources for ${name}`,
+  "african-american-black": (name: string) => `Resources for ${name}`,
+  "asian-american-and-pacific-islander": (name: string) =>
+    `Resources for ${name}`,
+  "people-with-disabilities": (name: string) => `Resources for ${name}`,
+  "lgbtq-community": (name: string) => `Resources for the ${name}`,
+  "indigenous-communities": (name: string) => `Resources for ${name}`,
+};
+
+export async function getStaticPaths() {
+  const populationEntries = await getCollection("populations");
+
+  return populationEntries.map((populationEntry) => ({
+    params: {
+      population: populationEntry.data.slug,
+    },
+    props: {
+      populationEntry,
+    },
+  }));
+}
+
+const { populationEntry } = Astro.props;
+const labelMaker = labelMakerFnMap[populationEntry.data.slug];
+---
+
+<Shell>
+  <p>{labelMaker(populationEntry.data.name)}</p>
+</Shell>

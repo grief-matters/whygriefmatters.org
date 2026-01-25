@@ -9,6 +9,7 @@ import FeaturedWebsite from "@ui/composites/featured-resources/FeaturedWebsite.a
 interface Props {
   resourceRef: string;
   resourceType: InternetResourceType;
+  fullHeight?: boolean;
 }
 
 const props = Astro.props;
@@ -16,7 +17,7 @@ const props = Astro.props;
 const safeCollectionKey = resourceTypeToCollectionKeyMap[props.resourceType];
 if (!safeCollectionKey) {
   throw new Error(
-    `[FeaturedResource] could not match "${props.resourceType}" to a collection`
+    `[FeaturedResource] could not match "${props.resourceType}" to a collection`,
   );
 }
 ---
@@ -42,6 +43,7 @@ if (!safeCollectionKey) {
       case "videos":
         return (
           <BasicFeaturedResource
+            fullHeight={props.fullHeight}
             resourceRef={{
               collection: safeCollectionKey,
               id: props.resourceRef,
@@ -69,7 +71,7 @@ if (!safeCollectionKey) {
       default:
         const _exhaustiveCheck: never = safeCollectionKey;
         throw new Error(
-          `[FeaturedResource] Unknown 'collection' specified: '${safeCollectionKey}'`
+          `[FeaturedResource] Unknown 'collection' specified: '${safeCollectionKey}'`,
         );
     }
   }

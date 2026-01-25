@@ -1,0 +1,88 @@
+---
+import type {
+  CategoryPageLinkContentItem,
+  ResourcePageLinkContentItem,
+} from "@content/model/contentBlock/pageLinksContentItem";
+import ContentSurface from "@ui/primitives/ContentSurface.astro";
+import { getEntry } from "astro:content";
+import SanityImagePrimitive from "@ui/primitives/SanityImage.astro";
+import Link from "@ui/primitives/Link.astro";
+import { isNonEmptyString } from "@ui/utils/helpers";
+
+interface Props {
+  pageLink: CategoryPageLinkContentItem | ResourcePageLinkContentItem;
+}
+
+const { pageLink } = Astro.props;
+
+let label: string | null = null;
+let image = null;
+const path: Array<string> = [];
+
+if (pageLink.contentType === "categoryPageLink") {
+  const category = await getEntry(pageLink.category);
+  if (!category) {
+    throw new Error(
+      `[ResourcePageLinkCard] Could not get category for: ${pageLink.category.id}`,
+    );
+  }
+  path.push(category.data.slug);
+
+  label = isNonEmptyString(pageLink.label)
+    ? pageLink.label
+    : (category.data.displayTitle ?? category.data.title);
+}
+
+if (pageLink.contentType === "resourcePageLink") {
+  if (
+    !pageLink.category &&
+    !pageLink.population &&
+    !pageLink.resourceTypes?.length
+  ) {
+    throw new Error(
+      `[ResourcePageLinkCard] resourcePageLink requires at least one of: categoryRef, populationRef, or resourceTypes`,
+    );
+  }
+
+  if (pageLink.category) {
+    const category = await getEntry(pageLink.category);
+    if (!category) {
+      throw new Error(
+        `[ResourcePageLinkCard] Could not get category for: ${pageLink.category.id}`,
+      );
+    }
+    path.push(category.data.slug);
+    image = category.data.image;
+  }
+
+  if (pageLink.population) {
+    const population = await getEntry(pageLink.population);
+    if (!population) {
+      throw new Error(
+        `[ResourcePageLinkCard] Could not get population for: ${pageLink.population.id}`,
+      );
+    }
+    path.push(population.data.slug);
+    if (!image) {
+      image = population.data.image;
+    }
+  }
+
+  label = pageLink.label;
+}
+
+if (!label || !path) {
+  throw new Error(
+    `[ResourcePageLinkCard] resourcePageLink requires at least one of: categoryRef, populationRef, or resourceTypes`,
+  );
+}
+
+const url = `/${path.join("/")}`;
+---
+
+<ContentSurface variant="featureCard" fullHeight>
+  {image && <SanityImagePrimitive image={image} />}
+  <div class="p-3">
+    <Link label={label} to={url} variant="title-4" />
+  </div>
+</ContentSurface>

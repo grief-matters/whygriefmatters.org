@@ -13,6 +13,11 @@ import FeaturedResourceRenderer from "./FeaturedResourceRenderer.astro";
 import PageLinksRenderer from "./PageLinksRenderer.astro";
 import Slider from "@ui/layouts/slider/Slider.astro";
 import Slide from "@ui/layouts/slider/Slide.astro";
+import ResourcePageLinkCard from "@ui/composites/ResourcePageLinkCard.astro";
+import type {
+  CategoryPageLinkContentItem,
+  ResourcePageLinkContentItem,
+} from "@content/model/contentBlock/pageLinksContentItem";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
@@ -64,12 +69,23 @@ const contentBlock = await getEntry(contentBlockRef);
           </Container>
         );
       case "imageRow":
-        // TODO - this will need it's own component when we style
         return (
           <Container size={2}>
-            {contentItem.images.map((img) => (
-              <SanityImage image={img} />
-            ))}
+            <div class="grid grid-cols-1 md:grid-cols-2 md:px-3 lg:grid-cols-3 gap-4">
+              {contentItem.images.map((img, index) => (
+                <div
+                  class={
+                    index === 0
+                      ? ""
+                      : index === 1
+                        ? "hidden md:block"
+                        : "hidden lg:block"
+                  }
+                >
+                  <SanityImage image={img} />
+                </div>
+              ))}
+            </div>
           </Container>
         );
       case "featuredResource":
@@ -85,32 +101,9 @@ const contentBlock = await getEntry(contentBlockRef);
         return (
           <Slider>
             {contentItem.resources.map((resource) => (
-              <Slide>
+              <Slide paddingX={1} paddingY={2}>
                 <FeaturedResourceRenderer
-                  resourceRef={resource.refId}
-                  resourceType={resource.refType}
-                />
-              </Slide>
-            ))}
-            {contentItem.resources.map((resource) => (
-              <Slide>
-                <FeaturedResourceRenderer
-                  resourceRef={resource.refId}
-                  resourceType={resource.refType}
-                />
-              </Slide>
-            ))}
-            {contentItem.resources.map((resource) => (
-              <Slide>
-                <FeaturedResourceRenderer
-                  resourceRef={resource.refId}
-                  resourceType={resource.refType}
-                />
-              </Slide>
-            ))}
-            {contentItem.resources.map((resource) => (
-              <Slide>
-                <FeaturedResourceRenderer
+                  fullHeight
                   resourceRef={resource.refId}
                   resourceType={resource.refType}
                 />
@@ -127,9 +120,11 @@ const contentBlock = await getEntry(contentBlockRef);
       case "featuredWebsites":
         return (
           <Container size={2}>
-            {contentItem.websites.map((w) => (
-              <FeaturedWebsite websiteRef={w} />
-            ))}
+            <div class="grid grid-cols-2 md:grid-cols-3">
+              {contentItem.websites.map((w) => (
+                <FeaturedWebsite websiteRef={w} />
+              ))}
+            </div>
           </Container>
         );
       case "featuredCrisisResource":
@@ -145,7 +140,7 @@ const contentBlock = await getEntry(contentBlockRef);
               <DynamicPageLink
                 linkType={contentItem.contentType}
                 label={contentItem.label}
-                categoryRef={contentItem.category}
+                categoryRef={contentItem.category ?? undefined}
                 populationRef={contentItem.population ?? undefined}
                 resourceTypes={contentItem.resourceTypes ?? undefined}
               />
@@ -163,6 +158,26 @@ const contentBlock = await getEntry(contentBlockRef);
           </Container>
         );
       case "pageLinks":
+        if (contentItem.showImages) {
+          return (
+            <Container size={2} paddingX={1}>
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {contentItem.links.map((link) => (
+                  <div>
+                    <ResourcePageLinkCard
+                      pageLink={
+                        link as  // todo - we should remove this case if we can
+                          | CategoryPageLinkContentItem
+                          | ResourcePageLinkContentItem
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            </Container>
+          );
+        }
+
         return (
           <Container>
             <PageLinksRenderer

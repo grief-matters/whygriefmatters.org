@@ -6,7 +6,6 @@ import {
 import type { ReferenceDataEntry } from "astro:content";
 import { getEntry } from "astro:content";
 import ResourceSource from "../ResourceSource.astro";
-import FeaturedResourceContainer from "./FeaturedResourceContainer.astro";
 
 interface Props {
   appRef: ReferenceDataEntry<"apps", string>;
@@ -32,7 +31,7 @@ const safeSource =
     : null);
 ---
 
-<FeaturedResourceContainer>
+<article>
   <h3>{data.title}</h3>
   {safeSource !== null && <ResourceSource source={safeSource} />}
   {data.description && <p>{data.description}</p>}
@@ -55,4 +54,4 @@ const safeSource =
       >{`Download on the Play Store`}</a>
     )
   }
-</FeaturedResourceContainer>
+</article>

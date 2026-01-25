@@ -1,12 +1,13 @@
 ---
 import Shell from "@ui/layouts/Shell.astro";
 import Container from "@ui/primitives/Container.astro";
+import ContentSurface from "@ui/primitives/ContentSurface.astro";
 import LayoutSurface, {
   type LayoutSurfaceVariantKey,
 } from "@ui/primitives/LayoutSurface.astro";
 import Stack from "@ui/primitives/Stack.astro";
 import Typography from "@ui/primitives/Typography.astro";
-import { colorVariants, textPresets } from "@ui/utils/styles";
+import { type Prominence, colorVariants, textPresets } from "@ui/utils/styles";
 import startCase from "lodash/startCase";
 
 const codeClasses =
@@ -78,17 +79,54 @@ const codeClasses =
       ),
     )
   }
-  <LayoutSurface>
+  <LayoutSurface variantKey={2}>
     <Container paddingX={1} paddingY={1}>
-      <Stack>
+      <Stack spacing={2}>
         <Typography as="h2" variant="title-2">Content Surface</Typography>
         <Typography
           variant="body-1"
           set:html={`The <code class="${codeClasses}">ContentSurface</code> component should be used to create areas where content is grouped together in some logical way.`}
         />
-      </Stack>
-      <Stack>
-        <p>todo</p>
+        <ContentSurface variant="featureCard">
+          <p class="p-3">{`Feature Card content surface`}</p>
+        </ContentSurface>
+        {
+          colorVariants.map((variant) =>
+            (["muted", "default", "prominent"] as Prominence[]).map((p) => (
+              <ContentSurface
+                paddingX={1}
+                paddingY={1}
+                variant={variant}
+                prominence={p}
+              >
+                <Typography
+                  color={variant === "neutral" ? "warmNeutral" : variant}
+                  set:html={`The <code class="${codeClasses}">${variant}-${p}</code> content surface using matched typography color.`}
+                />
+              </ContentSurface>
+            )),
+          )
+        }
+        <Typography
+          set:text="We can combine different content surfaces together to create layered effects, giving us a lot of flexibility when building new designs."
+        />
+        <ContentSurface
+          prominence="muted"
+          paddingX={1}
+          paddingY={1}
+          variant="neutral"
+        >
+          <Stack>
+            <Typography
+              set:text={"Imagine that this is some kind of panel component"}
+            />
+            <ContentSurface paddingX={1} paddingY={1}>
+              <Typography
+                set:text=`We can create different effects using the "prominence" concept`
+              />
+            </ContentSurface>
+          </Stack>
+        </ContentSurface>
       </Stack>
     </Container>
   </LayoutSurface>

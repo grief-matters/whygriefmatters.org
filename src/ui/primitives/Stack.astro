@@ -1,7 +1,19 @@
 ---
+type SpaceSetting = 1 | 2 | 3;
 
+interface Props {
+  spacing?: SpaceSetting;
+}
+
+const spaceSettingMap: Record<SpaceSetting, string> = {
+  1: "space-y-3",
+  2: "space-y-5",
+  3: "space-y-8",
+};
+
+const props = Astro.props;
 ---
 
-<div class:list={["space-y-3"]}>
+<div class:list={[spaceSettingMap[props.spacing ?? 1]]}>
   <slot />
 </div>

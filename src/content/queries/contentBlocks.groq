@@ -81,6 +81,7 @@
     _type == "pageLinks" => {
       "contentType": _type,
       "emphasized": coalesce(isProminent, false),
+      "showImages": coalesce(showImages, false),
       "links": links[]{
         _type == "relativeLink" => {
           "contentType": _type,

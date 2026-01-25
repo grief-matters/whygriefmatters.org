@@ -7,13 +7,15 @@ import { isNonEmptyString } from "@ui/utils/helpers";
 
 import EmphasizedPageLink from "@ui/primitives/EmphasizedPageLink.astro";
 import Link from "@ui/primitives/Link.astro";
+import type { TextPreset } from "@ui/utils/styles";
 
 interface BaseProps {
   emphasized?: boolean;
-  categoryRef: ReferenceDataEntry<"categories", string>;
+  textVariant?: TextPreset;
 }
 
 interface CategoryLinkProps extends BaseProps {
+  categoryRef: ReferenceDataEntry<"categories", string>;
   linkType: "categoryPageLink";
   label?: string | null;
 }
@@ -21,6 +23,7 @@ interface CategoryLinkProps extends BaseProps {
 interface ResourcePageLinkProps extends BaseProps {
   label: string;
   linkType: "resourcePageLink";
+  categoryRef?: ReferenceDataEntry<"categories", string>;
   populationRef?: ReferenceDataEntry<"populations", string> | null;
   resourceTypes?: Array<InternetResourceType> | null;
 }
@@ -31,35 +34,52 @@ const props = Astro.props as Props;
 
 const urlParts: Array<string> = [];
 
-const category = await getEntry(props.categoryRef);
-if (!category) {
-  throw new Error(
-    `[DynamicPageLink] Could not get category for: ${props.categoryRef.id}`,
-  );
-}
+let resolvedLabel: string;
 
-urlParts.push(category.data.slug);
-
-if (props.linkType === "resourcePageLink" && props.populationRef) {
-  const population = await getEntry(props.populationRef);
-  if (!population) {
+if (props.linkType === "resourcePageLink") {
+  if (
+    !props.categoryRef &&
+    !props.populationRef &&
+    !props.resourceTypes?.length
+  ) {
     throw new Error(
-      `[DynamicPageLink] Could not get population for: ${props.populationRef.id}`,
+      `[DynamicPageLink] resourcePageLink requires at least one of: categoryRef, populationRef, or resourceTypes`,
     );
   }
 
-  urlParts.push(population.data.slug);
-}
+  if (props.categoryRef) {
+    const category = await getEntry(props.categoryRef);
+    if (!category) {
+      throw new Error(
+        `[DynamicPageLink] Could not get category for: ${props.categoryRef.id}`,
+      );
+    }
+    urlParts.push(category.data.slug);
+  }
 
-const resolvedLabel =
-  props.linkType === "categoryPageLink" && !isNonEmptyString(props.label)
-    ? (category.data.displayTitle ?? category.data.title)
-    : props.label;
+  if (props.populationRef) {
+    const population = await getEntry(props.populationRef);
+    if (!population) {
+      throw new Error(
+        `[DynamicPageLink] Could not get population for: ${props.populationRef.id}`,
+      );
+    }
+    urlParts.push(population.data.slug);
+  }
 
-if (!isNonEmptyString(resolvedLabel)) {
-  throw new Error(
-    `[DynamicPageLink] Could not generate label for: ${props.categoryRef.id}`,
-  );
+  resolvedLabel = props.label;
+} else {
+  const category = await getEntry(props.categoryRef);
+  if (!category) {
+    throw new Error(
+      `[DynamicPageLink] Could not get category for: ${props.categoryRef.id}`,
+    );
+  }
+  urlParts.push(category.data.slug);
+
+  resolvedLabel = isNonEmptyString(props.label)
+    ? props.label
+    : (category.data.displayTitle ?? category.data.title);
 }
 
 const url = `/${urlParts.join("/")}`;
@@ -71,6 +91,10 @@ const url = `/${urlParts.join("/")}`;
   props.emphasized ? (
     <EmphasizedPageLink to={url} label={resolvedLabel} />
   ) : (
-    <Link to={url} label={resolvedLabel} variant="body-2" />
+    <Link
+      to={url}
+      label={resolvedLabel}
+      variant={props.textVariant ?? "body-2"}
+    />
   )
 }
