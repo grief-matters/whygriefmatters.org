@@ -1,3 +1,4 @@
+@import "./tokens.css";
 @import "tailwindcss";
 
 @theme {
@@ -5,51 +6,66 @@
   /* Transitional font stack */
   --font-serif: "Charter", "Bitstream Charter", "Sitka Text", "Cambria", serif;
   /* Humanist font stack */
-  --font-sans: "Seravek", "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans",
+  --font-sans-a:
+    "Seravek", "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans",
     source-sans-pro, sans-serif;
+  /* Classical Humanist */
+  --font-sans-b: Optima, Candara, "Noto Sans", source-sans-pro, sans-serif;
 
   /* This wipes out default Tailwind colors */
   --color-*: initial;
 
-  --color-blue-25: #23375c;
-  --color-blue-30: #173d85;
-  --color-blue-42: #3059a6;
-  --color-blue-52: #4270c8;
-  --color-blue-55: #5e80ba;
-  --color-blue-79: #99b8fa;
-  --color-blue-89: #bccffa;
-  --color-blue-91: #d6e1fa;
-  --color-blue-95: #e9effc;
-  --color-blue-97: #f1f5fe;
-  --color-green-79: #c0d3c0;
-  --color-green-87: #d6e5d6;
-  --color-green-90: #e0ebe0;
-  --color-green-95: #f1f4f1;
-  --color-green-98: #f8faf8;
-  --color-pink-80: #fd9ab1;
-  --color-pink-87: #f5c5d0;
-  --color-pink-92: #f7dfe4;
-  --color-pink-95: #f7eef0;
-  --color-pink-97: #faf5f6;
-  --color-brown-40: #696363;
-  --color-brown-46: #7b6f6f;
-  --color-brown-58: #9c8b8b;
-  --color-brown-70: #b9acac;
-  --color-brown-80: #d1c7c7;
-  --color-brown-90: #e8e3e3;
-  --color-stone-96: #f5f3f3;
-  --color-stone-97: #f8f7f7;
-  --color-stone-98: #fafafa;
-  --color-stone-99: #fcfcfc;
-  --color-slate-62: #909aaa;
-  --color-aqua-70: #69fafc;
-  --color-aqua-80: #9bfcfd;
-  --color-aqua-90: #cdfdfe;
-  --color-sky-57: #4687db;
-  --color-yellow-82: #fcefa4;
+  /* Layout surface */
+  --color-layoutSurface-neutral--1: var(--token-color-stone-99);
+  --color-layoutSurface-neutral--2: var(--token-color-stone-98);
+  --color-layoutSurface-neutral--3: var(--token-color-stone-97);
+  --color-layoutSurface-neutral--4: var(--token-color-stone-96);
+  --color-layoutSurface-primary--1: var(--token-color-blue-97);
+  --color-layoutSurface-primaryContrast--1: var(--token-color-blue-25);
+  --color-layoutSurface-secondary--1: var(--token-color-pink-97);
+  --color-layoutSurface-tertiary--1: var(--token-color-green-98);
 
-  --color-brand-dark-blue: #173d85;
-  --color-brand-powder-blue: #d6e1fa;
-  --color-brand-sky-blue: #4687db;
-  --color-cornflower-yellow: #fcefa4;
+  /* Content surface */
+  --color-contentSurface-neutral--muted: var(--token-color-stone-97);
+  --color-contentSurface-neutral--default: var(--token-color-stone-98);
+  --color-contentSurface-neutral--prominent: var(--token-color-stone-99);
+  --color-contentSurface-primary--muted: var(--token-color-blue-97);
+  --color-contentSurface-primary--default: var(--token-color-blue-95);
+  --color-contentSurface-primary--prominent: var(--token-color-blue-91);
+  --color-contentSurface-primaryContrast--muted: var(--token-color-blue-52);
+  --color-contentSurface-primaryContrast--default: var(--token-color-blue-42);
+  --color-contentSurface-primaryContrast--prominent: var(--token-color-blue-30);
+  --color-contentSurface-secondary--muted: var(--token-color-pink-97);
+  --color-contentSurface-secondary--default: var(--token-color-pink-95);
+  --color-contentSurface-secondary--prominent: var(--token-color-pink-87);
+  --color-contentSurface-tertiary--muted: var(--token-color-green-98);
+  --color-contentSurface-tertiary--default: var(--token-color-green-95);
+  --color-contentSurface-tertiary--prominent: var(--token-color-green-90);
+
+  --color-onSurface-coolNeutral--default: var(--token-color-blue-30);
+  --color-onSurface-coolNeutral--muted: var(--token-color-slate-62);
+  --color-onSurface-warmNeutral--default: var(--token-color-brown-46);
+  --color-onSurface-warmNeutral--muted: var(--token-color-brown-58);
+  --color-onSurface-primary--default: var(--token-color-blue-30);
+  --color-onSurface-primary--muted: var(--token-color-blue-55);
+  --color-onSurface-primaryContrast--default: var(--token-color-stone-98);
+  --color-onSurface-primaryContrast--muted: var(--token-color-stone-98);
+  --color-onSurface-secondary--default: var(--token-color-blue-30);
+  --color-onSurface-secondary--muted: var(--token-color-blue-55);
+  --color-onSurface-tertiary--default: var(--token-color-blue-30);
+  --color-onSurface-tertiary--muted: var(--token-color-blue-55);
+
+  --color-line-primary--muted: var(--token-color-blue-91);
+  --color-line-primary--default: var(--token-color-blue-89);
+  --color-line-primary--prominent: var(--token-color-blue-79);
+  --color-line-neutral--muted: var(--token-color-brown-90);
+  --color-line-neutral--default: var(--token-color-brown-80);
+  --color-line-neutral--prominent: var(--token-color-brown-70);
+  --color-line-secondary--muted: var(--token-color-pink-92);
+  --color-line-secondary--default: var(--token-color-pink-87);
+  --color-line-secondary--prominent: var(--token-color-pink-80);
+  --color-line-tertiary--muted: var(--token-color-green-90);
+  --color-line-tertiary--default: var(--token-color-green-87);
+  --color-line-tertiary--prominent: var(--token-color-green-79);
+  --color-line-brand--accent: var(--token-color-cornflower-yellow);
 }

@@ -1,4 +1,10 @@
 ---
+import {
+  type PaddingSetting,
+  paddingXSettingMap,
+  paddingYSettingMap,
+} from "@ui/utils/styles";
+
 type ContainerSize = 1 | 2;
 const containerSizeToTWClass: Record<ContainerSize, string> = {
   1: "max-w-4xl",
@@ -7,14 +13,20 @@ const containerSizeToTWClass: Record<ContainerSize, string> = {
 
 interface Props {
   size?: ContainerSize;
-  padded?: boolean;
+  paddingX?: PaddingSetting;
+  paddingY?: PaddingSetting;
 }
 
-const { size, padded } = Astro.props;
+const { size, paddingX, paddingY } = Astro.props;
 ---
 
 <div
-  class:list={[containerSizeToTWClass[size ?? 1], "mx-auto", padded && "px-3"]}
+  class:list={[
+    "mx-auto",
+    containerSizeToTWClass[size ?? 1],
+    paddingX ? paddingXSettingMap[paddingX] : null,
+    paddingY ? paddingYSettingMap[paddingY] : null,
+  ]}
 >
   <slot />
 </div>

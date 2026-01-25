@@ -1,37 +1,27 @@
 ---
-import designTokens from "@styles/semantic-token-map";
-
-type TextSize = 1 | 2 | 3;
-const textSizeToClass: Record<TextSize, string> = {
-  1: "",
-  2: "text-xl font-bold",
-  3: "text-2xl",
-};
-
-const pageLinkVariants = {
-  primary: [
-    designTokens.color.text.onContentSurface.primary.default,
-    designTokens.color.decoration.onContentSurface.primary.interactive,
-  ],
-  neutral: [],
-} as const;
-
-type PageLinkVariant = keyof typeof pageLinkVariants;
+import {
+  textColorMap,
+  textPresetClassMap,
+  type OnSurfaceColorVariant,
+  type TextPreset,
+} from "@ui/utils/styles";
 
 interface Props {
   to: string;
   label: string;
-  variant: PageLinkVariant;
-  size?: TextSize;
+  variant?: TextPreset;
+  color?: OnSurfaceColorVariant;
   external?: boolean;
+  textAlign?: "center" | "left";
 }
 
 const {
   to,
   label,
-  variant,
-  size = 1,
+  variant = "body-1",
+  color = "primary",
   external = false,
+  textAlign,
   ...attrs
 } = Astro.props;
 
@@ -41,20 +31,40 @@ const externalLinkAttrs = external
       target: "_blank",
     }
   : {};
+
+const decorationColorMap: Record<OnSurfaceColorVariant, string> = {
+  primary:
+    "decoration-onSurface-primary--default/40 hover:decoration-onSurface-primary--default",
+  secondary:
+    "decoration-onSurface-secondary--default/40 hover:decoration-onSurface-secondary--default",
+  tertiary:
+    "decoration-onSurface-tertiary--default/40 hover:decoration-onSurface-tertiary--default",
+  coolNeutral:
+    "decoration-onSurface-coolNeutral--muted/50 hover:decoration-onSurface-coolNeutral--muted",
+  warmNeutral:
+    "decoration-onSurface-warmNeutral--default/40 hover:decoration-onSurface-warmNeutral--default",
+  primaryContrast:
+    "decoration-onSurface-primaryContrast--default/40 hover:decoration-onSurface-primaryContrast--default",
+};
+
+const decorationStyle =
+  variant === "subtitle-1" ? "decoration-solid" : "decoration-dotted";
 ---
 
 <a
   class:list={[
-    "underline decoration-dotted",
-    textSizeToClass[size],
-    designTokens.decoration.textUnderlineOffset.default,
-    "transition",
-    designTokens.motion.transition.default,
-    pageLinkVariants[variant],
-    "font-serif",
+    decorationStyle,
+    textPresetClassMap[variant],
+    "underline underline-offset-2",
+    decorationColorMap[color],
+    "transition duration-300",
+    variant === "subtitle-1"
+      ? textColorMap.coolNeutral.muted
+      : textColorMap[color]["default"],
+    textAlign && "text-center inline-block",
   ]}
   href={to}
-  set:text={label}
   {...attrs}
   {...externalLinkAttrs}
+  set:text={label}
 />

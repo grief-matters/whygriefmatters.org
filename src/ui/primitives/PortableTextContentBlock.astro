@@ -3,12 +3,17 @@ import sanitizeHtml, { type AllowedAttribute } from "sanitize-html";
 import { toHTML } from "@portabletext/to-html";
 import { clsx } from "clsx";
 
-import designTokens from "@styles/semantic-token-map";
 import type { PortableText } from "@content/model/portableText";
+import {
+  textColorMap,
+  textPresetClassMap,
+  type TextPreset,
+} from "@ui/utils/styles";
+import Stack from "./Stack.astro";
 
 interface Props {
   portableText: PortableText;
-  emphasized?: boolean;
+  variant?: Extract<TextPreset, "body-1" | "body-2">;
   textAlign?: "center" | "left"; // Not doing anything specific with left as that's the default in Tailwind
 }
 
@@ -38,10 +43,8 @@ const permittedAttributesByElement: Partial<
 const classListMap = {
   block: {
     normal: clsx([
-      "font-serif",
-      "leading-relaxed",
-      "mb-6",
-      props.emphasized && designTokens.typography.size.body.prominent,
+      textPresetClassMap[props.variant ?? "body-1"],
+      textColorMap.primary.default,
       props.textAlign === "center" && "text-center",
     ]),
   },
@@ -95,11 +98,11 @@ const safeHtmlString = sanitizeHtml(htmlString, {
     permittedElements.map((el) => [
       el,
       permittedAttributesByElement[el] ?? [...defaultPermittedAttributes],
-    ])
+    ]),
   ),
 });
 ---
 
-<div class="*:last:mb-0">
+<Stack>
   <Fragment set:html={safeHtmlString} />
-</div>
+</Stack>

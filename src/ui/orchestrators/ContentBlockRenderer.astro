@@ -4,8 +4,8 @@ import { getEntry } from "astro:content";
 
 import Container from "@ui/primitives/Container.astro";
 import FeaturedWebsite from "@ui/composites/featured-resources/FeaturedWebsite.astro";
-import Heading from "@ui/primitives/Heading.astro";
 import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
+import Typography from "@ui/primitives/Typography.astro";
 import SanityImage from "@ui/primitives/SanityImage.astro";
 
 import DynamicPageLink from "./DynamicPageLink.astro";
@@ -28,21 +28,27 @@ const contentBlock = await getEntry(contentBlockRef);
   contentBlock.data.content.map((contentItem) => {
     switch (contentItem.contentType) {
       case "headingText":
-        return <Heading as="h2" size={2} text={contentItem.text} />;
+        return (
+          <Typography as="h2" variant="title-2" textAlign="center">
+            {contentItem.text}
+          </Typography>
+        );
       case "richTextContentBlock":
         return (
-          <Container padded>
+          <Container paddingX={1}>
             <PortableTextContentBlock
               textAlign={textAlign}
               portableText={contentItem.portableText}
-              emphasized={contentItem.emphasized}
+              variant={contentItem.emphasized ? "body-2" : "body-1"}
             />
           </Container>
         );
       case "richTextWithHeading":
         return (
-          <Container padded>
-            <Heading as="h3" size={1} text={contentItem.headingText} />
+          <Container>
+            <Typography as="h3" variant="title-3" textAlign="center">
+              {contentItem.headingText}
+            </Typography>
             <PortableTextContentBlock
               textAlign={textAlign}
               portableText={contentItem.portableText}
@@ -68,7 +74,7 @@ const contentBlock = await getEntry(contentBlockRef);
         );
       case "featuredResource":
         return (
-          <Container padded>
+          <Container>
             <FeaturedResourceRenderer
               resourceRef={contentItem.refId}
               resourceType={contentItem.refType}
@@ -114,13 +120,13 @@ const contentBlock = await getEntry(contentBlockRef);
         );
       case "featuredWebsite":
         return (
-          <Container padded>
+          <Container>
             <FeaturedWebsite websiteRef={contentItem.refId} />
           </Container>
         );
       case "featuredWebsites":
         return (
-          <Container padded size={2}>
+          <Container size={2}>
             {contentItem.websites.map((w) => (
               <FeaturedWebsite websiteRef={w} />
             ))}
@@ -134,19 +140,21 @@ const contentBlock = await getEntry(contentBlockRef);
         return <div>[Still to implement `{contentItem.contentType}`]</div>;
       case "resourcePageLink":
         return (
-          <Container padded>
-            <DynamicPageLink
-              linkType={contentItem.contentType}
-              label={contentItem.label}
-              categoryRef={contentItem.category}
-              populationRef={contentItem.population ?? undefined}
-              resourceTypes={contentItem.resourceTypes ?? undefined}
-            />
+          <Container>
+            <div class={textAlign === "center" ? "text-center" : ""}>
+              <DynamicPageLink
+                linkType={contentItem.contentType}
+                label={contentItem.label}
+                categoryRef={contentItem.category}
+                populationRef={contentItem.population ?? undefined}
+                resourceTypes={contentItem.resourceTypes ?? undefined}
+              />
+            </div>
           </Container>
         );
       case "categoryPageLink":
         return (
-          <Container padded>
+          <Container>
             <DynamicPageLink
               linkType={contentItem.contentType}
               label={contentItem.label}
@@ -156,7 +164,7 @@ const contentBlock = await getEntry(contentBlockRef);
         );
       case "pageLinks":
         return (
-          <Container padded>
+          <Container>
             <PageLinksRenderer
               emphasized={contentItem.emphasized}
               links={contentItem.links}
@@ -166,7 +174,7 @@ const contentBlock = await getEntry(contentBlockRef);
       default:
         const _exhaustiveCheck: never = contentItem;
         throw new Error(
-          `[ContentBlockRenderer] Unknown content type in data entry: \n${contentItem}`
+          `[ContentBlockRenderer] Unknown content type in data entry: \n${contentItem}`,
         );
     }
   })

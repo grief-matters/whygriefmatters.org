@@ -1,7 +1,7 @@
 ---
-import designTokens from "@styles/semantic-token-map";
-import Text from "@ui/primitives/Text.astro";
-import { isLink, isNonEmptyString, type Link } from "@ui/utils";
+import LinkComponent from "@ui/primitives/Link.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import { isLink, isNonEmptyString, type Link } from "@ui/utils/helpers";
 
 interface Props {
   source: string | Link;
@@ -11,26 +11,20 @@ interface Props {
 const { source, prefaceTextOverride } = Astro.props;
 ---
 
-<Text as="p" size="muted">
+<Typography as="p" variant="subtitle-1">
   {isNonEmptyString(prefaceTextOverride) ? `${prefaceTextOverride} ` : "From "}
   {
     isLink(source) ? (
       // Render a link if we managed to process one
-      <a
-        class:list={[
-          "underline underline-offset-3",
-          designTokens.color.decoration.onContentSurface.neutralAlt.interactive,
-          "transition",
-          designTokens.motion.transition.default,
-        ]}
-        href={source.url}
-        rel="noopener"
-        target="_blank"
-      >
-        {source.label}
-      </a>
+      <LinkComponent
+        external
+        to={source.url}
+        label={source.label}
+        variant="subtitle-1"
+        color="coolNeutral"
+      />
     ) : (
       source
     )
   }
-</Text>
+</Typography>

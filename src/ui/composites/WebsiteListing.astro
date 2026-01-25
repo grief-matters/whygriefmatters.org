@@ -1,5 +1,5 @@
 ---
-import { getLocaleDateStringFromIsoString } from "@ui/utils";
+import { getLocaleDateStringFromIsoString } from "@ui/utils/helpers";
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 const props = Astro.props;
 
 const lastReviewedDate = getLocaleDateStringFromIsoString(
-  props.entry.data.updatedAt
+  props.entry.data.updatedAt,
 );
 ---
 

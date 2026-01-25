@@ -6,10 +6,10 @@ import type { BasicInternetResourceCollectionKey } from "@content/collections";
 import {
   getSourceFromResourceUrl,
   getSourceLinkFromWebsiteRef,
-} from "@ui/utils";
+} from "@ui/utils/helpers";
 import Card from "@ui/composites/Card.astro";
 import ResourceSource from "../ResourceSource.astro";
-import Text from "@ui/primitives/Text.astro";
+import Typography from "@ui/primitives/Typography.astro";
 
 interface Props {
   resourceRef: ReferenceDataEntry<BasicInternetResourceCollectionKey, string>;
@@ -20,7 +20,7 @@ const props = Astro.props;
 const { data } = await getEntry(props.resourceRef);
 if (!data) {
   throw new Error(
-    `[BasicFeaturedResource] could not get resource from reference: ${props.resourceRef.id}`
+    `[BasicFeaturedResource] could not get resource from reference: ${props.resourceRef.id}`,
   );
 }
 
@@ -30,17 +30,10 @@ const source = data.sourceWebsiteId
 
 const safeSource = source ?? getSourceFromResourceUrl(data.resourceUrl);
 
-const image = data.image
-  ? { image: data.image.image, altText: "" }
-  : null;
+const image = data.image ? { image: data.image.image, altText: "" } : null;
 ---
 
-<Card
-  image={image}
-  title={data.title}
-  titleHref={data.resourceUrl}
-  external
->
+<Card image={image} title={data.title} titleHref={data.resourceUrl} external>
   {safeSource && <ResourceSource source={safeSource} />}
-  {data.description && <Text>{data.description}</Text>}
+  {data.description && <Typography>{data.description}</Typography>}
 </Card>

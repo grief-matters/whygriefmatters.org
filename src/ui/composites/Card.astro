@@ -1,13 +1,11 @@
 ---
 import type { SanityImage } from "@content/model/image";
 
-import Surface from "@ui/primitives/Surface.astro";
+import ContentSurface from "@ui/primitives/ContentSurface.astro";
 import SanityImagePrimitive from "@ui/primitives/SanityImage.astro";
 import Link from "@ui/primitives/Link.astro";
-import designTokens, {
-  type ColorVariant,
-  type Prominence,
-} from "@styles/semantic-token-map";
+import type { ColorVariant, Prominence } from "@ui/utils/styles";
+import Typography from "@ui/primitives/Typography.astro";
 
 interface Props {
   variant?: ColorVariant;
@@ -27,33 +25,29 @@ const {
   titleHref,
   external = false,
 } = Astro.props;
+
+const colorVariant = variant === "neutral" ? "coolNeutral" : "primary";
 ---
 
-<Surface
-  as="article"
-  variant={variant}
-  prominence={prominence}
-  class:list={[designTokens.shadow.default]}
->
+<ContentSurface as="article" variant={variant} prominence={prominence}>
   {image && <SanityImagePrimitive image={image} />}
 
   <div class="pt-3 px-4 pb-5">
-    <h3 class="text-balance">
-      {
-        titleHref ? (
-          <Link
-            to={titleHref}
-            label={title}
-            variant="primary"
-            size={2}
-            external={external}
-          />
-        ) : (
-          <span class="text-2xl font-bold font-serif">{title}</span>
-        )
-      }
-    </h3>
-
+    {
+      titleHref ? (
+        <Link
+          to={titleHref}
+          label={title}
+          external={external}
+          variant="title-3"
+          color={colorVariant}
+        />
+      ) : (
+        <Typography as="h3" variant="title-3" color={colorVariant}>
+          {title}
+        </Typography>
+      )
+    }
     <slot />
   </div>
-</Surface>
+</ContentSurface>

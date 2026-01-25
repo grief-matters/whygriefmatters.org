@@ -2,10 +2,10 @@
 import type { CollectionEntry } from "astro:content";
 
 import type { BasicInternetResourceCollectionKey } from "@content/collections";
-import { getLocaleDateStringFromIsoString, isLink } from "@ui/utils";
+import { getLocaleDateStringFromIsoString, isLink } from "@ui/utils/helpers";
 import { getEntry } from "astro:content";
 
-import { getSourceFromResourceUrl, type Link } from "@ui/utils";
+import { getSourceFromResourceUrl, type Link } from "@ui/utils/helpers";
 
 interface Props {
   entry: CollectionEntry<BasicInternetResourceCollectionKey>;

@@ -2,7 +2,7 @@
 import {
   getSourceFromResourceUrl,
   getSourceLinkFromWebsiteRef,
-} from "@ui/utils";
+} from "@ui/utils/helpers";
 import type { ReferenceDataEntry } from "astro:content";
 import { getEntry } from "astro:content";
 import ResourceSource from "../ResourceSource.astro";
@@ -17,7 +17,7 @@ const props = Astro.props;
 const { data } = await getEntry(props.appRef);
 if (!data) {
   throw new Error(
-    `[FeaturedApp] could not get 'app' from reference: ${props.appRef.id}`
+    `[FeaturedApp] could not get 'app' from reference: ${props.appRef.id}`,
   );
 }
 

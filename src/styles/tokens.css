@@ -1,0 +1,43 @@
+:root {
+  /* 'primitive' tokens referencing raw values */
+  --token-color-blue-25: #23375c;
+  --token-color-blue-30: #173d85;
+  --token-color-blue-42: #3059a6;
+  --token-color-blue-52: #4270c8;
+  --token-color-blue-55: #5e80ba;
+  --token-color-blue-79: #99b8fa;
+  --token-color-blue-89: #bccffa;
+  --token-color-blue-91: #d6e1fa;
+  --token-color-blue-95: #e9effc;
+  --token-color-blue-97: #f1f5fe;
+  --token-color-green-79: #c0d3c0;
+  --token-color-green-87: #d6e5d6;
+  --token-color-green-90: #e0ebe0;
+  --token-color-green-95: #f1f4f1;
+  --token-color-green-98: #f8faf8;
+  --token-color-pink-80: #fd9ab1;
+  --token-color-pink-87: #f5c5d0;
+  --token-color-pink-92: #f7dfe4;
+  --token-color-pink-95: #f7eef0;
+  --token-color-pink-97: #faf5f6;
+  --token-color-brown-40: #696363;
+  --token-color-brown-46: #7b6f6f;
+  --token-color-brown-58: #9c8b8b;
+  --token-color-brown-70: #b9acac;
+  --token-color-brown-80: #d1c7c7;
+  --token-color-brown-90: #e8e3e3;
+  --token-color-stone-96: #f5f3f3;
+  --token-color-stone-97: #f8f7f7;
+  --token-color-stone-98: #fafafa;
+  --token-color-stone-99: #fcfcfc;
+  --token-color-slate-62: #909aaa;
+  --token-color-aqua-70: #69fafc;
+  --token-color-aqua-80: #9bfcfd;
+  --token-color-aqua-90: #cdfdfe;
+
+  /* Brand colors */
+  --token-color-brand-dark-blue: #173d85;
+  --token-color-brand-powder-blue: #d6e1fa;
+  --token-color-brand-sky-blue: #4687db;
+  --token-color-cornflower-yellow: #fcefa4;
+}

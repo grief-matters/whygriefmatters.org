@@ -1,23 +1,25 @@
 ---
-import designTokens from "@styles/semantic-token-map";
 interface Props {
   to: string;
   label: string;
 }
+
 const { to, label } = Astro.props;
 ---
 
 <a
   class:list={[
-    designTokens.color.contentSurface.neutral.prominent,
+    "text-onSurface-primary--default",
+    "bg-contentSurface-neutral--prominent",
     "inline-block",
     "py-1 px-3",
     "italic font-semibold text-balance",
-    "border-b-3",
-    designTokens.color.border.tertiary.interactive,
-    designTokens.shadow.interactive,
-    designTokens.motion.transition.default,
+    "border-b-3 border-line-secondary--default hover:border-line-secondary--prominent",
+    "shadow-md hover:shadow-lg",
+    "duration-300",
     "font-serif",
   ]}
-  href={to}>{label}</a
+  href={to}
 >
+  {label}
+</a>

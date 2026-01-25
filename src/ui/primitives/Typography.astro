@@ -1,0 +1,45 @@
+---
+import type { Polymorphic } from "astro/types";
+
+import {
+  textColorMap,
+  textPresetClassMap,
+  type OnSurfaceColorVariant,
+  type TextPreset,
+  type TextProminence,
+} from "../utils/styles";
+
+type TextElement = "p" | "span" | "h1" | "h2" | "h3" | "h4";
+
+type TextProps = {
+  as: TextElement;
+  variant?: TextPreset;
+  prominence?: TextProminence;
+  color?: OnSurfaceColorVariant;
+  textAlign?: "center" | "left";
+};
+
+type Props = Polymorphic<TextProps>;
+
+const {
+  as: Tag = "p",
+  textAlign = "left",
+  variant = "body-1",
+  prominence = "default",
+  color = "primary",
+  ...attrs
+} = Astro.props;
+
+const variantClasses = [
+  textPresetClassMap[variant],
+  variant === "subtitle-1"
+    ? textColorMap.coolNeutral.muted
+    : textColorMap[color][prominence],
+  Tag.startsWith("h") ? "leading-8 text-balance" : "leading-7",
+  textAlign === "center" ? "text-center" : null,
+];
+---
+
+<Tag class:list={variantClasses} {...attrs}>
+  <slot />
+</Tag>

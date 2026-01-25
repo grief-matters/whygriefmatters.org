@@ -2,13 +2,12 @@
 import { getEntry } from "astro:content";
 
 import Shell from "@ui/layouts/Shell.astro";
-import Section from "@ui/primitives/Section.astro";
+import LayoutSurface, {
+  type LayoutSurfaceVariantKey,
+} from "@ui/primitives/LayoutSurface.astro";
 import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
 import { getOrganization } from "@content/loaders/organizationLoader";
 import ContentBlockRenderer from "@ui/orchestrators/ContentBlockRenderer.astro";
-import designTokens, {
-  type LayoutSurfaceColor,
-} from "@styles/semantic-token-map";
 import Stack from "@ui/primitives/Stack.astro";
 
 const org = await getOrganization();
@@ -32,12 +31,6 @@ const logoUrl = org.logos.onDark
   : null;
 
 const bgVar = `url(${heroImgUrl})`;
-
-const layoutSurfaceBgValues: Array<keyof LayoutSurfaceColor["neutral"]> = [
-  "default",
-  "muted",
-  "mutedAlt",
-];
 ---
 
 <Shell>
@@ -62,7 +55,7 @@ const layoutSurfaceBgValues: Array<keyof LayoutSurfaceColor["neutral"]> = [
       }
       <p
         class:list={[
-          designTokens.color.text.onDark,
+          "text-onSurface-primaryContrast--default",
           "font-serif italic lowercase",
           "text-sm sm:text-base 2xl:text-2xl",
           `before:content-["..."]`,
@@ -76,15 +69,16 @@ const layoutSurfaceBgValues: Array<keyof LayoutSurfaceColor["neutral"]> = [
   </div>
   {
     homePageEntry.data.contentBlocks.map((block, i) => (
-      <Section
-        backgroundColor={(t) =>
-          t.neutral[layoutSurfaceBgValues[i % layoutSurfaceBgValues.length]]
-        }
+      <LayoutSurface
+        as="section"
+        variant="neutral"
+        variantKey={((i % 4) + 1) as LayoutSurfaceVariantKey}
+        paddingY={2}
       >
         <Stack>
           <ContentBlockRenderer contentBlockRef={block} />
         </Stack>
-      </Section>
+      </LayoutSurface>
     ))
   }
 </Shell>

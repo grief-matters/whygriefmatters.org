@@ -1,0 +1,64 @@
+---
+import type { Polymorphic } from "astro/types";
+import type {
+  Prominence,
+  ProminenceMap,
+  SurfaceColorVariant,
+} from "@ui/utils/styles";
+
+type SurfaceElement = "div" | "article" | "aside" | "section";
+type ContentSurfaceVariant = SurfaceColorVariant | "featureCard";
+
+interface SurfaceOwnProps {
+  as: SurfaceElement;
+  variant?: ContentSurfaceVariant;
+  prominence?: Prominence;
+}
+
+const colorMap: Record<SurfaceColorVariant, ProminenceMap> = {
+  neutral: {
+    default: "bg-contentSurface-neutral--default",
+    muted: "bg-contentSurface-neutral--muted",
+    prominent: "bg-contentSurface-neutral--prominent",
+  },
+  primary: {
+    default: "bg-contentSurface-primary--default",
+    muted: "bg-contentSurface-primary--muted",
+    prominent: "bg-contentSurface-primary--prominent",
+  },
+  secondary: {
+    default: "bg-contentSurface-secondary--default",
+    muted: "bg-contentSurface-secondary--muted",
+    prominent: "bg-contentSurface-secondary--prominent",
+  },
+  tertiary: {
+    default: "bg-contentSurface-tertiary--default",
+    muted: "bg-contentSurface-tertiary--muted",
+    prominent: "bg-contentSurface-tertiary--prominent",
+  },
+  primaryContrast: {
+    default: "bg-contentSurface-primaryContrast--default",
+    muted: "bg-contentSurface-primaryContrast--muted",
+    prominent: "bg-contentSurface-primaryContrast--prominent",
+  },
+};
+
+type Props = Polymorphic<SurfaceOwnProps>;
+
+const {
+  as: Tag = "div",
+  variant = "neutral",
+  prominence = "default",
+  ...attrs
+} = Astro.props;
+
+const classes = [
+  variant === "featureCard"
+    ? colorMap.neutral.prominent
+    : colorMap[variant][prominence],
+];
+---
+
+<Tag class:list={classes} {...attrs}>
+  <slot />
+</Tag>

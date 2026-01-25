@@ -3,7 +3,7 @@ import { getEntry, type ReferenceDataEntry } from "astro:content";
 
 import type { InternetResourceType } from "@content/model/internetResource";
 
-import { isNonEmptyString } from "@ui/utils";
+import { isNonEmptyString } from "@ui/utils/helpers";
 
 import EmphasizedPageLink from "@ui/primitives/EmphasizedPageLink.astro";
 import Link from "@ui/primitives/Link.astro";
@@ -34,7 +34,7 @@ const urlParts: Array<string> = [];
 const category = await getEntry(props.categoryRef);
 if (!category) {
   throw new Error(
-    `[DynamicPageLink] Could not get category for: ${props.categoryRef.id}`
+    `[DynamicPageLink] Could not get category for: ${props.categoryRef.id}`,
   );
 }
 
@@ -44,7 +44,7 @@ if (props.linkType === "resourcePageLink" && props.populationRef) {
   const population = await getEntry(props.populationRef);
   if (!population) {
     throw new Error(
-      `[DynamicPageLink] Could not get population for: ${props.populationRef.id}`
+      `[DynamicPageLink] Could not get population for: ${props.populationRef.id}`,
     );
   }
 
@@ -58,7 +58,7 @@ const resolvedLabel =
 
 if (!isNonEmptyString(resolvedLabel)) {
   throw new Error(
-    `[DynamicPageLink] Could not generate label for: ${props.categoryRef.id}`
+    `[DynamicPageLink] Could not generate label for: ${props.categoryRef.id}`,
   );
 }
 
@@ -71,6 +71,6 @@ const url = `/${urlParts.join("/")}`;
   props.emphasized ? (
     <EmphasizedPageLink to={url} label={resolvedLabel} />
   ) : (
-    <Link variant="primary" to={url} label={resolvedLabel} />
+    <Link to={url} label={resolvedLabel} variant="body-2" />
   )
 }
