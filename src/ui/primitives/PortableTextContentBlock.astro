@@ -13,7 +13,7 @@ import Stack from "./Stack.astro";
 
 interface Props {
   portableText: PortableText;
-  variant?: Extract<TextPreset, "body-1" | "body-2">;
+  variant?: Extract<TextPreset, "body-1" | "body-2"> | "prominent-first";
   textAlign?: "center" | "left"; // Not doing anything specific with left as that's the default in Tailwind
 }
 
@@ -40,10 +40,15 @@ const permittedAttributesByElement: Partial<
   a: [...defaultPermittedAttributes, "href"],
 };
 
+// "body-2": "font-serif font-normal text-lg",
+// "body-1": "font-serif font-normal text-base",
+
 const classListMap = {
   block: {
     normal: clsx([
-      textPresetClassMap[props.variant ?? "body-1"],
+      props.variant === "prominent-first"
+        ? ["first:text-lg text-base font-serif font-normal"]
+        : textPresetClassMap[props.variant ?? "body-1"],
       textColorMap.primary.default,
       props.textAlign === "center" && "text-center",
     ]),
@@ -103,6 +108,6 @@ const safeHtmlString = sanitizeHtml(htmlString, {
 });
 ---
 
-<Stack>
+<Stack spacing={4}>
   <Fragment set:html={safeHtmlString} />
 </Stack>

@@ -6,28 +6,40 @@ import {
   type ReferenceDataEntry,
 } from "astro:content";
 
-import Shell from "@ui/layouts/Shell.astro";
 import {
   internetResourceCollectionKeys,
   type InternetResourceCollectionKey,
   type InternetResourceEntries,
 } from "@content/collections";
-import InternetResourceListingRenderer from "@ui/orchestrators/InternetResourceListingRenderer.astro";
-import startCase from "lodash/startCase";
-import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
+
+import Shell from "@ui/layouts/Shell.astro";
+import Slide from "@ui/layouts/slider/Slide.astro";
+import Slider from "@ui/layouts/slider/Slider.astro";
+
 import CategoryPopulationsNavigator from "@ui/composites/CategoryPopulationsNavigator.astro";
+
+import Container from "@ui/primitives/Container.astro";
+import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
+import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
+import Stack from "@ui/primitives/Stack.astro";
+import Typography from "@ui/primitives/Typography.astro";
+
+import CategoryPageHeader from "@ui/composites/CategoryPageHeader.astro";
+import FeaturedResourceRenderer from "@ui/orchestrators/FeaturedResourceRenderer.astro";
+import ResourceListingsOrchestrator from "@ui/orchestrators/ResourceListingsOrchestrator.astro";
 
 interface Props {
   categoryEntry: CollectionEntry<"categories">;
   internetResources: InternetResourceEntries;
   populations: Array<CollectionEntry<"populations">>;
+  resourceTypes: Array<InternetResourceCollectionKey>;
   parentCategory?: CollectionEntry<"categories">;
 }
 
 // Helper function to recursively get all descendant category IDs
 export function getAllDescendantCategoryIds(
   categoryId: string,
-  allCategories: Array<CollectionEntry<"categories">>
+  allCategories: Array<CollectionEntry<"categories">>,
 ): Set<string> {
   const categoryIds = new Set<string>([categoryId]);
 
@@ -39,7 +51,7 @@ export function getAllDescendantCategoryIds(
   for (const subcategoryRef of category.data.subcategories) {
     const descendantIds = getAllDescendantCategoryIds(
       subcategoryRef.id,
-      allCategories
+      allCategories,
     );
     descendantIds.forEach((id) => categoryIds.add(id));
   }
@@ -49,10 +61,10 @@ export function getAllDescendantCategoryIds(
 
 export async function getResourcesFor<K extends InternetResourceCollectionKey>(
   key: K,
-  categoryId: string
+  categoryId: string,
 ): Promise<Array<CollectionEntry<K>>> {
   const result = await getCollection(key, ({ data }) =>
-    data.categories.some((c) => c.id === categoryId)
+    data.categories.some((c) => c.id === categoryId),
   );
 
   return result;
@@ -64,13 +76,13 @@ export async function getStaticPaths() {
 
   for (const categoryEntry of categoryEntries) {
     const parentCategory = categoryEntries.find((entry) =>
-      entry.data.subcategories.map((c) => c.id).includes(categoryEntry.id)
+      entry.data.subcategories.map((c) => c.id).includes(categoryEntry.id),
     );
 
     // Get all category IDs including current and all descendants
     const allCategoryIds = getAllDescendantCategoryIds(
       categoryEntry.id,
-      categoryEntries
+      categoryEntries,
     );
 
     const internetResources: InternetResourceEntries = {};
@@ -82,11 +94,11 @@ export async function getStaticPaths() {
     for (const key of internetResourceCollectionKeys) {
       // const resourcesForKey = await getResourcesFor(key, categoryEntry.id);
       const resourcesForKey = await getCollection(key, ({ data }) =>
-        data.categories.some((c) => allCategoryIds.has(c.id))
+        data.categories.some((c) => allCategoryIds.has(c.id)),
       );
 
       resourcesForKey.forEach((r) =>
-        r.data.populations.forEach((p) => (populationMap[p.id] = p))
+        r.data.populations.forEach((p) => (populationMap[p.id] = p)),
       );
 
       if (resourcesForKey.length > 0) {
@@ -99,6 +111,8 @@ export async function getStaticPaths() {
 
     const populations = await getEntries(Object.values(populationMap));
 
+    const resourceTypes = Object.keys(internetResources);
+
     staticPaths.push({
       params: {
         category: categoryEntry.data.slug,
@@ -106,6 +120,7 @@ export async function getStaticPaths() {
       props: {
         categoryEntry,
         internetResources,
+        resourceTypes,
         populations,
         parentCategory,
       },
@@ -116,81 +131,81 @@ export async function getStaticPaths() {
 }
 
 const props = Astro.props;
-
-let resolvedSubcategories: Array<CollectionEntry<"categories">> | null = null;
-if (props.categoryEntry.data.subcategories.length > 0) {
-  const c = await getEntries(props.categoryEntry.data.subcategories);
-  resolvedSubcategories = c;
-}
 ---
 
 <Shell>
-  <!-- Page Header Content -->
-  <header>
-    <h1>
-      {props.categoryEntry.data.displayTitle ?? props.categoryEntry.data.title}
-    </h1>
-    {
-      props.categoryEntry.data.shortDescription && (
-        <p>{props.categoryEntry.data.shortDescription}</p>
-      )
-    }
-    {
-      resolvedSubcategories !== null && resolvedSubcategories?.length > 0 && (
-        <nav>
-          <p>{"Explore further:"}</p>
-          <ul>
-            {resolvedSubcategories.map((c) => (
-              <li>
-                <a href={`/${c.data.slug}`}>{c.data.title}</a>
-              </li>
-            ))}
-          </ul>
-          {props.parentCategory && (
-            <p>
-              {"Part of "}
-              <a href={`/${props.parentCategory.data.slug}`}>
-                {props.parentCategory.data.displayTitle ??
-                  props.parentCategory.data.title}
-              </a>
-            </p>
+  <CategoryPageHeader
+    categoryEntryData={props.categoryEntry.data}
+    parentCategory={props.parentCategory}
+  />
+
+  {/* Category Description */}
+  {
+    props.categoryEntry.data.description && (
+      <LayoutSurface paddingY={6}>
+        <Container paddingX={4}>
+          {props.categoryEntry.data.description && (
+            <PortableTextContentBlock
+              variant="prominent-first"
+              textAlign="center"
+              portableText={props.categoryEntry.data.description}
+            />
           )}
-        </nav>
-      )
-    }
-  </header>
-  <div>
-    {
-      props.categoryEntry.data.description && (
-        <PortableTextContentBlock
-          portableText={props.categoryEntry.data.description}
+        </Container>
+      </LayoutSurface>
+    )
+  }
+
+  {/* Underserved Populations */}
+  {
+    props.populations.length > 0 && (
+      <LayoutSurface paddingX={2} paddingY={4}>
+        <Container>
+          <CategoryPopulationsNavigator
+            category={props.categoryEntry}
+            populations={props.populations}
+          />
+        </Container>
+      </LayoutSurface>
+    )
+  }
+
+  {/* Featured Resources */}
+  {
+    (props.categoryEntry.data.featuredResources ?? []).length > 0 && (
+      <LayoutSurface paddingY={6} variantKey={4}>
+        <Container>
+          <Typography
+            textAlign="center"
+            marginBottom={2}
+            as="h2"
+            variant="title-2"
+            set:text="Featured Resources"
+          />
+        </Container>
+        <Slider>
+          {props.categoryEntry.data.featuredResources.map((resource) => (
+            <Slide paddingX={1} paddingY={4}>
+              <FeaturedResourceRenderer
+                fullHeight
+                resourceRef={resource.refId}
+                resourceType={resource.refType}
+              />
+            </Slide>
+          ))}
+        </Slider>
+      </LayoutSurface>
+    )
+  }
+
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <Container>
+      <Stack spacing={5}>
+        <ResourceListingsOrchestrator
+          internetResources={props.internetResources}
+          resourceTypes={props.resourceTypes}
         />
-      )
-    }
-    {
-      props.populations.length > 0 && (
-        <CategoryPopulationsNavigator
-          category={props.categoryEntry}
-          populations={props.populations}
-        />
-      )
-    }
-  </div>
-  <section>
-    {/* TODO - featured resources */}
-  </section>
-  <section>
-    {
-      Object.entries(props.internetResources).map(
-        ([resourceType, resourceEntries]) => (
-          <div>
-            <h2>{startCase(resourceType)}</h2>
-            {resourceEntries.map((entry) => (
-              <InternetResourceListingRenderer entry={entry} />
-            ))}
-          </div>
-        )
-      )
-    }
-  </section>
+      </Stack>
+    </Container>
+  </LayoutSurface>
 </Shell>

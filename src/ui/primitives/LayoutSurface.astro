@@ -1,21 +1,27 @@
 ---
 import type { Polymorphic } from "astro/types";
+import { type SurfaceColorVariant } from "@ui/utils/styles";
 import {
   paddingXSettingMap,
   paddingYSettingMap,
-  type PaddingSetting,
-  type SurfaceColorVariant,
-} from "@ui/utils/styles";
+  type SpaceSetting,
+} from "@ui/utils/spacing";
 
-type SurfaceElement = "div" | "article" | "aside" | "section";
+type SurfaceElement =
+  | "div"
+  | "article"
+  | "aside"
+  | "section"
+  | "header"
+  | "footer";
 export type LayoutSurfaceVariantKey = 1 | 2 | 3 | 4;
 
 interface SurfaceOwnProps {
   as: SurfaceElement;
   variant?: SurfaceColorVariant;
   variantKey?: LayoutSurfaceVariantKey;
-  paddingX?: PaddingSetting;
-  paddingY?: PaddingSetting;
+  paddingX?: SpaceSetting;
+  paddingY?: SpaceSetting;
 }
 
 type Props = Polymorphic<SurfaceOwnProps>;

@@ -6,6 +6,8 @@ export const textPresets = [
   "body-2",
   "body-1",
   "subtitle-1",
+  "button-1",
+  "button-2",
 ] as const;
 
 export const textPresetClassMap: Record<TextPreset, string> = {
@@ -16,6 +18,8 @@ export const textPresetClassMap: Record<TextPreset, string> = {
   "body-2": "font-serif font-normal text-lg",
   "body-1": "font-serif font-normal text-base",
   "subtitle-1": "font-sans-b font-normal text-sm",
+  "button-1": "font-sans-a font-bold text-base",
+  "button-2": "font-serif font-bold text-base",
 } as const;
 
 export const colorVariants = [
@@ -25,6 +29,7 @@ export const colorVariants = [
   "tertiary",
   "primaryContrast",
 ] as const;
+
 export type ColorVariant = (typeof colorVariants)[number];
 
 export type SurfaceColorVariant = ColorVariant;
@@ -71,17 +76,3 @@ export const textColorMap: Record<OnSurfaceColorVariant, TextProminenceMap> = {
 };
 
 export type TextProminence = Exclude<Prominence, "prominent">;
-
-export type PaddingSetting = 1 | 2 | 3;
-
-export const paddingYSettingMap: Record<PaddingSetting, string> = {
-  1: "py-3",
-  2: "py-5",
-  3: "py-8",
-};
-
-export const paddingXSettingMap: Record<PaddingSetting, string> = {
-  1: "px-3",
-  2: "",
-  3: "",
-};

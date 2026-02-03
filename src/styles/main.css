@@ -61,6 +61,8 @@
   --color-line-neutral--muted: var(--token-color-brown-90);
   --color-line-neutral--default: var(--token-color-brown-80);
   --color-line-neutral--prominent: var(--token-color-brown-70);
+  --color-line-coolNeutral--muted: var(--token-color-slate-95);
+  --color-line-coolNeutral--default: var(--token-color-slate-88);
   --color-line-secondary--muted: var(--token-color-pink-92);
   --color-line-secondary--default: var(--token-color-pink-87);
   --color-line-secondary--prominent: var(--token-color-pink-80);

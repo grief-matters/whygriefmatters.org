@@ -1,11 +1,19 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
-import type { BasicInternetResourceCollectionKey } from "@content/collections";
+import {
+  collectionKeyToResourceTypeMap,
+  type BasicInternetResourceCollectionKey,
+} from "@content/collections";
 import { getLocaleDateStringFromIsoString, isLink } from "@ui/utils/helpers";
 import { getEntry } from "astro:content";
 
 import { getSourceFromResourceUrl, type Link } from "@ui/utils/helpers";
+import Typography from "@ui/primitives/Typography.astro";
+import LinkComp from "@ui/primitives/Link.astro";
+import Stack from "@ui/primitives/Stack.astro";
+import Icon from "@ui/primitives/Icon.astro";
+import { resourceTypeIconMap } from "@ui/utils/icons";
 
 interface Props {
   entry: CollectionEntry<BasicInternetResourceCollectionKey>;
@@ -14,7 +22,7 @@ interface Props {
 const props = Astro.props;
 
 const lastReviewedDate = getLocaleDateStringFromIsoString(
-  props.entry.data.updatedAt
+  props.entry.data.updatedAt,
 );
 
 let source: Link | null = null;
@@ -28,37 +36,65 @@ if (props.entry.data.sourceWebsiteId) {
 
 const processedSource =
   source ?? getSourceFromResourceUrl(props.entry.data.resourceUrl);
+
+const iconConfig =
+  resourceTypeIconMap[collectionKeyToResourceTypeMap[props.entry.collection]];
 ---
 
 <article>
-  <header>
-    <h3>{props.entry.data.title}</h3>
-    {
-      processedSource !== null && (
-        <p>
-          {"From "}
-          {isLink(processedSource) ? (
-            // Render a link if we managed to process one
-            <a href={processedSource.url} rel="noopener" target="_blank">
-              {processedSource.label}
-            </a>
-          ) : (
-            // Render just text if we fail to get a linkable source
-            <p>here</p>
-            <span>{processedSource}</span>
-          )}
-        </p>
-      )
-    }
-
-    {
-      lastReviewedDate && (
-        <p>
-          {"Last Reviewed "}
-          <time datetime={props.entry.data.updatedAt}>{lastReviewedDate}</time>
-        </p>
-      )
-    }
-  </header>
-  <p>{props.entry.data.description}</p>
+  <Stack as="header" reverse>
+    <Stack spacing={2} direction="horizontal">
+      <LinkComp
+        external
+        variant="title-4"
+        to={props.entry.data.resourceUrl}
+        label={props.entry.data.title}
+      />
+      <Icon
+        size={1}
+        color="primary"
+        getIcon={(icons) => icons.arrowTopRightOnSquare}
+      />
+    </Stack>
+    <Stack direction="horizontal">
+      {
+        processedSource !== null && (
+          <>
+            <Icon
+              color={iconConfig.colorVariant}
+              getIcon={() => iconConfig.icon}
+              size={1}
+            />
+            <Typography variant="subtitle-1">
+              {"From "}
+              {isLink(processedSource) ? (
+                // Render a link if we managed to process one
+                <LinkComp
+                  external
+                  variant="subtitle-1"
+                  to={processedSource.url}
+                  label={processedSource.label}
+                />
+              ) : (
+                // Render just text if we fail to get a linkable source
+                <span>{processedSource}</span>
+              )}
+              {","}
+            </Typography>
+          </>
+        )
+      }
+      {
+        lastReviewedDate && (
+          <Typography variant="subtitle-1">
+            {"last reviewed "}
+            <time datetime={props.entry.data.updatedAt}>
+              {lastReviewedDate}
+            </time>
+          </Typography>
+        )
+      }
+    </Stack>
+  </Stack>
+  <Typography>{props.entry.data.description}</Typography>
 </article>

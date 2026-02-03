@@ -1,0 +1,42 @@
+---
+import type { InternetResourceCollectionKey } from "@content/collections";
+import Button from "@ui/primitives/Button.astro";
+import ContentSurface from "@ui/primitives/ContentSurface.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import startCase from "lodash/startCase";
+
+interface Props {
+  resourceTypes: Array<InternetResourceCollectionKey>;
+}
+
+const props = Astro.props;
+---
+
+<ContentSurface variant="neutral" prominence="muted" paddingY={3} paddingX={5}>
+  <div class="flex justify-between mb-3">
+    <Typography
+      as="h2"
+      variant="title-4"
+      color="warmNeutral"
+      set:text="Filter by:"
+    />
+    <Button
+      styleVariant="outlined"
+      colorVariant="neutral"
+      textVariant="button-1"
+      label="Clear Filter"
+    />
+  </div>
+  <div class="flex flex-wrap gap-4 sm:grid sm:grid-cols-3">
+    {
+      props.resourceTypes.map((resourceType: InternetResourceCollectionKey) => (
+        <Button
+          styleVariant="outlined"
+          colorVariant="neutral"
+          textVariant="button-2"
+          label={startCase(resourceType)}
+        />
+      ))
+    }
+  </div>
+</ContentSurface>

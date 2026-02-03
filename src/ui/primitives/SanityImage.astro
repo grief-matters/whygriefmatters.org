@@ -41,7 +41,7 @@ const selectedWidths = widths.filter((w) => w <= maxWidth);
 // Fallback images entry
 const fallbackImagesEntry = await getEntry(
   "imageCollections",
-  "bfd6483c-3f64-4d66-bd7c-646ffd69054e"
+  "bfd6483c-3f64-4d66-bd7c-646ffd69054e",
 );
 
 const fallbackImages = fallbackImagesEntry?.data.images ?? [];
@@ -61,7 +61,7 @@ if (sanityImageSource) {
 
   const getSrcSet = (format: Format): string => {
     const set = selectedWidths.map(
-      (w) => `${baseBuilder?.width(w).format(format).url()} ${w}w`
+      (w) => `${baseBuilder?.width(w).format(format).url()} ${w}w`,
     );
 
     return set.join(", ");
@@ -90,7 +90,7 @@ const optimizedFallbackImgConfig = {
     .map((w, i) =>
       i !== sortedSelectedWidths.length - 1
         ? `(min-width: ${w}px) ${sortedSelectedWidths[i + 1]}px`
-        : `${w}px`
+        : `${w}px`,
     )
     .join(", "),
 };
@@ -118,6 +118,7 @@ const hotspotY = `${(sanityImageSource?.image.hotspot?.y ?? 0.5) * 100}%`;
         class:list={[
           "aspect-7/5",
           objectFit === "cover" ? "object-cover" : "object-contain",
+          ...(props.classList ?? []),
         ]}
       />
     </picture>

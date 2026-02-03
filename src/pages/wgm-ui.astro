@@ -1,5 +1,6 @@
 ---
 import Shell from "@ui/layouts/Shell.astro";
+import Button from "@ui/primitives/Button.astro";
 import Container from "@ui/primitives/Container.astro";
 import ContentSurface from "@ui/primitives/ContentSurface.astro";
 import LayoutSurface, {
@@ -7,6 +8,7 @@ import LayoutSurface, {
 } from "@ui/primitives/LayoutSurface.astro";
 import Stack from "@ui/primitives/Stack.astro";
 import Typography from "@ui/primitives/Typography.astro";
+import { spaceSettingKeys } from "@ui/utils/spacing";
 import { type Prominence, colorVariants, textPresets } from "@ui/utils/styles";
 import startCase from "lodash/startCase";
 
@@ -127,6 +129,62 @@ const codeClasses =
             </ContentSurface>
           </Stack>
         </ContentSurface>
+      </Stack>
+    </Container>
+  </LayoutSurface>
+  <LayoutSurface variantKey={3}>
+    <Container paddingX={1} paddingY={1}>
+      <Stack spacing={2}>
+        <Typography as="h2" variant="title-2">Buttons</Typography>
+        <Typography as="p">
+          {"Buttons can be rendered as link or button tags"}
+        </Typography>
+        <Stack spacing={1} direction="horizontal">
+          {
+            colorVariants.map((c) => (
+              <Button
+                as="a"
+                colorVariant={c}
+                label={`${startCase(c)} Button`}
+              />
+            ))
+          }
+        </Stack>
+        <Typography>
+          {
+            "Button labels cab set using the `label` prop or by passing content to its `slot`. Be aware you will be responsible for styling if using the slot"
+          }
+        </Typography>
+        <Button>
+          <Typography>
+            {"Button using a "}
+            <strong class="text-bold">{"Typography"}</strong>
+            {" component as its label"}
+          </Typography>
+        </Button>
+      </Stack>
+    </Container>
+  </LayoutSurface>
+  <LayoutSurface>
+    <Container paddingX={1} paddingY={1}>
+      <Stack spacing={2}>
+        <Typography as="h2" variant="title-2">Spacing</Typography>
+        <Typography as="p">
+          {"Spacing"}
+        </Typography>
+        <div class="flex flex-col space-y-3">
+          {
+            spaceSettingKeys.map((k) => (
+              <div class="self-start">
+                <ContentSurface paddingX={k} paddingY={k} variant={"primary"}>
+                  <Typography
+                    set:text={`Space Setting ${k} - equivalent to ${k * 4} in Figma`}
+                  />
+                </ContentSurface>
+              </div>
+            ))
+          }
+        </div>
       </Stack>
     </Container>
   </LayoutSurface>
