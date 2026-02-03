@@ -37,11 +37,12 @@ if (props.entry.data.sourceWebsiteId) {
 const processedSource =
   source ?? getSourceFromResourceUrl(props.entry.data.resourceUrl);
 
-const iconConfig =
-  resourceTypeIconMap[collectionKeyToResourceTypeMap[props.entry.collection]];
+const resourceType = collectionKeyToResourceTypeMap[props.entry.collection];
+
+const iconConfig = resourceTypeIconMap[resourceType];
 ---
 
-<article>
+<article id={props.entry.id} data-resource-type={resourceType}>
   <Stack as="header" reverse>
     <Stack spacing={2} direction="horizontal">
       <LinkComp
