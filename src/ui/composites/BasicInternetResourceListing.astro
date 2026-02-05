@@ -13,7 +13,7 @@ import Typography from "@ui/primitives/Typography.astro";
 import LinkComp from "@ui/primitives/Link.astro";
 import Stack from "@ui/primitives/Stack.astro";
 import Icon from "@ui/primitives/Icon.astro";
-import { resourceTypeIconMap } from "@ui/utils/icons";
+import { resourceTypeIconConfigMap } from "@ui/utils/icons";
 
 interface Props {
   entry: CollectionEntry<BasicInternetResourceCollectionKey>;
@@ -39,10 +39,10 @@ const processedSource =
 
 const resourceType = collectionKeyToResourceTypeMap[props.entry.collection];
 
-const iconConfig = resourceTypeIconMap[resourceType];
+const iconConfig = resourceTypeIconConfigMap[resourceType];
 ---
 
-<article id={props.entry.id} data-resource-type={resourceType}>
+<article id={props.entry.id} data-resource-type={props.entry.collection}>
   <Stack as="header" reverse>
     <Stack spacing={2} direction="horizontal">
       <LinkComp

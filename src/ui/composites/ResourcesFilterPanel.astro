@@ -1,8 +1,14 @@
 ---
-import type { InternetResourceCollectionKey } from "@content/collections";
+import {
+  collectionKeyToResourceTypeMap,
+  type InternetResourceCollectionKey,
+} from "@content/collections";
 import Button from "@ui/primitives/Button.astro";
 import ContentSurface from "@ui/primitives/ContentSurface.astro";
+import Icon from "@ui/primitives/Icon.astro";
+import Stack from "@ui/primitives/Stack.astro";
 import Typography from "@ui/primitives/Typography.astro";
+import { resourceTypeIconConfigMap } from "@ui/utils/icons";
 import startCase from "lodash/startCase";
 
 interface Props {
@@ -21,6 +27,7 @@ const props = Astro.props;
       set:text="Filter by:"
     />
     <Button
+      data-clear-filters
       styleVariant="outlined"
       colorVariant="neutral"
       textVariant="button-1"
@@ -32,11 +39,38 @@ const props = Astro.props;
       props.resourceTypes.map((resourceType: InternetResourceCollectionKey) => (
         <Button
           id={`${resourceType}--filter-btn`}
+          class:list={[
+            "data-active:bg-contentSurface-neutral--prominent",
+            "data-active:border-line-neutral--prominent",
+            "not-data-active:bg-contentSurface-neutral--muted",
+            "not-data-active:border-line-neutral--muted",
+          ]}
+          data-filter-btn
+          data-resource-type={resourceType}
           styleVariant="outlined"
           colorVariant="neutral"
-          textVariant="button-2"
-          label={startCase(resourceType)}
-        />
+        >
+          <Stack as="span" direction="horizontal">
+            <Icon
+              size={1}
+              getIcon={() =>
+                resourceTypeIconConfigMap[
+                  collectionKeyToResourceTypeMap[resourceType]
+                ].icon
+              }
+              color={
+                resourceTypeIconConfigMap[
+                  collectionKeyToResourceTypeMap[resourceType]
+                ].colorVariant
+              }
+            />
+            <Typography
+              color={"warmNeutral"}
+              variant={"button-2"}
+              set:text={startCase(resourceType)}
+            />
+          </Stack>
+        </Button>
       ))
     }
   </div>

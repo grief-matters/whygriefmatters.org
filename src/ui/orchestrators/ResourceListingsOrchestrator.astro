@@ -5,6 +5,7 @@ import type {
   InternetResourceCollectionKey,
   InternetResourceEntries,
 } from "@content/collections";
+import Stack from "@ui/primitives/Stack.astro";
 
 interface Props {
   resourceTypes: Array<InternetResourceCollectionKey>;
@@ -14,9 +15,69 @@ interface Props {
 const props = Astro.props;
 ---
 
-<>
-  <ResourcesFilterPanel resourceTypes={props.resourceTypes} />
-  <ResourceListingRenderer internetResources={props.internetResources} />
-</>
+<resource-filter-controller>
+  <Stack spacing={5}>
+    <ResourcesFilterPanel resourceTypes={props.resourceTypes} />
+    <ResourceListingRenderer internetResources={props.internetResources} />
+  </Stack>
+</resource-filter-controller>
 
-<script></script>
+<script>
+  class ResourceFilterController extends HTMLElement {
+    private activeFilters: Set<string> = new Set();
+
+    connectedCallback() {
+      const filterBtns = this.querySelectorAll("[data-filter-btn]");
+      const clearBtn = this.querySelector("[data-clear-filters]");
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener("click", () => this.toggleFilter(btn));
+      });
+
+      clearBtn?.addEventListener("click", () => this.clearFilters());
+    }
+
+    toggleFilter(btn: Element) {
+      const resourceType = btn.getAttribute("data-resource-type");
+      if (!resourceType) return;
+
+      if (this.activeFilters.has(resourceType)) {
+        this.activeFilters.delete(resourceType);
+        btn.removeAttribute("data-active");
+      } else {
+        this.activeFilters.add(resourceType);
+        btn.setAttribute("data-active", "");
+      }
+
+      this.applyFilters();
+    }
+
+    clearFilters() {
+      this.activeFilters.clear();
+      this.querySelectorAll("[data-filter-btn][data-active]").forEach((btn) => {
+        btn.removeAttribute("data-active");
+      });
+      this.applyFilters();
+    }
+
+    applyFilters() {
+      const sections = this.querySelectorAll("[data-resource-section]");
+
+      sections.forEach((section) => {
+        const sectionType = section.getAttribute("data-resource-section");
+        if (!sectionType) return;
+
+        if (
+          this.activeFilters.size === 0 ||
+          this.activeFilters.has(sectionType)
+        ) {
+          section.removeAttribute("hidden");
+        } else {
+          section.setAttribute("hidden", "");
+        }
+      });
+    }
+  }
+
+  customElements.define("resource-filter-controller", ResourceFilterController);
+</script>

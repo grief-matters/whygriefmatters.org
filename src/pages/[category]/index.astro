@@ -21,7 +21,6 @@ import CategoryPopulationsNavigator from "@ui/composites/CategoryPopulationsNavi
 import Container from "@ui/primitives/Container.astro";
 import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
 import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
-import Stack from "@ui/primitives/Stack.astro";
 import Typography from "@ui/primitives/Typography.astro";
 
 import CategoryPageHeader from "@ui/composites/CategoryPageHeader.astro";
@@ -198,14 +197,12 @@ const props = Astro.props;
     )
   }
 
-  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+  <LayoutSurface paddingX={2} paddingY={5}>
     <Container>
-      <Stack spacing={5}>
-        <ResourceListingsOrchestrator
-          internetResources={props.internetResources}
-          resourceTypes={props.resourceTypes}
-        />
-      </Stack>
+      <ResourceListingsOrchestrator
+        internetResources={props.internetResources}
+        resourceTypes={props.resourceTypes}
+      />
     </Container>
   </LayoutSurface>
 </Shell>

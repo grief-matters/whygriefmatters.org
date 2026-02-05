@@ -31,7 +31,10 @@ export const iconMap = {
 export type IconKey = keyof typeof iconMap;
 export type IconMapValue = (typeof iconMap)[keyof typeof iconMap];
 
-export const resourceTypeIconMap: Record<InternetResourceType, IconConfig> = {
+export const resourceTypeIconConfigMap: Record<
+  InternetResourceType,
+  IconConfig
+> = {
   article: {
     colorVariant: "primary",
     icon: iconMap.documentText,
