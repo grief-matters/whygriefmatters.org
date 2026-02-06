@@ -29,7 +29,7 @@ const props = Astro.props;
     </Container>
     <div
       class:list={[
-        "md:grid md:grid-cols-[1fr_auto] md:gap-6 lg:gap-12 lg:grid-cols-[1fr_auto_minmax(150px,_1fr)]",
+        "md:grid md:grid-cols-[1fr_auto] md:gap-6 lg:gap-12 lg:grid-cols-[1fr_auto_minmax(150px,1fr)]",
       ]}
     >
       <!-- Desktop Jump To Nav (sticky sidebar) -->
@@ -230,8 +230,9 @@ const props = Astro.props;
         }
       }
 
-      // Scroll to section
+      // Scroll to section and update URL hash
       section?.scrollIntoView({ behavior: "smooth" });
+      history.pushState(null, "", `#${resourceType}`);
 
       // Close mobile panel if open
       const mobilePanel = this.querySelector("[data-mobile-jump-panel]");
