@@ -197,12 +197,10 @@ const props = Astro.props;
     )
   }
 
-  <LayoutSurface paddingX={2} paddingY={5}>
-    <Container>
-      <ResourceListingsOrchestrator
-        internetResources={props.internetResources}
-        resourceTypes={props.resourceTypes}
-      />
-    </Container>
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <ResourceListingsOrchestrator
+      internetResources={props.internetResources}
+      resourceTypes={props.resourceTypes}
+    />
   </LayoutSurface>
 </Shell>

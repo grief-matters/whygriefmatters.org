@@ -8,7 +8,7 @@ import {
 
 interface Props {
   to: string;
-  label: string;
+  label?: string;
   variant?: TextPreset;
   color?: OnSurfaceColorVariant;
   external?: boolean;
@@ -56,7 +56,7 @@ const decorationStyle =
     variant.startsWith("t") && "text-balance",
     decorationStyle,
     textPresetClassMap[variant],
-    "underline underline-offset-2",
+    "underline underline-offset-4",
     decorationColorMap[color],
     "transition duration-300",
     variant === "subtitle-1"
@@ -67,5 +67,6 @@ const decorationStyle =
   href={to}
   {...attrs}
   {...externalLinkAttrs}
-  set:text={label}
-/>
+>
+  {label ?? <slot />}
+</a>

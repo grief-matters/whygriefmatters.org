@@ -15,7 +15,7 @@ const props = Astro.props;
 {
   Object.entries(props.internetResources).map(
     ([resourceType, resourceEntries]) => (
-      <Stack as="section" spacing={4} data-resource-section={resourceType}>
+      <Stack as="section" spacing={4} id={resourceType} data-resource-section={resourceType}>
         <Typography as="h2" variant="title-2">
           {startCase(resourceType)}
         </Typography>

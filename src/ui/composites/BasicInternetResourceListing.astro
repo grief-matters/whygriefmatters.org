@@ -44,23 +44,22 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
 
 <article id={props.entry.id} data-resource-type={props.entry.collection}>
   <Stack as="header" reverse>
-    <Stack spacing={2} direction="horizontal">
-      <LinkComp
-        external
-        variant="title-4"
-        to={props.entry.data.resourceUrl}
-        label={props.entry.data.title}
-      />
-      <Icon
-        size={1}
-        color="primary"
-        getIcon={(icons) => icons.arrowTopRightOnSquare}
-      />
-    </Stack>
-    <Stack direction="horizontal">
+    <div>
+      <LinkComp external variant="title-4" to={props.entry.data.resourceUrl}>
+        <span set:text={props.entry.data.title} />
+        <span class="inline-block">
+          <Icon
+            size={2}
+            color="primary"
+            getIcon={(icons) => icons.arrowTopRightOnSquare}
+          />
+        </span>
+      </LinkComp>
+    </div>
+    <div class:list={["space-y-1.5", "md:flex md:gap-1.5"]}>
       {
         processedSource !== null && (
-          <>
+          <div class:list={["flex gap-1.5 items-center"]}>
             <Icon
               color={iconConfig.colorVariant}
               getIcon={() => iconConfig.icon}
@@ -82,7 +81,7 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
               )}
               {","}
             </Typography>
-          </>
+          </div>
         )
       }
       {
@@ -95,7 +94,7 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
           </Typography>
         )
       }
-    </Stack>
+    </div>
   </Stack>
   <Typography>{props.entry.data.description}</Typography>
 </article>

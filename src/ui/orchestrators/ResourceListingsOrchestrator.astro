@@ -6,6 +6,12 @@ import type {
   InternetResourceEntries,
 } from "@content/collections";
 import Stack from "@ui/primitives/Stack.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import startCase from "lodash/startCase";
+import Container from "@ui/primitives/Container.astro";
+import Link from "@ui/primitives/Link.astro";
+import Button from "@ui/primitives/Button.astro";
+import { textColorMap } from "@ui/utils/styles";
 
 interface Props {
   resourceTypes: Array<InternetResourceCollectionKey>;
@@ -16,9 +22,115 @@ const props = Astro.props;
 ---
 
 <resource-filter-controller>
+  <!-- Main content column -->
   <Stack spacing={5}>
-    <ResourcesFilterPanel resourceTypes={props.resourceTypes} />
-    <ResourceListingRenderer internetResources={props.internetResources} />
+    <Container>
+      <ResourcesFilterPanel resourceTypes={props.resourceTypes} />
+    </Container>
+    <div
+      class:list={[
+        "md:grid md:grid-cols-[1fr_auto] md:gap-6 lg:gap-12 lg:grid-cols-[1fr_auto_minmax(150px,_1fr)]",
+      ]}
+    >
+      <!-- Desktop Jump To Nav (sticky sidebar) -->
+      <nav class="hidden md:block md:order-last" data-jump-nav>
+        <div class="md:sticky md:top-40 md:mt-12">
+          <Stack spacing={3}>
+            <Typography
+              as="p"
+              variant="title-4"
+              color="warmNeutral"
+              set:text="Jump to"
+            />
+            <Stack>
+              {
+                props.resourceTypes.map((type) => (
+                  <div>
+                    <a
+                      data-jump-link={type}
+                      class:list={[
+                        "font-serif",
+                        "underline underline-offset-4 decoration-dotted decoration-onSurface-warmNeutral--default/40 hover:decoration-onSurface-warmNeutral--default",
+                        "transition duration-300",
+                        textColorMap.warmNeutral.default,
+                        "data-filtered:opacity-50",
+                      ]}
+                      href={`#${type}`}
+                    >
+                      {startCase(type)}
+                    </a>
+                  </div>
+                ))
+              }
+            </Stack>
+            <span class="italic">
+              <Link to="#" label={"Back to Top"} color="warmNeutral" />
+            </span>
+          </Stack>
+        </div>
+      </nav>
+
+      <!-- Mobile Jump To Button + Panel -->
+      <div class="md:hidden fixed bottom-4 right-4 z-50" data-mobile-jump>
+        <Button
+          data-mobile-jump-btn
+          label="Jump To"
+          textVariant="button-2"
+          colorVariant="neutral"
+          styleVariant="outlined"
+        />
+        <div
+          data-mobile-jump-panel
+          hidden
+          class="bg-contentSurface-neutral--muted border border-line-neutral--default rounded-lg p-4 shadow-lg"
+        >
+          <Stack spacing={3}>
+            <div class="flex justify-between">
+              <Typography
+                as="p"
+                variant="title-4"
+                color="warmNeutral"
+                set:text="Jump to"
+              />
+              <button
+                data-mobile-jump-close
+                class="text-onSurface-coolNeutral--muted hover:text-onSurface-coolNeutral--default"
+              >
+                ✕
+              </button>
+            </div>
+            <Stack>
+              {
+                props.resourceTypes.map((type) => (
+                  <div>
+                    <a
+                      data-jump-link={type}
+                      class:list={[
+                        "font-serif",
+                        "underline underline-offset-4 decoration-dotted decoration-onSurface-warmNeutral--default/40 hover:decoration-onSurface-warmNeutral--default",
+                        "transition duration-300",
+                        textColorMap.warmNeutral.default,
+                        "data-filtered:opacity-50",
+                      ]}
+                      href={`#${type}`}
+                    >
+                      {startCase(type)}
+                    </a>
+                  </div>
+                ))
+              }
+            </Stack>
+            <span class="italic">
+              <Link to="#" label={"Back to Top"} color="warmNeutral" />
+            </span>
+          </Stack>
+        </div>
+      </div>
+      <div class="hidden lg:block"></div>
+      <Container>
+        <ResourceListingRenderer internetResources={props.internetResources} />
+      </Container>
+    </div>
   </Stack>
 </resource-filter-controller>
 
@@ -35,6 +147,25 @@ const props = Astro.props;
       });
 
       clearBtn?.addEventListener("click", () => this.clearFilters());
+
+      // Jump link click handlers
+      const jumpLinks = this.querySelectorAll("[data-jump-link]");
+      jumpLinks.forEach((link) => {
+        link.addEventListener("click", (e) => this.handleJumpClick(e, link));
+      });
+
+      // Back to top handlers
+      const backToTopLinks = this.querySelectorAll("[data-back-to-top]");
+      backToTopLinks.forEach((link) => {
+        link.addEventListener("click", (e) => this.handleBackToTop(e));
+      });
+
+      // Mobile panel toggle
+      const mobileBtn = this.querySelector("[data-mobile-jump-btn]");
+      const mobileCloseBtn = this.querySelector("[data-mobile-jump-close]");
+
+      mobileBtn?.addEventListener("click", () => this.toggleMobilePanel());
+      mobileCloseBtn?.addEventListener("click", () => this.toggleMobilePanel());
     }
 
     toggleFilter(btn: Element) {
@@ -74,6 +205,70 @@ const props = Astro.props;
           section.removeAttribute("hidden");
         } else {
           section.setAttribute("hidden", "");
+        }
+      });
+
+      this.updateJumpLinkStates();
+    }
+
+    handleJumpClick(e: Event, link: Element) {
+      e.preventDefault();
+      const resourceType = link.getAttribute("data-jump-link");
+      if (!resourceType) return;
+
+      const section = this.querySelector(`#${resourceType}`);
+
+      // If section is hidden by filters, add it to active filters
+      if (section?.hasAttribute("hidden")) {
+        const btn = this.querySelector(
+          `[data-filter-btn][data-resource-type="${resourceType}"]`,
+        );
+        if (btn && !this.activeFilters.has(resourceType)) {
+          this.activeFilters.add(resourceType);
+          btn.setAttribute("data-active", "");
+          this.applyFilters();
+        }
+      }
+
+      // Scroll to section
+      section?.scrollIntoView({ behavior: "smooth" });
+
+      // Close mobile panel if open
+      const mobilePanel = this.querySelector("[data-mobile-jump-panel]");
+      if (mobilePanel && !mobilePanel.hasAttribute("hidden")) {
+        this.toggleMobilePanel();
+      }
+    }
+
+    handleBackToTop(e: Event) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      // Close mobile panel if open
+      const mobilePanel = this.querySelector("[data-mobile-jump-panel]");
+      if (mobilePanel && !mobilePanel.hasAttribute("hidden")) {
+        this.toggleMobilePanel();
+      }
+    }
+
+    toggleMobilePanel() {
+      const panel = this.querySelector("[data-mobile-jump-panel]");
+      const btn = this.querySelector("[data-mobile-jump-btn]");
+      panel?.toggleAttribute("hidden");
+      btn?.toggleAttribute("hidden");
+    }
+
+    updateJumpLinkStates() {
+      const jumpLinks = this.querySelectorAll("[data-jump-link]");
+      jumpLinks.forEach((link) => {
+        const resourceType = link.getAttribute("data-jump-link");
+        if (!resourceType) return;
+
+        const section = this.querySelector(`#${resourceType}`);
+        if (section?.hasAttribute("hidden")) {
+          link.setAttribute("data-filtered", "");
+        } else {
+          link.removeAttribute("data-filtered");
         }
       });
     }
