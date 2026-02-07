@@ -41,6 +41,9 @@
   --color-contentSurface-tertiary--muted: var(--token-color-green-98);
   --color-contentSurface-tertiary--default: var(--token-color-green-95);
   --color-contentSurface-tertiary--prominent: var(--token-color-green-90);
+  --color-contentSurface-donate--muted: var(--token-color-aqua-90);
+  --color-contentSurface-donate--default: var(--token-color-aqua-80);
+  --color-contentSurface-donate--prominent: var(--token-color-aqua-70);
 
   --color-onSurface-coolNeutral--default: var(--token-color-blue-30);
   --color-onSurface-coolNeutral--muted: var(--token-color-slate-62);

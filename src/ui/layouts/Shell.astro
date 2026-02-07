@@ -1,5 +1,7 @@
 ---
 import "@styles/main.css";
+
+import SiteHeader from "@ui/composites/SiteHeader.astro";
 ---
 
 <html lang="en">
@@ -17,8 +19,10 @@ import "@styles/main.css";
       "text-onSurface-primary--default",
     ]}
   >
-    <header>
-      {/* This will be where the nav goes */}
+    <header
+      class:list={["border-t-6 md:border-t-12 border-line-brand--accent"]}
+    >
+      <SiteHeader />
       <slot name="in-header" />
     </header>
     <main class="grow">
