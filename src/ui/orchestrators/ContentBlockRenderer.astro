@@ -2,6 +2,8 @@
 import type { ReferenceDataEntry } from "astro:content";
 import { getEntry } from "astro:content";
 
+import { assertNever } from "src/utils/assertNever";
+
 import Container from "@ui/primitives/Container.astro";
 import FeaturedWebsite from "@ui/composites/featured-resources/FeaturedWebsite.astro";
 import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
@@ -187,10 +189,7 @@ const contentBlock = await getEntry(contentBlockRef);
           </Container>
         );
       default:
-        const _exhaustiveCheck: never = contentItem;
-        throw new Error(
-          `[ContentBlockRenderer] Unknown content type in data entry: \n${contentItem}`,
-        );
+        assertNever(contentItem);
     }
   })
 }

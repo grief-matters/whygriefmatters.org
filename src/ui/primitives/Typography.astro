@@ -19,6 +19,8 @@ type TextProps = {
   color?: OnSurfaceColorVariant;
   textAlign?: "center" | "left";
   marginBottom?: SpaceSetting;
+  bold?: boolean;
+  italic?: boolean;
 };
 
 const marginBottomMap: Record<SpaceSetting, string> = {
@@ -40,6 +42,8 @@ const {
   prominence = "default",
   color = "primary",
   marginBottom,
+  bold,
+  italic,
   ...attrs
 } = Astro.props;
 
@@ -51,6 +55,8 @@ const variantClasses = [
   Tag.startsWith("h") ? "leading-8 text-balance" : "leading-7",
   textAlign === "center" ? "text-center" : null,
   marginBottom && marginBottomMap[marginBottom],
+  bold && "font-bold",
+  italic && "font-italic",
 ];
 ---
 

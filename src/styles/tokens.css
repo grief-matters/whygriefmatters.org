@@ -1,4 +1,6 @@
 :root {
+  --token-color-black: #000000;
+
   /* 'primitive' tokens referencing raw values */
   --token-color-blue-25: #23375c;
   --token-color-blue-30: #173d85;

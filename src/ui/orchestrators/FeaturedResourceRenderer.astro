@@ -1,6 +1,7 @@
 ---
 import type { InternetResourceType } from "@content/model/internetResource";
 import { resourceTypeToCollectionKeyMap } from "@content/collections";
+import { assertNever } from "src/utils/assertNever";
 
 import BasicFeaturedResource from "@ui/composites/featured-resources/BasicFeaturedResource.astro";
 import FeaturedApp from "@ui/composites/featured-resources/FeaturedApp.astro";
@@ -69,10 +70,7 @@ if (!safeCollectionKey) {
           />
         );
       default:
-        const _exhaustiveCheck: never = safeCollectionKey;
-        throw new Error(
-          `[FeaturedResource] Unknown 'collection' specified: '${safeCollectionKey}'`,
-        );
+        assertNever(safeCollectionKey);
     }
   }
 }

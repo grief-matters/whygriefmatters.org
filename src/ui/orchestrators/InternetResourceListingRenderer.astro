@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 
 import type { InternetResourceCollectionKey } from "@content/collections";
+import { assertNever } from "src/utils/assertNever";
 
 import AppListing from "@ui/composites/AppListing.astro";
 import BasicInternetResourceListing from "@ui/composites/BasicInternetResourceListing.astro";
@@ -41,10 +42,7 @@ const { entry } = Astro.props;
         case "websites":
           return <WebsiteListing entry={entry} />;
         default:
-          const _exhaustiveCheck: never = entry;
-          throw new Error(
-            `[InternetResourceListingRenderer] Not all resource types have a renderer`,
-          );
+          assertNever(entry);
       }
     }
   }

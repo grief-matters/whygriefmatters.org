@@ -4,8 +4,8 @@ import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
 import { getOrganization } from "@content/loaders/organizationLoader";
 
 import Button from "@ui/primitives/Button.astro";
-import Icon from "@ui/primitives/Icon.astro";
 import Link from "@ui/primitives/Link.astro";
+import Search from "@ui/orchestrators/Search.astro";
 
 const org = await getOrganization();
 if (!org) {
@@ -33,24 +33,7 @@ const logoUrl = org.logos.onLight
       <img class:list={["h-16"]} src={logoUrl} alt={`${org.name} logo`} />
     </a>
     <!-- Search Input -->
-    <div
-      class:list={[
-        "grow basis-40 px-3 py-1 border rounded-full border-line-primary--muted max-w-xs mb-1",
-      ]}
-    >
-      <Icon
-        getIcon={(icons) => icons.magnifyingGlass}
-        color="primary"
-        display="inline"
-      />
-      <span
-        class:list={[
-          "align-middle font-serif text-onSurface-coolNeutral--muted",
-        ]}
-      >
-        {"Search..."}
-      </span>
-    </div>
+    <Search />
   </div>
   <div class:list={["flex justify-end items-center gap-3"]}>
     <Link to={"/about"} label="About" variant="button-2" />

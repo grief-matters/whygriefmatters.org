@@ -42,11 +42,18 @@ const resourceType = collectionKeyToResourceTypeMap[props.entry.collection];
 const iconConfig = resourceTypeIconConfigMap[resourceType];
 ---
 
-<article id={props.entry.id} data-resource-type={props.entry.collection}>
+<article
+  id={`resource--${props.entry.id}`}
+  data-resource-type={props.entry.collection}
+>
   <Stack as="header" reverse>
     <div>
       <LinkComp external variant="title-4" to={props.entry.data.resourceUrl}>
-        <span set:text={props.entry.data.title} />
+        <h4
+          id={props.entry.id}
+          class="inline m-0"
+          set:text={props.entry.data.title}
+        />
         <span class="inline-block">
           <Icon
             size={2}
@@ -56,7 +63,10 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
         </span>
       </LinkComp>
     </div>
-    <div class:list={["space-y-1.5", "md:flex md:gap-1.5"]}>
+    <div
+      data-pagefind-ignore="index"
+      class:list={["space-y-1.5", "md:flex md:gap-1.5"]}
+    >
       {
         processedSource !== null && (
           <div class:list={["flex gap-1.5 items-center"]}>
@@ -97,5 +107,7 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
       }
     </div>
   </Stack>
-  <Typography>{props.entry.data.description}</Typography>
+  <Typography>
+    {props.entry.data.description}
+  </Typography>
 </article>

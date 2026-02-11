@@ -15,6 +15,8 @@
   /* This wipes out default Tailwind colors */
   --color-*: initial;
 
+  --color-black: var(--token-color-black);
+
   /* Layout surface */
   --color-layoutSurface-neutral--1: var(--token-color-stone-99);
   --color-layoutSurface-neutral--2: var(--token-color-stone-98);

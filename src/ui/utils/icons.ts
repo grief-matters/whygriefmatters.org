@@ -10,6 +10,7 @@ export const iconMap = {
   academicCap: "academic-cap",
   arrowDownTray: "arrow-down-tray",
   arrowTopRightOnSquare: "arrow-top-right-on-square",
+  barsThree: "bars-3",
   bookOpen: "book-open",
   chatBubbleLeftEllipsis: "chat-bubble-left-ellipsis",
   chatBubbleLeftRight: "chat-bubble-left-right",

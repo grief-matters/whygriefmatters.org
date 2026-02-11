@@ -1,6 +1,7 @@
 ---
 import { iconMap, type IconMapValue } from "@ui/utils/icons";
 import type { OnSurfaceColorVariant } from "@ui/utils/styles";
+import { assertNever } from "src/utils/assertNever";
 
 type ColorVariantMap = Record<OnSurfaceColorVariant, Array<string>>;
 type IconSize = 1 | 2 | 3;
@@ -36,6 +37,7 @@ const classes = [
   sizeMap[props.size ?? 2],
   props.display,
   props.display === "inline" && "inline align-middle",
+  props.display === "block" && "block",
   props.color
     ? (colorVariantMap[props.color] ?? "stroke-current")
     : "stroke-current",
@@ -212,12 +214,16 @@ const classes = [
               d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
             />
           );
-        default:
-          // throw new Error(`[Icon] Unknown Icon being rendered: \n${icon}`);
-          const _exhaustiveCheck: never = icon;
-          throw new Error(
-            `[ContentBlockRenderer] Unknown content type in data entry: \n${icon}`,
+        case "bars-3":
+          return (
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
           );
+        default:
+          assertNever(icon);
       }
     }
   }

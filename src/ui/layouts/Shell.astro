@@ -1,7 +1,5 @@
 ---
 import "@styles/main.css";
-
-import SiteHeader from "@ui/composites/SiteHeader.astro";
 ---
 
 <html lang="en">
@@ -19,17 +17,10 @@ import SiteHeader from "@ui/composites/SiteHeader.astro";
       "text-onSurface-primary--default",
     ]}
   >
-    <header
-      class:list={["border-t-6 md:border-t-12 border-line-brand--accent"]}
-    >
-      <SiteHeader />
-      <slot name="in-header" />
-    </header>
-    <main class="grow">
-      <slot />
-    </main>
-    <footer>
+    <slot />
+    <footer class="h-24 bg-layoutSurface-primaryContrast--1">
       {/* Footer content will always be the same */}
+      <p>Footer</p>
     </footer>
   </body>
 </html>

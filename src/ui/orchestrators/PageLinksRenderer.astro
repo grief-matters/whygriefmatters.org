@@ -1,5 +1,6 @@
 ---
 import type { PageLinks } from "@content/model/contentBlock";
+import { assertNever } from "src/utils/assertNever";
 import DynamicPageLink from "./DynamicPageLink.astro";
 
 interface Props {
@@ -37,10 +38,7 @@ const props = Astro.props;
         case "relativeLink":
           return;
         default:
-          const _exhaustiveCheck: never = link;
-          throw new Error(
-            `[PageLinkRenderer] Unknown content type in data entry: \n${link}`,
-          );
+          assertNever(link);
       }
     })
   }

@@ -26,6 +26,7 @@ import Typography from "@ui/primitives/Typography.astro";
 import CategoryPageHeader from "@ui/composites/CategoryPageHeader.astro";
 import FeaturedResourceRenderer from "@ui/orchestrators/FeaturedResourceRenderer.astro";
 import ResourceListingsOrchestrator from "@ui/orchestrators/ResourceListingsOrchestrator.astro";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
 interface Props {
   categoryEntry: CollectionEntry<"categories">;
@@ -133,74 +134,76 @@ const props = Astro.props;
 ---
 
 <Shell>
-  <CategoryPageHeader
-    categoryEntryData={props.categoryEntry.data}
-    parentCategory={props.parentCategory}
-  />
-
-  {/* Category Description */}
-  {
-    props.categoryEntry.data.description && (
-      <LayoutSurface paddingY={6}>
-        <Container paddingX={4}>
-          {props.categoryEntry.data.description && (
-            <PortableTextContentBlock
-              variant="prominent-first"
-              textAlign="center"
-              portableText={props.categoryEntry.data.description}
-            />
-          )}
-        </Container>
-      </LayoutSurface>
-    )
-  }
-
-  {/* Underserved Populations */}
-  {
-    props.populations.length > 0 && (
-      <LayoutSurface paddingX={2} paddingY={4}>
-        <Container>
-          <CategoryPopulationsNavigator
-            category={props.categoryEntry}
-            populations={props.populations}
-          />
-        </Container>
-      </LayoutSurface>
-    )
-  }
-
-  {/* Featured Resources */}
-  {
-    (props.categoryEntry.data.featuredResources ?? []).length > 0 && (
-      <LayoutSurface paddingY={6} variantKey={4}>
-        <Container>
-          <Typography
-            textAlign="center"
-            marginBottom={2}
-            as="h2"
-            variant="title-2"
-            set:text="Featured Resources"
-          />
-        </Container>
-        <Slider>
-          {props.categoryEntry.data.featuredResources.map((resource) => (
-            <Slide paddingX={1} paddingY={4}>
-              <FeaturedResourceRenderer
-                fullHeight
-                resourceRef={resource.refId}
-                resourceType={resource.refType}
-              />
-            </Slide>
-          ))}
-        </Slider>
-      </LayoutSurface>
-    )
-  }
-
-  <LayoutSurface as="section" paddingX={2} paddingY={5}>
-    <ResourceListingsOrchestrator
-      internetResources={props.internetResources}
-      resourceTypes={props.resourceTypes}
+  <SitePageLayout>
+    <CategoryPageHeader
+      categoryEntryData={props.categoryEntry.data}
+      parentCategory={props.parentCategory}
     />
-  </LayoutSurface>
+
+    {/* Category Description */}
+    {
+      props.categoryEntry.data.description && (
+        <LayoutSurface paddingY={6}>
+          <Container paddingX={4}>
+            {props.categoryEntry.data.description && (
+              <PortableTextContentBlock
+                variant="prominent-first"
+                textAlign="center"
+                portableText={props.categoryEntry.data.description}
+              />
+            )}
+          </Container>
+        </LayoutSurface>
+      )
+    }
+
+    {/* Underserved Populations */}
+    {
+      props.populations.length > 0 && (
+        <LayoutSurface paddingX={2} paddingY={4}>
+          <Container>
+            <CategoryPopulationsNavigator
+              category={props.categoryEntry}
+              populations={props.populations}
+            />
+          </Container>
+        </LayoutSurface>
+      )
+    }
+
+    {/* Featured Resources */}
+    {
+      (props.categoryEntry.data.featuredResources ?? []).length > 0 && (
+        <LayoutSurface paddingY={6} variantKey={4}>
+          <Container>
+            <Typography
+              textAlign="center"
+              marginBottom={2}
+              as="h2"
+              variant="title-2"
+              set:text="Featured Resources"
+            />
+          </Container>
+          <Slider>
+            {props.categoryEntry.data.featuredResources.map((resource) => (
+              <Slide paddingX={1} paddingY={4}>
+                <FeaturedResourceRenderer
+                  fullHeight
+                  resourceRef={resource.refId}
+                  resourceType={resource.refType}
+                />
+              </Slide>
+            ))}
+          </Slider>
+        </LayoutSurface>
+      )
+    }
+
+    <LayoutSurface as="section" paddingX={2} paddingY={5}>
+      <ResourceListingsOrchestrator
+        internetResources={props.internetResources}
+        resourceTypes={props.resourceTypes}
+      />
+    </LayoutSurface>
+  </SitePageLayout>
 </Shell>
