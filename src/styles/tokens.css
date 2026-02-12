@@ -1,4 +1,5 @@
 :root {
+  --token-color-white: #ffffff;
   --token-color-black: #000000;
 
   /* 'primitive' tokens referencing raw values */

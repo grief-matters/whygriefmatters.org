@@ -15,6 +15,7 @@
   /* This wipes out default Tailwind colors */
   --color-*: initial;
 
+  --color-white: var(--token-color-white);
   --color-black: var(--token-color-black);
 
   /* Layout surface */
@@ -24,6 +25,7 @@
   --color-layoutSurface-neutral--4: var(--token-color-stone-96);
   --color-layoutSurface-primary--1: var(--token-color-blue-97);
   --color-layoutSurface-primaryContrast--1: var(--token-color-blue-25);
+  --color-layoutSurface-primaryContrast--2: var(--token-color-blue-30);
   --color-layoutSurface-secondary--1: var(--token-color-pink-97);
   --color-layoutSurface-tertiary--1: var(--token-color-green-98);
 
@@ -63,6 +65,8 @@
   --color-line-primary--muted: var(--token-color-blue-91);
   --color-line-primary--default: var(--token-color-blue-89);
   --color-line-primary--prominent: var(--token-color-blue-79);
+  --color-line-primaryContrast--default: var(--token-color-stone-98);
+  --color-line-primaryContrast--muted: var(--token-color-stone-98);
   --color-line-neutral--muted: var(--token-color-brown-90);
   --color-line-neutral--default: var(--token-color-brown-80);
   --color-line-neutral--prominent: var(--token-color-brown-70);

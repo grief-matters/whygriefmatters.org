@@ -15,9 +15,10 @@ interface Props {
   size?: ContainerSize;
   paddingX?: SpaceSetting;
   paddingY?: SpaceSetting;
+  additiveClasses?: string[];
 }
 
-const { size, paddingX, paddingY } = Astro.props;
+const { size, paddingX, paddingY, additiveClasses } = Astro.props;
 ---
 
 <div
@@ -26,6 +27,7 @@ const { size, paddingX, paddingY } = Astro.props;
     containerSizeToTWClass[size ?? 1],
     paddingX ? paddingXSettingMap[paddingX] : null,
     paddingY ? paddingYSettingMap[paddingY] : null,
+    ...(additiveClasses ?? []),
   ]}
 >
   <slot />
