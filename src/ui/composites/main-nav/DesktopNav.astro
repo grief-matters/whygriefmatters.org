@@ -1,0 +1,259 @@
+---
+import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
+import Button from "@ui/primitives/Button.astro";
+import Link from "@ui/primitives/Link.astro";
+import Stack from "@ui/primitives/Stack.astro";
+import type { CategoryTreeNode } from "@ui/orchestrators/MainNav.astro";
+
+interface Props {
+  navTree: CategoryTreeNode[];
+}
+
+const { navTree } = Astro.props;
+---
+
+<desktop-nav-controller>
+  <LayoutSurface variant="primaryContrast" variantKey={2}>
+    <nav
+      class="flex items-center justify-between gap-1 max-w-6xl mx-auto"
+      data-desktop-nav
+      aria-label="Main navigation"
+    >
+      {
+        navTree.map((item) => (
+          <button
+            type="button"
+            data-tier1-btn={item.id}
+            class:list={[
+              "px-4 py-2",
+              "cursor-pointer",
+              "transition duration-300",
+              "font-sans-a font-medium",
+              "text-onSurface-primaryContrast--default",
+              "bg-contentSurface-primaryContrast--prominent hover:bg-contentSurface-primaryContrast--default",
+              "data-active:bg-contentSurface-primary--default data-active:text-onSurface-primary--default",
+            ]}
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            {item.title}
+          </button>
+        ))
+      }
+    </nav>
+  </LayoutSurface>
+
+  <!-- Desktop mega-nav -->
+  <div
+    data-mega-nav
+    hidden
+    class:list={[
+      "shadow-lg border-t",
+      "absolute left-0 right-0 z-40",
+      "max-w-7xl mx-auto",
+      "bg-contentSurface-primary--default",
+    ]}
+  >
+    <div class="grid grid-cols-[280px_1fr]">
+      <!-- Left pane: Tier 2 items -->
+      <div data-mega-tier2-pane class="py-12">
+        {
+          navTree.map((tier1) => (
+            <ul data-mega-tier2-list={tier1.id} hidden>
+              {tier1.children.map((tier2, i) => (
+                <li>
+                  <button
+                    type="button"
+                    data-mega-tier2-btn={tier2.id}
+                    data-parent-tier1={tier1.id}
+                    data-first={i === 0 ? "" : undefined}
+                    class="w-full text-left px-4 py-2 font-serif text-onSurface-primary--default cursor-pointer hover:bg-layoutSurface-primary--1 transition-colors border-l-4 border-transparent data-[active]:border-line-brand--accent data-[active]:bg-layoutSurface-neutral--1"
+                  >
+                    {tier2.title}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ))
+        }
+      </div>
+
+      <!-- Right pane: Tier 3 items -->
+      <div data-mega-tier3-pane class="py-4 px-6 bg-layoutSurface-neutral--1">
+        <div class="flex justify-end mb-4">
+          <Button
+            data-mega-close
+            type="button"
+            styleVariant="outlined"
+            colorVariant="neutral"
+            textVariant="button-1"
+            label="Close"
+          />
+        </div>
+        {
+          navTree.flatMap((tier1) =>
+            tier1.children.map((tier2) => (
+              <div data-mega-tier3-section={tier2.id} hidden>
+                <h3 class="font-serif font-bold text-2xl text-onSurface-primary--default mb-4">
+                  {tier2.title}
+                </h3>
+                <ul class="space-y-3">
+                  {tier2.children.map((tier3) => (
+                    <li>
+                      <Link
+                        bold
+                        to={`/${tier3.slug}`}
+                        label={tier3.title}
+                        variant="body-2"
+                      />
+
+                      {tier3.children.length > 0 && (
+                        <Stack>
+                          {tier3.children.map((tier4) => (
+                            <div>
+                              <Link to={`/${tier4.slug}`} label={tier4.title} />
+                            </div>
+                          ))}
+                        </Stack>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )),
+          )
+        }
+      </div>
+    </div>
+  </div>
+</desktop-nav-controller>
+
+<script is:inline>
+  class DesktopNavController extends HTMLElement {
+    selectedTier1Id = null;
+    selectedTier2Id = null;
+
+    connectedCallback() {
+      this.setupHandlers();
+      this.setupKeyboardHandlers();
+    }
+
+    setupHandlers() {
+      this.querySelectorAll("[data-tier1-btn]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const tier1Id = btn.getAttribute("data-tier1-btn");
+          if (this.selectedTier1Id === tier1Id) {
+            this.closeMegaNav();
+          } else {
+            this.openMegaNav(tier1Id);
+          }
+        });
+      });
+
+      this.querySelectorAll("[data-mega-tier2-btn]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const tier2Id = btn.getAttribute("data-mega-tier2-btn");
+          this.selectTier2(tier2Id);
+        });
+      });
+
+      const closeBtn = this.querySelector("[data-mega-close]");
+      closeBtn?.addEventListener("click", () => this.closeMegaNav());
+
+      document.addEventListener("click", (e) => {
+        const megaNav = this.querySelector("[data-mega-nav]");
+        if (megaNav && !megaNav.hasAttribute("hidden")) {
+          const isInsideNav = this.contains(e.target);
+          if (!isInsideNav) {
+            this.closeMegaNav();
+          }
+        }
+      });
+    }
+
+    openMegaNav(tier1Id) {
+      this.selectedTier1Id = tier1Id;
+
+      this.querySelectorAll("[data-tier1-btn]").forEach((btn) => {
+        const btnId = btn.getAttribute("data-tier1-btn");
+        if (btnId === tier1Id) {
+          btn.setAttribute("data-active", "");
+          btn.setAttribute("aria-expanded", "true");
+        } else {
+          btn.removeAttribute("data-active");
+          btn.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      this.querySelectorAll("[data-mega-tier2-list]").forEach((list) => {
+        list.hidden = list.dataset.megaTier2List !== tier1Id;
+      });
+
+      const firstTier2Btn = this.querySelector(
+        `[data-mega-tier2-list="${tier1Id}"] [data-first]`,
+      );
+      if (firstTier2Btn) {
+        const firstTier2Id = firstTier2Btn.getAttribute("data-mega-tier2-btn");
+        this.selectTier2(firstTier2Id);
+      }
+
+      const megaNav = this.querySelector("[data-mega-nav]");
+      megaNav?.removeAttribute("hidden");
+    }
+
+    closeMegaNav() {
+      const megaNav = this.querySelector("[data-mega-nav]");
+      megaNav?.setAttribute("hidden", "");
+
+      this.querySelectorAll("[data-tier1-btn]").forEach((btn) => {
+        btn.removeAttribute("data-active");
+        btn.setAttribute("aria-expanded", "false");
+      });
+
+      this.querySelectorAll("[data-mega-tier2-list]").forEach((list) => {
+        list.hidden = true;
+      });
+
+      this.querySelectorAll("[data-mega-tier3-section]").forEach((section) => {
+        section.hidden = true;
+      });
+
+      this.querySelectorAll("[data-mega-tier2-btn]").forEach((btn) => {
+        btn.removeAttribute("data-active");
+      });
+
+      this.selectedTier1Id = null;
+      this.selectedTier2Id = null;
+    }
+
+    selectTier2(tier2Id) {
+      this.selectedTier2Id = tier2Id;
+
+      this.querySelectorAll("[data-mega-tier2-btn]").forEach((btn) => {
+        const btnId = btn.getAttribute("data-mega-tier2-btn");
+        if (btnId === tier2Id) {
+          btn.setAttribute("data-active", "");
+        } else {
+          btn.removeAttribute("data-active");
+        }
+      });
+
+      this.querySelectorAll("[data-mega-tier3-section]").forEach((section) => {
+        section.hidden = section.dataset.megaTier3Section !== tier2Id;
+      });
+    }
+
+    setupKeyboardHandlers() {
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          const megaNav = this.querySelector("[data-mega-nav]");
+          if (megaNav && !megaNav.hasAttribute("hidden")) {
+            this.closeMegaNav();
+          }
+        }
+      });
+    }
+  }
+
+  customElements.define("desktop-nav-controller", DesktopNavController);
+</script>

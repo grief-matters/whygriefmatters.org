@@ -1,0 +1,64 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import MobileNav from "@ui/composites/main-nav/MobileNav.astro";
+import DesktopNav from "@ui/composites/main-nav/DesktopNav.astro";
+
+export interface CategoryTreeNode {
+  id: string;
+  slug: string;
+  title: string;
+  displayTitle: string;
+  children: CategoryTreeNode[];
+}
+
+function buildCategoryTree(
+  category: CollectionEntry<"categories">,
+  allCategories: CollectionEntry<"categories">[],
+): CategoryTreeNode {
+  return {
+    id: category.id,
+    slug: category.data.slug,
+    title: category.data.title,
+    displayTitle: category.data.displayTitle ?? category.data.title,
+    children: category.data.subcategories
+      .map(({ id }) => allCategories.find((c) => c.id === id))
+      .filter((c): c is CollectionEntry<"categories"> => c !== undefined)
+      .map((c) => buildCategoryTree(c, allCategories)),
+  };
+}
+
+const categories = await getCollection("categories");
+if ((categories ?? []).length === 0) {
+  throw new Error("Could not get categories in [MainNav]");
+}
+
+// Find root categories (those not appearing as children of any other)
+const childIds = new Set(
+  categories.flatMap((c) => c.data.subcategories.map((sub) => sub.id)),
+);
+
+const rootCategories = categories.filter((c) => !childIds.has(c.id));
+
+// IMPORTANT: This is the ordering determined by project lead
+const authoritativeRootCategorySlugs = [
+  "topics",
+  "types-of-loss",
+  "supporting-the-bereaved",
+  "finding-peer-support-and-support-groups",
+] as const;
+const authoritativeRootCategories = authoritativeRootCategorySlugs
+  .map((slug) => rootCategories.find((c) => c.data.slug === slug))
+  .filter((c): c is CollectionEntry<"categories"> => c !== undefined);
+
+// Build the navigation tree
+const navTree: CategoryTreeNode[] = authoritativeRootCategories.map((item) =>
+  buildCategoryTree(item, categories),
+);
+---
+
+<div class="md:hidden">
+  <MobileNav navTree={navTree} />
+</div>
+<div class="hidden md:block">
+  <DesktopNav navTree={navTree} />
+</div>

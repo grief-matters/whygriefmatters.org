@@ -6,7 +6,7 @@ import { getOrganization } from "@content/loaders/organizationLoader";
 import Button from "@ui/primitives/Button.astro";
 import Link from "@ui/primitives/Link.astro";
 import Search from "@ui/orchestrators/Search.astro";
-import MainNav from "./MainNav.astro";
+import MainNav from "@ui/orchestrators/MainNav.astro";
 
 const org = await getOrganization();
 if (!org) {
