@@ -7,13 +7,17 @@ import type { PortableText } from "@content/model/portableText";
 import {
   textColorMap,
   textPresetClassMap,
+  type OnSurfaceColorVariant,
   type TextPreset,
 } from "@ui/utils/styles";
 import Stack from "./Stack.astro";
 
 interface Props {
   portableText: PortableText;
-  variant?: Extract<TextPreset, "body-1" | "body-2"> | "prominent-first";
+  textVariant?:
+    | Extract<TextPreset, "body-1" | "body-2" | "body-small">
+    | "prominent-first";
+  colorVariant?: OnSurfaceColorVariant;
   textAlign?: "center" | "left"; // Not doing anything specific with left as that's the default in Tailwind
 }
 
@@ -46,10 +50,10 @@ const permittedAttributesByElement: Partial<
 const classListMap = {
   block: {
     normal: clsx([
-      props.variant === "prominent-first"
+      props.textVariant === "prominent-first"
         ? ["first:text-lg text-base font-serif font-normal"]
-        : textPresetClassMap[props.variant ?? "body-1"],
-      textColorMap.primary.default,
+        : textPresetClassMap[props.textVariant ?? "body-1"],
+      textColorMap[props.colorVariant ?? "primary"].default,
       props.textAlign === "center" && "text-center",
     ]),
   },

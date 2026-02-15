@@ -46,7 +46,9 @@ const contentBlock = await getEntry(contentBlockRef);
             <PortableTextContentBlock
               textAlign={textAlign}
               portableText={contentItem.portableText}
-              variant={contentItem.emphasized ? "prominent-first" : "body-1"}
+              textVariant={
+                contentItem.emphasized ? "prominent-first" : "body-1"
+              }
             />
           </Container>
         );
