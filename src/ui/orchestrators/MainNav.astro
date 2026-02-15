@@ -2,30 +2,13 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import MobileNav from "@ui/composites/main-nav/MobileNav.astro";
 import DesktopNav from "@ui/composites/main-nav/DesktopNav.astro";
+import {
+  type CategoryTreeNode,
+  buildCategoryTree,
+  buildUnderservedCommunitiesNode,
+} from "./nav-utils";
 
-export interface CategoryTreeNode {
-  id: string;
-  slug: string;
-  title: string;
-  displayTitle: string;
-  children: CategoryTreeNode[];
-}
-
-function buildCategoryTree(
-  category: CollectionEntry<"categories">,
-  allCategories: CollectionEntry<"categories">[],
-): CategoryTreeNode {
-  return {
-    id: category.id,
-    slug: category.data.slug,
-    title: category.data.title,
-    displayTitle: category.data.displayTitle ?? category.data.title,
-    children: category.data.subcategories
-      .map(({ id }) => allCategories.find((c) => c.id === id))
-      .filter((c): c is CollectionEntry<"categories"> => c !== undefined)
-      .map((c) => buildCategoryTree(c, allCategories)),
-  };
-}
+export type { CategoryTreeNode };
 
 const categories = await getCollection("categories");
 if ((categories ?? []).length === 0) {
@@ -54,6 +37,15 @@ const authoritativeRootCategories = authoritativeRootCategorySlugs
 const navTree: CategoryTreeNode[] = authoritativeRootCategories.map((item) =>
   buildCategoryTree(item, categories),
 );
+
+// Add the "Underserved Communities" node
+const underservedNode = await buildUnderservedCommunitiesNode(
+  authoritativeRootCategories,
+  categories,
+);
+if (underservedNode.children.length > 0) {
+  navTree.push(underservedNode);
+}
 ---
 
 <div class="md:hidden">

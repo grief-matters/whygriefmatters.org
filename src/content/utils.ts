@@ -1,4 +1,4 @@
-import { defineCollection } from "astro:content";
+import { defineCollection, type CollectionEntry } from "astro:content";
 
 import zBasicInternetResource, {
   type InternetResourceType,
@@ -19,4 +19,29 @@ export function getBasicInternetResourceCollectionDef(
       }),
     schema: zBasicInternetResource,
   });
+}
+
+/**
+ * Recursively get all descendant category IDs (including the given category itself).
+ */
+export function getAllDescendantCategoryIds(
+  categoryId: string,
+  allCategories: Array<CollectionEntry<"categories">>,
+): Set<string> {
+  const categoryIds = new Set<string>([categoryId]);
+
+  const category = allCategories.find((c) => c.id === categoryId);
+  if (!category || category.data.subcategories.length === 0) {
+    return categoryIds;
+  }
+
+  for (const subcategoryRef of category.data.subcategories) {
+    const descendantIds = getAllDescendantCategoryIds(
+      subcategoryRef.id,
+      allCategories,
+    );
+    descendantIds.forEach((id) => categoryIds.add(id));
+  }
+
+  return categoryIds;
 }

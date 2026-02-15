@@ -1,6 +1,6 @@
 ---
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import Button from "@ui/primitives/Button.astro";
-import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
 import Link from "@ui/primitives/Link.astro";
 import SanityImage from "@ui/primitives/SanityImage.astro";
 import Spacer from "@ui/primitives/Spacer.astro";
@@ -22,86 +22,78 @@ if (props.categoryEntryData.subcategories.length > 0) {
 }
 ---
 
-<LayoutSurface variant="primaryContrast" as="header">
-  <div class="md:grid md:grid-cols-2 md:min-h-100">
-    <div class="md:order-2 md:relative">
-      <SanityImage
-        classList={["md:absolute md:inset-0 md:h-full md:w-full"]}
-        objectFit="cover"
-        image={props.categoryEntryData.image}
-      />
-    </div>
-    <div class="md:order-1 px-8 py-12 md:flex md:items-center md:justify-end">
-      <div class="basis-100">
-        <Spacer marginBottom={3}>
-          <!-- header -->
+<PageHeaderLayout surfaceVariant="primaryContrast" surfaceVariantKey={1}>
+  <SanityImage
+    slot="image"
+    classList={["md:absolute md:inset-0 md:h-full md:w-full"]}
+    objectFit="cover"
+    image={props.categoryEntryData.image}
+  />
+  <Fragment slot="content">
+    <Spacer marginBottom={3}>
+      <!-- header -->
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        color="primaryContrast"
+      >
+        {props.categoryEntryData.displayTitle ?? props.categoryEntryData.title}
+      </Typography>
+      <!-- description -->
+      {
+        props.categoryEntryData.shortDescription && (
           <Typography
-            marginBottom={2}
-            as="h1"
-            variant="title-1"
+            as="p"
+            variant="body-2"
             color="primaryContrast"
+            marginBottom={2}
           >
-            {
-              props.categoryEntryData.displayTitle ??
-                props.categoryEntryData.title
-            }
+            {props.categoryEntryData.shortDescription}
           </Typography>
-          <!-- description -->
-          {
-            props.categoryEntryData.shortDescription && (
-              <Typography
-                as="p"
-                variant="body-2"
-                color="primaryContrast"
-                marginBottom={2}
-              >
-                {props.categoryEntryData.shortDescription}
-              </Typography>
-            )
-          }
-        </Spacer>
+        )
+      }
+    </Spacer>
 
-        <!-- subcats -->
-        {
-          resolvedSubcategories !== null &&
-            resolvedSubcategories?.length > 0 && (
-              <Stack spacing={3}>
-                <Typography color="primaryContrast" variant="title-4">
-                  {"Explore further:"}
-                </Typography>
-                <Stack as="ul" spacing={2} marginBottom={4}>
-                  {resolvedSubcategories.map((c) => (
-                    <li>
-                      <Link
-                        to={`/${c.data.slug}`}
-                        label={c.data.title}
-                        color="primaryContrast"
-                      />
-                    </li>
-                  ))}
-                </Stack>
-              </Stack>
-            )
-        }
-        {/* button */}
-        {
-          props.parentCategory && (
-            <Button
-              as="a"
-              colorVariant="secondary"
-              href={`/${props.parentCategory.data.slug}`}
-            >
-              <Typography>
-                {"Part of "}
-                <strong class="text-bold">
-                  {props.parentCategory.data.displayTitle ??
-                    props.parentCategory.data.title}
-                </strong>
-              </Typography>
-            </Button>
-          )
-        }
-      </div>
-    </div>
-  </div>
-</LayoutSurface>
+    <!-- subcats -->
+    {
+      resolvedSubcategories !== null && resolvedSubcategories?.length > 0 && (
+        <Stack spacing={3}>
+          <Typography color="primaryContrast" variant="title-4">
+            {"Explore further:"}
+          </Typography>
+          <Stack as="ul" spacing={2} marginBottom={4}>
+            {resolvedSubcategories.map((c) => (
+              <li>
+                <Link
+                  to={`/${c.data.slug}`}
+                  label={c.data.title}
+                  color="primaryContrast"
+                />
+              </li>
+            ))}
+          </Stack>
+        </Stack>
+      )
+    }
+    {/* button */}
+    {
+      props.parentCategory && (
+        <Button
+          as="a"
+          colorVariant="secondary"
+          href={`/${props.parentCategory.data.slug}`}
+          class="inline-block"
+        >
+          <Typography>
+            {"Part of "}
+            <strong class="text-bold">
+              {props.parentCategory.data.displayTitle ??
+                props.parentCategory.data.title}
+            </strong>
+          </Typography>
+        </Button>
+      )
+    }
+  </Fragment>
+</PageHeaderLayout>

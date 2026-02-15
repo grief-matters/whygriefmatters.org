@@ -1,0 +1,30 @@
+---
+import LayoutSurface, {
+  type LayoutSurfaceVariantKey,
+} from "@ui/primitives/LayoutSurface.astro";
+import type { SurfaceColorVariant } from "@ui/utils/styles";
+
+interface Props {
+  surfaceVariant: SurfaceColorVariant;
+  surfaceVariantKey: LayoutSurfaceVariantKey;
+}
+
+const props = Astro.props;
+---
+
+<LayoutSurface
+  as="header"
+  variant={props.surfaceVariant}
+  variantKey={props.surfaceVariantKey}
+>
+  <div class="md:grid md:grid-cols-2 md:min-h-100">
+    <div class="md:order-2 md:relative">
+      <slot name="image" />
+    </div>
+    <div class="md:order-1 px-8 py-12 md:flex md:items-center md:justify-end">
+      <div class="basis-100">
+        <slot name="content" />
+      </div>
+    </div>
+  </div>
+</LayoutSurface>

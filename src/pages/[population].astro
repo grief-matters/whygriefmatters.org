@@ -1,10 +1,20 @@
 ---
 import type { PopulationSlug } from "@content/model/population";
-import Shell from "@ui/layouts/Shell.astro";
+
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import PopulationCategoryTree from "@ui/composites/PopulationCategoryTree.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import {
+  type CategoryTreeNode,
+  buildCategoryTree,
+  buildResourceExistenceSet,
+  pruneTreeForPopulation,
+} from "@ui/orchestrators/nav-utils";
 import { getCollection, type CollectionEntry } from "astro:content";
 
 interface Props {
   populationEntry: CollectionEntry<"populations">;
+  categoryTrees: CategoryTreeNode[];
 }
 
 const labelMakerFnMap: Record<PopulationSlug, (name: string) => string> = {
@@ -18,22 +28,68 @@ const labelMakerFnMap: Record<PopulationSlug, (name: string) => string> = {
 };
 
 export async function getStaticPaths() {
-  const populationEntries = await getCollection("populations");
+  const [populationEntries, categories] = await Promise.all([
+    getCollection("populations"),
+    getCollection("categories"),
+  ]);
 
-  return populationEntries.map((populationEntry) => ({
-    params: {
-      population: populationEntry.data.slug,
-    },
-    props: {
-      populationEntry,
-    },
-  }));
+  // Find root categories (those not appearing as children of any other)
+  const childIds = new Set(
+    categories.flatMap((c) => c.data.subcategories.map((sub) => sub.id)),
+  );
+  const rootCategories = categories.filter((c) => !childIds.has(c.id));
+
+  // Authoritative ordering determined by project lead
+  const authoritativeRootCategorySlugs = [
+    "topics",
+    "types-of-loss",
+    "supporting-the-bereaved",
+    "finding-peer-support-and-support-groups",
+  ] as const;
+  const authoritativeRootCategories = authoritativeRootCategorySlugs
+    .map((slug) => rootCategories.find((c) => c.data.slug === slug))
+    .filter((c): c is CollectionEntry<"categories"> => c !== undefined);
+
+  // Build full category trees and resource existence set once
+  const fullTrees = authoritativeRootCategories.map((rootCat) =>
+    buildCategoryTree(rootCat, categories),
+  );
+  const existenceSet = await buildResourceExistenceSet();
+
+  return populationEntries.map((populationEntry) => {
+    // Prune all trees for this population
+    const prunedTrees = fullTrees
+      .map((tree) =>
+        pruneTreeForPopulation(
+          tree,
+          populationEntry.id,
+          populationEntry.data.slug,
+          existenceSet,
+        ),
+      )
+      .filter((node): node is CategoryTreeNode => node !== null);
+
+    return {
+      params: {
+        population: populationEntry.data.slug,
+      },
+      props: {
+        populationEntry,
+        categoryTrees: prunedTrees,
+      },
+    };
+  });
 }
 
-const { populationEntry } = Astro.props;
+const { populationEntry, categoryTrees } = Astro.props;
 const labelMaker = labelMakerFnMap[populationEntry.data.slug];
 ---
 
-<Shell>
-  <p>{labelMaker(populationEntry.data.name)}</p>
-</Shell>
+<SitePageLayout>
+  <div class="px-8 py-12 max-w-4xl mx-auto">
+    <Typography as="h1" variant="title-1" marginBottom={4}>
+      {labelMaker(populationEntry.data.name)}
+    </Typography>
+    <PopulationCategoryTree trees={categoryTrees} />
+  </div>
+</SitePageLayout>

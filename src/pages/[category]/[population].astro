@@ -4,7 +4,8 @@ import {
   type InternetResourceEntries,
 } from "@content/collections";
 import type { PopulationSlug } from "@content/model/population";
-import Shell from "@ui/layouts/Shell.astro";
+import { getAllDescendantCategoryIds } from "@content/utils";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 import InternetResourceListingRenderer from "@ui/orchestrators/InternetResourceListingRenderer.astro";
 import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
@@ -33,14 +34,19 @@ export async function getStaticPaths() {
   const staticPaths = [];
 
   for (const categoryEntry of categoryEntries) {
+    const allCategoryIds = getAllDescendantCategoryIds(
+      categoryEntry.id,
+      categoryEntries,
+    );
+
     for (const populationEntry of populationEntries) {
       const internetResources: InternetResourceEntries = {};
       for (const key of internetResourceCollectionKeys) {
         const resourcesForKey = await getCollection(
           key,
           ({ data }) =>
-            data.categories.some((c) => c.id === categoryEntry.id) &&
-            data.populations.some((p) => p.id === populationEntry.id)
+            data.categories.some((c) => allCategoryIds.has(c.id)) &&
+            data.populations.some((p) => p.id === populationEntry.id),
         );
 
         if (resourcesForKey.length > 0) {
@@ -76,7 +82,7 @@ const params = Astro.params;
 const labelMaker = labelMakerFnMap[props.populationEntry.data.slug];
 ---
 
-<Shell>
+<SitePageLayout>
   <header>
     <h1>
       {props.categoryEntry.data.displayTitle ?? props.categoryEntry.data.title}
@@ -106,8 +112,8 @@ const labelMaker = labelMakerFnMap[props.populationEntry.data.slug];
               <InternetResourceListingRenderer entry={entry} />
             ))}
           </div>
-        )
+        ),
       )
     }
   </section>
-</Shell>
+</SitePageLayout>

@@ -12,6 +12,8 @@ import {
   type InternetResourceEntries,
 } from "@content/collections";
 
+import { getAllDescendantCategoryIds } from "@content/utils";
+
 import Slide from "@ui/layouts/slider/Slide.astro";
 import Slider from "@ui/layouts/slider/Slider.astro";
 
@@ -33,29 +35,6 @@ interface Props {
   populations: Array<CollectionEntry<"populations">>;
   resourceTypes: Array<InternetResourceCollectionKey>;
   parentCategory?: CollectionEntry<"categories">;
-}
-
-// Helper function to recursively get all descendant category IDs
-export function getAllDescendantCategoryIds(
-  categoryId: string,
-  allCategories: Array<CollectionEntry<"categories">>,
-): Set<string> {
-  const categoryIds = new Set<string>([categoryId]);
-
-  const category = allCategories.find((c) => c.id === categoryId);
-  if (!category || category.data.subcategories.length === 0) {
-    return categoryIds;
-  }
-
-  for (const subcategoryRef of category.data.subcategories) {
-    const descendantIds = getAllDescendantCategoryIds(
-      subcategoryRef.id,
-      allCategories,
-    );
-    descendantIds.forEach((id) => categoryIds.add(id));
-  }
-
-  return categoryIds;
 }
 
 export async function getResourcesFor<K extends InternetResourceCollectionKey>(

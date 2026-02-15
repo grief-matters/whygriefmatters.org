@@ -118,13 +118,19 @@ const navContainerClasses = ["p-12 space-y-4"];
                   label={tier2Cat.title}
                   class="w-full text-left"
                 />
-              ) : (
+              ) : tier2Cat.href ? (
                 <TextButton
                   as="a"
                   variant="title-5"
                   label={tier2Cat.title}
-                  href={`/${tier2Cat.slug}`}
+                  href={tier2Cat.href}
                   class="w-full text-left block"
+                />
+              ) : (
+                <Typography
+                  as="span"
+                  variant="title-5"
+                  set:text={tier2Cat.title}
                 />
               ),
             )}
@@ -160,15 +166,23 @@ const navContainerClasses = ["p-12 space-y-4"];
                   variant="title-3"
                   set:text={tier2Cat.displayTitle}
                 />
-                {tier2Cat.children.map((tier3Cat) => (
-                  <TextButton
-                    as="a"
-                    variant="title-5"
-                    label={tier3Cat.title}
-                    class="w-full text-left block"
-                    href={`/${tier3Cat.slug}`}
-                  />
-                ))}
+                {tier2Cat.children.map((tier3Cat) =>
+                  tier3Cat.href ? (
+                    <TextButton
+                      as="a"
+                      variant="title-5"
+                      label={tier3Cat.title}
+                      class="w-full text-left block"
+                      href={tier3Cat.href}
+                    />
+                  ) : (
+                    <Typography
+                      as="span"
+                      variant="title-5"
+                      set:text={tier3Cat.title}
+                    />
+                  ),
+                )}
               </div>
             )),
           )

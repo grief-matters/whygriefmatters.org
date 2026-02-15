@@ -1,0 +1,30 @@
+---
+import type { CategoryTreeNode } from "@ui/orchestrators/nav-utils";
+import Link from "@ui/primitives/Link.astro";
+
+interface Props {
+  node: CategoryTreeNode;
+}
+
+const Self = Astro.self;
+const { node } = Astro.props;
+---
+
+<li>
+  {
+    node.href ? (
+      <Link to={node.href} label={node.displayTitle} />
+    ) : (
+      <span>{node.displayTitle}</span>
+    )
+  }
+  {
+    node.children.length > 0 && (
+      <ul class="ml-6 mt-2 space-y-2">
+        {node.children.map((child) => (
+          <Self node={child} />
+        ))}
+      </ul>
+    )
+  }
+</li>
