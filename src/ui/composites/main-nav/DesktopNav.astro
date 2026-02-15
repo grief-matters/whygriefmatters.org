@@ -4,6 +4,9 @@ import Button from "@ui/primitives/Button.astro";
 import Link from "@ui/primitives/Link.astro";
 import Stack from "@ui/primitives/Stack.astro";
 import type { CategoryTreeNode } from "@ui/orchestrators/MainNav.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import CategoryResourceTypes from "@ui/orchestrators/CategoryResourceTypes.astro";
+import { paddingXSettingMap, paddingYSettingMap } from "@ui/utils/spacing";
 
 interface Props {
   navTree: CategoryTreeNode[];
@@ -25,7 +28,8 @@ const { navTree } = Astro.props;
             type="button"
             data-tier1-btn={item.id}
             class:list={[
-              "px-4 py-2",
+              "py-2",
+              paddingXSettingMap[3],
               "cursor-pointer",
               "transition duration-300",
               "font-sans-a font-medium",
@@ -48,14 +52,15 @@ const { navTree } = Astro.props;
     data-mega-nav
     hidden
     class:list={[
-      "shadow-lg border-t",
+      "shadow-lg",
       "absolute left-0 right-0 z-40",
       "max-w-7xl mx-auto",
       "bg-contentSurface-primary--default",
     ]}
   >
-    <div class="grid grid-cols-[280px_1fr]">
+    <nav class="grid grid-cols-[280px_1fr]">
       <!-- Left pane: Tier 2 items -->
+
       <div data-mega-tier2-pane class="py-12">
         {
           navTree.map((tier1) => (
@@ -67,7 +72,17 @@ const { navTree } = Astro.props;
                     data-mega-tier2-btn={tier2.id}
                     data-parent-tier1={tier1.id}
                     data-first={i === 0 ? "" : undefined}
-                    class="w-full text-left px-4 py-2 font-serif text-onSurface-primary--default cursor-pointer hover:bg-layoutSurface-primary--1 transition-colors border-l-4 border-transparent data-[active]:border-line-brand--accent data-[active]:bg-layoutSurface-neutral--1"
+                    class:list={[
+                      "font-bold font-serif text-left",
+                      "cursor-pointer",
+                      "w-full",
+                      paddingXSettingMap[4],
+                      paddingYSettingMap[2],
+                      "text-onSurface-primary--default",
+                      "transition-colors",
+                      "hover:bg-layoutSurface-primary--1 data-active:bg-layoutSurface-neutral--1",
+                      "border-l-4 border-transparent data-active:border-line-brand--accent",
+                    ]}
                   >
                     {tier2.title}
                   </button>
@@ -79,52 +94,77 @@ const { navTree } = Astro.props;
       </div>
 
       <!-- Right pane: Tier 3 items -->
-      <div data-mega-tier3-pane class="py-4 px-6 bg-layoutSurface-neutral--1">
-        <div class="flex justify-end mb-4">
-          <Button
-            data-mega-close
-            type="button"
-            styleVariant="outlined"
-            colorVariant="neutral"
-            textVariant="button-1"
-            label="Close"
-          />
-        </div>
+      <div data-mega-tier3-pane class="py-4 px-8 bg-layoutSurface-neutral--1">
         {
           navTree.flatMap((tier1) =>
             tier1.children.map((tier2) => (
-              <div data-mega-tier3-section={tier2.id} hidden>
-                <h3 class="font-serif font-bold text-2xl text-onSurface-primary--default mb-4">
-                  {tier2.title}
-                </h3>
-                <ul class="space-y-3">
-                  {tier2.children.map((tier3) => (
-                    <li>
-                      <Link
-                        bold
-                        to={`/${tier3.slug}`}
-                        label={tier3.title}
-                        variant="body-2"
-                      />
+              <div
+                data-mega-tier3-section={tier2.id}
+                hidden
+                class="flex flex-col h-full"
+              >
+                <header class="flex justify-between mt-3 mb-4">
+                  <Typography variant="title-3" marginBottom={2}>
+                    {tier2.title}
+                  </Typography>
+                  <div>
+                    <Button
+                      data-mega-close
+                      type="button"
+                      styleVariant="outlined"
+                      colorVariant="neutral"
+                      textVariant="button-1"
+                      label="Close"
+                    />
+                  </div>
+                </header>
+                <div class="grid grid-cols-2 gap-3">
+                  {tier2.children.length > 0 && (
+                    <ul class="space-y-3">
+                      {tier2.children.map((tier3) => (
+                        <li>
+                          <Link
+                            to={`/${tier3.slug}`}
+                            label={tier3.title}
+                            variant="body-2"
+                            color="warmNeutral"
+                          />
 
-                      {tier3.children.length > 0 && (
-                        <Stack>
-                          {tier3.children.map((tier4) => (
-                            <div>
-                              <Link to={`/${tier4.slug}`} label={tier4.title} />
+                          {tier3.children.length > 0 && (
+                            <div class="ml-4 mt-2 mb-1">
+                              <Stack>
+                                {tier3.children.map((tier4) => (
+                                  <div>
+                                    <Link
+                                      to={`/${tier4.slug}`}
+                                      label={tier4.title}
+                                      color="warmNeutral"
+                                    />
+                                  </div>
+                                ))}
+                              </Stack>
                             </div>
-                          ))}
-                        </Stack>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <div class="shrink">
+                    <CategoryResourceTypes categoryId={tier2.id} />
+                  </div>
+                </div>
+                <div class="my-4 grow flex items-end justify-end">
+                  <Link to={tier2.slug} variant="title-5" color="warmNeutral">
+                    <span class="font-normal">{"Explore "}</span>
+                    {tier2.title}
+                  </Link>
+                </div>
               </div>
             )),
           )
         }
       </div>
-    </div>
+    </nav>
   </div>
 </desktop-nav-controller>
 
@@ -157,8 +197,9 @@ const { navTree } = Astro.props;
         });
       });
 
-      const closeBtn = this.querySelector("[data-mega-close]");
-      closeBtn?.addEventListener("click", () => this.closeMegaNav());
+      this.querySelectorAll("[data-mega-close]").forEach((btn) => {
+        btn?.addEventListener("click", () => this.closeMegaNav());
+      });
 
       document.addEventListener("click", (e) => {
         const megaNav = this.querySelector("[data-mega-nav]");

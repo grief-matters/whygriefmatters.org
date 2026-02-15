@@ -108,16 +108,26 @@ const navContainerClasses = ["p-12 space-y-4"];
               variant="title-3"
               set:text={tier1Cat.displayTitle}
             />
-            {tier1Cat.children.map((tier2Cat) => (
-              <TextButton
-                type="button"
-                variant="title-5"
-                data-mobile-tier2-btn={tier2Cat.id}
-                data-parent-tier1={tier1Cat.id}
-                label={tier2Cat.title}
-                class="w-full text-left"
-              />
-            ))}
+            {tier1Cat.children.map((tier2Cat) =>
+              tier2Cat.children.length > 0 ? (
+                <TextButton
+                  type="button"
+                  variant="title-5"
+                  data-mobile-tier2-btn={tier2Cat.id}
+                  data-parent-tier1={tier1Cat.id}
+                  label={tier2Cat.title}
+                  class="w-full text-left"
+                />
+              ) : (
+                <TextButton
+                  as="a"
+                  variant="title-5"
+                  label={tier2Cat.title}
+                  href={`/${tier2Cat.slug}`}
+                  class="w-full text-left block"
+                />
+              ),
+            )}
           </div>
         ))
       }

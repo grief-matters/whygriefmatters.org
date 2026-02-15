@@ -1,5 +1,6 @@
 ---
 import "@styles/main.css";
+import SiteFooter from "@ui/composites/SiteFooter.astro";
 ---
 
 <html lang="en">
@@ -17,10 +18,9 @@ import "@styles/main.css";
       "text-onSurface-primary--default",
     ]}
   >
+    {/*Slot for Header and Main */}
     <slot />
-    <footer class="h-24 bg-layoutSurface-primaryContrast--1">
-      {/* Footer content will always be the same */}
-      <p>Footer</p>
-    </footer>
+    {/* Footer always renders - in all layouts */}
+    <SiteFooter />
   </body>
 </html>

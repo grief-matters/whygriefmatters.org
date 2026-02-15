@@ -23,12 +23,7 @@ const {
   ...attrs
 } = Astro.props;
 
-const baseClasses = [
-  "inline-block",
-  "py-0.5 px-4",
-  "cursor-pointer",
-  "rounded-sm",
-];
+const baseClasses = ["block", "py-0.5 px-4", "cursor-pointer", "rounded-sm"];
 
 const variantClassMap: Record<
   StyleVariant,

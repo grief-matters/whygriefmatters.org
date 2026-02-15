@@ -1,7 +1,6 @@
 ---
 import { getEntry } from "astro:content";
 
-import Shell from "@ui/layouts/Shell.astro";
 import LayoutSurface, {
   type LayoutSurfaceVariantKey,
 } from "@ui/primitives/LayoutSurface.astro";
@@ -34,57 +33,55 @@ const logoUrl = org.logos.onDark
 const bgVar = `url(${heroImgUrl})`;
 ---
 
-<Shell>
-  <SitePageLayout>
-    <div
-      slot="in-header"
-      class:list={[
-        "px-4 flex justify-center items-center flex-col h-96 2xl:h-148",
-        "hero",
-        "bg-center bg-no-repeat bg-cover",
-      ]}
-    >
-      <h1 class:list={[logoUrl && "sr-only"]}>{org.name}</h1>
-      <div>
-        {
-          logoUrl && (
-            <img
-              class="h-24 lg:h-32 2xl:h-48"
-              src={logoUrl}
-              alt={`${org.name} logo`}
-            />
-          )
-        }
-        <p
-          class:list={[
-            "text-onSurface-primaryContrast--default",
-            "font-serif italic lowercase",
-            "text-sm sm:text-base 2xl:text-2xl",
-            `before:content-["..."]`,
-            `text-right 2xl:text-left`,
-            "indent-28 lg:indent-40 2xl:indent-60",
-            "-mt-3 2xl:-mt-6",
-          ]}
-          set:text={org.slogan}
-        />
-      </div>
+<SitePageLayout>
+  <div
+    slot="in-header"
+    class:list={[
+      "px-4 flex justify-center items-center flex-col h-96 2xl:h-148",
+      "hero",
+      "bg-center bg-no-repeat bg-cover",
+    ]}
+  >
+    <h1 class:list={[logoUrl && "sr-only"]}>{org.name}</h1>
+    <div>
+      {
+        logoUrl && (
+          <img
+            class="h-24 lg:h-32 2xl:h-48"
+            src={logoUrl}
+            alt={`${org.name} logo`}
+          />
+        )
+      }
+      <p
+        class:list={[
+          "text-onSurface-primaryContrast--default",
+          "font-serif italic lowercase",
+          "text-sm sm:text-base 2xl:text-2xl",
+          `before:content-["..."]`,
+          `text-right 2xl:text-left`,
+          "indent-28 lg:indent-40 2xl:indent-60",
+          "-mt-3 2xl:-mt-6",
+        ]}
+        set:text={org.slogan}
+      />
     </div>
-    {
-      homePageEntry.data.contentBlocks.map((block, i) => (
-        <LayoutSurface
-          as="section"
-          variant="neutral"
-          variantKey={((i % 4) + 1) as LayoutSurfaceVariantKey}
-          paddingY={6}
-        >
-          <Stack>
-            <ContentBlockRenderer contentBlockRef={block} />
-          </Stack>
-        </LayoutSurface>
-      ))
-    }
-  </SitePageLayout>
-</Shell>
+  </div>
+  {
+    homePageEntry.data.contentBlocks.map((block, i) => (
+      <LayoutSurface
+        as="section"
+        variant="neutral"
+        variantKey={((i % 4) + 1) as LayoutSurfaceVariantKey}
+        paddingY={6}
+      >
+        <Stack>
+          <ContentBlockRenderer contentBlockRef={block} />
+        </Stack>
+      </LayoutSurface>
+    ))
+  }
+</SitePageLayout>
 
 <style define:vars={{ bgVar }}>
   .hero {

@@ -27,14 +27,16 @@ const logoUrl = org.logos.onLight
 >
   <div
     class:list={[
-      "space-y-2 flex flex-wrap sm:flex-nowrap items-center gap-x-4 grow",
+      "space-y-2 flex flex-wrap sm:flex-nowrap items-center gap-x-6 grow",
     ]}
   >
     <a class="block basis-50" href="/">
       <img class:list={["h-16"]} src={logoUrl} alt={`${org.name} logo`} />
     </a>
     <!-- Search Input -->
-    <Search />
+    <div class="grow min-w-0 max-w-75">
+      <Search />
+    </div>
   </div>
   <div class:list={["flex justify-end items-center gap-3"]}>
     <Link to={"/about"} label="About" variant="button-2" />

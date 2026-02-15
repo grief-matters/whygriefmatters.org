@@ -5,13 +5,13 @@ import Icon from "@ui/primitives/Icon.astro";
 import Typography from "@ui/primitives/Typography.astro";
 ---
 
-<search-controller>
+<search-controller class="">
   <!-- Trigger button (styled like the original placeholder) -->
   <button
     type="button"
     data-search-trigger
     class:list={[
-      "grow basis-40 px-3 py-1 border rounded-full border-line-primary--muted sm:max-w-60",
+      "w-full basis-40 px-3 py-1 border rounded-full border-line-primary--muted",
       "cursor-pointer hover:border-line-primary--default transition-colors",
       "flex items-center gap-1",
     ]}

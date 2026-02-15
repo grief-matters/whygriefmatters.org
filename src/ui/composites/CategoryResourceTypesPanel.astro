@@ -1,0 +1,126 @@
+---
+import {
+  collectionKeyToResourceTypeMap,
+  type InternetResourceCollectionKey,
+} from "@content/collections";
+import { primaryResourceTypes } from "@content/model/internetResource";
+import Button from "@ui/primitives/Button.astro";
+import ContentSurface from "@ui/primitives/ContentSurface.astro";
+import Icon from "@ui/primitives/Icon.astro";
+import Stack from "@ui/primitives/Stack.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import { resourceTypeIconConfigMap } from "@ui/utils/icons";
+import startCase from "lodash/startCase";
+
+type ResourceTypeCounts = Partial<
+  Record<InternetResourceCollectionKey, number>
+>;
+
+interface Props {
+  categorySlug: string;
+  resourceTypesData: ResourceTypeCounts;
+}
+
+const props = Astro.props;
+
+// Get all entries as [collectionKey, count] pairs
+const resourceEntries = Object.entries(props.resourceTypesData) as [
+  InternetResourceCollectionKey,
+  number,
+][];
+
+// Filter to primary resource types with count > 0, maintaining primaryResourceTypes order
+const resourceCountsToDisplay = primaryResourceTypes
+  .map((type) =>
+    resourceEntries.find(
+      ([cKey, count]) =>
+        collectionKeyToResourceTypeMap[cKey] === type && count > 0,
+    ),
+  )
+  .filter(
+    (entry): entry is [InternetResourceCollectionKey, number] =>
+      entry !== undefined,
+  );
+
+// Sum counts for non-primary resource types
+const otherResourcesCount = resourceEntries
+  .filter(
+    ([cKey, count]) =>
+      !primaryResourceTypes.includes(
+        collectionKeyToResourceTypeMap[
+          cKey
+        ] as (typeof primaryResourceTypes)[number],
+      ) && count > 0,
+  )
+  .reduce((sum, [, count]) => sum + count, 0);
+
+function getOtherResourcesLabel(count: number) {
+  if (count < 5) {
+    return null;
+  }
+
+  if (count < 25) {
+    return "Plus more across other formats";
+  }
+
+  if (count < 50) {
+    return "With over 25 more across other formats";
+  }
+
+  if (count < 100) {
+    return "With over 50 more across other formats";
+  }
+
+  return "With over 100 more across other formats";
+}
+---
+
+<ContentSurface paddingX={5} paddingY={4}>
+  <Stack spacing={2}>
+    <Typography variant="title-4" color="warmNeutral">
+      {"Resources on this topic"}
+    </Typography>
+    <Stack spacing={2}>
+      {
+        resourceCountsToDisplay.map(([collectionKey, count]) => {
+          const iconConfig =
+            resourceTypeIconConfigMap[
+              collectionKeyToResourceTypeMap[
+                collectionKey as InternetResourceCollectionKey
+              ]
+            ];
+
+          return (
+            <Button
+              as="a"
+              href={`/${props.categorySlug}#${collectionKey}`}
+              styleVariant="outlined"
+              colorVariant="neutral"
+            >
+              <span class="flex items-center gap-1">
+                <Icon
+                  size={2}
+                  color={iconConfig.colorVariant}
+                  getIcon={() => iconConfig.icon}
+                />
+                <Typography
+                  as="span"
+                  set:text={`${count} ${startCase(collectionKey)}`}
+                  variant="button-2"
+                  color="warmNeutral"
+                />
+              </span>
+            </Button>
+          );
+        })
+      }
+    </Stack>
+    {
+      otherResourcesCount > 0 && (
+        <Typography color="warmNeutral">
+          {getOtherResourcesLabel(otherResourcesCount)}
+        </Typography>
+      )
+    }
+  </Stack>
+</ContentSurface>
