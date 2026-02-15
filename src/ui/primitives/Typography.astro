@@ -3,7 +3,7 @@ import type { Polymorphic } from "astro/types";
 
 import {
   textColorMap,
-  textPresetClassMap,
+  textPresetMap,
   type OnSurfaceColorVariant,
   type TextPreset,
   type TextProminence,
@@ -47,16 +47,18 @@ const {
   ...attrs
 } = Astro.props;
 
+const preset = textPresetMap[variant];
 const variantClasses = [
-  textPresetClassMap[variant],
+  preset.fontFamily,
+  preset.fontSize,
+  bold ? "font-bold" : preset.fontWeight,
+  italic ? "italic" : null,
   variant === "subtitle-1"
     ? textColorMap.coolNeutral.muted
     : textColorMap[color][prominence],
   Tag.startsWith("h") ? "leading-8 text-balance" : "leading-7",
   textAlign === "center" ? "text-center" : null,
   marginBottom && marginBottomMap[marginBottom],
-  bold && "font-bold",
-  italic && "font-italic",
 ];
 ---
 

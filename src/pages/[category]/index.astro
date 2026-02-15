@@ -122,13 +122,11 @@ const props = Astro.props;
     props.categoryEntry.data.description && (
       <LayoutSurface paddingY={6}>
         <Container paddingX={4}>
-          {props.categoryEntry.data.description && (
-            <PortableTextContentBlock
-              textVariant="prominent-first"
-              textAlign="center"
-              portableText={props.categoryEntry.data.description}
-            />
-          )}
+          <PortableTextContentBlock
+            textVariant="prominent-first"
+            textAlign="center"
+            portableText={props.categoryEntry.data.description}
+          />
         </Container>
       </LayoutSurface>
     )

@@ -1,12 +1,15 @@
 ---
+import type { SanityImage } from "@content/model/image";
 import LayoutSurface, {
   type LayoutSurfaceVariantKey,
 } from "@ui/primitives/LayoutSurface.astro";
+import SanityImageComp from "@ui/primitives/SanityImage.astro";
 import type { SurfaceColorVariant } from "@ui/utils/styles";
 
 interface Props {
   surfaceVariant: SurfaceColorVariant;
   surfaceVariantKey: LayoutSurfaceVariantKey;
+  image: SanityImage | null;
 }
 
 const props = Astro.props;
@@ -19,12 +22,14 @@ const props = Astro.props;
 >
   <div class="md:grid md:grid-cols-2 md:min-h-100">
     <div class="md:order-2 md:relative">
-      <slot name="image" />
+      <SanityImageComp
+        classList={["md:absolute md:inset-0 md:h-full md:w-full"]}
+        objectFit="cover"
+        image={props.image}
+      />
     </div>
-    <div class="md:order-1 px-8 py-12 md:flex md:items-center md:justify-end">
-      <div class="basis-100">
-        <slot name="content" />
-      </div>
+    <div class="md:order-1">
+      <slot />
     </div>
   </div>
 </LayoutSurface>

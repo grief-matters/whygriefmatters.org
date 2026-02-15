@@ -1,6 +1,4 @@
 ---
-import type { PopulationSlug } from "@content/model/population";
-
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 import PopulationCategoryTree from "@ui/composites/PopulationCategoryTree.astro";
 import Typography from "@ui/primitives/Typography.astro";
@@ -11,21 +9,16 @@ import {
   pruneTreeForPopulation,
 } from "@ui/orchestrators/nav-utils";
 import { getCollection, type CollectionEntry } from "astro:content";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import { makeLabelPartsForPopulationResources } from "@content/utils";
+import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
+import Container from "@ui/primitives/Container.astro";
+import Stack from "@ui/primitives/Stack.astro";
 
 interface Props {
   populationEntry: CollectionEntry<"populations">;
   categoryTrees: CategoryTreeNode[];
 }
-
-const labelMakerFnMap: Record<PopulationSlug, (name: string) => string> = {
-  "latino-and-hispanic-americans": (name: string) => `Resources for ${name}`,
-  "african-american-black": (name: string) => `Resources for ${name}`,
-  "asian-american-and-pacific-islander": (name: string) =>
-    `Resources for ${name}`,
-  "people-with-disabilities": (name: string) => `Resources for ${name}`,
-  "lgbtq-community": (name: string) => `Resources for the ${name}`,
-  "indigenous-communities": (name: string) => `Resources for ${name}`,
-};
 
 export async function getStaticPaths() {
   const [populationEntries, categories] = await Promise.all([
@@ -82,14 +75,43 @@ export async function getStaticPaths() {
 }
 
 const { populationEntry, categoryTrees } = Astro.props;
-const labelMaker = labelMakerFnMap[populationEntry.data.slug];
+
+const labelParts = await makeLabelPartsForPopulationResources(
+  populationEntry.id,
+);
 ---
 
 <SitePageLayout>
-  <div class="px-8 py-12 max-w-4xl mx-auto">
-    <Typography as="h1" variant="title-1" marginBottom={4}>
-      {labelMaker(populationEntry.data.name)}
-    </Typography>
-    <PopulationCategoryTree trees={categoryTrees} />
-  </div>
+  <PageHeaderLayout
+    surfaceVariant="tertiary"
+    surfaceVariantKey={3}
+    image={populationEntry.data.image}
+  >
+    <div class="md:h-full md:flex md:flex-col">
+      <div class="md:h-full md:flex md:items-center">
+        <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
+          <div class="basis-100">
+            <Typography as="span" variant="body-2" class="block" italic>
+              {`${labelParts[0]} `}
+            </Typography>
+            <Typography as="span" variant="title-2">
+              {labelParts[1]}
+            </Typography>
+          </div>
+        </div>
+      </div>
+    </div>
+  </PageHeaderLayout>
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <Container>
+      <Stack spacing={4}>
+        <Typography variant="body-2">
+          {
+            `We have a range of ${labelParts.join(" ")} across the following categories:`
+          }
+        </Typography>
+        <PopulationCategoryTree trees={categoryTrees} />
+      </Stack>
+    </Container>
+  </LayoutSurface>
 </SitePageLayout>

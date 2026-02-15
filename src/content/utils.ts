@@ -1,4 +1,8 @@
-import { defineCollection, type CollectionEntry } from "astro:content";
+import {
+  defineCollection,
+  getEntry,
+  type CollectionEntry,
+} from "astro:content";
 
 import zBasicInternetResource, {
   type InternetResourceType,
@@ -44,4 +48,27 @@ export function getAllDescendantCategoryIds(
   }
 
   return categoryIds;
+}
+
+export async function makeLabelPartsForPopulationResources(
+  populationId: string,
+): Promise<Array<string>> {
+  const entry = await getEntry("populations", populationId);
+
+  let labelParts = null;
+  switch (entry?.data.slug) {
+    case "african-american-black":
+    case "asian-american-and-pacific-islander":
+    case "indigenous-communities":
+    case "latino-and-hispanic-americans":
+    case "people-with-disabilities":
+      labelParts = ["Resources for", entry.data.name];
+      break;
+    case "lgbtq-community":
+      labelParts = ["Resources for the", entry.data.name];
+    default:
+      break;
+  }
+
+  return labelParts ?? [];
 }

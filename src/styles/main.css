@@ -28,6 +28,8 @@
   --color-layoutSurface-primaryContrast--2: var(--token-color-blue-30);
   --color-layoutSurface-secondary--1: var(--token-color-pink-97);
   --color-layoutSurface-tertiary--1: var(--token-color-green-98);
+  --color-layoutSurface-tertiary--2: var(--token-color-green-95);
+  --color-layoutSurface-tertiary--3: var(--token-color-green-90);
 
   /* Content surface */
   --color-contentSurface-neutral--muted: var(--token-color-stone-97);

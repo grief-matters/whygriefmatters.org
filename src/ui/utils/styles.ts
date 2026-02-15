@@ -12,19 +12,32 @@ export const textPresets = [
   "button-2",
 ] as const;
 
-export const textPresetClassMap: Record<TextPreset, string> = {
-  "title-1": "font-serif font-bold text-4xl",
-  "title-2": "font-serif font-bold text-3xl",
-  "title-3": "font-serif font-bold text-2xl",
-  "title-4": "font-serif font-bold text-xl",
-  "title-5": "font-serif font-bold text-lg",
-  "body-2": "font-serif font-normal text-lg",
-  "body-1": "font-serif font-normal text-base",
-  "body-small": "font-serif font-normal text-sm",
-  "subtitle-1": "font-sans-b font-normal text-sm",
-  "button-1": "font-sans-a font-bold text-base",
-  "button-2": "font-serif font-bold text-base",
-} as const;
+interface TextPresetDefinition {
+  fontFamily: string;
+  fontSize: string;
+  fontWeight: string;
+}
+
+export const textPresetMap: Record<TextPreset, TextPresetDefinition> = {
+  "title-1": { fontFamily: "font-serif", fontSize: "text-4xl", fontWeight: "font-bold" },
+  "title-2": { fontFamily: "font-serif", fontSize: "text-3xl", fontWeight: "font-bold" },
+  "title-3": { fontFamily: "font-serif", fontSize: "text-2xl", fontWeight: "font-bold" },
+  "title-4": { fontFamily: "font-serif", fontSize: "text-xl", fontWeight: "font-bold" },
+  "title-5": { fontFamily: "font-serif", fontSize: "text-lg", fontWeight: "font-bold" },
+  "body-2": { fontFamily: "font-serif", fontSize: "text-lg", fontWeight: "font-normal" },
+  "body-1": { fontFamily: "font-serif", fontSize: "text-base", fontWeight: "font-normal" },
+  "body-small": { fontFamily: "font-serif", fontSize: "text-sm", fontWeight: "font-normal" },
+  "subtitle-1": { fontFamily: "font-sans-b", fontSize: "text-sm", fontWeight: "font-normal" },
+  "button-1": { fontFamily: "font-sans-a", fontSize: "text-base", fontWeight: "font-bold" },
+  "button-2": { fontFamily: "font-serif", fontSize: "text-base", fontWeight: "font-bold" },
+};
+
+export const textPresetClassMap: Record<TextPreset, string> = Object.fromEntries(
+  Object.entries(textPresetMap).map(([key, { fontFamily, fontSize, fontWeight }]) => [
+    key,
+    `${fontFamily} ${fontWeight} ${fontSize}`,
+  ]),
+) as Record<TextPreset, string>;
 
 export const colorVariants = [
   "neutral",

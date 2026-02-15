@@ -1,31 +1,40 @@
 ---
 import {
   internetResourceCollectionKeys,
+  type InternetResourceCollectionKey,
   type InternetResourceEntries,
 } from "@content/collections";
 import type { PopulationSlug } from "@content/model/population";
 import { getAllDescendantCategoryIds } from "@content/utils";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
-import InternetResourceListingRenderer from "@ui/orchestrators/InternetResourceListingRenderer.astro";
+import ResourceListingsOrchestrator from "@ui/orchestrators/ResourceListingsOrchestrator.astro";
+import Button from "@ui/primitives/Button.astro";
+import Container from "@ui/primitives/Container.astro";
+import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
 import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
+import Typography from "@ui/primitives/Typography.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
-import startCase from "lodash/startCase";
 
 interface Props {
   categoryEntry: CollectionEntry<"categories">;
   populationEntry: CollectionEntry<"populations">;
   internetResources: InternetResourceEntries;
+  resourceTypes: Array<InternetResourceCollectionKey>;
 }
 
-const labelMakerFnMap: Record<PopulationSlug, (name: string) => string> = {
-  "latino-and-hispanic-americans": (name: string) => `Resources for ${name}`,
-  "african-american-black": (name: string) => `Resources for ${name}`,
-  "asian-american-and-pacific-islander": (name: string) =>
-    `Resources for ${name}`,
-  "people-with-disabilities": (name: string) => `Resources for ${name}`,
-  "lgbtq-community": (name: string) => `Resources for the ${name}`,
-  "indigenous-communities": (name: string) => `Resources for ${name}`,
-};
+const labelMakerFnMap: Record<PopulationSlug, (name: string) => Array<string>> =
+  {
+    "latino-and-hispanic-americans": (name: string) => ["Resources for", name],
+    "african-american-black": (name: string) => ["Resources for", name],
+    "asian-american-and-pacific-islander": (name: string) => [
+      "Resources for",
+      name,
+    ],
+    "people-with-disabilities": (name: string) => ["Resources for", name],
+    "lgbtq-community": (name: string) => ["Resources for the", name],
+    "indigenous-communities": (name: string) => ["Resources for", name],
+  };
 
 export async function getStaticPaths() {
   const categoryEntries = await getCollection("categories");
@@ -59,6 +68,8 @@ export async function getStaticPaths() {
         continue;
       }
 
+      const resourceTypes = Object.keys(internetResources);
+
       staticPaths.push({
         params: {
           category: categoryEntry.data.slug,
@@ -68,6 +79,7 @@ export async function getStaticPaths() {
           categoryEntry,
           populationEntry,
           internetResources,
+          resourceTypes,
         },
       });
     }
@@ -77,43 +89,94 @@ export async function getStaticPaths() {
 }
 
 const props = Astro.props;
-const params = Astro.params;
 
 const labelMaker = labelMakerFnMap[props.populationEntry.data.slug];
+const labelParts = labelMaker(props.populationEntry.data.name);
 ---
 
 <SitePageLayout>
-  <header>
-    <h1>
-      {props.categoryEntry.data.displayTitle ?? props.categoryEntry.data.title}
-    </h1>
-    {
-      props.categoryEntry.data.shortDescription && (
-        <p>{props.categoryEntry.data.shortDescription}</p>
-      )
-    }
-    <p>{labelMaker(props.populationEntry.data.name)}</p>
-    <a href={`/${params.category}`}>{"See all resources for this topic"}</a>
-  </header>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={props.populationEntry.data.image}
+  >
+    <div class="md:h-full md:flex md:flex-col">
+      <div class="md:h-full md:flex md:items-center">
+        <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
+          <div class="basis-100">
+            <Typography
+              marginBottom={2}
+              as="h1"
+              variant="title-1"
+              color="primaryContrast"
+            >
+              {
+                props.categoryEntry.data.displayTitle ??
+                  props.categoryEntry.data.title
+              }
+            </Typography>
+            {
+              props.categoryEntry.data.shortDescription && (
+                <Typography
+                  as="p"
+                  variant="body-2"
+                  color="primaryContrast"
+                  marginBottom={2}
+                >
+                  {props.categoryEntry.data.shortDescription}
+                </Typography>
+              )
+            }
+          </div>
+        </div>
+      </div>
+      <LayoutSurface variant="tertiary" variantKey={3}>
+        <div class="px-8 py-6 md:flex md:items-center md:justify-end">
+          <div class="basis-100">
+            <p class="mb-3">
+              <Typography as="span" variant="body-2" class="block">
+                <span class="italic">
+                  {`${labelParts[0]} `}
+                </span>
+              </Typography>
+              <Typography as="span" variant="title-2">
+                {labelParts[1]}
+              </Typography>
+            </p>
+            <Button
+              as="a"
+              colorVariant="primaryContrast"
+              href={`/${props.categoryEntry.data.slug}`}
+              class="inline-block"
+            >
+              <Typography as="span" color="primaryContrast">
+                {"See all resources for this topic"}
+              </Typography>
+            </Button>
+          </div>
+        </div>
+      </LayoutSurface>
+    </div>
+  </PageHeaderLayout>
+  {/* Category Description */}
   {
     props.categoryEntry.data.description && (
-      <PortableTextContentBlock
-        portableText={props.categoryEntry.data.description}
-      />
+      <LayoutSurface paddingY={6}>
+        <Container paddingX={4}>
+          <PortableTextContentBlock
+            textVariant="prominent-first"
+            textAlign="center"
+            portableText={props.categoryEntry.data.description}
+          />
+        </Container>
+      </LayoutSurface>
     )
   }
-  <section>
-    {
-      Object.entries(props.internetResources).map(
-        ([resourceType, resourceEntries]) => (
-          <div>
-            <h2>{startCase(resourceType)}</h2>
-            {resourceEntries.map((entry) => (
-              <InternetResourceListingRenderer entry={entry} />
-            ))}
-          </div>
-        ),
-      )
-    }
-  </section>
+
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <ResourceListingsOrchestrator
+      internetResources={props.internetResources}
+      resourceTypes={props.resourceTypes}
+    />
+  </LayoutSurface>
 </SitePageLayout>
