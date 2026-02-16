@@ -20,6 +20,7 @@ import type {
   CategoryPageLinkContentItem,
   ResourcePageLinkContentItem,
 } from "@content/model/contentBlock/pageLinksContentItem";
+import Link from "@ui/primitives/Link.astro";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
@@ -136,7 +137,13 @@ const contentBlock = await getEntry(contentBlockRef);
       case "resourceLinks":
         return <div>[Still to implement `{contentItem.contentType}`]</div>;
       case "relativeLink":
-        return <div>[Still to implement `{contentItem.contentType}`]</div>;
+        return (
+          <Container>
+            <div class={textAlign === "center" ? "text-center" : ""}>
+              <Link to={contentItem.url} label={contentItem.label} />
+            </div>
+          </Container>
+        );
       case "resourcePageLink":
         return (
           <Container>

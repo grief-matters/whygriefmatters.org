@@ -1,0 +1,105 @@
+---
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import Container from "@ui/primitives/Container.astro";
+import ContentSurface from "@ui/primitives/ContentSurface.astro";
+import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
+import Link from "@ui/primitives/Link.astro";
+import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
+import SanityImage from "@ui/primitives/SanityImage.astro";
+import Stack from "@ui/primitives/Stack.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+import kebabCase from "lodash/kebabCase";
+
+interface Props {
+  personData: CollectionEntry<"people">["data"];
+}
+
+export async function getStaticPaths() {
+  const people = await getCollection(
+    "people",
+    (x) => x.data.personalStory !== null,
+  );
+
+  return people.map((person) => ({
+    params: { person: kebabCase(person.data.fullName) },
+    props: {
+      personData: person.data,
+    },
+  }));
+}
+
+const props = Astro.props;
+---
+
+<SitePageLayout>
+  <LayoutSurface as="header" variant={"primaryContrast"}>
+    <Container paddingX={4} paddingY={4} size={2}>
+      <div class="space-y-3 md:gap-6 md:flex md:items-center md:justify-evenly">
+        <Stack spacing={1}>
+          <Typography as="h1" variant="title-1" color="primaryContrast">
+            {props.personData.fullName}
+          </Typography>
+          <Typography variant="title-4" color="primaryContrast">
+            {props.personData.role}
+          </Typography>
+          <Typography color="primaryContrast">
+            {
+              `Learn more about our ${props.personData.role}, ${props.personData.fullName}`
+            }
+          </Typography>
+        </Stack>
+        <div class="flex justify-center">
+          <ContentSurface
+            class:list={["max-w-sm"]}
+            paddingX={2}
+            paddingY={2}
+            variant="featureCard"
+          >
+            <SanityImage
+              useFallback={false}
+              aspect="square"
+              image={props.personData.avatar !== null
+                ? { image: props.personData.avatar, altText: "" }
+                : null}
+            />
+          </ContentSurface>
+        </div>
+      </div>
+    </Container>
+  </LayoutSurface>
+  <LayoutSurface paddingY={6} as="section">
+    <Container paddingX={2}>
+      {
+        props.personData.shortBio && (
+          <PortableTextContentBlock
+            textAlign="center"
+            portableText={props.personData.shortBio}
+          />
+        )
+      }
+    </Container>
+  </LayoutSurface>
+  <LayoutSurface paddingY={6} as="section" variantKey={3}>
+    <Container paddingX={2}>
+      <Typography
+        as="h2"
+        variant="title-2"
+        set:text="My Story"
+        marginBottom={3}
+      />
+      {
+        props.personData.personalStory && (
+          <PortableTextContentBlock
+            portableText={props.personData.personalStory}
+          />
+        )
+      }
+      <div class="text-center my-6">
+        <Link to={`/about/team`}>
+          {"Meet the rest of our team, volunteers and other contributors"}
+        </Link>
+      </div>
+    </Container>
+  </LayoutSurface>
+</SitePageLayout>

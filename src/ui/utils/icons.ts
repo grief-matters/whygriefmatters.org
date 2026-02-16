@@ -19,6 +19,7 @@ export const iconMap = {
   devicePhoneMobile: "device-phone-mobile",
   documentDuplicate: "document-duplicate",
   documentText: "document-text",
+  envelope: "envelope",
   film: "film",
   globeAlt: "globe-alt",
   heart: "heart",
@@ -29,6 +30,7 @@ export const iconMap = {
   rss: "rss",
   userGroup: "user-group",
   users: "users",
+  linkedIn: "linked-in",
 } as const;
 
 export type IconKey = keyof typeof iconMap;

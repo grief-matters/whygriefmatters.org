@@ -8,6 +8,8 @@ const zSocials = z.object({
   email: z.string().email().nullable(),
 });
 
+export type SocialVal = keyof z.infer<typeof zSocials>;
+
 export default z.object({
   id: z.string(),
   fullName: z.string(),

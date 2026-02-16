@@ -20,6 +20,7 @@ interface Props {
   priority?: boolean;
   useFallback?: boolean;
   objectFit?: "contain" | "cover";
+  aspect?: "square";
 }
 
 const {
@@ -99,6 +100,10 @@ const returnFragment = sanityImageSource === null && !useFallback;
 
 const hotspotX = `${(sanityImageSource?.image.hotspot?.x ?? 0.5) * 100}%`;
 const hotspotY = `${(sanityImageSource?.image.hotspot?.y ?? 0.5) * 100}%`;
+
+const aspectMap = {
+  square: "aspect-square",
+};
 ---
 
 {
@@ -111,12 +116,12 @@ const hotspotY = `${(sanityImageSource?.image.hotspot?.y ?? 0.5) * 100}%`;
       ))}
       <img
         src={optimizedFallbackImgConfig.src}
-        alt="Looking through reeds over a tranquil lake on a sunny day."
+        alt={""}
         srcset={optimizedFallbackImgConfig.srcSet}
         sizes={optimizedFallbackImgConfig.sizes}
         loading={props.priority ? "eager" : "lazy"}
         class:list={[
-          "aspect-7/5",
+          props.aspect ? aspectMap[props.aspect] : "aspect-7/5",
           objectFit === "cover" ? "object-cover" : "object-contain",
           ...(props.classList ?? []),
         ]}

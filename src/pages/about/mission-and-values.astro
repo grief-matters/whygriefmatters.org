@@ -1,0 +1,72 @@
+---
+import CoreValuesRenderer from "@ui/composites/CoreValuesRenderer.astro";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import ContentBlockRenderer from "@ui/orchestrators/ContentBlockRenderer.astro";
+import Button from "@ui/primitives/Button.astro";
+import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
+import Spacer from "@ui/primitives/Spacer.astro";
+import Stack from "@ui/primitives/Stack.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import { getCollection } from "astro:content";
+
+const missionAndValuesContentGroup = await getCollection(
+  "contentGroups",
+  (col) => col.data.slug === "mission-and-values",
+);
+if (missionAndValuesContentGroup.length === 0) {
+  throw new Error("Could not get content group for about page");
+}
+
+const mvData = missionAndValuesContentGroup[0].data;
+---
+
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={mvData.image ?? null}
+  >
+    <div class="md:h-full md:flex md:items-center">
+      <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
+        <div class="basis-100">
+          <Spacer marginBottom={3}>
+            <Typography
+              marginBottom={2}
+              as="h1"
+              variant="title-1"
+              color="primaryContrast"
+            >
+              {mvData.title}
+            </Typography>
+          </Spacer>
+          <Button
+            as="a"
+            colorVariant="secondary"
+            href={`/about`}
+            class="inline-block"
+          >
+            <Typography>
+              {"Back to "}
+              <strong class="text-bold">
+                {"About Us"}
+              </strong>
+            </Typography>
+          </Button>
+        </div>
+      </div>
+    </div>
+  </PageHeaderLayout>
+
+  <LayoutSurface as="section" variant="neutral" paddingY={6}>
+    <Stack>
+      <ContentBlockRenderer contentBlockRef={mvData.contentBlocks[0]} />
+    </Stack>
+  </LayoutSurface>
+
+  <LayoutSurface as="section" variant="primary" paddingY={6}>
+    <Stack>
+      <CoreValuesRenderer contentBlockRef={mvData.contentBlocks[1]} />
+    </Stack>
+  </LayoutSurface>
+</SitePageLayout>
