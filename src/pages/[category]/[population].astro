@@ -40,19 +40,33 @@ export async function getStaticPaths() {
   const categoryEntries = await getCollection("categories");
   const populationEntries = await getCollection("populations");
 
+  // Pre-fetch all resource collections once (instead of per category x population)
+  const allResources = new Map<
+    InternetResourceCollectionKey,
+    Array<CollectionEntry<InternetResourceCollectionKey>>
+  >();
+  for (const key of internetResourceCollectionKeys) {
+    allResources.set(key, await getCollection(key));
+  }
+
+  // Pre-compute descendant category IDs for all categories
+  const descendantMap = new Map<string, Set<string>>();
+  for (const categoryEntry of categoryEntries) {
+    descendantMap.set(
+      categoryEntry.id,
+      getAllDescendantCategoryIds(categoryEntry.id, categoryEntries),
+    );
+  }
+
   const staticPaths = [];
 
   for (const categoryEntry of categoryEntries) {
-    const allCategoryIds = getAllDescendantCategoryIds(
-      categoryEntry.id,
-      categoryEntries,
-    );
+    const allCategoryIds = descendantMap.get(categoryEntry.id)!;
 
     for (const populationEntry of populationEntries) {
       const internetResources: InternetResourceEntries = {};
       for (const key of internetResourceCollectionKeys) {
-        const resourcesForKey = await getCollection(
-          key,
+        const resourcesForKey = allResources.get(key)!.filter(
           ({ data }) =>
             data.categories.some((c) => allCategoryIds.has(c.id)) &&
             data.populations.some((p) => p.id === populationEntry.id),

@@ -1,14 +1,7 @@
 ---
-import { getCollection, getEntry, type CollectionEntry } from "astro:content";
-import {
-  internetResourceCollectionKeys,
-  type InternetResourceCollectionKey,
-} from "@content/collections";
+import { getEntry } from "astro:content";
 import CategoryResourceTypesPanel from "@ui/composites/CategoryResourceTypesPanel.astro";
-
-type ResourceTypeCounts = Partial<
-  Record<InternetResourceCollectionKey, number>
->;
+import { getResourceTypeCountsForCategory } from "./nav-utils";
 
 interface Props {
   categoryId: string;
@@ -23,58 +16,7 @@ if (!category) {
   );
 }
 
-// Helper to recursively get all descendant category IDs
-function getAllDescendantCategoryIds(
-  categoryId: string,
-  allCategories: Array<CollectionEntry<"categories">>,
-): Set<string> {
-  const categoryIds = new Set<string>([categoryId]);
-  const cat = allCategories.find((c) => c.id === categoryId);
-
-  if (!cat || cat.data.subcategories.length === 0) {
-    return categoryIds;
-  }
-
-  for (const subcategoryRef of cat.data.subcategories) {
-    const descendantIds = getAllDescendantCategoryIds(
-      subcategoryRef.id,
-      allCategories,
-    );
-    descendantIds.forEach((id) => categoryIds.add(id));
-  }
-
-  return categoryIds;
-}
-
-// Get all category IDs including descendants
-const categoryEntries = await getCollection("categories");
-const allCategoryIds = getAllDescendantCategoryIds(
-  category.id,
-  categoryEntries,
-);
-
-// Build resource type counts
-
-const resourceTypeCounts: ResourceTypeCounts = {};
-
-for (const collectionKey of internetResourceCollectionKeys) {
-  const resources = await getCollection(collectionKey, ({ data }) =>
-    data.categories.some((c) => allCategoryIds.has(c.id)),
-  );
-
-  if (resources.length > 0) {
-    resourceTypeCounts[collectionKey] = resources.length;
-  }
-}
-
-// Derived data for template
-// const resourceTypesWithResources = Object.keys(
-//   resourceTypeCounts,
-// ) as InternetResourceCollectionKey[];
-// const totalResourceCount = Object.values(resourceTypeCounts).reduce(
-//   (sum, count) => sum + count,
-//   0,
-// );
+const resourceTypeCounts = await getResourceTypeCountsForCategory(category.id);
 ---
 
 <CategoryResourceTypesPanel
