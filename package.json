@@ -10,7 +10,7 @@
     "start": "wrangler types && astro dev",
     "build:astro": "astro build",
     "build:pagefind": "npx pagefind",
-    "build": "wrangler types && astro check && astro build && npx pagefind",
+    "build": "wrangler types && astro check && astro build && pagefind",
     "preview": "wrangler types && wrangler dev --env dev"
   },
   "repository": {
