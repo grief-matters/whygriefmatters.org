@@ -7,6 +7,7 @@ import type { CategoryTreeNode } from "@ui/orchestrators/MainNav.astro";
 import Typography from "@ui/primitives/Typography.astro";
 import CategoryResourceTypes from "@ui/orchestrators/CategoryResourceTypes.astro";
 import { paddingXSettingMap, paddingYSettingMap } from "@ui/utils/spacing";
+import ContentSurface from "@ui/primitives/ContentSurface.astro";
 
 interface Props {
   navTree: CategoryTreeNode[];
@@ -168,7 +169,13 @@ const { navTree } = Astro.props;
                   )}
                   {!tier2.id.startsWith("population-") && (
                     <div class="shrink">
-                      <CategoryResourceTypes categoryId={tier2.id} />
+                      <ContentSurface
+                        prominence="muted"
+                        paddingX={5}
+                        paddingY={4}
+                      >
+                        <CategoryResourceTypes categoryId={tier2.id} />
+                      </ContentSurface>
                     </div>
                   )}
                 </div>

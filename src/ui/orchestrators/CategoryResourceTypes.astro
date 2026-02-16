@@ -1,6 +1,6 @@
 ---
 import { getEntry } from "astro:content";
-import CategoryResourceTypesPanel from "@ui/composites/CategoryResourceTypesPanel.astro";
+import CategoryResourceTypesSummary from "@ui/composites/CategoryResourceTypesSummary.astro";
 import { getResourceTypeCountsForCategory } from "./nav-utils";
 
 interface Props {
@@ -19,7 +19,7 @@ if (!category) {
 const resourceTypeCounts = await getResourceTypeCountsForCategory(category.id);
 ---
 
-<CategoryResourceTypesPanel
+<CategoryResourceTypesSummary
   categorySlug={category.data.slug}
   resourceTypesData={resourceTypeCounts}
 />

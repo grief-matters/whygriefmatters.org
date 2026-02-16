@@ -5,12 +5,13 @@ import {
 } from "@content/collections";
 import { primaryResourceTypes } from "@content/model/internetResource";
 import Button from "@ui/primitives/Button.astro";
-import ContentSurface from "@ui/primitives/ContentSurface.astro";
 import Icon from "@ui/primitives/Icon.astro";
 import Stack from "@ui/primitives/Stack.astro";
 import Typography from "@ui/primitives/Typography.astro";
 import { resourceTypeIconConfigMap } from "@ui/utils/icons";
+import type { OnSurfaceColorVariant } from "@ui/utils/styles";
 import startCase from "lodash/startCase";
+import sum from "lodash/sum";
 
 type ResourceTypeCounts = Partial<
   Record<InternetResourceCollectionKey, number>
@@ -19,15 +20,18 @@ type ResourceTypeCounts = Partial<
 interface Props {
   categorySlug: string;
   resourceTypesData: ResourceTypeCounts;
+  colorVariant?: OnSurfaceColorVariant;
 }
 
-const props = Astro.props;
+const { colorVariant = "warmNeutral", ...props } = Astro.props;
 
 // Get all entries as [collectionKey, count] pairs
 const resourceEntries = Object.entries(props.resourceTypesData) as [
   InternetResourceCollectionKey,
   number,
 ][];
+
+const totalResourceCount = sum(Object.values(props.resourceTypesData));
 
 // Filter to primary resource types with count > 0, maintaining primaryResourceTypes order
 const resourceCountsToDisplay = primaryResourceTypes
@@ -75,52 +79,59 @@ function getOtherResourcesLabel(count: number) {
 }
 ---
 
-<ContentSurface prominence="muted" paddingX={5} paddingY={4}>
-  <Stack spacing={2}>
-    <Typography variant="title-4" color="warmNeutral">
-      {"Resources on this topic"}
-    </Typography>
-    <Stack spacing={2}>
-      {
-        resourceCountsToDisplay.map(([collectionKey, count]) => {
-          const iconConfig =
-            resourceTypeIconConfigMap[
-              collectionKeyToResourceTypeMap[
-                collectionKey as InternetResourceCollectionKey
-              ]
-            ];
-
-          return (
-            <Button
-              as="a"
-              href={`/${props.categorySlug}#${collectionKey}`}
-              styleVariant="outlined"
-              colorVariant="neutral"
-            >
-              <span class="flex items-center gap-1">
-                <Icon
-                  size={2}
-                  color={iconConfig.colorVariant}
-                  getIcon={() => iconConfig.icon}
-                />
-                <Typography
-                  as="span"
-                  set:text={`${count} ${startCase(collectionKey)}`}
-                  variant="button-2"
-                  color="warmNeutral"
-                />
-              </span>
-            </Button>
-          );
-        })
-      }
-    </Stack>
+<Stack spacing={2}>
+  <Typography variant="title-4" color={colorVariant}>
+    {"Resources on this topic"}
+  </Typography>
+  <Typography color={colorVariant}>
     {
-      otherResourcesCount > 0 && (
-        <Typography color="warmNeutral">
-          {getOtherResourcesLabel(otherResourcesCount)}
-        </Typography>
-      )
+      `We have collected over ${Math.floor(totalResourceCount / 10) * 10} resources across this topic`
+    }
+  </Typography>
+  <Stack spacing={2}>
+    {
+      resourceCountsToDisplay.map(([collectionKey, count]) => {
+        const iconConfig =
+          resourceTypeIconConfigMap[
+            collectionKeyToResourceTypeMap[
+              collectionKey as InternetResourceCollectionKey
+            ]
+          ];
+
+        return (
+          <Button
+            as="a"
+            href={`/${props.categorySlug}#${collectionKey}`}
+            styleVariant="outlined"
+            colorVariant={
+              colorVariant === "warmNeutral" || colorVariant === "coolNeutral"
+                ? "neutral"
+                : colorVariant
+            }
+          >
+            <span class="flex items-center gap-1">
+              <Icon
+                size={2}
+                color={iconConfig.colorVariant}
+                getIcon={() => iconConfig.icon}
+              />
+              <Typography
+                as="span"
+                set:text={`${count} ${startCase(collectionKey)}`}
+                variant="button-2"
+                color={colorVariant}
+              />
+            </span>
+          </Button>
+        );
+      })
     }
   </Stack>
-</ContentSurface>
+  {
+    otherResourcesCount > 0 && (
+      <Typography color={colorVariant}>
+        {getOtherResourcesLabel(otherResourcesCount)}
+      </Typography>
+    )
+  }
+</Stack>

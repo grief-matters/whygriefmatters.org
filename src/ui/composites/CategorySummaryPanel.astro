@@ -1,0 +1,62 @@
+---
+import Typography from "@ui/primitives/Typography.astro";
+import { getEntry } from "astro:content";
+import CategoryResourceTypesSummary from "./CategoryResourceTypesSummary.astro";
+import { getResourceTypeCountsForCategory } from "@ui/orchestrators/nav-utils";
+import type { ColorVariant } from "@ui/utils/styles";
+import { getEntries } from "astro:content";
+import ButtonLink from "@ui/primitives/ButtonLink.astro";
+import Stack from "@ui/primitives/Stack.astro";
+import Link from "@ui/primitives/Link.astro";
+
+interface Props {
+  categoryId: string;
+  colorVariant?: ColorVariant;
+}
+
+const { colorVariant = "neutral", ...props } = Astro.props;
+
+const categoryEntry = await getEntry("categories", props.categoryId);
+if (!categoryEntry) {
+  throw new Error(`Could not get category with id: ${props.categoryId}`);
+}
+
+const refs = categoryEntry.data.subcategories.map(({ collection, id }) => ({
+  collection,
+  id,
+}));
+const subCategoryEntries = await getEntries(refs);
+
+const resourceTypeCounts = await getResourceTypeCountsForCategory(
+  props.categoryId,
+);
+---
+
+<Stack spacing={3}>
+  <Typography variant="title-3" set:text={categoryEntry.data.title} />
+  <Typography set:text={categoryEntry.data.shortDescription} />
+
+  {
+    subCategoryEntries.length > 0 && (
+      <div class="flex gap-3 flex-wrap">
+        {subCategoryEntries.map((c) => (
+          <ButtonLink
+            to={c.data.slug}
+            label={c.data.title}
+            colorVariant="secondary"
+          />
+        ))}
+      </div>
+    )
+  }
+
+  <CategoryResourceTypesSummary
+    colorVariant={colorVariant === "neutral" ? "warmNeutral" : colorVariant}
+    categorySlug={categoryEntry.data.slug}
+    resourceTypesData={resourceTypeCounts}
+  />
+
+  <Link to={`/${categoryEntry.data.slug}`}>
+    {"Explore "}<strong>{categoryEntry.data.title}</strong>
+  </Link>
+</Stack>
