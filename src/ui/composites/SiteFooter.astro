@@ -1,0 +1,72 @@
+---
+import { getOrganization } from "@content/loaders/organizationLoader";
+import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
+import BrushMarkButton from "@ui/primitives/BrushMarkButton.astro";
+import Container from "@ui/primitives/Container.astro";
+import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
+import Link from "@ui/primitives/Link.astro";
+import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
+import Typography from "@ui/primitives/Typography.astro";
+
+const org = await getOrganization();
+if (!org) {
+  throw new Error('Failed to [getOrganization] for "src/pages/index.astro"');
+}
+
+const logoUrl = org.logos.onDarkMono
+  ? getImageUrlBuilder(org.logos.onDarkMono).url()
+  : null;
+---
+
+<LayoutSurface variant="primaryContrast" as="footer">
+  <Container size={2} paddingY={6}>
+    <div class="flex justify-between items-center mb-8">
+      <a class="block" href="/">
+        <img class:list={["h-18"]} src={logoUrl} alt={`${org.name} logo`} />
+      </a>
+      <div>
+        <BrushMarkButton as="a" href="/donate" label="Donate" size={2} />
+      </div>
+    </div>
+    {/* Small print etc */}
+    <div
+      class:list={[
+        "space-y-3 *:pb-8 *:mb-8 divide-y > :not(:last-child) divide-white",
+        "",
+      ]}
+    >
+      <div class="md:grid md:grid-cols-2">
+        <div class="flex flex-col gap-3 mb-3">
+          <Typography
+            color="primaryContrast"
+            variant="title-4"
+            set:text={"Contact"}
+          />
+          <Link color="primaryContrast" to="/" label="[example]" />
+          <Link color="primaryContrast" to="/" label="[example]" />
+          <Link color="primaryContrast" to="/" label="[example]" />
+        </div>
+      </div>
+      <div>
+        <PortableTextContentBlock
+          textVariant="body-small"
+          colorVariant="primaryContrast"
+          portableText={org.smallPrint}
+        />
+      </div>
+      <div>
+        <Typography
+          color="primaryContrast"
+          variant="body-small"
+          set:text={org.nonprofitNotice}
+        />
+        <Typography
+          bold
+          color="primaryContrast"
+          variant="body-small"
+          set:text={`© ${new Date().getFullYear()} ${org.copyrightNotice}`}
+        />
+      </div>
+    </div>
+  </Container>
+</LayoutSurface>

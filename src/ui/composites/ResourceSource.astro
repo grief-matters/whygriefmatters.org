@@ -1,0 +1,30 @@
+---
+import LinkComponent from "@ui/primitives/Link.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import { isLink, isNonEmptyString, type Link } from "@ui/utils/helpers";
+
+interface Props {
+  source: string | Link;
+  prefaceTextOverride?: string;
+}
+
+const { source, prefaceTextOverride } = Astro.props;
+---
+
+<Typography as="p" variant="subtitle-1">
+  {isNonEmptyString(prefaceTextOverride) ? `${prefaceTextOverride} ` : "From "}
+  {
+    isLink(source) ? (
+      // Render a link if we managed to process one
+      <LinkComponent
+        external
+        to={source.url}
+        label={source.label}
+        variant="subtitle-1"
+        color="coolNeutral"
+      />
+    ) : (
+      source
+    )
+  }
+</Typography>

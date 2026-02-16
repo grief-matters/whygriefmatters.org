@@ -1,0 +1,36 @@
+---
+import ButtonLink from "@ui/primitives/ButtonLink.astro";
+import ContentSurface from "@ui/primitives/ContentSurface.astro";
+import Stack from "@ui/primitives/Stack.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  category: CollectionEntry<"categories">;
+  populations: Array<CollectionEntry<"populations">>;
+}
+
+const props = Astro.props;
+---
+
+<ContentSurface variant="tertiary" paddingY={3} paddingX={5}>
+  <Stack spacing={2}>
+    <Typography as="h2" variant="title-4">{"Underserved Groups"}</Typography>
+    <Typography>
+      {
+        `We've identified resources in this topic that are more centered to the unique needs and perspectives of the following communities.`
+      }
+    </Typography>
+    <Stack as="ul" spacing={3} direction="horizontal" wrap>
+      {
+        props.populations.map((p) => (
+          <ButtonLink
+            colorVariant="tertiary"
+            to={`/${props.category.data.slug}/${p.data.slug}`}
+            label={p.data.name}
+          />
+        ))
+      }
+    </Stack>
+  </Stack>
+</ContentSurface>

@@ -1,0 +1,100 @@
+---
+import { getEntry, type ReferenceDataEntry } from "astro:content";
+
+import type { InternetResourceType } from "@content/model/internetResource";
+
+import { isNonEmptyString } from "@ui/utils/helpers";
+
+import EmphasizedPageLink from "@ui/primitives/EmphasizedPageLink.astro";
+import Link from "@ui/primitives/Link.astro";
+import type { TextPreset } from "@ui/utils/styles";
+
+interface BaseProps {
+  emphasized?: boolean;
+  textVariant?: TextPreset;
+}
+
+interface CategoryLinkProps extends BaseProps {
+  categoryRef: ReferenceDataEntry<"categories", string>;
+  linkType: "categoryPageLink";
+  label?: string | null;
+}
+
+interface ResourcePageLinkProps extends BaseProps {
+  label: string;
+  linkType: "resourcePageLink";
+  categoryRef?: ReferenceDataEntry<"categories", string>;
+  populationRef?: ReferenceDataEntry<"populations", string> | null;
+  resourceTypes?: Array<InternetResourceType> | null;
+}
+
+type Props = CategoryLinkProps | ResourcePageLinkProps;
+
+const props = Astro.props as Props;
+
+const urlParts: Array<string> = [];
+
+let resolvedLabel: string;
+
+if (props.linkType === "resourcePageLink") {
+  if (
+    !props.categoryRef &&
+    !props.populationRef &&
+    !props.resourceTypes?.length
+  ) {
+    throw new Error(
+      `[DynamicPageLink] resourcePageLink requires at least one of: categoryRef, populationRef, or resourceTypes`,
+    );
+  }
+
+  if (props.categoryRef) {
+    const category = await getEntry(props.categoryRef);
+    if (!category) {
+      throw new Error(
+        `[DynamicPageLink] Could not get category for: ${props.categoryRef.id}`,
+      );
+    }
+    urlParts.push(category.data.slug);
+  }
+
+  if (props.populationRef) {
+    const population = await getEntry(props.populationRef);
+    if (!population) {
+      throw new Error(
+        `[DynamicPageLink] Could not get population for: ${props.populationRef.id}`,
+      );
+    }
+    urlParts.push(population.data.slug);
+  }
+
+  resolvedLabel = props.label;
+} else {
+  const category = await getEntry(props.categoryRef);
+  if (!category) {
+    throw new Error(
+      `[DynamicPageLink] Could not get category for: ${props.categoryRef.id}`,
+    );
+  }
+  urlParts.push(category.data.slug);
+
+  resolvedLabel = isNonEmptyString(props.label)
+    ? props.label
+    : (category.data.displayTitle ?? category.data.title);
+}
+
+const url = `/${urlParts.join("/")}`;
+
+// TODO - resource types
+---
+
+{
+  props.emphasized ? (
+    <EmphasizedPageLink to={url} label={resolvedLabel} />
+  ) : (
+    <Link
+      to={url}
+      label={resolvedLabel}
+      variant={props.textVariant ?? "body-2"}
+    />
+  )
+}

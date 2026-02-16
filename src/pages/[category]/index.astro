@@ -1,236 +1,183 @@
 ---
-import sortBy from "lodash/sortBy";
-import differenceBy from "lodash/differenceBy";
-
-import type {
-  CategoryPageData,
-  CategoryPageFeaturedResource,
-} from "@model/categoryPage";
-import type { Topic } from "@model/featuredContent";
-import type { SanityImage } from "@model/image";
 import {
-  type InternetResourcePageListing,
-  type InternetResourceType,
-} from "@model/internetResource";
-import type { Population } from "@model/population";
+  getCollection,
+  getEntries,
+  type CollectionEntry,
+  type ReferenceDataEntry,
+} from "astro:content";
 
-import { getCategoryPagesData, getPopulations } from "@common/client";
-import { getFilteredTypesFromResources } from "@common/resourceType";
-import { getResourcePageTitle } from "@common/page";
-import { wgmDesignSystem as ds } from "@common/design-system";
+import {
+  internetResourceCollectionKeys,
+  type InternetResourceCollectionKey,
+  type InternetResourceEntries,
+} from "@content/collections";
 
-import MainLayout from "@layouts/MainLayout.astro";
+import { getAllDescendantCategoryIds } from "@content/utils";
+
+import Slide from "@ui/layouts/slider/Slide.astro";
+import Slider from "@ui/layouts/slider/Slider.astro";
+
+import CategoryPopulationsNavigator from "@ui/composites/CategoryPopulationsNavigator.astro";
 
 import Container from "@ui/primitives/Container.astro";
-import EmphasizedEllipsisText from "@ui/primitives/EmphasizedEllipsisText.astro";
-import Heading from "@ui/primitives/Heading.astro";
+import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
+import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
+import Typography from "@ui/primitives/Typography.astro";
 
-import CardLink from "@ui/CardLink.astro";
-import FeaturedResources from "@ui/FeaturedResources.astro";
-import MainNavRecursiveTopicTree from "@ui/MainNav/MainNavRecursiveTopicTree.astro";
-import PageHeader from "@ui/PageHeader.astro";
-import ResourceCounts, {
-  type ResourceTypesCounts,
-} from "@ui/ResourceCounts.astro";
-import ResourcePageListings from "@ui/ResourcePageListing/ResourcePageListings.astro";
-import TextBlock from "@ui/typography/TextBlock.astro";
-
-type SubtopicResources = Record<
-  string,
-  {
-    title: string;
-    resources: Array<InternetResourcePageListing>;
-  }
->;
+import CategoryPageHeader from "@ui/composites/CategoryPageHeader.astro";
+import FeaturedResourceRenderer from "@ui/orchestrators/FeaturedResourceRenderer.astro";
+import ResourceListingsOrchestrator from "@ui/orchestrators/ResourceListingsOrchestrator.astro";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
 interface Props {
-  title: string;
-  resources: Array<InternetResourcePageListing>;
-  subtopicResources: SubtopicResources;
-  featuredArticles: Array<CategoryPageFeaturedResource> | null;
-  featuredStories: Array<CategoryPageFeaturedResource> | null;
-  applicablePopulations: Array<Population>;
-  applicableTypes: Array<InternetResourceType>;
-  image: SanityImage | null;
-  topic: Topic;
-  subtopics: Array<Topic>;
-  resourceTypesCounts: ResourceTypesCounts;
+  categoryEntry: CollectionEntry<"categories">;
+  internetResources: InternetResourceEntries;
+  populations: Array<CollectionEntry<"populations">>;
+  resourceTypes: Array<InternetResourceCollectionKey>;
+  parentCategory?: CollectionEntry<"categories">;
+}
+
+export async function getResourcesFor<K extends InternetResourceCollectionKey>(
+  key: K,
+  categoryId: string,
+): Promise<Array<CollectionEntry<K>>> {
+  const result = await getCollection(key, ({ data }) =>
+    data.categories.some((c) => c.id === categoryId),
+  );
+
+  return result;
 }
 
 export async function getStaticPaths() {
-  const categoryPagesData = await getCategoryPagesData();
-  const populations = await getPopulations();
+  const categoryEntries = await getCollection("categories");
+  const staticPaths = [];
 
-  return categoryPagesData.map((data: CategoryPageData) => {
-    const filteredPopulations = populations.filter((p) =>
-      data.resources.some((r) => r.populations?.includes(p.slug))
+  for (const categoryEntry of categoryEntries) {
+    const parentCategory = categoryEntries.find((entry) =>
+      entry.data.subcategories.map((c) => c.id).includes(categoryEntry.id),
     );
 
-    const filteredTypes = getFilteredTypesFromResources(data.resources);
+    // Get all category IDs including current and all descendants
+    const allCategoryIds = getAllDescendantCategoryIds(
+      categoryEntry.id,
+      categoryEntries,
+    );
 
-    // TODO - we need to fix titling so that we can distinguish between "{Loss of A} X" and "{Supporting} X"
-    const fullTitle = data.title;
+    const internetResources: InternetResourceEntries = {};
+    const populationMap: Record<
+      string,
+      ReferenceDataEntry<"populations", string>
+    > = {};
 
-    const subtopicResources: SubtopicResources = {};
+    for (const key of internetResourceCollectionKeys) {
+      // const resourcesForKey = await getResourcesFor(key, categoryEntry.id);
+      const resourcesForKey = await getCollection(key, ({ data }) =>
+        data.categories.some((c) => allCategoryIds.has(c.id)),
+      );
 
-    data.subtopics?.forEach((t: Topic) => {
-      const pageMatch = categoryPagesData.find((x) => x.slug === t.slug);
-      if (typeof pageMatch === "undefined") {
-        return;
+      resourcesForKey.forEach((r) =>
+        r.data.populations.forEach((p) => (populationMap[p.id] = p)),
+      );
+
+      if (resourcesForKey.length > 0) {
+        // TS can't be sure that 'key' is one of the literals its expecting - but we know better (we think)
+        // we *could* use a Record type for `internetResources` but we'll lose the nice type inference we get
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (internetResources as any)[key] = resourcesForKey;
       }
+    }
 
-      subtopicResources[t.slug] = {
-        title: pageMatch.title,
-        resources: sortBy(pageMatch.resources, ["type", "title"]),
-      };
-    });
+    const populations = await getEntries(Object.values(populationMap));
 
-    const featuredArticles = data.featuredArticles ?? [];
-    const featuredStories = data.featuredStories ?? [];
-    const featuredResources = [...featuredArticles, ...featuredStories];
+    const resourceTypes = Object.keys(internetResources);
 
-    const filteredResources = differenceBy(
-      data.resources,
-      featuredResources,
-      "resourceUrl"
-    );
-
-    const resourceTypesCounts: ResourceTypesCounts = {};
-    const applicableTypes = filteredTypes.sort() ?? [];
-    applicableTypes.forEach(
-      (t) =>
-        (resourceTypesCounts[t] = data.resources.filter(
-          (x) => x.type === t
-        ).length)
-    );
-
-    return {
-      params: { category: data.slug },
-      props: {
-        title: fullTitle,
-        image: data.image,
-        resources: sortBy(filteredResources, ["type", "title"]),
-        subtopicResources: subtopicResources,
-        featuredArticles: data.featuredArticles,
-        featuredStories: data.featuredStories,
-        applicablePopulations: filteredPopulations ?? [],
-        applicableTypes: applicableTypes,
-        subtopics: data.subtopics,
-        resourceTypesCounts,
+    staticPaths.push({
+      params: {
+        category: categoryEntry.data.slug,
       },
-    };
-  });
+      props: {
+        categoryEntry,
+        internetResources,
+        resourceTypes,
+        populations,
+        parentCategory,
+      },
+    });
+  }
+
+  return staticPaths;
 }
 
-const params = Astro.params;
 const props = Astro.props;
-
-const pageTitle = getResourcePageTitle({
-  categoryName: props.title,
-});
-
-const showFeatured =
-  Array.isArray(props.featuredStories) || Array.isArray(props.featuredArticles);
 ---
 
-<MainLayout>
-  <PageHeader
-    pageTitle={pageTitle}
-    image={props.image ? props.image : undefined}
+<SitePageLayout>
+  <CategoryPageHeader
+    categoryEntryData={props.categoryEntry.data}
+    parentCategory={props.parentCategory}
   />
-  <Container>
-    {
-      (props.subtopics ?? []).length > 0 && (
-        <section class="m-3 p-4 sm:px-5 bg-white shadow-md">
-          {props.subtopics.map((st: Topic) => (
-            <MainNavRecursiveTopicTree topic={st} variant="secondary" />
-          ))}
-        </section>
-      )
-    }
-    {
-      props.applicableTypes.length > 1 && (
-        <section class="p-3 lg:mb-6">
-          <Heading as="h3" class:list={["mb-4 font-semibold"]}>
-            {`Types of Resources on This Topic`}
-          </Heading>
-          <ResourceCounts
-            resourceTypesCounts={props.resourceTypesCounts}
-            category={params.category}
+
+  {/* Category Description */}
+  {
+    props.categoryEntry.data.description && (
+      <LayoutSurface paddingY={6}>
+        <Container paddingX={4}>
+          <PortableTextContentBlock
+            textVariant="prominent-first"
+            textAlign="center"
+            portableText={props.categoryEntry.data.description}
           />
-        </section>
-      )
-    }
-    {
-      props.applicablePopulations.length > 0 && (
-        <section class="p-3 mb-3 lg:mb-6">
-          <Heading as="h3" class:list={["mb-4 font-semibold"]}>
-            Underserved Groups
-          </Heading>
-          <TextBlock>{`We have identified resources within this topic for the following groups`}</TextBlock>
-          <div class:list={["flex flex-wrap gap-4"]}>
-            {props.applicablePopulations.map((population) => (
-              <CardLink href={`/${params.category}/${population.slug}`}>
-                {population.name}
-              </CardLink>
-            ))}
-          </div>
-        </section>
-      )
-    }
-  </Container>
-  {
-    showFeatured && (
-      <div
-        class:list={[
-          "[&>*:nth-child(odd)]:bg-stone-200",
-          "[&>*:nth-child(even)]:bg-stone-100",
-        ]}
-      >
-        {props.featuredArticles !== null && (
-          <div>
-            <Container size="lg">
-              <section class="py-3">
-                <Heading as="h2" size="xl2" class="text-center">
-                  <EmphasizedEllipsisText text="Featured Articles" />
-                </Heading>
-                <FeaturedResources featuredResources={props.featuredArticles} />
-              </section>
-            </Container>
-          </div>
-        )}
-        {props.featuredStories !== null && (
-          <div>
-            <Container size="lg">
-              <section class="py-3">
-                <Heading as="h2" size="xl2" class="text-center">
-                  <EmphasizedEllipsisText text="Featured Stories" />
-                </Heading>
-                <FeaturedResources featuredResources={props.featuredStories} />
-              </section>
-            </Container>
-          </div>
-        )}
-      </div>
+        </Container>
+      </LayoutSurface>
     )
   }
+
+  {/* Underserved Populations */}
   {
-    props.resources.length > 0 && (
-      <Container>
-        <section class="p-3 lg:mb-6">
-          <Heading
+    props.populations.length > 0 && (
+      <LayoutSurface paddingX={2} paddingY={4}>
+        <Container>
+          <CategoryPopulationsNavigator
+            category={props.categoryEntry}
+            populations={props.populations}
+          />
+        </Container>
+      </LayoutSurface>
+    )
+  }
+
+  {/* Featured Resources */}
+  {
+    (props.categoryEntry.data.featuredResources ?? []).length > 0 && (
+      <LayoutSurface paddingY={6} variantKey={4}>
+        <Container>
+          <Typography
+            textAlign="center"
+            marginBottom={2}
             as="h2"
-            size="xl2"
-            class:list={[
-              "mb-6 font-semibold",
-              ds.typography.color.primary.defaultLight,
-            ]}
-          >
-            {"Resources On This Topic"}
-          </Heading>
-          <ResourcePageListings resources={props.resources} />
-        </section>
-      </Container>
+            variant="title-2"
+            set:text="Featured Resources"
+          />
+        </Container>
+        <Slider>
+          {props.categoryEntry.data.featuredResources.map((resource) => (
+            <Slide paddingX={1} paddingY={4}>
+              <FeaturedResourceRenderer
+                fullHeight
+                resourceRef={resource.refId}
+                resourceType={resource.refType}
+              />
+            </Slide>
+          ))}
+        </Slider>
+      </LayoutSurface>
     )
   }
-</MainLayout>
+
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <ResourceListingsOrchestrator
+      internetResources={props.internetResources}
+      resourceTypes={props.resourceTypes}
+    />
+  </LayoutSurface>
+</SitePageLayout>

@@ -1,0 +1,53 @@
+---
+import type { SanityImage } from "@content/model/image";
+
+import ContentSurface, {
+  type ContentSurfaceVariant,
+} from "@ui/primitives/ContentSurface.astro";
+import SanityImagePrimitive from "@ui/primitives/SanityImage.astro";
+import Link from "@ui/primitives/Link.astro";
+import Typography from "@ui/primitives/Typography.astro";
+
+interface Props {
+  variant?: ContentSurfaceVariant;
+  // Content props
+  image?: SanityImage | null;
+  title: string;
+  titleHref?: string;
+  external?: boolean;
+  fullHeight?: boolean;
+}
+
+const {
+  variant = "neutral",
+  image,
+  title,
+  titleHref,
+  external = false,
+  fullHeight,
+} = Astro.props;
+
+const colorVariant = variant === "neutral" ? "coolNeutral" : "primary";
+---
+
+<ContentSurface fullHeight={fullHeight} as="article" variant="featureCard">
+  <SanityImagePrimitive useFallback image={image ?? null} />
+  <div class="pt-3 px-5 pb-5">
+    {
+      titleHref ? (
+        <Link
+          to={titleHref}
+          label={title}
+          external={external}
+          variant="title-3"
+          color={colorVariant}
+        />
+      ) : (
+        <Typography as="h3" variant="title-3" color={colorVariant}>
+          {title}
+        </Typography>
+      )
+    }
+    <slot />
+  </div>
+</ContentSurface>

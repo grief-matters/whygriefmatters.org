@@ -1,0 +1,117 @@
+---
+import sanitizeHtml, { type AllowedAttribute } from "sanitize-html";
+import { toHTML } from "@portabletext/to-html";
+import { clsx } from "clsx";
+
+import type { PortableText } from "@content/model/portableText";
+import {
+  textColorMap,
+  textPresetClassMap,
+  type OnSurfaceColorVariant,
+  type TextPreset,
+} from "@ui/utils/styles";
+import Stack from "./Stack.astro";
+
+interface Props {
+  portableText: PortableText;
+  textVariant?:
+    | Extract<TextPreset, "body-1" | "body-2" | "body-small">
+    | "prominent-first";
+  colorVariant?: OnSurfaceColorVariant;
+  textAlign?: "center" | "left"; // Not doing anything specific with left as that's the default in Tailwind
+}
+
+const props = Astro.props;
+
+// Whitelists of elements and attributes - right now, all we need is `class` on a few elements, so we'll keep it simple
+// If we need to vary which attributes get stripped on a per element basis, we'll likely need a record-like data structure
+const permittedElements = [
+  "p",
+  "ul",
+  "ol",
+  "strong",
+  "em",
+  "span",
+  "a",
+  "s",
+] as const;
+const defaultPermittedAttributes = ["class"] as const;
+
+const permittedAttributesByElement: Partial<
+  Record<(typeof permittedElements)[number], AllowedAttribute[]>
+> = {
+  // Warning! This needs to be tightly controlled if we ever start pulling user-generated content from the CMS!
+  a: [...defaultPermittedAttributes, "href"],
+};
+
+// "body-2": "font-serif font-normal text-lg",
+// "body-1": "font-serif font-normal text-base",
+
+const classListMap = {
+  block: {
+    normal: clsx([
+      props.textVariant === "prominent-first"
+        ? ["first:text-lg text-base font-serif font-normal"]
+        : textPresetClassMap[props.textVariant ?? "body-1"],
+      textColorMap[props.colorVariant ?? "primary"].default,
+      props.textAlign === "center" && "text-center",
+    ]),
+  },
+  list: {
+    bullet: clsx(["mb-6", "list-disc"]),
+    number: clsx(["mb-6"]),
+  },
+  marks: {
+    strong: "font-bold",
+    em: "italic",
+    underline: "underline",
+    "strike-through": "",
+    link: clsx([
+      "underline underline-offset-2 hover:underline-offset-3",
+      "decoration-dotted",
+      "transition-decoration duration-200",
+    ]),
+  },
+} as const;
+
+const htmlString = toHTML(props.portableText, {
+  components: {
+    block: {
+      normal: ({ children }) =>
+        `<p class="${classListMap.block.normal}">${children}</p>`,
+    },
+    list: {
+      bullet: ({ children }) =>
+        `<ul class="${classListMap.list.bullet}">${children}</ul>`,
+      number: ({ children }) =>
+        `<ol class="${classListMap.list.number}">${children}</ul>`,
+    },
+    marks: {
+      underline: ({ children }) =>
+        `<span class="${classListMap.marks.underline}">${children}</span>`,
+      em: ({ children }) =>
+        `<em class=${classListMap.marks.em}>${children}</em>`,
+      strong: ({ children }) =>
+        `<strong class=${classListMap.marks.strong}>${children}</strong>`,
+      "strike-through": ({ children }) =>
+        `<s class="${classListMap.marks["strike-through"]}">${children}</s>`,
+      link: ({ children, value }) =>
+        `<a class="${classListMap.marks.link}" href="${value.href}">${children}</a>`,
+    },
+    hardBreak: false,
+  },
+});
+
+const safeHtmlString = sanitizeHtml(htmlString, {
+  allowedAttributes: Object.fromEntries(
+    permittedElements.map((el) => [
+      el,
+      permittedAttributesByElement[el] ?? [...defaultPermittedAttributes],
+    ]),
+  ),
+});
+---
+
+<Stack spacing={4}>
+  <Fragment set:html={safeHtmlString} />
+</Stack>

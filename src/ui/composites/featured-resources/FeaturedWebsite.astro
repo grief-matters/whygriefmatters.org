@@ -1,0 +1,38 @@
+---
+import { getEntry } from "astro:content";
+import type { ReferenceDataEntry } from "astro:content";
+
+import SanityImage from "@ui/primitives/SanityImage.astro";
+
+interface Props {
+  websiteRef: ReferenceDataEntry<"websites", string>;
+}
+
+const props = Astro.props;
+
+const websiteEntry = await getEntry(props.websiteRef);
+if (!websiteEntry) {
+  throw new Error(
+    `[FeaturedWebsite] could not get website from reference: ${props.websiteRef.id}`,
+  );
+}
+---
+
+<article class="p-3">
+  <a href={websiteEntry.data.resourceUrl} target="_blank" rel="noopener">
+    <h3 class:list={[websiteEntry.data.logo && "sr-only"]}>
+      {websiteEntry.data.name}
+    </h3>
+    {
+      websiteEntry.data.logo && (
+        <SanityImage
+          image={{
+            image: websiteEntry.data.logo,
+            altText: "",
+          }}
+          objectFit="contain"
+        />
+      )
+    }
+  </a>
+</article>

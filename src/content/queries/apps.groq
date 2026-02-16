@@ -1,0 +1,16 @@
+*[_type == 'app']{
+  "id": _id,
+  "updatedAt": _updatedAt,
+  title,
+  resourceUrl,
+  description,
+  image{
+    image,
+    "altText": alt
+  },
+  "sourceWebsiteId": sourceWebsite->._id,
+  "categories": coalesce(categories[]->._id, []),
+  "populations": coalesce(populations[]->._id, []),
+  appleUrl,
+  playStoreUrl
+}

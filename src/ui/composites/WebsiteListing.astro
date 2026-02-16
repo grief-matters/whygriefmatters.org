@@ -1,0 +1,31 @@
+---
+import { getLocaleDateStringFromIsoString } from "@ui/utils/helpers";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"websites">;
+}
+
+const props = Astro.props;
+
+const lastReviewedDate = getLocaleDateStringFromIsoString(
+  props.entry.data.updatedAt,
+);
+---
+
+<article id={props.entry.id} data-pagefind-body>
+  <header>
+    <h4 id={props.entry.id}>{props.entry.data.name}</h4>
+    <div data-pagefind-ignore="index">
+      {
+        lastReviewedDate && (
+          <p>
+            {"Last Reviewed "}
+            <time datetime={props.entry.data.updatedAt}>{lastReviewedDate}</time>
+          </p>
+        )
+      }
+    </div>
+  </header>
+  <p>{props.entry.data.description}</p>
+</article>

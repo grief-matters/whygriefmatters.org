@@ -1,108 +1,182 @@
 ---
-import type {
-  InternetResourcePageListing,
-  InternetResourceType,
-} from "@model/internetResource";
-import type { CategoryPageData } from "@model/categoryPage";
-import type { Population } from "@model/population";
-import type { SanityImage } from "@model/image";
-
-import { getCategoryPagesData, getPopulations } from "@common/client";
-import { getFilteredTypesFromResources } from "@common/resourceType";
-import { getResourcePageTitle } from "@common/page";
-
-import MainLayout from "@layouts/MainLayout.astro";
-
+import {
+  internetResourceCollectionKeys,
+  type InternetResourceCollectionKey,
+  type InternetResourceEntries,
+} from "@content/collections";
+import type { PopulationSlug } from "@content/model/population";
+import { getAllDescendantCategoryIds } from "@content/utils";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import ResourceListingsOrchestrator from "@ui/orchestrators/ResourceListingsOrchestrator.astro";
+import Button from "@ui/primitives/Button.astro";
 import Container from "@ui/primitives/Container.astro";
-
-import PageHeader from "@ui/PageHeader.astro";
-import Heading from "@ui/primitives/Heading.astro";
-import ResourceCounts, {
-  type ResourceTypesCounts,
-} from "@ui/ResourceCounts.astro";
-import ResourcePageListings from "@ui/ResourcePageListing/ResourcePageListings.astro";
+import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
+import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
 
 interface Props {
-  categoryTitle: string;
-  resources: Array<InternetResourcePageListing>;
-  populationData: Population;
-  applicableTypes: Array<InternetResourceType>;
-  image: SanityImage | null;
+  categoryEntry: CollectionEntry<"categories">;
+  populationEntry: CollectionEntry<"populations">;
+  internetResources: InternetResourceEntries;
+  resourceTypes: Array<InternetResourceCollectionKey>;
 }
+
+const labelMakerFnMap: Record<PopulationSlug, (name: string) => Array<string>> =
+  {
+    "latino-and-hispanic-americans": (name: string) => ["Resources for", name],
+    "african-american-black": (name: string) => ["Resources for", name],
+    "asian-american-and-pacific-islander": (name: string) => [
+      "Resources for",
+      name,
+    ],
+    "people-with-disabilities": (name: string) => ["Resources for", name],
+    "lgbtq-community": (name: string) => ["Resources for the", name],
+    "indigenous-communities": (name: string) => ["Resources for", name],
+  };
 
 export async function getStaticPaths() {
-  const categoryPagesData = await getCategoryPagesData();
-  const populations = await getPopulations();
+  const categoryEntries = await getCollection("categories");
+  const populationEntries = await getCollection("populations");
 
-  return categoryPagesData.flatMap((data: CategoryPageData) => {
-    const filteredPopulations = populations.filter((p) =>
-      data.resources.some((r) => r.populations?.includes(p.slug))
+  const staticPaths = [];
+
+  for (const categoryEntry of categoryEntries) {
+    const allCategoryIds = getAllDescendantCategoryIds(
+      categoryEntry.id,
+      categoryEntries,
     );
 
-    return filteredPopulations
-      .map((population) => {
-        const resources = data.resources.filter((r) =>
-          r.populations?.includes(population.slug)
+    for (const populationEntry of populationEntries) {
+      const internetResources: InternetResourceEntries = {};
+      for (const key of internetResourceCollectionKeys) {
+        const resourcesForKey = await getCollection(
+          key,
+          ({ data }) =>
+            data.categories.some((c) => allCategoryIds.has(c.id)) &&
+            data.populations.some((p) => p.id === populationEntry.id),
         );
 
-        const filteredTypes = getFilteredTypesFromResources(resources);
+        if (resourcesForKey.length > 0) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (internetResources as any)[key] = resourcesForKey;
+        }
+      }
 
-        return {
-          params: { category: data.slug, population: population.slug },
-          props: {
-            categoryTitle: data.title,
-            image: data.image,
-            populationData: population,
-            resources,
-            applicableTypes: filteredTypes ?? [],
-          },
-        };
-      })
-      .filter((pop) => pop.props.resources.length > 0);
-  });
+      if (Object.values(internetResources).flat().length === 0) {
+        continue;
+      }
+
+      const resourceTypes = Object.keys(internetResources);
+
+      staticPaths.push({
+        params: {
+          category: categoryEntry.data.slug,
+          population: populationEntry.data.slug,
+        },
+        props: {
+          categoryEntry,
+          populationEntry,
+          internetResources,
+          resourceTypes,
+        },
+      });
+    }
+  }
+
+  return staticPaths;
 }
 
-const params = Astro.params;
 const props = Astro.props;
 
-const fullCategoryTitle = props.categoryTitle;
-
-const pageTitle = getResourcePageTitle({
-  categoryName: fullCategoryTitle,
-  populationName: props.populationData.name,
-});
-
-const resourceTypesCounts: ResourceTypesCounts = {};
-props.applicableTypes.forEach(
-  (t) =>
-    (resourceTypesCounts[t] = props.resources.filter(
-      (x) => x.type === t
-    ).length)
-);
+const labelMaker = labelMakerFnMap[props.populationEntry.data.slug];
+const labelParts = labelMaker(props.populationEntry.data.name);
 ---
 
-<MainLayout>
-  <PageHeader
-    pageTitle={pageTitle}
-    image={props.image ? props.image : undefined}
-  />
-  <Container>
-    {
-      props.applicableTypes.length > 1 && (
-        <section class="p-3 lg:mb-6">
-          <Heading as="h3" class:list={["mb-4 font-semibold"]}>
-            {`Types of Resources for ${props.populationData.name} on This Topic`}
-          </Heading>
-          <ResourceCounts
-            resourceTypesCounts={resourceTypesCounts}
-            population={params.population}
-            category={params.category}
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={props.populationEntry.data.image}
+  >
+    <div class="md:h-full md:flex md:flex-col">
+      <div class="md:h-full md:flex md:items-center">
+        <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
+          <div class="basis-100">
+            <Typography
+              marginBottom={2}
+              as="h1"
+              variant="title-1"
+              color="primaryContrast"
+            >
+              {
+                props.categoryEntry.data.displayTitle ??
+                  props.categoryEntry.data.title
+              }
+            </Typography>
+            {
+              props.categoryEntry.data.shortDescription && (
+                <Typography
+                  as="p"
+                  variant="body-2"
+                  color="primaryContrast"
+                  marginBottom={2}
+                >
+                  {props.categoryEntry.data.shortDescription}
+                </Typography>
+              )
+            }
+          </div>
+        </div>
+      </div>
+      <LayoutSurface variant="tertiary" variantKey={3}>
+        <div class="px-8 py-6 md:flex md:items-center md:justify-end">
+          <div class="basis-100">
+            <p class="mb-3">
+              <Typography as="span" variant="body-2" class="block">
+                <span class="italic">
+                  {`${labelParts[0]} `}
+                </span>
+              </Typography>
+              <Typography as="span" variant="title-2">
+                {labelParts[1]}
+              </Typography>
+            </p>
+            <Button
+              as="a"
+              colorVariant="primaryContrast"
+              href={`/${props.categoryEntry.data.slug}`}
+              class="inline-block"
+            >
+              <Typography as="span" color="primaryContrast">
+                {"See all resources for this topic"}
+              </Typography>
+            </Button>
+          </div>
+        </div>
+      </LayoutSurface>
+    </div>
+  </PageHeaderLayout>
+  {/* Category Description */}
+  {
+    props.categoryEntry.data.description && (
+      <LayoutSurface paddingY={6}>
+        <Container paddingX={4}>
+          <PortableTextContentBlock
+            textVariant="prominent-first"
+            textAlign="center"
+            portableText={props.categoryEntry.data.description}
           />
-        </section>
-      )
-    }
-    <section class="p-3 lg:mb-6">
-      <ResourcePageListings resources={props.resources} />
-    </section>
-  </Container>
-</MainLayout>
+        </Container>
+      </LayoutSurface>
+    )
+  }
+
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <ResourceListingsOrchestrator
+      internetResources={props.internetResources}
+      resourceTypes={props.resourceTypes}
+    />
+  </LayoutSurface>
+</SitePageLayout>

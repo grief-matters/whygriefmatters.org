@@ -1,0 +1,29 @@
+---
+import {
+  marginBottomMap,
+  marginSettingMap,
+  paddingBottomMap,
+  paddingSettingMap,
+  type SpaceSetting,
+} from "@ui/utils/spacing";
+
+interface Props {
+  padding?: SpaceSetting;
+  margin?: SpaceSetting;
+  paddingBottom?: SpaceSetting;
+  marginBottom?: SpaceSetting;
+}
+
+const props = Astro.props;
+---
+
+<div
+  class:list={[
+    props.paddingBottom && paddingBottomMap[props.paddingBottom],
+    props.marginBottom && marginBottomMap[props.marginBottom],
+    props.padding && paddingSettingMap[props.padding],
+    props.margin && marginSettingMap[props.margin],
+  ]}
+>
+  <slot />
+</div>

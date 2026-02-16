@@ -1,0 +1,38 @@
+---
+import type { Polymorphic } from "astro/types";
+import type { OnSurfaceColorVariant, TextPreset } from "@ui/utils/styles";
+import { textPresetClassMap } from "@ui/utils/styles";
+
+type TextButtonTag = "button" | "a";
+
+type Props<T extends TextButtonTag = "button"> = Polymorphic<{ as: T }> & {
+  color?: OnSurfaceColorVariant;
+  variant?: TextPreset;
+  hoverToMuted?: boolean;
+  label?: string;
+};
+
+const {
+  as: Tag = "button",
+  color = "primary",
+  variant = "button-1",
+  hoverToMuted = true,
+  label,
+  ...attrs
+} = Astro.props;
+
+const baseClasses = ["cursor-pointer", "transition-colors duration-300"];
+
+const colorClasses = hoverToMuted
+  ? [`text-onSurface-${color}--default`, `hover:text-onSurface-${color}--muted`]
+  : [`text-onSurface-${color}--muted`, `hover:text-onSurface-${color}--default`];
+
+const hasDefaultSlot = Astro.slots.has("default");
+---
+
+<Tag
+  class:list={[...baseClasses, textPresetClassMap[variant], ...colorClasses]}
+  {...attrs}
+>
+  {hasDefaultSlot ? <slot /> : label}
+</Tag>

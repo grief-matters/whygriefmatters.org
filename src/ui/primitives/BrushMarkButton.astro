@@ -1,0 +1,83 @@
+---
+import type { Polymorphic } from "astro/types";
+import type { SurfaceColorVariant } from "@ui/utils/styles";
+import { textPresetClassMap } from "@ui/utils/styles";
+
+type BrushMarkButtonTag = "button" | "a";
+type BrushMarkButtonColorVariant = SurfaceColorVariant | "donate";
+type BrushMarkButtonSize = 1 | 2 | 3;
+
+type Props<T extends BrushMarkButtonTag = "button"> = Polymorphic<{ as: T }> & {
+  colorVariant?: BrushMarkButtonColorVariant;
+  label?: string;
+  size?: BrushMarkButtonSize;
+};
+
+const {
+  as: Tag = "button",
+  colorVariant = "donate",
+  label,
+  size = 1,
+  ...attrs
+} = Astro.props;
+
+const variantClassMap: Record<BrushMarkButtonColorVariant, Array<string>> = {
+  primary: [
+    "bg-contentSurface-primary--default hover:bg-contentSurface-primary--prominent",
+    "text-onSurface-primary--default",
+  ],
+  secondary: [
+    "bg-contentSurface-secondary--default hover:bg-contentSurface-secondary--prominent",
+    "text-onSurface-secondary--default",
+  ],
+  tertiary: [
+    "bg-contentSurface-tertiary--default hover:bg-contentSurface-tertiary--prominent",
+    "text-onSurface-tertiary--default",
+  ],
+  neutral: [
+    "bg-contentSurface-neutral--default hover:bg-contentSurface-neutral--prominent",
+    "text-onSurface-warmNeutral--default",
+  ],
+  primaryContrast: [
+    "bg-contentSurface-primaryContrast--default hover:bg-contentSurface-primaryContrast--prominent",
+    "text-onSurface-primaryContrast--default",
+  ],
+  donate: [
+    "bg-contentSurface-donate--default hover:bg-contentSurface-donate--prominent",
+    "text-onSurface-primary--default",
+  ],
+};
+
+const textSizeMap = {
+  1: "text-base",
+  2: "text-lg",
+  3: "text-xl",
+};
+---
+
+<Tag
+  class:list={[
+    "svg-mask",
+    "inline-block",
+    "px-6 pt-2 pb-3",
+    "cursor-pointer",
+    "transition-colors duration-300",
+    textPresetClassMap["button-1"],
+    textSizeMap[size],
+    variantClassMap[colorVariant],
+  ]}
+  {...attrs}
+>
+  {label}
+</Tag>
+
+<style>
+  .svg-mask {
+    mask-image: url(/masks/brush-mark.svg);
+    mask-size: 100% 100%;
+    mask-repeat: "no-repeat";
+    webkit-mask-image: url(/masks/brush-mark.svg);
+    webkit-mask-size: 100% 100%;
+    webkit-mask-repeat: no-repeat;
+  }
+</style>

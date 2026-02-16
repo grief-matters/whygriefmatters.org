@@ -1,0 +1,8 @@
+*[_type == "imageCollection"]{
+  "id": _id,
+  title,
+  "images": images[]{
+    image,
+    "altText": alt
+  }
+}

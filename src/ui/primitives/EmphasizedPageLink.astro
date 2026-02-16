@@ -1,0 +1,25 @@
+---
+interface Props {
+  to: string;
+  label: string;
+}
+
+const { to, label } = Astro.props;
+---
+
+<a
+  class:list={[
+    "text-onSurface-primary--default",
+    "bg-contentSurface-neutral--prominent",
+    "inline-block",
+    "py-1 px-3",
+    "italic font-semibold text-balance",
+    "border-b-3 border-line-secondary--default hover:border-line-secondary--prominent",
+    "shadow-md hover:shadow-lg",
+    "duration-300",
+    "font-serif",
+  ]}
+  href={to}
+>
+  {label}
+</a>

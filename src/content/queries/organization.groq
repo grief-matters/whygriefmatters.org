@@ -1,0 +1,15 @@
+*[_id == 'organization-singleton'][0]{
+  name,
+  slogan,
+  "logos": {
+    "onLight": logos[variant == "onLight"][0].logo.image,
+    "onDark": logos[variant == "onDark"][0].logo.image,
+    "onDarkMono": logos[variant == "onDarkMono"][0].logo.image,
+  },
+  legalName,
+  copyrightNotice,
+  nonprofitNotice,
+  "missionStatement": mission,
+  // todo - split this up
+  smallPrint
+}  

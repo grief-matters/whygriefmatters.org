@@ -1,0 +1,14 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"apps">;
+}
+
+const props = Astro.props;
+---
+
+<article id={props.entry.id} data-pagefind-body>
+  <h4 id={props.entry.id}>{props.entry.data.title}</h4>
+  <p>{props.entry.data.description}</p>
+</article>

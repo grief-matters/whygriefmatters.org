@@ -1,0 +1,106 @@
+*[_type == 'contentBlock']{
+  "id": _id,
+  "content": coalesce(content[]{
+    _type == 'headingText' => {
+      "contentType": _type,
+      text
+    },
+    _type == "richTextContentBlock" => {
+      "contentType": _type,
+      portableText,
+      "emphasized": coalesce(isProminent, false)
+    },
+    _type == "richTextWithHeading" => {
+      "contentType": _type,
+      "headingText": heading.text,
+      portableText
+    },
+    _type == "accessibleImage" => {
+      "contentType": _type,
+      image,
+      "altText": alt
+    },
+    _type == "imageRow" => {
+      "contentType": _type,
+      images[]{
+        image,
+        "altText": alt
+      }
+    },
+    _type == "featuredResource" => {
+      "contentType": _type,
+      "refType": resource->_type,
+      "refId": resource->_id
+    },
+    _type == "featuredResources" => {
+      "contentType": _type,
+      "resources": coalesce(
+        resources[]->{
+          "refType": _type,
+          "refId": _id
+        },
+        []
+      ),
+    },
+    _type == "featuredWebsite" => {
+      "contentType": _type,
+      "refId": resource._ref,
+    },
+    _type == "featuredWebsites" => {
+      "contentType": _type,
+      "websites": coalesce(websites[]->._id, [])
+    },
+    _type == "featuredCrisisResource" => {
+      "contentType": _type,
+    },
+    _type == "resourceLinks" => {
+      "contentType": _type,
+        resources[]->{
+          "title": coalesce(title, name),
+          "url": resourceUrl,
+          "type": _type
+        }
+    },
+    _type == "relativeLink" => {
+      "contentType": _type,
+      label,
+      url
+    },
+    _type == "resourcePageLink" => {
+      "contentType": _type,
+      "category": category._ref,
+      label,
+      "resourceTypes": type,
+      "population": population._ref
+    },
+    _type == "categoryPageLink" => {
+      "contentType": _type,
+      "category": category._ref,
+      label
+    },
+    _type == "pageLinks" => {
+      "contentType": _type,
+      "emphasized": coalesce(isProminent, false),
+      "showImages": coalesce(showImages, false),
+      "links": links[]{
+        _type == "relativeLink" => {
+          "contentType": _type,
+          label,
+          url
+        },
+        _type == "resourcePageLink" => {
+          "contentType": _type,
+          "category": category._ref,
+          label,
+          "resourceTypes": type,
+          "population": population._ref
+        },
+        _type == "categoryPageLink" => {
+          "contentType": _type,
+          "category": category._ref,
+          label
+        },
+      }
+    }
+  }, [])
+}

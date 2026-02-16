@@ -1,0 +1,76 @@
+---
+import type { InternetResourceType } from "@content/model/internetResource";
+import { resourceTypeToCollectionKeyMap } from "@content/collections";
+import { assertNever } from "src/utils/assertNever";
+
+import BasicFeaturedResource from "@ui/composites/featured-resources/BasicFeaturedResource.astro";
+import FeaturedApp from "@ui/composites/featured-resources/FeaturedApp.astro";
+import FeaturedWebsite from "@ui/composites/featured-resources/FeaturedWebsite.astro";
+
+interface Props {
+  resourceRef: string;
+  resourceType: InternetResourceType;
+  fullHeight?: boolean;
+}
+
+const props = Astro.props;
+
+const safeCollectionKey = resourceTypeToCollectionKeyMap[props.resourceType];
+if (!safeCollectionKey) {
+  throw new Error(
+    `[FeaturedResource] could not match "${props.resourceType}" to a collection`,
+  );
+}
+---
+
+{
+  () => {
+    switch (safeCollectionKey) {
+      case "communities":
+      case "memorials":
+      case "webinars":
+      case "articles":
+      case "blogs":
+      case "printedMaterials":
+      case "books":
+      case "courses":
+      case "forums":
+      case "peerSupports":
+      case "podcastEpisodes":
+      case "podcasts":
+      case "stories":
+      case "supportGroups":
+      case "therapyResources":
+      case "videos":
+        return (
+          <BasicFeaturedResource
+            fullHeight={props.fullHeight}
+            resourceRef={{
+              collection: safeCollectionKey,
+              id: props.resourceRef,
+            }}
+          />
+        );
+      case "apps":
+        return (
+          <FeaturedApp
+            appRef={{
+              collection: "apps",
+              id: props.resourceRef,
+            }}
+          />
+        );
+      case "websites":
+        return (
+          <FeaturedWebsite
+            websiteRef={{
+              collection: "websites",
+              id: props.resourceRef,
+            }}
+          />
+        );
+      default:
+        assertNever(safeCollectionKey);
+    }
+  }
+}

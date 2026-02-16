@@ -1,0 +1,9 @@
+*[_type == "person"]{
+  "id": _id,
+  fullName,
+  shortBio,
+  personalStory,
+  socials,
+  role,
+  avatar
+}

@@ -1,0 +1,42 @@
+---
+import type { CategoryTreeNode } from "@ui/orchestrators/nav-utils";
+import Link from "@ui/primitives/Link.astro";
+import type { TextPreset } from "@ui/utils/styles";
+
+interface Props {
+  node: CategoryTreeNode;
+  level?: number;
+}
+
+const Self = Astro.self;
+const { node, level = 0 } = Astro.props;
+
+const textVariantMap: Record<number, TextPreset> = {
+  0: "title-4",
+  1: "body-2",
+  2: "body-1",
+};
+---
+
+<li class:list={[level === 0 && "mb-8"]}>
+  {
+    node.href ? (
+      <Link
+        to={node.href}
+        label={node.displayTitle}
+        variant={textVariantMap[level]}
+      />
+    ) : (
+      <span>{node.displayTitle}</span>
+    )
+  }
+  {
+    node.children.length > 0 && (
+      <ul class="mt-2 space-y-2">
+        {node.children.map((child) => (
+          <Self node={child} level={level + 1} />
+        ))}
+      </ul>
+    )
+  }
+</li>

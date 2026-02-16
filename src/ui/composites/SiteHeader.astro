@@ -1,0 +1,52 @@
+---
+import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
+
+import { getOrganization } from "@content/loaders/organizationLoader";
+
+import Button from "@ui/primitives/Button.astro";
+import Link from "@ui/primitives/Link.astro";
+import Search from "@ui/orchestrators/Search.astro";
+import MainNav from "@ui/orchestrators/MainNav.astro";
+
+const org = await getOrganization();
+if (!org) {
+  throw new Error('Failed to [getOrganization] for "src/pages/index.astro"');
+}
+
+const logoUrl = org.logos.onLight
+  ? getImageUrlBuilder(org.logos.onLight).url()
+  : null;
+---
+
+<div
+  class:list={[
+    "flex flex-col-reverse sm:flex-row sm:justify-between gap-x-6",
+    "p-3 sm:p-6",
+    "max-w-6xl mx-auto",
+  ]}
+>
+  <div
+    class:list={[
+      "space-y-2 flex flex-wrap sm:flex-nowrap items-center gap-x-6 grow",
+    ]}
+  >
+    <a class="block basis-50" href="/">
+      <img class:list={["h-16"]} src={logoUrl} alt={`${org.name} logo`} />
+    </a>
+    <!-- Search Input -->
+    <div class="grow min-w-0 max-w-75">
+      <Search />
+    </div>
+  </div>
+  <div class:list={["flex justify-end items-center gap-3"]}>
+    <Link to={"/about"} label="About" variant="button-2" />
+    <Link to={"/contact"} label="Contact" variant="button-2" />
+    <Button
+      label="Donate"
+      textVariant="button-1"
+      styleVariant="outlined"
+      colorVariant="donate"
+    />
+  </div>
+</div>
+<MainNav />

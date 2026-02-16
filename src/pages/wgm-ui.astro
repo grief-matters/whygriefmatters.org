@@ -1,0 +1,196 @@
+---
+import "@styles/main.css";
+import Shell from "@ui/layouts/Shell.astro";
+
+import Button from "@ui/primitives/Button.astro";
+import Container from "@ui/primitives/Container.astro";
+import ContentSurface from "@ui/primitives/ContentSurface.astro";
+import LayoutSurface, {
+  type LayoutSurfaceVariantKey,
+} from "@ui/primitives/LayoutSurface.astro";
+import Stack from "@ui/primitives/Stack.astro";
+import Typography from "@ui/primitives/Typography.astro";
+import { spaceSettingKeys } from "@ui/utils/spacing";
+import { type Prominence, colorVariants, textPresets } from "@ui/utils/styles";
+import startCase from "lodash/startCase";
+
+const codeClasses =
+  "outline outline-line-primary--prominent text-sm bg-contentSurface-neutral--muted rounded-sm px-2 mx-1 text-onSurface-coolNeutral--default text-nowrap";
+---
+
+<Shell>
+  <main data-pagefind-ignore="all">
+    <LayoutSurface variant="neutral" variantKey={1}>
+      <Container paddingX={1} paddingY={1}>
+        <Stack>
+          <Typography as="h1" variant="title-1">Why Grief Matters UI</Typography
+          >
+          <Typography variant="body-1">
+            {"Welcome to the Why Grief Matters UI."}
+          </Typography>
+          <Typography
+            variant="body-1"
+            set:text="Building templates and components for the Why Grief Matters website is kept intentionally constrained in order to maintain simplicity and design coherence."
+          />
+        </Stack>
+      </Container>
+    </LayoutSurface>
+    <LayoutSurface variant="neutral" variantKey={3}>
+      <Container paddingX={1} paddingY={1}>
+        <Stack>
+          <Typography as="h2" variant="title-2">Typography</Typography>
+          <Typography
+            set:text="The number of style variants available is kept intentionally limited
+            but offers more than enough to create compelling pages with good
+            visual hierarchy"
+          />
+          {
+            textPresets.map((preset) => (
+              <div>
+                <Typography variant={preset}>{startCase(preset)}</Typography>
+                <Typography variant="subtitle-1">{preset}</Typography>
+              </div>
+            ))
+          }
+        </Stack>
+      </Container>
+    </LayoutSurface>
+    <LayoutSurface>
+      <Container paddingX={1} paddingY={1}>
+        <Stack>
+          <Typography as="h2" variant="title-2">Layout Surface</Typography>
+          <Typography
+            variant="body-1"
+            set:html={`The <code class="${codeClasses}">LayoutSurface</code> component should be used to define sections on a page. It can be used with a number of color variants.`}
+          />
+        </Stack>
+      </Container>
+    </LayoutSurface>
+    {
+      colorVariants.map((variant) =>
+        variant === "neutral" ? (
+          ([1, 2, 3, 4] as LayoutSurfaceVariantKey[]).map((n) => (
+            <LayoutSurface as="div" variant={variant} variantKey={n}>
+              <Container paddingX={1} paddingY={1}>
+                <Typography color="coolNeutral">{`${variant} - ${n}`}</Typography>
+              </Container>
+            </LayoutSurface>
+          ))
+        ) : (
+          <LayoutSurface as="div" variant={variant}>
+            <Container paddingX={1} paddingY={1}>
+              <Typography color={variant}>{variant}</Typography>
+            </Container>
+          </LayoutSurface>
+        ),
+      )
+    }
+    <LayoutSurface variantKey={2}>
+      <Container paddingX={1} paddingY={1}>
+        <Stack spacing={2}>
+          <Typography as="h2" variant="title-2">Content Surface</Typography>
+          <Typography
+            variant="body-1"
+            set:html={`The <code class="${codeClasses}">ContentSurface</code> component should be used to create areas where content is grouped together in some logical way.`}
+          />
+          <ContentSurface variant="featureCard">
+            <p class="p-3">{`Feature Card content surface`}</p>
+          </ContentSurface>
+          {
+            colorVariants.map((variant) =>
+              (["muted", "default", "prominent"] as Prominence[]).map((p) => (
+                <ContentSurface
+                  paddingX={1}
+                  paddingY={1}
+                  variant={variant}
+                  prominence={p}
+                >
+                  <Typography
+                    color={variant === "neutral" ? "warmNeutral" : variant}
+                    set:html={`The <code class="${codeClasses}">${variant}-${p}</code> content surface using matched typography color.`}
+                  />
+                </ContentSurface>
+              )),
+            )
+          }
+          <Typography
+            set:text="We can combine different content surfaces together to create layered effects, giving us a lot of flexibility when building new designs."
+          />
+          <ContentSurface
+            prominence="muted"
+            paddingX={1}
+            paddingY={1}
+            variant="neutral"
+          >
+            <Stack>
+              <Typography
+                set:text={"Imagine that this is some kind of panel component"}
+              />
+              <ContentSurface paddingX={1} paddingY={1}>
+                <Typography
+                  set:text=`We can create different effects using the "prominence" concept`
+                />
+              </ContentSurface>
+            </Stack>
+          </ContentSurface>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+    <LayoutSurface variantKey={3}>
+      <Container paddingX={1} paddingY={1}>
+        <Stack spacing={2}>
+          <Typography as="h2" variant="title-2">Buttons</Typography>
+          <Typography as="p">
+            {"Buttons can be rendered as link or button tags"}
+          </Typography>
+          <Stack spacing={1} direction="horizontal">
+            {
+              colorVariants.map((c) => (
+                <Button
+                  as="a"
+                  colorVariant={c}
+                  label={`${startCase(c)} Button`}
+                />
+              ))
+            }
+          </Stack>
+          <Typography>
+            {
+              "Button labels cab set using the `label` prop or by passing content to its `slot`. Be aware you will be responsible for styling if using the slot"
+            }
+          </Typography>
+          <Button>
+            <Typography>
+              {"Button using a "}
+              <strong class="text-bold">{"Typography"}</strong>
+              {" component as its label"}
+            </Typography>
+          </Button>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+    <LayoutSurface>
+      <Container paddingX={1} paddingY={1}>
+        <Stack spacing={2}>
+          <Typography as="h2" variant="title-2">Spacing</Typography>
+          <Typography as="p">
+            {"Spacing"}
+          </Typography>
+          <div class="flex flex-col space-y-3">
+            {
+              spaceSettingKeys.map((k) => (
+                <div class="self-start">
+                  <ContentSurface paddingX={k} paddingY={k} variant={"primary"}>
+                    <Typography
+                      set:text={`Space Setting ${k} - equivalent to ${k * 4} in Figma`}
+                    />
+                  </ContentSurface>
+                </div>
+              ))
+            }
+          </div>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+  </main>
+</Shell>

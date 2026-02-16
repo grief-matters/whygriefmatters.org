@@ -1,29 +1,27 @@
 ---
-import type { HTMLAttributes } from "astro/types";
-
 import {
-  wgmDesignSystem as ds,
-  type TypographyColorScheme,
-  type TypographyColorSchemeVariant,
-  type TypographySize,
-} from "@common/design-system";
+  textColorMap,
+  textPresetClassMap,
+  type OnSurfaceColorVariant,
+  type TextPreset,
+} from "@ui/utils/styles";
 
-interface Props extends HTMLAttributes<"a"> {
-  colorScheme?: TypographyColorScheme;
-  colorSchemeVariant?: TypographyColorSchemeVariant;
-  size?: TypographySize;
+interface Props {
+  to: string;
+  label?: string;
+  variant?: TextPreset;
+  color?: OnSurfaceColorVariant;
   external?: boolean;
-  underline?: boolean;
-  classListOverride?: Array<string>;
+  textAlign?: "center" | "left";
 }
 
 const {
-  colorScheme,
-  colorSchemeVariant,
-  size,
-  external,
-  underline = true,
-  classListOverride = [],
+  to,
+  label,
+  variant = "body-1",
+  color = "primary",
+  external = false,
+  textAlign,
   ...attrs
 } = Astro.props;
 
@@ -34,27 +32,41 @@ const externalLinkAttrs = external
     }
   : {};
 
-const decorationColor =
-  colorSchemeVariant === "contrast" ? "contrastHover" : "hover";
+const decorationColorMap: Record<OnSurfaceColorVariant, string> = {
+  primary:
+    "decoration-onSurface-primary--default/40 hover:decoration-onSurface-primary--default",
+  secondary:
+    "decoration-onSurface-secondary--default/40 hover:decoration-onSurface-secondary--default",
+  tertiary:
+    "decoration-onSurface-tertiary--default/40 hover:decoration-onSurface-tertiary--default",
+  coolNeutral:
+    "decoration-onSurface-coolNeutral--muted/50 hover:decoration-onSurface-coolNeutral--muted",
+  warmNeutral:
+    "decoration-onSurface-warmNeutral--default/40 hover:decoration-onSurface-warmNeutral--default",
+  primaryContrast:
+    "decoration-onSurface-primaryContrast--default/40 hover:decoration-onSurface-primaryContrast--default",
+};
 
-const standardClassList = [
-  ds.typography.color[colorScheme ?? "primary"][
-    colorSchemeVariant ?? "default"
-  ],
-  ds.decoration.color[colorScheme ?? "primary"][decorationColor],
-];
+const decorationStyle =
+  variant === "subtitle-1" ? "decoration-solid" : "decoration-dotted";
 ---
 
 <a
   class:list={[
-    "font-serif",
-    ds.typography.size[size ?? "base"],
-    ds.decoration.transition,
-    { underline: underline },
-    ...(classListOverride ? classListOverride : standardClassList),
+    variant.startsWith("t") && "text-balance",
+    decorationStyle,
+    textPresetClassMap[variant],
+    "underline underline-offset-4",
+    decorationColorMap[color],
+    "transition duration-300",
+    variant === "subtitle-1"
+      ? textColorMap.coolNeutral.muted
+      : textColorMap[color]["default"],
+    textAlign && "text-center inline-block",
   ]}
+  href={to}
   {...attrs}
   {...externalLinkAttrs}
 >
-  <slot />
+  {label ?? <slot />}
 </a>
