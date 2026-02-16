@@ -1,0 +1,313 @@
+---
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Icon from "@ui/base/Icon.astro";
+import Button from "@ui/base/Button.astro";
+import Typography from "@ui/base/Typography.astro";
+import TextButton from "@ui/base/TextButton.astro";
+import BackButton from "@ui/base/BackButton.astro";
+import type { CategoryTreeNode } from "@ui/utils/nav-utils";
+
+interface Props {
+  navTree: CategoryTreeNode[];
+}
+
+const { navTree } = Astro.props;
+
+const basePanelClasses = [
+  "absolute inset-0 bg-layoutSurface-neutral--1 flex flex-col",
+];
+const transitionClasses = [
+  "translate-x-full transition-transform duration-300 ease-in-out",
+];
+const navContainerClasses = ["p-12 space-y-4"];
+---
+
+<mobile-nav-controller>
+  <LayoutSurface variant="primaryContrast" variantKey={2}>
+    <div class="flex justify-end p-2">
+      <button
+        data-mobile-trigger
+        aria-expanded="false"
+        aria-label="Open navigation menu"
+        aria-controls="mobile-menu"
+        type="button"
+        class:list={["bg-contentSurface-primaryContrast--prominent"]}
+      >
+        <span class="flex items-center gap-1">
+          <Typography
+            as="span"
+            variant="button-1"
+            color="primaryContrast"
+            set:text="Menu"
+          />
+          <Icon
+            display="inline"
+            getIcon={(icons) => icons.barsThree}
+            color="primaryContrast"
+            size={3}
+          />
+        </span>
+      </button>
+    </div>
+  </LayoutSurface>
+
+  <!-- Mobile overlay -->
+  <nav id="mobile-menu" data-mobile-menu hidden class="fixed inset-0 z-50">
+    <!-- Tier 1 Panel -->
+    <div data-tier1-panel class:list={[...basePanelClasses]}>
+      <div class="flex justify-end p-4">
+        <Button
+          data-mobile-close
+          type="button"
+          styleVariant="outlined"
+          colorVariant="neutral"
+          textVariant="button-1"
+          label="Close"
+        />
+      </div>
+      <div class:list={navContainerClasses}>
+        {
+          navTree.map((item) => (
+            <TextButton
+              type="button"
+              variant="title-3"
+              data-mobile-tier1-btn={item.id}
+              label={item.title}
+              class="w-full text-left"
+            />
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Tier 2 Panel (slides from right) -->
+    <div
+      data-tier2-panel
+      class:list={[...basePanelClasses, ...transitionClasses]}
+    >
+      <header class="flex justify-between items-center p-4">
+        <BackButton data-mobile-back-to-tier1 />
+        <Button
+          data-mobile-close
+          type="button"
+          styleVariant="outlined"
+          colorVariant="neutral"
+          textVariant="button-1"
+          label="Close"
+        />
+      </header>
+      {
+        navTree.map((tier1Cat) => (
+          <div
+            data-tier2-section={tier1Cat.id}
+            hidden
+            class:list={navContainerClasses}
+          >
+            <Typography
+              as="h2"
+              variant="title-3"
+              set:text={tier1Cat.displayTitle}
+            />
+            {tier1Cat.children.map((tier2Cat) =>
+              tier2Cat.children.length > 0 ? (
+                <TextButton
+                  type="button"
+                  variant="title-5"
+                  data-mobile-tier2-btn={tier2Cat.id}
+                  data-parent-tier1={tier1Cat.id}
+                  label={tier2Cat.title}
+                  class="w-full text-left"
+                />
+              ) : tier2Cat.href ? (
+                <TextButton
+                  as="a"
+                  variant="title-5"
+                  label={tier2Cat.title}
+                  href={tier2Cat.href}
+                  class="w-full text-left block"
+                />
+              ) : (
+                <Typography
+                  as="span"
+                  variant="title-5"
+                  set:text={tier2Cat.title}
+                />
+              ),
+            )}
+          </div>
+        ))
+      }
+
+      <!-- Tier 3 Panel (slides from right) -->
+      <div
+        data-tier3-panel
+        class:list={[...basePanelClasses, ...transitionClasses]}
+      >
+        <header class="flex justify-between items-center p-4">
+          <BackButton data-mobile-back-to-tier2 />
+          <Button
+            data-mobile-close
+            styleVariant="outlined"
+            colorVariant="neutral"
+            textVariant="button-1"
+            label="Close"
+          />
+        </header>
+        {
+          navTree.flatMap((tier1Cat) =>
+            tier1Cat.children.map((tier2Cat) => (
+              <div
+                data-tier3-section={tier2Cat.id}
+                hidden
+                class:list={navContainerClasses}
+              >
+                <Typography
+                  as="h3"
+                  variant="title-3"
+                  set:text={tier2Cat.displayTitle}
+                />
+                {tier2Cat.children.map((tier3Cat) =>
+                  tier3Cat.href ? (
+                    <TextButton
+                      as="a"
+                      variant="title-5"
+                      label={tier3Cat.title}
+                      class="w-full text-left block"
+                      href={tier3Cat.href}
+                    />
+                  ) : (
+                    <Typography
+                      as="span"
+                      variant="title-5"
+                      set:text={tier3Cat.title}
+                    />
+                  ),
+                )}
+              </div>
+            )),
+          )
+        }
+      </div>
+    </div>
+  </nav>
+
+  <script is:inline>
+    class MobileNavController extends HTMLElement {
+      selectedTier1Id = null;
+      selectedTier2Id = null;
+
+      connectedCallback() {
+        this.setupHandlers();
+        this.setupKeyboardHandlers();
+      }
+
+      setupHandlers() {
+        const mobileTrigger = this.querySelector("[data-mobile-trigger]");
+        mobileTrigger?.addEventListener("click", () => this.openMenu());
+
+        this.querySelectorAll("[data-mobile-close]").forEach((btn) => {
+          btn.addEventListener("click", () => this.closeMenu());
+        });
+
+        this.querySelectorAll("[data-mobile-tier1-btn]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const tier1Id = btn.getAttribute("data-mobile-tier1-btn");
+            this.showTier2(tier1Id);
+          });
+        });
+
+        this.querySelectorAll("[data-mobile-tier2-btn]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const tier2Id = btn.getAttribute("data-mobile-tier2-btn");
+            this.showTier3(tier2Id);
+          });
+        });
+
+        const backToTier1 = this.querySelector("[data-mobile-back-to-tier1]");
+        backToTier1?.addEventListener("click", () => this.hideTier2());
+
+        const backToTier2 = this.querySelector("[data-mobile-back-to-tier2]");
+        backToTier2?.addEventListener("click", () => this.hideTier3());
+      }
+
+      openMenu() {
+        const menu = this.querySelector("[data-mobile-menu]");
+        const trigger = this.querySelector("[data-mobile-trigger]");
+        menu?.removeAttribute("hidden");
+        trigger?.setAttribute("aria-expanded", "true");
+        document.body.style.overflow = "hidden";
+      }
+
+      closeMenu() {
+        const menu = this.querySelector("[data-mobile-menu]");
+        const trigger = this.querySelector("[data-mobile-trigger]");
+        const tier2Panel = this.querySelector("[data-tier2-panel]");
+        const tier3Panel = this.querySelector("[data-tier3-panel]");
+
+        menu?.setAttribute("hidden", "");
+        trigger?.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = "";
+
+        tier2Panel?.classList.add("translate-x-full");
+        tier3Panel?.classList.add("translate-x-full");
+
+        this.querySelectorAll("[data-tier2-section]").forEach((section) => {
+          section.hidden = true;
+        });
+        this.querySelectorAll("[data-tier3-section]").forEach((section) => {
+          section.hidden = true;
+        });
+
+        this.selectedTier1Id = null;
+        this.selectedTier2Id = null;
+      }
+
+      showTier2(tier1Id) {
+        this.selectedTier1Id = tier1Id;
+
+        this.querySelectorAll("[data-tier2-section]").forEach((section) => {
+          section.hidden = section.dataset.tier2Section !== tier1Id;
+        });
+
+        const panel = this.querySelector("[data-tier2-panel]");
+        panel?.classList.remove("translate-x-full");
+      }
+
+      hideTier2() {
+        const panel = this.querySelector("[data-tier2-panel]");
+        panel?.classList.add("translate-x-full");
+        this.selectedTier1Id = null;
+      }
+
+      showTier3(tier2Id) {
+        this.selectedTier2Id = tier2Id;
+
+        this.querySelectorAll("[data-tier3-section]").forEach((section) => {
+          section.hidden = section.dataset.tier3Section !== tier2Id;
+        });
+
+        const panel = this.querySelector("[data-tier3-panel]");
+        panel?.classList.remove("translate-x-full");
+      }
+
+      hideTier3() {
+        const panel = this.querySelector("[data-tier3-panel]");
+        panel?.classList.add("translate-x-full");
+        this.selectedTier2Id = null;
+      }
+
+      setupKeyboardHandlers() {
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            const menu = this.querySelector("[data-mobile-menu]");
+            if (menu && !menu.hasAttribute("hidden")) {
+              this.closeMenu();
+            }
+          }
+        });
+      }
+    }
+
+    customElements.define("mobile-nav-controller", MobileNavController);
+  </script>
+</mobile-nav-controller>

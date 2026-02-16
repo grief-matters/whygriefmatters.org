@@ -1,0 +1,104 @@
+---
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import Button from "@ui/base/Button.astro";
+import Link from "@ui/base/Link.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import { getEntries, type CollectionEntry } from "astro:content";
+
+interface Props {
+  categoryEntryData: CollectionEntry<"categories">["data"];
+  parentCategory?: CollectionEntry<"categories">;
+}
+
+const props = Astro.props;
+
+let resolvedSubcategories: Array<CollectionEntry<"categories">> | null = null;
+if (props.categoryEntryData.subcategories.length > 0) {
+  const c = await getEntries(props.categoryEntryData.subcategories);
+  resolvedSubcategories = c;
+}
+---
+
+<PageHeaderLayout
+  surfaceVariant="primaryContrast"
+  surfaceVariantKey={1}
+  image={props.categoryEntryData.image}
+>
+  <div class="md:h-full md:flex md:items-center">
+    <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
+      <div class="basis-100">
+        <Spacer marginBottom={3}>
+          <!-- header -->
+          <Typography
+            marginBottom={2}
+            as="h1"
+            variant="title-1"
+            color="primaryContrast"
+          >
+            {
+              props.categoryEntryData.displayTitle ??
+                props.categoryEntryData.title
+            }
+          </Typography>
+          <!-- description -->
+          {
+            props.categoryEntryData.shortDescription && (
+              <Typography
+                as="p"
+                variant="body-2"
+                color="primaryContrast"
+                marginBottom={2}
+              >
+                {props.categoryEntryData.shortDescription}
+              </Typography>
+            )
+          }
+        </Spacer>
+
+        <!-- subcats -->
+        {
+          resolvedSubcategories !== null &&
+            resolvedSubcategories?.length > 0 && (
+              <Stack spacing={3}>
+                <Typography color="primaryContrast" variant="title-4">
+                  {"Explore further:"}
+                </Typography>
+                <Stack as="ul" spacing={2} marginBottom={4}>
+                  {resolvedSubcategories.map((c) => (
+                    <li>
+                      <Link
+                        to={`/${c.data.slug}`}
+                        label={c.data.title}
+                        color="primaryContrast"
+                      />
+                    </li>
+                  ))}
+                </Stack>
+              </Stack>
+            )
+        }
+        {/* button */}
+        {
+          props.parentCategory && (
+            <Button
+              as="a"
+              colorVariant="secondary"
+              href={`/${props.parentCategory.data.slug}`}
+              class="inline-block"
+            >
+              <Typography>
+                {"Part of "}
+                <strong class="text-bold">
+                  {props.parentCategory.data.displayTitle ??
+                    props.parentCategory.data.title}
+                </strong>
+              </Typography>
+            </Button>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</PageHeaderLayout>

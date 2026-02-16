@@ -1,0 +1,199 @@
+---
+import { makeLabelPartsForPopulationResources } from "@content/utils";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import Button from "@ui/base/Button.astro";
+import Container from "@ui/base/Container.astro";
+import ContentSurface from "@ui/base/ContentSurface.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Link from "@ui/base/Link.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import {
+  buildResourceExistenceSet,
+  buildCategoryTree,
+  pruneTreeForPopulation,
+} from "@ui/utils/nav-utils";
+
+import { getCollection, getEntry } from "astro:content";
+import ContentBlockRenderer from "../content-block/ContentBlockRenderer.astro";
+import CategorySummaryPanel from "../category/CategorySummaryPanel.astro";
+
+interface Props {
+  categoryId: string;
+  populationId: string;
+  leadInContentBlockRefs?: Array<string>;
+}
+
+const { categoryId, populationId, leadInContentBlockRefs } = Astro.props;
+
+const categories = await getCollection("categories");
+
+const root = categories.find((x) => x.id === categoryId);
+if (!root) {
+  throw new Error(
+    `Could not find [categoryEntry] for id: [${categoryId}] in [PopulationRootCategoryPage]`,
+  );
+}
+
+const populationEntry = await getEntry("populations", populationId);
+if (!populationEntry) {
+  throw new Error(
+    `Could not find [populationEntry] for id: [${populationId}] in [PopulationRootCategoryPage]`,
+  );
+}
+
+// Build category tree and prune for this population
+const existenceSet = await buildResourceExistenceSet();
+const fullTree = buildCategoryTree(root, categories);
+const prunedTree = pruneTreeForPopulation(
+  fullTree,
+  populationId,
+  populationEntry.data.slug,
+  existenceSet,
+);
+
+// Get surviving subcategory IDs from the pruned tree
+const survivingSubcategoryIds = new Set(
+  prunedTree?.children.map((child) => child.id) ?? [],
+);
+
+// Filter root subcategories to only those that survived pruning
+const filteredSubcategoryRefs = root.data.subcategories.filter((ref) =>
+  survivingSubcategoryIds.has(ref.id),
+);
+
+// Resolve filtered subcategory entries for the header links
+const filteredSubcategoryEntries = filteredSubcategoryRefs
+  .map((ref) => categories.find((c) => c.id === ref.id))
+  .filter((c): c is (typeof categories)[number] => c !== undefined);
+
+// Generate population label
+const labelParts = await makeLabelPartsForPopulationResources(populationId);
+---
+
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={populationEntry.data.image}
+  >
+    <div class="md:h-full md:flex md:flex-col">
+      <div class="md:h-full md:flex md:items-center">
+        <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
+          <div class="basis-100">
+            <Typography
+              marginBottom={2}
+              as="h1"
+              variant="title-1"
+              color="primaryContrast"
+            >
+              {root.data.displayTitle ?? root.data.title}
+            </Typography>
+            {
+              root.data.shortDescription && (
+                <Typography
+                  as="p"
+                  variant="body-2"
+                  color="primaryContrast"
+                  marginBottom={2}
+                >
+                  {root.data.shortDescription}
+                </Typography>
+              )
+            }
+            {
+              filteredSubcategoryEntries.length > 0 && (
+                <Stack spacing={3}>
+                  <Typography color="primaryContrast" variant="title-4">
+                    {"Explore further:"}
+                  </Typography>
+                  <Stack as="ul" spacing={2} marginBottom={4}>
+                    {filteredSubcategoryEntries.map((c) => (
+                      <li>
+                        <Link
+                          to={`/${c.data.slug}/${populationEntry.data.slug}`}
+                          label={c.data.title}
+                          color="primaryContrast"
+                        />
+                      </li>
+                    ))}
+                  </Stack>
+                </Stack>
+              )
+            }
+          </div>
+        </div>
+      </div>
+      <LayoutSurface variant="tertiary" variantKey={3}>
+        <div class="px-8 py-6 md:flex md:items-center md:justify-end">
+          <div class="basis-100">
+            {
+              labelParts.length > 0 && (
+                <p class="mb-3">
+                  <Typography as="span" variant="body-2" class="block">
+                    <span class="italic">{`${labelParts[0]} `}</span>
+                  </Typography>
+                  <Typography as="span" variant="title-2">
+                    {labelParts[1]}
+                  </Typography>
+                </p>
+              )
+            }
+            <Button
+              as="a"
+              colorVariant="primaryContrast"
+              href={`/${root.data.slug}`}
+              class="inline-block"
+            >
+              <Typography as="span" color="primaryContrast">
+                {"See all resources for this topic"}
+              </Typography>
+            </Button>
+          </div>
+        </div>
+      </LayoutSurface>
+    </div>
+  </PageHeaderLayout>
+  {
+    leadInContentBlockRefs && (
+      <LayoutSurface as="section" variant="neutral" paddingY={6}>
+        <Container>
+          <Stack>
+            {leadInContentBlockRefs.map((blockId) => (
+              <ContentBlockRenderer
+                contentBlockRef={{
+                  collection: "contentBlocks",
+                  id: blockId,
+                }}
+              />
+            ))}
+          </Stack>
+        </Container>
+      </LayoutSurface>
+    )
+  }
+  <LayoutSurface variantKey={3}>
+    <Container paddingY={7}>
+      <Stack spacing={4}>
+        {
+          filteredSubcategoryRefs.map((cat) => (
+            <ContentSurface
+              prominence="muted"
+              variant="tertiary"
+              paddingX={5}
+              paddingY={4}
+            >
+              <CategorySummaryPanel
+                colorVariant="tertiary"
+                categoryId={cat.id}
+                populationId={populationId}
+                populationSlug={populationEntry.data.slug}
+              />
+            </ContentSurface>
+          ))
+        }
+      </Stack>
+    </Container>
+  </LayoutSurface>
+</SitePageLayout>

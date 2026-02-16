@@ -1,22 +1,22 @@
 ---
+import { getCollection, getEntries, getEntry } from "astro:content";
+import kebabCase from "lodash/kebabCase";
+
+import type { SocialVal } from "@content/model/person";
+import type { IconKey } from "src/components/utils/icons";
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
-import ContentBlockRenderer from "@ui/orchestrators/ContentBlockRenderer.astro";
-import Container from "@ui/primitives/Container.astro";
-import ContentSurface from "@ui/primitives/ContentSurface.astro";
-import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
-import Link from "@ui/primitives/Link.astro";
-import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
-import SanityImageComp from "@ui/primitives/SanityImage.astro";
-import Spacer from "@ui/primitives/Spacer.astro";
-import Stack from "@ui/primitives/Stack.astro";
-import Typography from "@ui/primitives/Typography.astro";
-import { getEntries } from "astro:content";
-import { getCollection, getEntry } from "astro:content";
-import kebabCase from "lodash/kebabCase";
-import Icon from "@ui/primitives/Icon.astro";
-import type { SocialVal } from "@content/model/person";
-import type { IconKey } from "@ui/utils/icons";
+import Container from "@ui/base/Container.astro";
+import ContentSurface from "@ui/base/ContentSurface.astro";
+import Icon from "@ui/base/Icon.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Link from "@ui/base/Link.astro";
+import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
+import SanityImageComp from "@ui/base/SanityImage.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
 
 const aboutContentGroup = await getCollection(
   "contentGroups",

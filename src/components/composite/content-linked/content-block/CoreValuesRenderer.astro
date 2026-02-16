@@ -1,0 +1,91 @@
+---
+import Container from "@ui/base/Container.astro";
+import Link from "@ui/base/Link.astro";
+import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import { getEntry, type ReferenceDataEntry } from "astro:content";
+import partition from "lodash/partition";
+
+interface Props {
+  contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
+}
+
+const { contentBlockRef } = Astro.props;
+
+const contentBlock = await getEntry(contentBlockRef);
+
+const [leadInContent, coreValues] = partition(
+  contentBlock.data.content,
+  (x) => x.contentType !== "richTextWithHeading",
+);
+
+const footerLink = leadInContent.find((x) => x.contentType === "relativeLink");
+---
+
+<Stack spacing={4}>
+  {
+    leadInContent.map((contentItem) => {
+      switch (contentItem.contentType) {
+        case "headingText":
+          return (
+            <Typography as="h2" variant="title-2" textAlign="center">
+              {contentItem.text}
+            </Typography>
+          );
+        case "richTextContentBlock":
+          return (
+            <Container paddingX={1}>
+              <PortableTextContentBlock
+                textAlign={"center"}
+                portableText={contentItem.portableText}
+                textVariant={
+                  contentItem.emphasized ? "prominent-first" : "body-1"
+                }
+              />
+            </Container>
+          );
+      }
+    })
+  }
+  <Container size={2}>
+    <div class="gap-8 px-12 grid sm:grid-cols-2 lg:grid-cols-4">
+      {
+        coreValues.map((cv, i) => (
+          <div
+            class:list={[
+              "space-y-3",
+              "p-6",
+              i % 2 === 0
+                ? "bg-contentSurface-primaryContrast--prominent"
+                : "bg-contentSurface-primaryContrast--default",
+            ]}
+          >
+            <Typography
+              as="h3"
+              color="primaryContrast"
+              variant="title-4"
+              textAlign="center"
+            >
+              {cv.headingText}
+            </Typography>
+            <PortableTextContentBlock
+              colorVariant="primaryContrast"
+              textAlign={"center"}
+              portableText={cv.portableText}
+            />
+          </div>
+        ))
+      }
+    </div>
+  </Container>
+  {
+    footerLink && (
+      <Container>
+        <div class="text-center">
+          <Link to={footerLink.url} label={footerLink.label} />
+        </div>
+      </Container>
+    )
+  }
+</Stack>

@@ -1,0 +1,70 @@
+---
+import {
+  marginBottomMap,
+  type SpaceSetting,
+} from "src/components/utils/spacing";
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+type DirectionSetting = "vertical" | "horizontal";
+
+type Props<Tag extends HTMLTag = "div"> = Polymorphic<{ as: Tag }> & {
+  spacing?: SpaceSetting;
+  direction?: DirectionSetting;
+  marginBottom?: SpaceSetting;
+  reverse?: boolean;
+  divide?: boolean;
+  wrap?: boolean;
+};
+
+type SpaceMap = Record<SpaceSetting, string>;
+
+const spaceSettingMap: Record<DirectionSetting, SpaceMap> = {
+  vertical: {
+    1: "space-y-1.5",
+    2: "space-y-3",
+    3: "space-y-4",
+    4: "space-y-6",
+    5: "space-y-8",
+    6: "space-y-12",
+    7: "space-y-16",
+  },
+  horizontal: {
+    1: "gap-1.5",
+    2: "gap-3",
+    3: "gap-4",
+    4: "gap-6",
+    5: "gap-8",
+    6: "gap-12",
+    7: "gap-16",
+  },
+};
+
+const {
+  as: Tag = "div",
+  spacing = 1,
+  direction = "vertical",
+  marginBottom,
+  reverse,
+  divide,
+  wrap,
+  ...attrs
+} = Astro.props;
+---
+
+<Tag
+  class:list={[
+    direction === "horizontal" && "flex",
+    direction === "horizontal" && wrap && "flex-wrap",
+    spaceSettingMap[direction][spacing ?? 1],
+    marginBottom && marginBottomMap[marginBottom],
+    reverse
+      ? direction === "horizontal"
+        ? "flex-row-reverse"
+        : "flex flex-col-reverse"
+      : null,
+    divide ? "divide-y" : null,
+  ]}
+  {...attrs}
+>
+  <slot />
+</Tag>

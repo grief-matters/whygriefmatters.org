@@ -1,0 +1,26 @@
+---
+import SiteFooter from "@ui/composite/SiteFooter.astro";
+import "../../styles/main.css";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Why Grief Matters</title>
+  </head>
+
+  <body
+    class:list={[
+      "min-h-screen",
+      "flex flex-col",
+      "bg-layoutSurface-neutral--1",
+      "text-onSurface-primary--default",
+    ]}
+  >
+    {/*Slot for Header and Main */}
+    <slot />
+    {/* Footer always renders - in all layouts */}
+    <SiteFooter />
+  </body>
+</html>

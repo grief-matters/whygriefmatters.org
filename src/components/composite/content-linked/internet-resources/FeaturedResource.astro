@@ -1,0 +1,46 @@
+---
+import { getEntry, type ReferenceDataEntry } from "astro:content";
+
+import type { BasicInternetResourceCollectionKey } from "@content/collections";
+
+import {
+  getSourceFromResourceUrl,
+  getSourceLinkFromWebsiteRef,
+} from "src/components/utils/helpers";
+import Typography from "@ui/base/Typography.astro";
+import Card from "@ui/composite/Card.astro";
+import ResourceSource from "./ResourceSource.astro";
+
+interface Props {
+  resourceRef: ReferenceDataEntry<BasicInternetResourceCollectionKey, string>;
+  fullHeight?: boolean;
+}
+
+const props = Astro.props;
+
+const { data } = await getEntry(props.resourceRef);
+if (!data) {
+  throw new Error(
+    `[BasicFeaturedResource] could not get resource from reference: ${props.resourceRef.id}`,
+  );
+}
+
+const source = data.sourceWebsiteId
+  ? await getSourceLinkFromWebsiteRef(data.sourceWebsiteId)
+  : null;
+
+const safeSource = source ?? getSourceFromResourceUrl(data.resourceUrl);
+
+const image = data.image ? { image: data.image.image, altText: "" } : null;
+---
+
+<Card
+  external
+  fullHeight={props.fullHeight}
+  image={image}
+  title={data.title}
+  titleHref={data.resourceUrl}
+>
+  {safeSource && <ResourceSource source={safeSource} />}
+  {data.description && <Typography>{data.description}</Typography>}
+</Card>

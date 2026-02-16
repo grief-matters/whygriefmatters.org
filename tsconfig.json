@@ -7,9 +7,7 @@
     "baseUrl": ".",
     "paths": {
       "@content/*": ["./src/content/*"],
-      "@server/*": ["./src/server/*"],
-      "@styles/*": ["./src/styles/*"],
-      "@ui/*": ["./src/ui/*"],
+      "@ui/*": ["src/components/*"],
       "@sanity-integration/*": ["./src/integrations/sanity/*"]
     }
   }

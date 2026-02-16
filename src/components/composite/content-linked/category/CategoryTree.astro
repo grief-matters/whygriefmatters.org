@@ -1,0 +1,26 @@
+---
+import type { CategoryTreeNode } from "@ui/utils/nav-utils";
+import Typography from "@ui/base/Typography.astro";
+import CategoryTreeBranch from "./CategoryTreeBranch.astro";
+
+interface Props {
+  trees: CategoryTreeNode[];
+}
+
+const { trees } = Astro.props;
+---
+
+{
+  trees.map((root) => (
+    <section class="mb-8">
+      <Typography as="h2" variant="title-3" marginBottom={2}>
+        {root.displayTitle}
+      </Typography>
+      <ul class="space-y-2">
+        {root.children.map((child) => (
+          <CategoryTreeBranch node={child} />
+        ))}
+      </ul>
+    </section>
+  ))
+}

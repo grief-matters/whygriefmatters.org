@@ -1,0 +1,87 @@
+---
+import { getCollection, getEntries, getEntry } from "astro:content";
+
+import { getAllDescendantCategoryIds } from "@content/utils";
+import { buildResourceExistenceSet } from "@ui/utils/nav-utils";
+import Link from "@ui/base/Link.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import type { ColorVariant } from "src/components/utils/styles";
+
+import CategoryResourceTypesSummary from "./CategoryResourceTypesSummary.astro";
+import LinkButton from "@ui/base/LinkButton.astro";
+
+interface Props {
+  categoryId: string;
+  colorVariant?: ColorVariant;
+  populationId?: string;
+  populationSlug?: string;
+}
+
+const {
+  colorVariant = "neutral",
+  populationId,
+  populationSlug,
+  ...props
+} = Astro.props;
+
+const categoryEntry = await getEntry("categories", props.categoryId);
+if (!categoryEntry) {
+  throw new Error(`Could not get category with id: ${props.categoryId}`);
+}
+
+const refs = categoryEntry.data.subcategories.map(({ collection, id }) => ({
+  collection,
+  id,
+}));
+let subCategoryEntries = await getEntries(refs);
+
+// When filtering by population, prune subcategories that have no resources for this population
+if (populationId) {
+  const existenceSet = await buildResourceExistenceSet();
+  const allCategories = await getCollection("categories");
+  subCategoryEntries = subCategoryEntries.filter((sub) => {
+    const descendantIds = getAllDescendantCategoryIds(sub.id, allCategories);
+    return Array.from(descendantIds).some((catId) =>
+      existenceSet.has(`${catId}:${populationId}`),
+    );
+  });
+}
+---
+
+<Stack spacing={3}>
+  <Typography variant="title-3" set:text={categoryEntry.data.title} />
+  <Typography set:text={categoryEntry.data.shortDescription} />
+
+  {
+    subCategoryEntries.length > 0 && (
+      <div class="flex gap-3 flex-wrap">
+        {subCategoryEntries.map((c) => (
+          <LinkButton
+            to={
+              populationSlug ? `/${c.data.slug}/${populationSlug}` : c.data.slug
+            }
+            label={c.data.title}
+            colorVariant={
+              colorVariant === "neutral" ? "secondary" : colorVariant
+            }
+          />
+        ))}
+      </div>
+    )
+  }
+
+  <CategoryResourceTypesSummary
+    categoryId={categoryEntry.id}
+    colorVariant={colorVariant === "neutral" ? "warmNeutral" : colorVariant}
+    populationSlug={populationSlug}
+  />
+
+  <Link
+    to={populationSlug
+      ? `/${categoryEntry.data.slug}/${populationSlug}`
+      : `/${categoryEntry.data.slug}`}
+  >
+    {"Explore "}<strong>{categoryEntry.data.title}</strong>
+  </Link>
+</Stack>

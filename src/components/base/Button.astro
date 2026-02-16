@@ -1,0 +1,98 @@
+---
+import type { Polymorphic } from "astro/types";
+import Typography from "./Typography.astro";
+import type { SurfaceColorVariant } from "src/components/utils/styles";
+import type { TextPreset } from "src/components/utils/styles";
+
+type ButtonTag = "a" | "button";
+type StyleVariant = "outlined" | "filled";
+
+type Props<T extends ButtonTag = "a"> = Polymorphic<{ as: T }> & {
+  colorVariant?: SurfaceColorVariant | "donate";
+  label?: string;
+  styleVariant?: StyleVariant;
+  textVariant?: Extract<TextPreset, "button-1" | "button-2">;
+};
+
+const {
+  as: Tag = "a",
+  colorVariant = "primary",
+  styleVariant = "filled",
+  textVariant = "button-1",
+  label,
+  ...attrs
+} = Astro.props;
+
+const baseClasses = [
+  "block",
+  "py-0.5 px-4",
+  "cursor-pointer",
+  "rounded-sm",
+  "transition-colors duration-300",
+];
+
+const variantClassMap: Record<
+  StyleVariant,
+  Record<SurfaceColorVariant | "donate", Array<string>>
+> = {
+  outlined: {
+    neutral: [
+      "bg-contentSurface-neutral--default hover:bg-contentSurface-neutral--prominent",
+      "border border-line-neutral--default",
+    ],
+    primary: [
+      "bg-contentSurface-primary--muted hover:bg-contentSurface-neutral--prominent",
+      "border border-line-primary--default",
+    ],
+    secondary: [
+      "bg-contentSurface-secondary--muted hover:bg-contentSurface-neutral--prominent",
+      "border border-line-secondary--default",
+    ],
+    tertiary: [
+      "bg-contentSurface-tertiary--muted hover:bg-contentSurface-neutral--prominent",
+      "border border-line-tertiary--default",
+    ],
+    primaryContrast: [
+      "bg-contentSurface-primaryContrast--muted",
+      "border-line-primaryContrast--default",
+    ],
+    donate: [
+      "bg-contentSurface-donate--default",
+      "border-2 border-onSurface-primary--default",
+    ],
+  },
+  filled: {
+    neutral: ["bg-contentSurface-neutral--muted"],
+    primary: ["bg-contentSurface-primary--prominent"],
+    secondary: ["bg-contentSurface-secondary--prominent"],
+    tertiary: ["bg-contentSurface-tertiary--prominent"],
+    primaryContrast: ["bg-contentSurface-primaryContrast--prominent"],
+    donate: [],
+  },
+};
+
+const hasDefaultSlot = Astro.slots.has("default");
+---
+
+<Tag
+  class:list={[...baseClasses, variantClassMap[styleVariant][colorVariant]]}
+  {...attrs}
+>
+  {
+    hasDefaultSlot ? (
+      <slot />
+    ) : (
+      <Typography
+        color={
+          colorVariant === "neutral"
+            ? "warmNeutral"
+            : colorVariant === "donate"
+              ? "primary"
+              : colorVariant
+        }
+        variant={textVariant}
+        set:text={label}
+      />
+    )
+  }
+</Tag>

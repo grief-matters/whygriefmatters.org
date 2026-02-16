@@ -3,12 +3,13 @@ import { getEntry } from "astro:content";
 
 import LayoutSurface, {
   type LayoutSurfaceVariantKey,
-} from "@ui/primitives/LayoutSurface.astro";
+} from "@ui/base/LayoutSurface.astro";
 import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
 import { getOrganization } from "@content/loaders/organizationLoader";
-import ContentBlockRenderer from "@ui/orchestrators/ContentBlockRenderer.astro";
-import Stack from "@ui/primitives/Stack.astro";
+
+import Stack from "@ui/base/Stack.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
 
 const org = await getOrganization();
 if (!org) {

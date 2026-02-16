@@ -1,0 +1,152 @@
+---
+import {
+  collectionKeyToResourceTypeMap,
+  type InternetResourceCollectionKey,
+} from "@content/collections";
+import { primaryResourceTypes } from "@content/model/internetResource";
+import Button from "@ui/base/Button.astro";
+import Icon from "@ui/base/Icon.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import { resourceTypeIconConfigMap } from "src/components/utils/icons";
+import type { OnSurfaceColorVariant } from "src/components/utils/styles";
+import startCase from "lodash/startCase";
+import sum from "lodash/sum";
+import { getResourceTypeCountsForCategory } from "@ui/utils/nav-utils";
+import { getEntry } from "astro:content";
+
+interface Props {
+  categoryId: string;
+  // categorySlug: string;
+  // resourceTypesData: ResourceTypeCounts;
+  colorVariant?: OnSurfaceColorVariant;
+  populationSlug?: string;
+}
+
+const { colorVariant = "warmNeutral", populationSlug, ...props } = Astro.props;
+
+const category = await getEntry("categories", props.categoryId);
+if (!category) {
+  throw new Error(
+    `Category with ref: [${props.categoryId}] could not be found in [CategoryResourceTypes]`,
+  );
+}
+
+const resourceTypeCounts = await getResourceTypeCountsForCategory(category.id);
+
+// Get all entries as [collectionKey, count] pairs
+const resourceEntries = Object.entries(resourceTypeCounts) as [
+  InternetResourceCollectionKey,
+  number,
+][];
+
+const totalResourceCount = sum(Object.values(resourceTypeCounts));
+
+// Filter to primary resource types with count > 0, maintaining primaryResourceTypes order
+const resourceCountsToDisplay = primaryResourceTypes
+  .map((type) =>
+    resourceEntries.find(
+      ([cKey, count]) =>
+        collectionKeyToResourceTypeMap[cKey] === type && count > 0,
+    ),
+  )
+  .filter(
+    (entry): entry is [InternetResourceCollectionKey, number] =>
+      entry !== undefined,
+  );
+
+// Sum counts for non-primary resource types
+const otherResourcesCount = resourceEntries
+  .filter(
+    ([cKey, count]) =>
+      !primaryResourceTypes.includes(
+        collectionKeyToResourceTypeMap[
+          cKey
+        ] as (typeof primaryResourceTypes)[number],
+      ) && count > 0,
+  )
+  .reduce((sum, [, count]) => sum + count, 0);
+
+function getOtherResourcesLabel(count: number) {
+  if (count < 5) {
+    return null;
+  }
+
+  if (count < 25) {
+    return "Plus more across other formats";
+  }
+
+  if (count < 50) {
+    return "With over 25 more across other formats";
+  }
+
+  if (count < 100) {
+    return "With over 50 more across other formats";
+  }
+
+  return "With over 100 more across other formats";
+}
+---
+
+<Stack spacing={2}>
+  <Typography variant="title-4" color={colorVariant}>
+    {"Resources on this topic"}
+  </Typography>
+  {
+    totalResourceCount > 25 && (
+      <Typography color={colorVariant}>
+        {`We have collected over ${Math.floor(totalResourceCount / 10) * 10} resources across this topic`}
+      </Typography>
+    )
+  }
+  <Stack spacing={2}>
+    {
+      resourceCountsToDisplay.map(([collectionKey, count]) => {
+        const iconConfig =
+          resourceTypeIconConfigMap[
+            collectionKeyToResourceTypeMap[
+              collectionKey as InternetResourceCollectionKey
+            ]
+          ];
+
+        return (
+          <Button
+            as="a"
+            href={
+              populationSlug
+                ? `/${category.data.slug}/${populationSlug}#${collectionKey}`
+                : `/${category.data.slug}#${collectionKey}`
+            }
+            styleVariant="outlined"
+            colorVariant={
+              colorVariant === "warmNeutral" || colorVariant === "coolNeutral"
+                ? "neutral"
+                : colorVariant
+            }
+          >
+            <span class="flex items-center gap-1">
+              <Icon
+                size={2}
+                color={iconConfig.colorVariant}
+                getIcon={() => iconConfig.icon}
+              />
+              <Typography
+                as="span"
+                set:text={`${count} ${startCase(collectionKey)}`}
+                variant="button-2"
+                color={colorVariant}
+              />
+            </span>
+          </Button>
+        );
+      })
+    }
+  </Stack>
+  {
+    otherResourcesCount > 0 && (
+      <Typography color={colorVariant}>
+        {getOtherResourcesLabel(otherResourcesCount)}
+      </Typography>
+    )
+  }
+</Stack>

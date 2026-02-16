@@ -1,0 +1,25 @@
+---
+import {
+  paddingXSettingMap,
+  paddingYSettingMap,
+  type SpaceSetting,
+} from "src/components/utils/spacing";
+
+interface Props {
+  paddingX?: SpaceSetting;
+  paddingY?: SpaceSetting;
+}
+
+const { paddingX, paddingY } = Astro.props;
+---
+
+<div
+  class:list={[
+    "basis-xs shrink-0 grow snap-center max-w-sm",
+    "overflow-hidden",
+    paddingX ? paddingXSettingMap[paddingX] : null,
+    paddingY ? paddingYSettingMap[paddingY] : null,
+  ]}
+>
+  <slot />
+</div>

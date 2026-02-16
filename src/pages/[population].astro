@@ -1,19 +1,19 @@
 ---
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
-import PopulationCategoryTree from "@ui/composites/PopulationCategoryTree.astro";
-import Typography from "@ui/primitives/Typography.astro";
+import Typography from "@ui/base/Typography.astro";
 import {
   type CategoryTreeNode,
   buildCategoryTree,
   buildResourceExistenceSet,
   pruneTreeForPopulation,
-} from "@ui/orchestrators/nav-utils";
+} from "@ui/utils/nav-utils";
 import { getCollection, type CollectionEntry } from "astro:content";
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import { makeLabelPartsForPopulationResources } from "@content/utils";
-import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
-import Container from "@ui/primitives/Container.astro";
-import Stack from "@ui/primitives/Stack.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Container from "@ui/base/Container.astro";
+import Stack from "@ui/base/Stack.astro";
+import CategoryTree from "@ui/composite/content-linked/category/CategoryTree.astro";
 
 interface Props {
   populationEntry: CollectionEntry<"populations">;
@@ -110,7 +110,7 @@ const labelParts = await makeLabelPartsForPopulationResources(
             `We have a range of ${labelParts.join(" ")} across the following categories:`
           }
         </Typography>
-        <PopulationCategoryTree trees={categoryTrees} />
+        <CategoryTree trees={categoryTrees} />
       </Stack>
     </Container>
   </LayoutSurface>

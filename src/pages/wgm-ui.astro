@@ -1,20 +1,24 @@
 ---
 import { getOrganization } from "@content/loaders/organizationLoader";
 import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
-import "@styles/main.css";
+import "../styles/main.css";
 import Shell from "@ui/layouts/Shell.astro";
 
-import Button from "@ui/primitives/Button.astro";
-import Container from "@ui/primitives/Container.astro";
-import ContentSurface from "@ui/primitives/ContentSurface.astro";
+import Button from "@ui/base/Button.astro";
+import Container from "@ui/base/Container.astro";
+import ContentSurface from "@ui/base/ContentSurface.astro";
 import LayoutSurface, {
   type LayoutSurfaceVariantKey,
-} from "@ui/primitives/LayoutSurface.astro";
-import Link from "@ui/primitives/Link.astro";
-import Stack from "@ui/primitives/Stack.astro";
-import Typography from "@ui/primitives/Typography.astro";
-import { spaceSettingKeys } from "@ui/utils/spacing";
-import { type Prominence, colorVariants, textPresets } from "@ui/utils/styles";
+} from "@ui/base/LayoutSurface.astro";
+import Link from "@ui/base/Link.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import { spaceSettingKeys } from "src/components/utils/spacing";
+import {
+  type Prominence,
+  colorVariants,
+  textPresets,
+} from "src/components/utils/styles";
 import startCase from "lodash/startCase";
 
 const org = await getOrganization();

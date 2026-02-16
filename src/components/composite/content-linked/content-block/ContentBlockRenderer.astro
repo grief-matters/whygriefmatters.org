@@ -1,0 +1,203 @@
+---
+import { getEntry, type ReferenceDataEntry } from "astro:content";
+
+import { assertNever } from "src/components/utils/assertNever";
+
+import Container from "@ui/base/Container.astro";
+import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
+import Typography from "@ui/base/Typography.astro";
+import SanityImage from "@ui/base/SanityImage.astro";
+
+import Slider from "@ui/layouts/slider/Slider.astro";
+import Slide from "@ui/layouts/slider/Slide.astro";
+import type {
+  CategoryPageLinkContentItem,
+  ResourcePageLinkContentItem,
+} from "@content/model/contentBlock/pageLinksContentItem";
+import Link from "@ui/base/Link.astro";
+import DynamicPageLink from "../DynamicPageLink.astro";
+import FeaturedResourceRenderer from "../internet-resources/FeaturedResourceRenderer.astro";
+import PageLinksRenderer from "../PageLinksRenderer.astro";
+import ResourcePageLinkCard from "../category/ResourcePageLinkCard.astro";
+import FeaturedWebsite from "../internet-resources/FeaturedWebsite.astro";
+
+interface Props {
+  contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
+  textAlign?: "center" | "left";
+}
+
+const { contentBlockRef, textAlign = "center" } = Astro.props;
+
+const contentBlock = await getEntry(contentBlockRef);
+---
+
+{
+  contentBlock.data.content.map((contentItem) => {
+    switch (contentItem.contentType) {
+      case "headingText":
+        return (
+          <Typography as="h2" variant="title-2" textAlign="center">
+            {contentItem.text}
+          </Typography>
+        );
+      case "richTextContentBlock":
+        return (
+          <Container paddingX={1}>
+            <PortableTextContentBlock
+              textAlign={textAlign}
+              portableText={contentItem.portableText}
+              textVariant={
+                contentItem.emphasized ? "prominent-first" : "body-1"
+              }
+            />
+          </Container>
+        );
+      case "richTextWithHeading":
+        return (
+          <Container>
+            <Typography as="h3" variant="title-3" textAlign="center">
+              {contentItem.headingText}
+            </Typography>
+            <PortableTextContentBlock
+              textAlign={textAlign}
+              portableText={contentItem.portableText}
+            />
+          </Container>
+        );
+      case "accessibleImage":
+        return (
+          <Container>
+            <SanityImage
+              image={{ image: contentItem.image, altText: contentItem.altText }}
+            />
+          </Container>
+        );
+      case "imageRow":
+        return (
+          <Container size={2}>
+            <div class="grid grid-cols-1 md:grid-cols-2 md:px-3 lg:grid-cols-3 gap-4">
+              {contentItem.images.map((img, index) => (
+                <div
+                  class={
+                    index === 0
+                      ? ""
+                      : index === 1
+                        ? "hidden md:block"
+                        : "hidden lg:block"
+                  }
+                >
+                  <SanityImage image={img} />
+                </div>
+              ))}
+            </div>
+          </Container>
+        );
+      case "featuredResource":
+        return (
+          <Container>
+            <FeaturedResourceRenderer
+              resourceRef={contentItem.refId}
+              resourceType={contentItem.refType}
+            />
+          </Container>
+        );
+      case "featuredResources":
+        return (
+          <Slider>
+            {contentItem.resources.map((resource) => (
+              <Slide paddingX={1} paddingY={2}>
+                <FeaturedResourceRenderer
+                  fullHeight
+                  resourceRef={resource.refId}
+                  resourceType={resource.refType}
+                />
+              </Slide>
+            ))}
+          </Slider>
+        );
+      case "featuredWebsite":
+        return (
+          <Container>
+            <FeaturedWebsite websiteRef={contentItem.refId} />
+          </Container>
+        );
+      case "featuredWebsites":
+        return (
+          <Container size={2}>
+            <div class="grid grid-cols-2 md:grid-cols-3">
+              {contentItem.websites.map((w) => (
+                <FeaturedWebsite websiteRef={w} />
+              ))}
+            </div>
+          </Container>
+        );
+      case "featuredCrisisResource":
+        return <div>[Still to implement `{contentItem.contentType}`]</div>;
+      case "resourceLinks":
+        return <div>[Still to implement `{contentItem.contentType}`]</div>;
+      case "relativeLink":
+        return (
+          <Container>
+            <div class={textAlign === "center" ? "text-center" : ""}>
+              <Link to={contentItem.url} label={contentItem.label} />
+            </div>
+          </Container>
+        );
+      case "resourcePageLink":
+        return (
+          <Container>
+            <div class={textAlign === "center" ? "text-center" : ""}>
+              <DynamicPageLink
+                linkType={contentItem.contentType}
+                label={contentItem.label}
+                categoryRef={contentItem.category ?? undefined}
+                populationRef={contentItem.population ?? undefined}
+                resourceTypes={contentItem.resourceTypes ?? undefined}
+              />
+            </div>
+          </Container>
+        );
+      case "categoryPageLink":
+        return (
+          <Container>
+            <DynamicPageLink
+              linkType={contentItem.contentType}
+              label={contentItem.label}
+              categoryRef={contentItem.category}
+            />
+          </Container>
+        );
+      case "pageLinks":
+        if (contentItem.showImages) {
+          return (
+            <Container size={2} paddingX={1}>
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {contentItem.links.map((link) => (
+                  <div>
+                    <ResourcePageLinkCard
+                      pageLink={
+                        link as  // todo - we should remove this case if we can
+                          | CategoryPageLinkContentItem
+                          | ResourcePageLinkContentItem
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            </Container>
+          );
+        }
+
+        return (
+          <Container>
+            <PageLinksRenderer
+              emphasized={contentItem.emphasized}
+              links={contentItem.links}
+            />
+          </Container>
+        );
+      default:
+        assertNever(contentItem);
+    }
+  })
+}

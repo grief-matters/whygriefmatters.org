@@ -1,0 +1,86 @@
+---
+import type { Polymorphic } from "astro/types";
+import type { SurfaceColorVariant } from "src/components/utils/styles";
+import {
+  paddingXSettingMap,
+  paddingYSettingMap,
+  type SpaceSetting,
+} from "src/components/utils/spacing";
+
+type SurfaceElement =
+  | "div"
+  | "article"
+  | "aside"
+  | "section"
+  | "header"
+  | "footer";
+export type LayoutSurfaceVariantKey = 1 | 2 | 3 | 4;
+
+interface SurfaceOwnProps {
+  as: SurfaceElement;
+  variant?: SurfaceColorVariant;
+  variantKey?: LayoutSurfaceVariantKey;
+  paddingX?: SpaceSetting;
+  paddingY?: SpaceSetting;
+}
+
+type Props = Polymorphic<SurfaceOwnProps>;
+
+const colorMap: Record<
+  SurfaceColorVariant,
+  Record<LayoutSurfaceVariantKey, string>
+> = {
+  neutral: {
+    1: "bg-layoutSurface-neutral--1",
+    2: "bg-layoutSurface-neutral--2",
+    3: "bg-layoutSurface-neutral--3",
+    4: "bg-layoutSurface-neutral--4",
+  },
+  primary: {
+    1: "bg-layoutSurface-primary--1",
+    2: "bg-layoutSurface-primary--1",
+    3: "bg-layoutSurface-primary--1",
+    4: "bg-layoutSurface-primary--1",
+  },
+  secondary: {
+    1: "bg-layoutSurface-secondary--1",
+    2: "bg-layoutSurface-secondary--1",
+    3: "bg-layoutSurface-secondary--1",
+    4: "bg-layoutSurface-secondary--1",
+  },
+  tertiary: {
+    1: "bg-layoutSurface-tertiary--1",
+    2: "bg-layoutSurface-tertiary--2",
+    3: "bg-layoutSurface-tertiary--3",
+    4: "bg-layoutSurface-tertiary--1",
+  },
+  primaryContrast: {
+    1: "bg-layoutSurface-primaryContrast--1",
+    2: "bg-layoutSurface-primaryContrast--2",
+    3: "bg-layoutSurface-primaryContrast--1",
+    4: "bg-layoutSurface-primaryContrast--1",
+  },
+};
+
+const {
+  as: Tag = "div",
+  variant = "neutral",
+  variantKey = 1,
+  paddingX,
+  paddingY,
+  ...attrs
+} = Astro.props;
+
+const colorClass = colorMap[variant][variantKey] ?? colorMap.neutral[1];
+---
+
+<Tag
+  class:list={[
+    colorClass,
+    paddingX ? paddingXSettingMap[paddingX] : null,
+    paddingY ? paddingYSettingMap[paddingY] : null,
+  ]}
+  {...attrs}
+>
+  <slot />
+</Tag>

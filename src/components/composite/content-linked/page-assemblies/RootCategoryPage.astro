@@ -1,0 +1,70 @@
+---
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import Container from "@ui/base/Container.astro";
+import ContentSurface from "@ui/base/ContentSurface.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Stack from "@ui/base/Stack.astro";
+import { getCollection } from "astro:content";
+import ContentBlockRenderer from "../content-block/ContentBlockRenderer.astro";
+import CategoryPageHeader from "../category/CategoryPageHeader.astro";
+import CategorySummaryPanel from "../category/CategorySummaryPanel.astro";
+
+interface Props {
+  categoryId: string;
+  leadInContentBlockRefs?: Array<string>;
+}
+
+const { leadInContentBlockRefs, categoryId } = Astro.props;
+
+const categories = await getCollection("categories");
+
+const root = categories.find((x) => x.id === categoryId);
+if (!root) {
+  throw new Error(
+    `Could not find [categoryEntry] in [categories] - [RootCategoryPage] for id: [${categoryId}]`,
+  );
+}
+---
+
+<SitePageLayout>
+  <CategoryPageHeader categoryEntryData={root.data} />
+  {
+    leadInContentBlockRefs && (
+      <LayoutSurface as="section" variant="neutral" paddingY={6}>
+        <Container>
+          <Stack>
+            {leadInContentBlockRefs.map((blockId) => (
+              <ContentBlockRenderer
+                contentBlockRef={{
+                  collection: "contentBlocks",
+                  id: blockId,
+                }}
+              />
+            ))}
+          </Stack>
+        </Container>
+      </LayoutSurface>
+    )
+  }
+  <LayoutSurface variantKey={3}>
+    <Container paddingY={7}>
+      <Stack spacing={4}>
+        {
+          root.data.subcategories.map((cat) => (
+            <ContentSurface
+              prominence="muted"
+              variant="secondary"
+              paddingX={5}
+              paddingY={4}
+            >
+              <CategorySummaryPanel
+                colorVariant="secondary"
+                categoryId={cat.id}
+              />
+            </ContentSurface>
+          ))
+        }
+      </Stack>
+    </Container>
+  </LayoutSurface>
+</SitePageLayout>

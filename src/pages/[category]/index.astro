@@ -17,17 +17,16 @@ import { getAllDescendantCategoryIds } from "@content/utils";
 import Slide from "@ui/layouts/slider/Slide.astro";
 import Slider from "@ui/layouts/slider/Slider.astro";
 
-import CategoryPopulationsNavigator from "@ui/composites/CategoryPopulationsNavigator.astro";
+import Container from "@ui/base/Container.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
+import Typography from "@ui/base/Typography.astro";
 
-import Container from "@ui/primitives/Container.astro";
-import LayoutSurface from "@ui/primitives/LayoutSurface.astro";
-import PortableTextContentBlock from "@ui/primitives/PortableTextContentBlock.astro";
-import Typography from "@ui/primitives/Typography.astro";
-
-import CategoryPageHeader from "@ui/composites/CategoryPageHeader.astro";
-import FeaturedResourceRenderer from "@ui/orchestrators/FeaturedResourceRenderer.astro";
-import ResourceListingsOrchestrator from "@ui/orchestrators/ResourceListingsOrchestrator.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import CategoryPageHeader from "@ui/composite/content-linked/category/CategoryPageHeader.astro";
+import CategoryPopulationsNavigator from "@ui/composite/content-linked/category/CategoryPopulationsNavigator.astro";
+import FeaturedResourceRenderer from "@ui/composite/content-linked/internet-resources/FeaturedResourceRenderer.astro";
+import ResourceListingsOrchestrator from "@ui/scripted/resource-listings-controller/ResourceListingsOrchestrator.astro";
 
 interface Props {
   categoryEntry: CollectionEntry<"categories">;
@@ -74,9 +73,11 @@ export async function getStaticPaths() {
     > = {};
 
     for (const key of internetResourceCollectionKeys) {
-      const resourcesForKey = allResources.get(key)!.filter(({ data }) =>
-        data.categories.some((c) => allCategoryIds.has(c.id)),
-      );
+      const resourcesForKey = allResources
+        .get(key)!
+        .filter(({ data }) =>
+          data.categories.some((c) => allCategoryIds.has(c.id)),
+        );
 
       resourcesForKey.forEach((r) =>
         r.data.populations.forEach((p) => (populationMap[p.id] = p)),

@@ -1,0 +1,45 @@
+---
+import type { PageLinks } from "@content/model/contentBlock";
+import { assertNever } from "src/components/utils/assertNever";
+import DynamicPageLink from "./DynamicPageLink.astro";
+
+interface Props {
+  emphasized?: boolean;
+  links: PageLinks["links"];
+}
+
+const props = Astro.props;
+---
+
+<div class:list={"flex flex-wrap gap-3 justify-center"}>
+  {
+    props.links.map((link) => {
+      switch (link.contentType) {
+        case "categoryPageLink":
+          return (
+            <DynamicPageLink
+              emphasized={props.emphasized}
+              linkType={link.contentType}
+              label={link.label}
+              categoryRef={link.category}
+            />
+          );
+        case "resourcePageLink":
+          return (
+            <DynamicPageLink
+              emphasized={props.emphasized}
+              linkType={link.contentType}
+              label={link.label}
+              categoryRef={link.category ?? undefined}
+              populationRef={link.population ?? undefined}
+              resourceTypes={link.resourceTypes ?? undefined}
+            />
+          );
+        case "relativeLink":
+          return;
+        default:
+          assertNever(link);
+      }
+    })
+  }
+</div>

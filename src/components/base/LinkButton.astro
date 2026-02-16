@@ -1,0 +1,98 @@
+---
+import {
+  textColorMap,
+  textPresetClassMap,
+  type OnSurfaceColorVariant,
+  type TextPreset,
+} from "src/components/utils/styles";
+
+interface Props {
+  to: string;
+  label: string;
+  variant?: TextPreset;
+  colorVariant?: OnSurfaceColorVariant;
+  external?: boolean;
+  textAlign?: "center" | "left";
+}
+
+const {
+  to,
+  label,
+  variant = "body-1",
+  colorVariant = "primary",
+  external = false,
+  textAlign,
+  ...attrs
+} = Astro.props;
+
+const externalLinkAttrs = external
+  ? {
+      rel: "noopener",
+      target: "_blank",
+    }
+  : {};
+
+const baseClasses = [
+  "inline-block",
+  "py-1 px-4",
+  "cursor-pointer",
+  "rounded-sm",
+  "border",
+];
+
+const decorationColorMap: Record<OnSurfaceColorVariant, Array<string>> = {
+  primary: [
+    "bg-contentSurface-primary--muted",
+    "border-line-primary--default",
+    "decoration-onSurface-primary--default/40 hover:decoration-onSurface-primary--default",
+  ],
+  secondary: [
+    "bg-contentSurface-secondary--muted",
+    "border-line-secondary--default",
+    "decoration-onSurface-secondary--default/40 hover:decoration-onSurface-secondary--default",
+  ],
+  tertiary: [
+    "bg-contentSurface-tertiary--muted",
+    "border-line-tertiary--default",
+    "decoration-onSurface-tertiary--default/40 hover:decoration-onSurface-tertiary--default",
+  ],
+  coolNeutral: [
+    "bg-contentSurface-coolNeutral--muted",
+    "border-line-coolNeutral--default",
+    "decoration-onSurface-coolNeutral--muted/50 hover:decoration-onSurface-coolNeutral--muted",
+  ],
+  warmNeutral: [
+    "bg-contentSurface-warmNeutral--muted",
+    "border-line-warmNeutral--default",
+    "decoration-onSurface-warmNeutral--default/40 hover:decoration-onSurface-warmNeutral--default",
+  ],
+  primaryContrast: [
+    "bg-contentSurface-primaryContrast--muted",
+    "border-line-primaryContrast--default",
+    "decoration-onSurface-primaryContrast--default/40 hover:decoration-onSurface-primaryContrast--default",
+  ],
+};
+
+const decorationStyle =
+  variant === "subtitle-1" ? "decoration-solid" : "decoration-dotted";
+---
+
+<a
+  class:list={[
+    ...baseClasses,
+    variant.startsWith("t") && "text-balance",
+    decorationStyle,
+    textPresetClassMap[variant],
+    "underline underline-offset-2",
+    decorationColorMap[colorVariant],
+    "transition duration-300",
+    variant === "subtitle-1"
+      ? textColorMap.coolNeutral.muted
+      : textColorMap[colorVariant]["default"],
+    textAlign && "text-center inline-block",
+  ]}
+  href={to}
+  {...attrs}
+  {...externalLinkAttrs}
+  set:text={label}
+/>

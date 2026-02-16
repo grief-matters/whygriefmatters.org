@@ -1,0 +1,56 @@
+---
+import {
+  getSourceFromResourceUrl,
+  getSourceLinkFromWebsiteRef,
+} from "src/components/utils/helpers";
+import { getEntry, type ReferenceDataEntry } from "astro:content";
+import ResourceSource from "./ResourceSource.astro";
+
+interface Props {
+  appRef: ReferenceDataEntry<"apps", string>;
+}
+
+const props = Astro.props;
+
+const { data } = await getEntry(props.appRef);
+if (!data) {
+  throw new Error(
+    `[FeaturedApp] could not get 'app' from reference: ${props.appRef.id}`,
+  );
+}
+
+const source = data.sourceWebsiteId
+  ? await getSourceLinkFromWebsiteRef(data.sourceWebsiteId)
+  : null;
+
+const safeSource =
+  source ??
+  (data.resourceUrl !== null
+    ? getSourceFromResourceUrl(data.resourceUrl)
+    : null);
+---
+
+<article>
+  <h3>{data.title}</h3>
+  {safeSource !== null && <ResourceSource source={safeSource} />}
+  {data.description && <p>{data.description}</p>}
+  {data.sourceWebsiteId}
+  {
+    data.appleUrl && (
+      <a
+        href={data.appleUrl}
+        target="_blank"
+        rel="noopener"
+      >{`Download on the App Store`}</a>
+    )
+  }
+  {
+    data.playStoreUrl && (
+      <a
+        href={data.playStoreUrl}
+        target="_blank"
+        rel="noopener"
+      >{`Download on the Play Store`}</a>
+    )
+  }
+</article>
