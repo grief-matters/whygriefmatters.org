@@ -21,9 +21,10 @@ interface Props {
   categorySlug: string;
   resourceTypesData: ResourceTypeCounts;
   colorVariant?: OnSurfaceColorVariant;
+  populationSlug?: string;
 }
 
-const { colorVariant = "warmNeutral", ...props } = Astro.props;
+const { colorVariant = "warmNeutral", populationSlug, ...props } = Astro.props;
 
 // Get all entries as [collectionKey, count] pairs
 const resourceEntries = Object.entries(props.resourceTypesData) as [
@@ -83,11 +84,13 @@ function getOtherResourcesLabel(count: number) {
   <Typography variant="title-4" color={colorVariant}>
     {"Resources on this topic"}
   </Typography>
-  <Typography color={colorVariant}>
-    {
-      `We have collected over ${Math.floor(totalResourceCount / 10) * 10} resources across this topic`
-    }
-  </Typography>
+  {
+    totalResourceCount > 25 && (
+      <Typography color={colorVariant}>
+        {`We have collected over ${Math.floor(totalResourceCount / 10) * 10} resources across this topic`}
+      </Typography>
+    )
+  }
   <Stack spacing={2}>
     {
       resourceCountsToDisplay.map(([collectionKey, count]) => {
@@ -101,7 +104,11 @@ function getOtherResourcesLabel(count: number) {
         return (
           <Button
             as="a"
-            href={`/${props.categorySlug}#${collectionKey}`}
+            href={
+              populationSlug
+                ? `/${props.categorySlug}/${populationSlug}#${collectionKey}`
+                : `/${props.categorySlug}#${collectionKey}`
+            }
             styleVariant="outlined"
             colorVariant={
               colorVariant === "warmNeutral" || colorVariant === "coolNeutral"

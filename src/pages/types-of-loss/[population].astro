@@ -1,7 +1,5 @@
 ---
-import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
-import Container from "@ui/primitives/Container.astro";
-import Typography from "@ui/primitives/Typography.astro";
+import PopulationRootCategoryPage from "@ui/orchestrators/PopulationRootCategoryPage.astro";
 import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
@@ -22,10 +20,12 @@ export async function getStaticPaths() {
 
   return staticPaths;
 }
+
+const { populationEntry } = Astro.props;
 ---
 
-<SitePageLayout>
-  <Container>
-    <Typography set:text="Coming Soon..." variant="body-2" />
-  </Container>
-</SitePageLayout>
+<PopulationRootCategoryPage
+  categoryId="95e45462-a8a7-48cb-882d-407422534681"
+  populationId={populationEntry.id}
+  leadInContentBlockRefs={["7c9a56bc-3f17-44a4-adc6-f712643cc1ab"]}
+/>

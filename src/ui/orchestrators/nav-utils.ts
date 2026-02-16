@@ -196,7 +196,7 @@ export async function getNavTree(): Promise<CategoryTreeNode[]> {
  * Returns resource type counts for a given category (including descendants).
  * Memoized per categoryId so each category is computed at most once per build.
  */
-type ResourceTypeCounts = Partial<
+export type ResourceTypeCounts = Partial<
   Record<InternetResourceCollectionKey, number>
 >;
 
@@ -227,5 +227,42 @@ export async function getResourceTypeCountsForCategory(
   }
 
   resourceTypeCountsCache.set(categoryId, counts);
+  return counts;
+}
+
+/**
+ * Returns resource type counts for a given category + population (including descendants).
+ * Memoized per categoryId:populationId so each combo is computed at most once per build.
+ */
+const resourceTypeCountsPopulationCache = new Map<string, ResourceTypeCounts>();
+
+export async function getResourceTypeCountsForCategoryAndPopulation(
+  categoryId: string,
+  populationId: string,
+): Promise<ResourceTypeCounts> {
+  const cacheKey = `${categoryId}:${populationId}`;
+  const cached = resourceTypeCountsPopulationCache.get(cacheKey);
+  if (cached) return cached;
+
+  const categoryEntries = await getCollection("categories");
+  const allCategoryIds = getAllDescendantCategoryIds(
+    categoryId,
+    categoryEntries,
+  );
+
+  const counts: ResourceTypeCounts = {};
+
+  for (const collectionKey of internetResourceCollectionKeys) {
+    const resources = await getCollection(collectionKey, ({ data }) =>
+      data.categories.some((c) => allCategoryIds.has(c.id)) &&
+      data.populations.some((p) => p.id === populationId),
+    );
+
+    if (resources.length > 0) {
+      counts[collectionKey] = resources.length;
+    }
+  }
+
+  resourceTypeCountsPopulationCache.set(cacheKey, counts);
   return counts;
 }

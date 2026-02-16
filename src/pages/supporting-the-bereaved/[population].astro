@@ -1,9 +1,6 @@
 ---
+import PopulationRootCategoryPage from "@ui/orchestrators/PopulationRootCategoryPage.astro";
 import { getCollection } from "astro:content";
-
-import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
-import Container from "@ui/primitives/Container.astro";
-import Typography from "@ui/primitives/Typography.astro";
 
 export async function getStaticPaths() {
   const populationEntries = await getCollection("populations");
@@ -23,10 +20,11 @@ export async function getStaticPaths() {
 
   return staticPaths;
 }
+
+const { populationEntry } = Astro.props;
 ---
 
-<SitePageLayout>
-  <Container>
-    <Typography set:text="Coming Soon..." variant="body-2" />
-  </Container>
-</SitePageLayout>
+<PopulationRootCategoryPage
+  categoryId="ebae60a4-a7b6-412d-a72a-8a6e265c1107"
+  populationId={populationEntry.id}
+/>

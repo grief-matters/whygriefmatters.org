@@ -2,9 +2,14 @@
 import Typography from "@ui/primitives/Typography.astro";
 import { getEntry } from "astro:content";
 import CategoryResourceTypesSummary from "./CategoryResourceTypesSummary.astro";
-import { getResourceTypeCountsForCategory } from "@ui/orchestrators/nav-utils";
+import {
+  getResourceTypeCountsForCategory,
+  getResourceTypeCountsForCategoryAndPopulation,
+  buildResourceExistenceSet,
+} from "@ui/orchestrators/nav-utils";
 import type { ColorVariant } from "@ui/utils/styles";
-import { getEntries } from "astro:content";
+import { getEntries, getCollection } from "astro:content";
+import { getAllDescendantCategoryIds } from "@content/utils";
 import ButtonLink from "@ui/primitives/ButtonLink.astro";
 import Stack from "@ui/primitives/Stack.astro";
 import Link from "@ui/primitives/Link.astro";
@@ -12,9 +17,11 @@ import Link from "@ui/primitives/Link.astro";
 interface Props {
   categoryId: string;
   colorVariant?: ColorVariant;
+  populationId?: string;
+  populationSlug?: string;
 }
 
-const { colorVariant = "neutral", ...props } = Astro.props;
+const { colorVariant = "neutral", populationId, populationSlug, ...props } = Astro.props;
 
 const categoryEntry = await getEntry("categories", props.categoryId);
 if (!categoryEntry) {
@@ -25,11 +32,23 @@ const refs = categoryEntry.data.subcategories.map(({ collection, id }) => ({
   collection,
   id,
 }));
-const subCategoryEntries = await getEntries(refs);
+let subCategoryEntries = await getEntries(refs);
 
-const resourceTypeCounts = await getResourceTypeCountsForCategory(
-  props.categoryId,
-);
+// When filtering by population, prune subcategories that have no resources for this population
+if (populationId) {
+  const existenceSet = await buildResourceExistenceSet();
+  const allCategories = await getCollection("categories");
+  subCategoryEntries = subCategoryEntries.filter((sub) => {
+    const descendantIds = getAllDescendantCategoryIds(sub.id, allCategories);
+    return Array.from(descendantIds).some((catId) =>
+      existenceSet.has(`${catId}:${populationId}`),
+    );
+  });
+}
+
+const resourceTypeCounts = populationId
+  ? await getResourceTypeCountsForCategoryAndPopulation(props.categoryId, populationId)
+  : await getResourceTypeCountsForCategory(props.categoryId);
 ---
 
 <Stack spacing={3}>
@@ -41,9 +60,9 @@ const resourceTypeCounts = await getResourceTypeCountsForCategory(
       <div class="flex gap-3 flex-wrap">
         {subCategoryEntries.map((c) => (
           <ButtonLink
-            to={c.data.slug}
+            to={populationSlug ? `/${c.data.slug}/${populationSlug}` : c.data.slug}
             label={c.data.title}
-            colorVariant="secondary"
+            colorVariant={colorVariant === "neutral" ? "secondary" : colorVariant}
           />
         ))}
       </div>
@@ -54,9 +73,10 @@ const resourceTypeCounts = await getResourceTypeCountsForCategory(
     colorVariant={colorVariant === "neutral" ? "warmNeutral" : colorVariant}
     categorySlug={categoryEntry.data.slug}
     resourceTypesData={resourceTypeCounts}
+    populationSlug={populationSlug}
   />
 
-  <Link to={`/${categoryEntry.data.slug}`}>
+  <Link to={populationSlug ? `/${categoryEntry.data.slug}/${populationSlug}` : `/${categoryEntry.data.slug}`}>
     {"Explore "}<strong>{categoryEntry.data.title}</strong>
   </Link>
 </Stack>
