@@ -3,9 +3,9 @@ import { getCollection } from "astro:content";
 
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
-import Container from "@ui/base/Container.astro";
+import Section from "@ui/layouts/Section.astro";
+
 import ContentSurface from "@ui/base/ContentSurface.astro";
-import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Stack from "@ui/base/Stack.astro";
 
 import ContentBlockRenderer from "../content-block/ContentBlockRenderer.astro";
@@ -33,41 +33,37 @@ if (!root) {
   <CategoryPageHeader categoryEntryData={root.data} />
   {
     leadInContentBlockRefs && (
-      <LayoutSurface as="section" colorVariant="neutral" paddingY={6}>
-        <Container>
-          <Stack>
-            {leadInContentBlockRefs.map((blockId) => (
-              <ContentBlockRenderer
-                contentBlockRef={{
-                  collection: "contentBlocks",
-                  id: blockId,
-                }}
-              />
-            ))}
-          </Stack>
-        </Container>
-      </LayoutSurface>
+      <Section colorVariant="neutral">
+        <Stack>
+          {leadInContentBlockRefs.map((blockId) => (
+            <ContentBlockRenderer
+              contentBlockRef={{
+                collection: "contentBlocks",
+                id: blockId,
+              }}
+            />
+          ))}
+        </Stack>
+      </Section>
     )
   }
-  <LayoutSurface colorVariantKey={3}>
-    <Container paddingY={7}>
-      <Stack spacing={4}>
-        {
-          root.data.subcategories.map((cat) => (
-            <ContentSurface
-              prominence="muted"
-              variant="secondary"
-              paddingX={5}
-              paddingY={4}
-            >
-              <CategorySummaryPanel
-                colorVariant="secondary"
-                categoryId={cat.id}
-              />
-            </ContentSurface>
-          ))
-        }
-      </Stack>
-    </Container>
-  </LayoutSurface>
+  <Section>
+    <Stack spacing={4}>
+      {
+        root.data.subcategories.map((cat) => (
+          <ContentSurface
+            prominence="muted"
+            variant="secondary"
+            paddingX={5}
+            paddingY={4}
+          >
+            <CategorySummaryPanel
+              colorVariant="secondary"
+              categoryId={cat.id}
+            />
+          </ContentSurface>
+        ))
+      }
+    </Stack>
+  </Section>
 </SitePageLayout>

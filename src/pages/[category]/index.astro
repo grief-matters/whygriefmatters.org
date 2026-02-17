@@ -14,6 +14,7 @@ import {
 
 import { getAllDescendantCategoryIds } from "@ui/utils/content/category";
 
+import Section from "@ui/layouts/Section.astro";
 import Slide from "@ui/layouts/slider/Slide.astro";
 import Slider from "@ui/layouts/slider/Slider.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
@@ -123,15 +124,13 @@ const props = Astro.props;
   {/* Category Description */}
   {
     props.categoryEntry.data.description && (
-      <LayoutSurface paddingY={6}>
-        <Container paddingX={4}>
-          <PortableTextContentBlock
-            textVariant="prominent-first"
-            textAlign="center"
-            portableText={props.categoryEntry.data.description}
-          />
-        </Container>
-      </LayoutSurface>
+      <Section as="div">
+        <PortableTextContentBlock
+          textVariant="prominent-first"
+          textAlign="center"
+          portableText={props.categoryEntry.data.description}
+        />
+      </Section>
     )
   }
 

@@ -3,6 +3,7 @@ import { getCollection, type CollectionEntry } from "astro:content";
 
 import kebabCase from "lodash/kebabCase";
 
+import Section from "@ui/layouts/Section.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
 import Container from "@ui/base/Container.astro";
@@ -69,36 +70,32 @@ const { personData } = Astro.props;
       </div>
     </Container>
   </LayoutSurface>
-  <LayoutSurface paddingY={6} as="section">
-    <Container paddingX={2}>
-      {
-        personData.shortBio && (
-          <PortableTextContentBlock
-            textAlign="center"
-            portableText={personData.shortBio}
-          />
-        )
-      }
-    </Container>
-  </LayoutSurface>
-  <LayoutSurface paddingY={6} as="section" colorVariantKey={3}>
-    <Container paddingX={2}>
-      <Typography
-        as="h2"
-        variant="title-2"
-        set:text="My Story"
-        marginBottom={3}
-      />
-      {
-        personData.personalStory && (
-          <PortableTextContentBlock portableText={personData.personalStory} />
-        )
-      }
-      <div class="text-center my-6">
-        <Link to={`/about/team`}>
-          {"Meet the rest of our team, volunteers and other contributors"}
-        </Link>
-      </div>
-    </Container>
-  </LayoutSurface>
+  <Section>
+    {
+      personData.shortBio && (
+        <PortableTextContentBlock
+          textAlign="center"
+          portableText={personData.shortBio}
+        />
+      )
+    }
+  </Section>
+  <Section colorVariantKey={3}>
+    <Typography
+      as="h2"
+      variant="title-2"
+      set:text="My Story"
+      marginBottom={3}
+    />
+    {
+      personData.personalStory && (
+        <PortableTextContentBlock portableText={personData.personalStory} />
+      )
+    }
+    <div class="text-center my-6">
+      <Link to={`/about/team`}>
+        {"Meet the rest of our team, volunteers and other contributors"}
+      </Link>
+    </div>
+  </Section>
 </SitePageLayout>

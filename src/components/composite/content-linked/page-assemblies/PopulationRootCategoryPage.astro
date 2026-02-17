@@ -7,12 +7,13 @@ import { buildResourceExistenceSet } from "@ui/utils/content/shared";
 import { makeLabelPartsForPopulationResources } from "@ui/utils/content/content";
 
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import Section from "@ui/layouts/Section.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
 import Button from "@ui/base/Button.astro";
-import Container from "@ui/base/Container.astro";
 import ContentSurface from "@ui/base/ContentSurface.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
+
 import Link from "@ui/base/Link.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
@@ -158,43 +159,39 @@ const labelParts = await makeLabelPartsForPopulationResources(populationId);
   </PageHeaderLayout>
   {
     leadInContentBlockRefs && (
-      <LayoutSurface as="section" colorVariant="neutral" paddingY={6}>
-        <Container>
-          <Stack>
-            {leadInContentBlockRefs.map((blockId) => (
-              <ContentBlockRenderer
-                contentBlockRef={{
-                  collection: "contentBlocks",
-                  id: blockId,
-                }}
-              />
-            ))}
-          </Stack>
-        </Container>
-      </LayoutSurface>
+      <Section colorVariant="neutral">
+        <Stack>
+          {leadInContentBlockRefs.map((blockId) => (
+            <ContentBlockRenderer
+              contentBlockRef={{
+                collection: "contentBlocks",
+                id: blockId,
+              }}
+            />
+          ))}
+        </Stack>
+      </Section>
     )
   }
-  <LayoutSurface colorVariantKey={3}>
-    <Container paddingY={7}>
-      <Stack spacing={4}>
-        {
-          filteredSubcategoryRefs.map((cat) => (
-            <ContentSurface
-              prominence="muted"
-              variant="tertiary"
-              paddingX={5}
-              paddingY={4}
-            >
-              <CategorySummaryPanel
-                colorVariant="tertiary"
-                categoryId={cat.id}
-                populationId={populationId}
-                populationSlug={populationEntry.data.slug}
-              />
-            </ContentSurface>
-          ))
-        }
-      </Stack>
-    </Container>
-  </LayoutSurface>
+  <Section>
+    <Stack spacing={4}>
+      {
+        filteredSubcategoryRefs.map((cat) => (
+          <ContentSurface
+            prominence="muted"
+            variant="tertiary"
+            paddingX={5}
+            paddingY={4}
+          >
+            <CategorySummaryPanel
+              colorVariant="tertiary"
+              categoryId={cat.id}
+              populationId={populationId}
+              populationSlug={populationEntry.data.slug}
+            />
+          </ContentSurface>
+        ))
+      }
+    </Stack>
+  </Section>
 </SitePageLayout>

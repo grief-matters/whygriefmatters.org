@@ -7,12 +7,11 @@ import type { SocialVal } from "@content/model/person";
 import type { IconKey } from "@ui/utils/icon";
 
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import Section from "@ui/layouts/Section.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
-import Container from "@ui/base/Container.astro";
 import ContentSurface from "@ui/base/ContentSurface.astro";
 import Icon from "@ui/base/Icon.astro";
-import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Link from "@ui/base/Link.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import SanityImageComp from "@ui/base/SanityImage.astro";
@@ -120,122 +119,111 @@ const contentGroupData = aboutContentGroup[0].data;
       </div>
     </div>
   </PageHeaderLayout>
-  <LayoutSurface paddingY={6} as="section" colorVariant="neutral">
-    <Container paddingX={2}>
+  <Section>
+    {
+      contentGroupData.contentBlocks.map((block) => (
+        <Stack spacing={4}>
+          <ContentBlockRenderer textAlign="center" contentBlockRef={block} />
+        </Stack>
+      ))
+    }
+  </Section>
+  <Section colorVariantKey={3}>
+    <Typography
+      as="h2"
+      variant="title-2"
+      set:text="Meet the Team"
+      marginBottom={3}
+    />
+    <Stack spacing={2}>
       {
-        contentGroupData.contentBlocks.map((block) => (
-          <Stack spacing={4}>
-            <ContentBlockRenderer textAlign="center" contentBlockRef={block} />
-          </Stack>
-        ))
-      }
-    </Container>
-  </LayoutSurface>
-  <LayoutSurface
-    paddingY={6}
-    as="section"
-    colorVariant="neutral"
-    colorVariantKey={3}
-  >
-    <Container paddingX={2}>
-      <Typography
-        as="h2"
-        variant="title-2"
-        set:text="Meet the Team"
-        marginBottom={3}
-      />
-      <Stack spacing={2}>
-        {
-          teamMembers.map((member) => (
-            <div class="not-last:border-b pb-6 border-b-line-coolNeutral--default mb-6">
-              <div
-                class:list={[
-                  "space-y-3  md:gap-6",
-                  member.data.avatar && "md:grid md:grid-cols-[1fr_2fr]",
-                ]}
-              >
-                {member.data.avatar && (
-                  <div class="flex justify-center md:block">
-                    <ContentSurface
-                      paddingX={2}
-                      paddingY={2}
-                      variant="featureCard"
-                      class:list={["max-w-sm"]}
-                    >
-                      <SanityImageComp
-                        useFallback={false}
-                        aspect="square"
-                        image={
-                          member.data.avatar !== null
-                            ? { image: member.data.avatar, altText: "" }
-                            : null
-                        }
-                      />
-                    </ContentSurface>
+        teamMembers.map((member) => (
+          <div class="not-last:border-b pb-6 border-b-line-coolNeutral--default mb-6">
+            <div
+              class:list={[
+                "space-y-3  md:gap-6",
+                member.data.avatar && "md:grid md:grid-cols-[1fr_2fr]",
+              ]}
+            >
+              {member.data.avatar && (
+                <div class="flex justify-center md:block">
+                  <ContentSurface
+                    paddingX={2}
+                    paddingY={2}
+                    variant="featureCard"
+                    class:list={["max-w-sm"]}
+                  >
+                    <SanityImageComp
+                      useFallback={false}
+                      aspect="square"
+                      image={
+                        member.data.avatar !== null
+                          ? { image: member.data.avatar, altText: "" }
+                          : null
+                      }
+                    />
+                  </ContentSurface>
+                </div>
+              )}
+              <div class="space-y-3">
+                <div>
+                  <Typography as="h3" variant="title-3">
+                    {member.data.fullName}
+                  </Typography>
+                  <Typography variant="subtitle-1">
+                    {member.data.role}
+                  </Typography>
+                </div>
+                {member.data.shortBio && (
+                  <PortableTextContentBlock
+                    portableText={member.data.shortBio}
+                  />
+                )}
+                {member.data.socials && (
+                  <div class="flex gap-3">
+                    {Object.entries(member.data.socials).map(([key, val]) => {
+                      if (!val) {
+                        return null;
+                      }
+
+                      const socialConfig = socialConfigMap[key as SocialVal];
+
+                      return (
+                        <a
+                          class="text-onSurface-coolNeutral--muted"
+                          href={socialConfig.hrefFn(val)}
+                        >
+                          <Icon
+                            size={3}
+                            getIcon={(icons) =>
+                              icons[socialConfig.icon as IconKey]
+                            }
+                          />
+                          <span class="sr-only">{socialConfig.a11yLabel}</span>
+                        </a>
+                      );
+                    })}
                   </div>
                 )}
-                <div class="space-y-3">
-                  <div>
-                    <Typography as="h3" variant="title-3">
-                      {member.data.fullName}
-                    </Typography>
-                    <Typography variant="subtitle-1">
-                      {member.data.role}
-                    </Typography>
-                  </div>
-                  {member.data.shortBio && (
-                    <PortableTextContentBlock
-                      portableText={member.data.shortBio}
-                    />
-                  )}
-                  {member.data.socials && (
-                    <div class="flex gap-3">
-                      {Object.entries(member.data.socials).map(([key, val]) => {
-                        if (!val) {
-                          return null;
-                        }
-
-                        const socialConfig = socialConfigMap[key as SocialVal];
-
-                        return (
-                          <a
-                            class="text-onSurface-coolNeutral--muted"
-                            href={socialConfig.hrefFn(val)}
-                          >
-                            <Icon
-                              size={3}
-                              getIcon={(icons) =>
-                                icons[socialConfig.icon as IconKey]
-                              }
-                            />
-                            <span class="sr-only">
-                              {socialConfig.a11yLabel}
-                            </span>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  )}
-                  {member.data.personalStory && (
-                    <Link
-                      to={`/about/${kebabCase(member.data.fullName)}`}
-                      label="Read More"
-                    />
-                  )}
-                </div>
+                {member.data.personalStory && (
+                  <Link
+                    to={`/about/${kebabCase(member.data.fullName)}`}
+                    label="Read More"
+                  />
+                )}
               </div>
             </div>
-          ))
-        }
-      </Stack>
-      <div class="text-center">
-        <Link to={`/about/team`}>
-          {"Read more about "}
-          <strong>{"Our Team, Volunteers"}</strong>
-          {" and "}
-          <strong>{"Contributors"}</strong>
-        </Link>
-      </div>
-    </Container>
-  </LayoutSurface>
+          </div>
+        ))
+      }
+    </Stack>
+    <div class="text-center">
+      <Link to={`/about/team`}>
+        {"Read more about "}
+        <strong>{"Our Team, Volunteers"}</strong>
+        {" and "}
+        <strong>{"Contributors"}</strong>
+      </Link>
+    </div>
+  </Section>
 </SitePageLayout>

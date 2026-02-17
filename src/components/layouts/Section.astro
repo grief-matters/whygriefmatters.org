@@ -1,0 +1,28 @@
+---
+import type {
+  SurfaceColorVariant,
+  LayoutSurfaceVariantKey,
+} from "@styles/utils/color";
+
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Container from "@ui/base/Container.astro";
+
+interface Props {
+  as?: "section" | "div" | "article" | "aside";
+  colorVariant?: SurfaceColorVariant;
+  colorVariantKey?: LayoutSurfaceVariantKey;
+}
+
+const { as = "section", colorVariant, colorVariantKey } = Astro.props;
+---
+
+<LayoutSurface
+  as={as}
+  colorVariant={colorVariant}
+  colorVariantKey={colorVariantKey}
+  paddingY={6}
+>
+  <Container paddingX={4}>
+    <slot />
+  </Container>
+</LayoutSurface>

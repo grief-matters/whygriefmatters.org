@@ -12,9 +12,10 @@ import { getAllDescendantCategoryIds } from "@ui/utils/content/category";
 import ResourceListingsOrchestrator from "@ui/scripted/resource-listings-controller/ResourceListingsOrchestrator.astro";
 
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import Section from "@ui/layouts/Section.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
 import Button from "@ui/base/Button.astro";
-import Container from "@ui/base/Container.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import Typography from "@ui/base/Typography.astro";
@@ -178,15 +179,13 @@ const labelParts = labelMaker(populationEntry.data.name);
   {/* Category Description */}
   {
     categoryEntry.data.description && (
-      <LayoutSurface paddingY={6}>
-        <Container paddingX={4}>
-          <PortableTextContentBlock
-            textVariant="prominent-first"
-            textAlign="center"
-            portableText={categoryEntry.data.description}
-          />
-        </Container>
-      </LayoutSurface>
+      <Section as="div">
+        <PortableTextContentBlock
+          textVariant="prominent-first"
+          textAlign="center"
+          portableText={categoryEntry.data.description}
+        />
+      </Section>
     )
   }
 
