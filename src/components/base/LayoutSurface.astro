@@ -20,8 +20,8 @@ type SurfaceElement =
 
 interface SurfaceOwnProps {
   as: SurfaceElement;
-  variant?: SurfaceColorVariant;
-  variantKey?: LayoutSurfaceVariantKey;
+  colorVariant?: SurfaceColorVariant;
+  colorVariantKey?: LayoutSurfaceVariantKey;
   paddingX?: SpaceSetting;
   paddingY?: SpaceSetting;
 }
@@ -66,8 +66,8 @@ const colorMap: Record<
 
 const {
   as: Tag = "div",
-  variant = "neutral",
-  variantKey = 1,
+  colorVariant: variant = "neutral",
+  colorVariantKey: variantKey = 1,
   paddingX,
   paddingY,
   ...attrs

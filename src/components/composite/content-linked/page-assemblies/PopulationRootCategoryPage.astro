@@ -126,7 +126,7 @@ const labelParts = await makeLabelPartsForPopulationResources(populationId);
           </div>
         </div>
       </div>
-      <LayoutSurface variant="tertiary" variantKey={3}>
+      <LayoutSurface colorVariant="tertiary" colorVariantKey={3}>
         <div class="px-8 py-6 md:flex md:items-center md:justify-end">
           <div class="basis-100">
             {
@@ -158,7 +158,7 @@ const labelParts = await makeLabelPartsForPopulationResources(populationId);
   </PageHeaderLayout>
   {
     leadInContentBlockRefs && (
-      <LayoutSurface as="section" variant="neutral" paddingY={6}>
+      <LayoutSurface as="section" colorVariant="neutral" paddingY={6}>
         <Container>
           <Stack>
             {leadInContentBlockRefs.map((blockId) => (
@@ -174,7 +174,7 @@ const labelParts = await makeLabelPartsForPopulationResources(populationId);
       </LayoutSurface>
     )
   }
-  <LayoutSurface variantKey={3}>
+  <LayoutSurface colorVariantKey={3}>
     <Container paddingY={7}>
       <Stack spacing={4}>
         {

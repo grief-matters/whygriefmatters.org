@@ -33,7 +33,7 @@ if (!root) {
   <CategoryPageHeader categoryEntryData={root.data} />
   {
     leadInContentBlockRefs && (
-      <LayoutSurface as="section" variant="neutral" paddingY={6}>
+      <LayoutSurface as="section" colorVariant="neutral" paddingY={6}>
         <Container>
           <Stack>
             {leadInContentBlockRefs.map((blockId) => (
@@ -49,7 +49,7 @@ if (!root) {
       </LayoutSurface>
     )
   }
-  <LayoutSurface variantKey={3}>
+  <LayoutSurface colorVariantKey={3}>
     <Container paddingY={7}>
       <Stack spacing={4}>
         {

@@ -120,7 +120,7 @@ const contentGroupData = aboutContentGroup[0].data;
       </div>
     </div>
   </PageHeaderLayout>
-  <LayoutSurface paddingY={6} as="section" variant="neutral">
+  <LayoutSurface paddingY={6} as="section" colorVariant="neutral">
     <Container paddingX={2}>
       {
         contentGroupData.contentBlocks.map((block) => (
@@ -131,7 +131,12 @@ const contentGroupData = aboutContentGroup[0].data;
       }
     </Container>
   </LayoutSurface>
-  <LayoutSurface paddingY={6} as="section" variant="neutral" variantKey={3}>
+  <LayoutSurface
+    paddingY={6}
+    as="section"
+    colorVariant="neutral"
+    colorVariantKey={3}
+  >
     <Container paddingX={2}>
       <Typography
         as="h2"

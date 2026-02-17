@@ -36,7 +36,7 @@ const { personData } = Astro.props;
 ---
 
 <SitePageLayout>
-  <LayoutSurface as="header" variant={"primaryContrast"}>
+  <LayoutSurface as="header" colorVariant={"primaryContrast"}>
     <Container paddingX={4} paddingY={4} size={2}>
       <div class="space-y-3 md:gap-6 md:flex md:items-center md:justify-evenly">
         <Stack spacing={1}>
@@ -81,7 +81,7 @@ const { personData } = Astro.props;
       }
     </Container>
   </LayoutSurface>
-  <LayoutSurface paddingY={6} as="section" variantKey={3}>
+  <LayoutSurface paddingY={6} as="section" colorVariantKey={3}>
     <Container paddingX={2}>
       <Typography
         as="h2"

@@ -71,7 +71,7 @@ const codeClasses =
     </div>
   </header>
   <main data-pagefind-ignore="all">
-    <LayoutSurface variant="neutral" variantKey={1} paddingY={6}>
+    <LayoutSurface colorVariant="neutral" colorVariantKey={1} paddingY={6}>
       <Container paddingX={1} paddingY={1}>
         <Stack>
           <Typography as="h1" variant="title-1">Why Grief Matters UI</Typography
@@ -86,7 +86,7 @@ const codeClasses =
         </Stack>
       </Container>
     </LayoutSurface>
-    <LayoutSurface variant="neutral" variantKey={3} paddingY={6}>
+    <LayoutSurface colorVariant="neutral" colorVariantKey={3} paddingY={6}>
       <Container paddingX={1} paddingY={1}>
         <Stack>
           <Typography as="h2" variant="title-2">Typography</Typography>
@@ -121,14 +121,14 @@ const codeClasses =
       colorVariants.map((variant) =>
         variant === "neutral" ? (
           ([1, 2, 3, 4] as LayoutSurfaceVariantKey[]).map((n) => (
-            <LayoutSurface as="div" variant={variant} variantKey={n}>
+            <LayoutSurface as="div" colorVariant={variant} colorVariantKey={n}>
               <Container paddingX={1} paddingY={1}>
                 <Typography colorVariant="coolNeutral">{`${variant} - ${n}`}</Typography>
               </Container>
             </LayoutSurface>
           ))
         ) : (
-          <LayoutSurface as="div" variant={variant}>
+          <LayoutSurface as="div" colorVariant={variant}>
             <Container paddingX={1} paddingY={1}>
               <Typography colorVariant={variant}>{variant}</Typography>
             </Container>
@@ -136,7 +136,7 @@ const codeClasses =
         ),
       )
     }
-    <LayoutSurface variantKey={2} paddingY={6}>
+    <LayoutSurface colorVariantKey={2} paddingY={6}>
       <Container paddingX={1} paddingY={1}>
         <Stack spacing={2}>
           <Typography as="h2" variant="title-2">Content Surface</Typography>
@@ -189,7 +189,7 @@ const codeClasses =
         </Stack>
       </Container>
     </LayoutSurface>
-    <LayoutSurface variantKey={3} paddingY={6}>
+    <LayoutSurface colorVariantKey={3} paddingY={6}>
       <Container paddingX={1} paddingY={1}>
         <Stack spacing={2}>
           <Typography as="h2" variant="title-2">Buttons</Typography>
