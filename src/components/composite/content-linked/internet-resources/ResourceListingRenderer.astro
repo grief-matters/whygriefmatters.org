@@ -6,6 +6,8 @@ import type { InternetResourceEntries } from "@content/collections";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
 
+import { paddingBottomMap } from "@styles/utils/spacing";
+
 import InternetResourceListingRenderer from "./InternetResourceListingRenderer.astro";
 
 interface Props {
@@ -30,7 +32,7 @@ const props = Astro.props;
 
         <Stack spacing={4}>
           {resourceEntries.map((entry) => (
-            <div class="not-last:border-b pb-6 border-b-line-coolNeutral--default">
+            <div class:list={[paddingBottomMap[4], "not-last:border-b border-b-line-coolNeutral--default"]}>
               <InternetResourceListingRenderer entry={entry} />
             </div>
           ))}

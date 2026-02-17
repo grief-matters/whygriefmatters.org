@@ -6,6 +6,8 @@ import type { SocialVal } from "@content/model/person";
 
 import type { IconKey } from "@ui/utils/icon";
 
+import { paddingBottomMap, marginBottomMap } from "@styles/utils/spacing";
+
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import Section from "@ui/layouts/Section.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
@@ -111,7 +113,7 @@ const contentGroupData = aboutContentGroup[0].data;
     <Stack spacing={2}>
       {
         teamMembers.map((member) => (
-          <div class="not-last:border-b pb-6 border-b-line-coolNeutral--default mb-6">
+          <div class:list={[paddingBottomMap[4], marginBottomMap[4], "not-last:border-b border-b-line-coolNeutral--default"]}>
             <div
               class:list={[
                 "space-y-3  md:gap-6",
@@ -125,7 +127,7 @@ const contentGroupData = aboutContentGroup[0].data;
                   />
                 </div>
               )}
-              <div class="space-y-3">
+              <Stack spacing={2}>
                 <div>
                   <Typography as="h3" variant="title-3">
                     {member.data.fullName}
@@ -171,7 +173,7 @@ const contentGroupData = aboutContentGroup[0].data;
                     label="Read More"
                   />
                 )}
-              </div>
+              </Stack>
             </div>
           </div>
         ))

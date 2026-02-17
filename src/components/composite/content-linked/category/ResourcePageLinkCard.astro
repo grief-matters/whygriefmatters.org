@@ -11,6 +11,7 @@ import { isNonEmptyString } from "@ui/utils/string";
 import ContentSurface from "@ui/base/ContentSurface.astro";
 import SanityImagePrimitive from "@ui/base/SanityImage.astro";
 import Link from "@ui/base/Link.astro";
+import Spacer from "@ui/base/Spacer.astro";
 
 interface Props {
   pageLink: CategoryPageLinkContentItem | ResourcePageLinkContentItem;
@@ -85,7 +86,7 @@ const url = `/${path.join("/")}`;
 
 <ContentSurface variant="featureCard" fullHeight>
   {image && <SanityImagePrimitive image={image} />}
-  <div class="p-3">
+  <Spacer padding={2}>
     <Link label={label} to={url} variant="title-4" />
-  </div>
+  </Spacer>
 </ContentSurface>

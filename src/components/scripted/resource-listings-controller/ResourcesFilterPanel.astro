@@ -6,7 +6,7 @@ import {
   type InternetResourceCollectionKey,
 } from "@content/collections";
 
-import { gapMap } from "@styles/utils/spacing";
+import { gapMap, marginBottomMap } from "@styles/utils/spacing";
 import { resourceTypeIconConfigMap } from "@ui/utils/icon";
 
 import Button from "@ui/base/Button.astro";
@@ -22,7 +22,7 @@ const { resourceTypes } = Astro.props;
 ---
 
 <ContentSurface variant="neutral" prominence="muted" paddingY={3} paddingX={5}>
-  <div class="flex justify-between mb-3">
+  <div class:list={[marginBottomMap[2], "flex justify-between"]}>
     <Typography
       as="h2"
       variant="title-4"

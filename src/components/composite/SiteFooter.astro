@@ -3,6 +3,8 @@ import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
 
 import { getOrganization } from "@content/loaders/organizationLoader";
 
+import { marginBottomMap, gapMap } from "@styles/utils/spacing";
+
 import BrushMarkButton from "@ui/base/BrushMarkButton.astro";
 import Container from "@ui/base/Container.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
@@ -22,7 +24,7 @@ const logoUrl = org.logos.onDarkMono
 
 <LayoutSurface colorVariant="primaryContrast" as="footer">
   <Container size={2} paddingY={6}>
-    <div class="flex justify-between items-center mb-8">
+    <div class:list={[marginBottomMap[5], "flex justify-between items-center"]}>
       <a class="block" href="/">
         <img class:list={["h-18"]} src={logoUrl} alt={`${org.name} logo`} />
       </a>
@@ -38,7 +40,7 @@ const logoUrl = org.logos.onDarkMono
       ]}
     >
       <div class="md:grid md:grid-cols-2">
-        <div class="flex flex-col gap-3 mb-3">
+        <div class:list={[gapMap[2], marginBottomMap[2], "flex flex-col"]}>
           <Typography
             colorVariant="primaryContrast"
             variant="title-4"

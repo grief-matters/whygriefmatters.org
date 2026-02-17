@@ -9,6 +9,8 @@ import Container from "@ui/base/Container.astro";
 import Button from "@ui/base/Button.astro";
 import ResourceListingRenderer from "@ui/composite/content-linked/internet-resources/ResourceListingRenderer.astro";
 
+import { paddingSettingMap, marginBottomMap } from "@styles/utils/spacing";
+
 import JumpLinks from "./JumpLinks.astro";
 import ResourcesFilterPanel from "./ResourcesFilterPanel.astro";
 
@@ -50,9 +52,9 @@ const { resourceTypes, internetResources } = Astro.props;
         <div
           data-mobile-jump-panel
           hidden
-          class="bg-contentSurface-neutral--muted border border-line-neutral--default rounded-lg p-4 shadow-lg"
+          class:list={[paddingSettingMap[3], "bg-contentSurface-neutral--muted border border-line-neutral--default rounded-lg shadow-lg"]}
         >
-          <div class="flex justify-between mb-3">
+          <div class:list={[marginBottomMap[2], "flex justify-between"]}>
             <JumpLinks resourceTypes={resourceTypes} />
             <button
               data-mobile-jump-close

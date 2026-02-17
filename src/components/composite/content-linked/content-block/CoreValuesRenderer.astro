@@ -2,7 +2,7 @@
 import { getEntry, type ReferenceDataEntry } from "astro:content";
 import partition from "lodash/partition";
 
-import { gapMap } from "@styles/utils/spacing";
+import { gapMap, spaceYMap, paddingSettingMap } from "@styles/utils/spacing";
 import Container from "@ui/base/Container.astro";
 import Link from "@ui/base/Link.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
@@ -56,8 +56,8 @@ const footerLink = leadInContent.find((x) => x.contentType === "relativeLink");
         coreValues.map((cv, i) => (
           <div
             class:list={[
-              "space-y-3",
-              "p-6",
+              spaceYMap[2],
+              paddingSettingMap[4],
               i % 2 === 0
                 ? "bg-contentSurface-primaryContrast--prominent"
                 : "bg-contentSurface-primaryContrast--default",
