@@ -1,14 +1,18 @@
 ---
+import startCase from "lodash/startCase";
+
 import {
   collectionKeyToResourceTypeMap,
   type InternetResourceCollectionKey,
 } from "@content/collections";
+
+import { gapMap } from "@styles/utils/spacing";
+import { resourceTypeIconConfigMap } from "@ui/utils/icon";
+
 import Button from "@ui/base/Button.astro";
 import ContentSurface from "@ui/base/ContentSurface.astro";
 import Icon from "@ui/base/Icon.astro";
 import Typography from "@ui/base/Typography.astro";
-import { resourceTypeIconConfigMap } from "@ui/utils/icon";
-import startCase from "lodash/startCase";
 
 interface Props {
   resourceTypes: Array<InternetResourceCollectionKey>;
@@ -33,7 +37,7 @@ const { resourceTypes } = Astro.props;
       label="Clear Filter"
     />
   </div>
-  <div class="flex flex-wrap gap-4 sm:grid sm:grid-cols-3">
+  <div class:list={[gapMap[3], "flex flex-wrap sm:grid sm:grid-cols-3"]}>
     {
       resourceTypes.map((resourceType: InternetResourceCollectionKey) => (
         <Button

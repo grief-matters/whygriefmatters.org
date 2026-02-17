@@ -1,23 +1,17 @@
 ---
 import type { HTMLTag, Polymorphic } from "astro/types";
 
-import { marginBottomMap, type SpaceSetting } from "@styles/utils/spacing";
+import {
+  marginBottomMap,
+  spaceYMap,
+  type SpaceSetting,
+} from "@styles/utils/spacing";
 
 type Props<Tag extends HTMLTag = "div"> = Polymorphic<{ as: Tag }> & {
   spacing?: SpaceSetting;
   marginBottom?: SpaceSetting;
   reverse?: boolean;
   divide?: boolean;
-};
-
-const spaceMap: Record<SpaceSetting, string> = {
-  1: "space-y-1.5",
-  2: "space-y-3",
-  3: "space-y-4",
-  4: "space-y-6",
-  5: "space-y-8",
-  6: "space-y-12",
-  7: "space-y-16",
 };
 
 const {
@@ -32,7 +26,7 @@ const {
 
 <Tag
   class:list={[
-    spaceMap[spacing ?? 1],
+    spaceYMap[spacing ?? 1],
     marginBottom && marginBottomMap[marginBottom],
     reverse && "flex flex-col-reverse",
     divide && "divide-y",

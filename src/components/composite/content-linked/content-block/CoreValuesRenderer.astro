@@ -2,6 +2,7 @@
 import { getEntry, type ReferenceDataEntry } from "astro:content";
 import partition from "lodash/partition";
 
+import { gapMap } from "@styles/utils/spacing";
 import Container from "@ui/base/Container.astro";
 import Link from "@ui/base/Link.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
@@ -50,7 +51,7 @@ const footerLink = leadInContent.find((x) => x.contentType === "relativeLink");
     })
   }
   <Container size={2}>
-    <div class="gap-8 px-12 grid sm:grid-cols-2 lg:grid-cols-4">
+    <div class:list={[gapMap[5], "px-12 grid sm:grid-cols-2 lg:grid-cols-4"]}>
       {
         coreValues.map((cv, i) => (
           <div

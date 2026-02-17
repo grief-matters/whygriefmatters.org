@@ -1,6 +1,7 @@
 ---
 import type { PageLinks } from "@content/model/contentBlock";
 
+import { gapMap } from "@styles/utils/spacing";
 import { assertNever } from "@ui/utils/ts-utils";
 
 import DynamicPageLink from "./DynamicPageLink.astro";
@@ -13,7 +14,7 @@ interface Props {
 const props = Astro.props;
 ---
 
-<div class:list={"flex flex-wrap gap-3 justify-center"}>
+<div class:list={[gapMap[2], "flex flex-wrap justify-center"]}>
   {
     props.links.map((link) => {
       switch (link.contentType) {

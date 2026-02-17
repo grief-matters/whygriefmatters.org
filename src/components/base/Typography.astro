@@ -22,7 +22,7 @@ type TextProps = {
   italic?: boolean;
 };
 
-const marginBottomMap: Record<SpaceSetting, string> = {
+const typographyMarginBottomMap: Record<SpaceSetting, string> = {
   1: "mb-1",
   2: "mb-3",
   3: "mb-5",
@@ -57,7 +57,7 @@ const variantClasses = [
     : textColorMap[colorVariant][prominence],
   Tag.startsWith("h") ? "leading-8 text-balance" : "leading-7",
   textAlign === "center" ? "text-center" : null,
-  marginBottom && marginBottomMap[marginBottom],
+  marginBottom && typographyMarginBottomMap[marginBottom],
 ];
 ---
 

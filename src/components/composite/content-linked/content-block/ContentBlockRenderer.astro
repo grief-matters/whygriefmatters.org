@@ -6,6 +6,7 @@ import type {
   ResourcePageLinkContentItem,
 } from "@content/model/contentBlock/pageLinksContentItem";
 
+import { gapMap } from "@styles/utils/spacing";
 import { assertNever } from "@ui/utils/ts-utils";
 
 import Slider from "@ui/layouts/slider/Slider.astro";
@@ -79,7 +80,12 @@ const contentBlock = await getEntry(contentBlockRef);
       case "imageRow":
         return (
           <Container size={2}>
-            <div class="grid grid-cols-1 md:grid-cols-2 md:px-3 lg:grid-cols-3 gap-4">
+            <div
+              class:list={[
+                gapMap[3],
+                "grid grid-cols-1 md:grid-cols-2 md:px-3 lg:grid-cols-3",
+              ]}
+            >
               {contentItem.images.map((img, index) => (
                 <div
                   class={
@@ -175,7 +181,12 @@ const contentBlock = await getEntry(contentBlockRef);
         if (contentItem.showImages) {
           return (
             <Container size={2} paddingX={3}>
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div
+                class:list={[
+                  gapMap[3],
+                  "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3",
+                ]}
+              >
                 {contentItem.links.map((link) => (
                   <div>
                     <ResourcePageLinkCard
