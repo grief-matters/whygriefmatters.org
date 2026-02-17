@@ -22,7 +22,7 @@ const props = Astro.props;
         `We've identified resources in this topic that are more centered to the unique needs and perspectives of the following communities.`
       }
     </Typography>
-    <Stack as="ul" spacing={3} direction="horizontal" wrap>
+    <ul class="flex flex-wrap gap-4">
       {
         props.populations.map((p) => (
           <LinkButton
@@ -32,6 +32,6 @@ const props = Astro.props;
           />
         ))
       }
-    </Stack>
+    </ul>
   </Stack>
 </ContentSurface>

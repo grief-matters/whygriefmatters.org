@@ -196,7 +196,7 @@ const codeClasses =
           <Typography as="p">
             {"Buttons can be rendered as link or button tags"}
           </Typography>
-          <Stack spacing={1} direction="horizontal">
+          <div class="flex gap-1.5">
             {
               colorVariants.map((c) => (
                 <Button
@@ -206,7 +206,7 @@ const codeClasses =
                 />
               ))
             }
-          </Stack>
+          </div>
           <Typography>
             {
               "Button labels cab set using the `label` prop or by passing content to its `slot`. Be aware you will be responsible for styling if using the slot"

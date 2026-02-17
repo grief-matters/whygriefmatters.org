@@ -13,7 +13,6 @@ import { type Link, isLink } from "@ui/utils/link";
 
 import Icon from "@ui/base/Icon.astro";
 import LinkComp from "@ui/base/Link.astro";
-import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
 
 interface Props {
@@ -42,7 +41,7 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
 ---
 
 <article id={`resource--${entry.id}`} data-resource-type={entry.collection}>
-  <Stack as="header" reverse>
+  <header class="flex flex-col-reverse space-y-reverse space-y-1.5">
     <div>
       <LinkComp external variant="title-4" to={entry.data.resourceUrl}>
         <h4 id={entry.id} class="inline m-0" set:text={entry.data.title} />
@@ -96,7 +95,7 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
         )
       }
     </div>
-  </Stack>
+  </header>
   <Typography>
     {entry.data.description}
   </Typography>
