@@ -1,0 +1,18 @@
+---
+import Typography from "./Typography.astro";
+
+interface Props {
+  labelParts: string[];
+}
+
+const { labelParts } = Astro.props;
+---
+
+<Typography as="span" variant="body-2" class="block">
+  <span class="italic">
+    {`${labelParts[0]} `}
+  </span>
+</Typography>
+<Typography as="span" variant="title-2">
+  {labelParts[1]}
+</Typography>

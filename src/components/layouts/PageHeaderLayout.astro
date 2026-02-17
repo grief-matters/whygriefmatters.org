@@ -16,6 +16,8 @@ interface Props {
 }
 
 const { surfaceVariant, surfaceVariantKey, image } = Astro.props;
+
+const hasFooter = Astro.slots.has("footer");
 ---
 
 <LayoutSurface
@@ -32,7 +34,18 @@ const { surfaceVariant, surfaceVariantKey, image } = Astro.props;
       />
     </div>
     <div class="md:order-1">
-      <slot />
+      <div class:list={["md:h-full md:flex md:flex-col"]}>
+        <div class:list={["md:h-full", "md:flex md:items-center"]}>
+          <div
+            class="px-8 py-12 md:flex md:items-center md:justify-end md:grow"
+          >
+            <div class="basis-100">
+              <slot />
+            </div>
+          </div>
+        </div>
+        {hasFooter && <slot name="footer" />}
+      </div>
     </div>
   </div>
 </LayoutSurface>

@@ -2,15 +2,13 @@
 import { getCollection } from "astro:content";
 
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
-
 import Section from "@ui/layouts/Section.astro";
 
-import ContentSurface from "@ui/base/ContentSurface.astro";
 import Stack from "@ui/base/Stack.astro";
 
-import ContentBlockRenderer from "../content-block/ContentBlockRenderer.astro";
 import CategoryPageHeader from "../category/CategoryPageHeader.astro";
-import CategorySummaryPanel from "../category/CategorySummaryPanel.astro";
+import CategorySummaryList from "../category/CategorySummaryList.astro";
+import ContentBlockRenderer from "../content-block/ContentBlockRenderer.astro";
 
 interface Props {
   categoryId: string;
@@ -47,23 +45,8 @@ if (!root) {
       </Section>
     )
   }
-  <Section>
-    <Stack spacing={4}>
-      {
-        root.data.subcategories.map((cat) => (
-          <ContentSurface
-            prominence="muted"
-            variant="secondary"
-            paddingX={5}
-            paddingY={4}
-          >
-            <CategorySummaryPanel
-              colorVariant="secondary"
-              categoryId={cat.id}
-            />
-          </ContentSurface>
-        ))
-      }
-    </Stack>
-  </Section>
+  <CategorySummaryList
+    categoryRefs={root.data.subcategories}
+    colorVariant="secondary"
+  />
 </SitePageLayout>

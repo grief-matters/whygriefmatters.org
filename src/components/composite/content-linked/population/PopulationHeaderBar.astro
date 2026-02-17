@@ -1,0 +1,38 @@
+---
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Button from "@ui/base/Button.astro";
+import PopulationLabel from "@ui/base/PopulationLabel.astro";
+import Typography from "@ui/base/Typography.astro";
+
+interface Props {
+  labelParts: string[];
+  allResourcesHref: string;
+  ctaLabel?: string;
+}
+
+const {
+  labelParts,
+  allResourcesHref,
+  ctaLabel = "See all resources for this topic",
+} = Astro.props;
+---
+
+<LayoutSurface colorVariant="tertiary" colorVariantKey={3}>
+  <div class="px-8 py-6 md:flex md:items-center md:justify-end">
+    <div class="basis-100">
+      <p class="mb-3">
+        <PopulationLabel labelParts={labelParts} />
+      </p>
+      <Button
+        as="a"
+        colorVariant="primaryContrast"
+        href={allResourcesHref}
+        class="inline-block"
+      >
+        <Typography as="span" colorVariant="primaryContrast">
+          {ctaLabel}
+        </Typography>
+      </Button>
+    </div>
+  </div>
+</LayoutSurface>

@@ -1,0 +1,50 @@
+---
+import startCase from "lodash/startCase";
+
+import type { InternetResourceCollectionKey } from "@content/collections";
+
+import { textColorMap } from "@styles/utils/color";
+
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import Link from "@ui/base/Link.astro";
+
+interface Props {
+  resourceTypes: Array<InternetResourceCollectionKey>;
+}
+
+const { resourceTypes } = Astro.props;
+---
+
+<Stack spacing={3}>
+  <Typography
+    as="p"
+    variant="title-4"
+    colorVariant="warmNeutral"
+    set:text="Jump to"
+  />
+  <Stack>
+    {
+      resourceTypes.map((type) => (
+        <div>
+          <a
+            data-jump-link={type}
+            class:list={[
+              "font-serif",
+              "underline underline-offset-4 decoration-dotted decoration-onSurface-warmNeutral--default/40 hover:decoration-onSurface-warmNeutral--default",
+              "transition duration-300",
+              textColorMap.warmNeutral.default,
+              "data-filtered:opacity-50",
+            ]}
+            href={`#${type}`}
+          >
+            {startCase(type)}
+          </a>
+        </div>
+      ))
+    }
+  </Stack>
+  <span class="italic">
+    <Link to="#" label={"Back to Top"} colorVariant="warmNeutral" />
+  </span>
+</Stack>

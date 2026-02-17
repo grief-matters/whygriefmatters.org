@@ -14,6 +14,7 @@ import { buildResourceExistenceSet } from "@ui/utils/content/shared";
 
 import Container from "@ui/base/Container.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import PopulationLabel from "@ui/base/PopulationLabel.astro";
 import Typography from "@ui/base/Typography.astro";
 import Stack from "@ui/base/Stack.astro";
 
@@ -91,20 +92,7 @@ const labelParts = await makeLabelPartsForPopulationResources(
     surfaceVariantKey={3}
     image={populationEntry.data.image}
   >
-    <div class="md:h-full md:flex md:flex-col">
-      <div class="md:h-full md:flex md:items-center">
-        <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
-          <div class="basis-100">
-            <Typography as="span" variant="body-2" class="block" italic>
-              {`${labelParts[0]} `}
-            </Typography>
-            <Typography as="span" variant="title-2">
-              {labelParts[1]}
-            </Typography>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PopulationLabel labelParts={labelParts} />
   </PageHeaderLayout>
   <LayoutSurface as="section" paddingX={2} paddingY={5}>
     <Container>

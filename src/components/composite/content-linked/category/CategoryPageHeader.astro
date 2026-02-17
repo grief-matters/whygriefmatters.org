@@ -2,12 +2,12 @@
 import { getEntries, type CollectionEntry } from "astro:content";
 
 import Button from "@ui/base/Button.astro";
-import Link from "@ui/base/Link.astro";
 import Spacer from "@ui/base/Spacer.astro";
-import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
 
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+
+import ExploreLinks from "@ui/composite/ExploreLinks.astro";
 
 interface Props {
   categoryEntryData: CollectionEntry<"categories">["data"];
@@ -28,76 +28,54 @@ if (categoryEntryData.subcategories.length > 0) {
   surfaceVariantKey={1}
   image={categoryEntryData.image}
 >
-  <div class="md:h-full md:flex md:items-center">
-    <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
-      <div class="basis-100">
-        <Spacer marginBottom={3}>
-          <!-- header -->
-          <Typography
-            marginBottom={2}
-            as="h1"
-            variant="title-1"
-            colorVariant="primaryContrast"
-          >
-            {categoryEntryData.displayTitle ?? categoryEntryData.title}
-          </Typography>
-          <!-- description -->
-          {
-            categoryEntryData.shortDescription && (
-              <Typography
-                as="p"
-                variant="body-2"
-                colorVariant="primaryContrast"
-                marginBottom={2}
-              >
-                {categoryEntryData.shortDescription}
-              </Typography>
-            )
-          }
-        </Spacer>
+  <Spacer marginBottom={3}>
+    <Typography
+      marginBottom={2}
+      as="h1"
+      variant="title-1"
+      colorVariant="primaryContrast"
+    >
+      {categoryEntryData.displayTitle ?? categoryEntryData.title}
+    </Typography>
+    {
+      categoryEntryData.shortDescription && (
+        <Typography
+          as="p"
+          variant="body-2"
+          colorVariant="primaryContrast"
+          marginBottom={2}
+        >
+          {categoryEntryData.shortDescription}
+        </Typography>
+      )
+    }
+  </Spacer>
 
-        <!-- subcats -->
-        {
-          resolvedSubcategories !== null &&
-            resolvedSubcategories?.length > 0 && (
-              <Stack spacing={3}>
-                <Typography colorVariant="primaryContrast" variant="title-4">
-                  {"Explore further:"}
-                </Typography>
-                <Stack as="ul" spacing={2} marginBottom={4}>
-                  {resolvedSubcategories.map((c) => (
-                    <li>
-                      <Link
-                        to={`/${c.data.slug}`}
-                        label={c.data.title}
-                        colorVariant="primaryContrast"
-                      />
-                    </li>
-                  ))}
-                </Stack>
-              </Stack>
-            )
-        }
-        {/* button */}
-        {
-          parentCategory && (
-            <Button
-              as="a"
-              colorVariant="secondary"
-              href={`/${parentCategory.data.slug}`}
-              class="inline-block"
-            >
-              <Typography>
-                {"Part of "}
-                <strong class="text-bold">
-                  {parentCategory.data.displayTitle ??
-                    parentCategory.data.title}
-                </strong>
-              </Typography>
-            </Button>
-          )
-        }
-      </div>
-    </div>
-  </div>
+  {
+    resolvedSubcategories !== null && resolvedSubcategories?.length > 0 && (
+      <ExploreLinks
+        links={resolvedSubcategories.map((c) => ({
+          url: `/${c.data.slug}`,
+          label: c.data.title,
+        }))}
+      />
+    )
+  }
+  {
+    parentCategory && (
+      <Button
+        as="a"
+        colorVariant="secondary"
+        href={`/${parentCategory.data.slug}`}
+        class="inline-block"
+      >
+        <Typography>
+          {"Part of "}
+          <strong class="text-bold">
+            {parentCategory.data.displayTitle ?? parentCategory.data.title}
+          </strong>
+        </Typography>
+      </Button>
+    )
+  }
 </PageHeaderLayout>

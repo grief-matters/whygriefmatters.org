@@ -7,19 +7,17 @@ import { buildResourceExistenceSet } from "@ui/utils/content/shared";
 import { makeLabelPartsForPopulationResources } from "@ui/utils/content/content";
 
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
-import Section from "@ui/layouts/Section.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
-import Button from "@ui/base/Button.astro";
-import ContentSurface from "@ui/base/ContentSurface.astro";
-import LayoutSurface from "@ui/base/LayoutSurface.astro";
-
-import Link from "@ui/base/Link.astro";
-import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
 
+import ExploreLinks from "@ui/composite/ExploreLinks.astro";
+import Section from "@ui/layouts/Section.astro";
+import Stack from "@ui/base/Stack.astro";
+
+import CategorySummaryList from "../category/CategorySummaryList.astro";
+import PopulationHeaderBar from "../population/PopulationHeaderBar.astro";
 import ContentBlockRenderer from "../content-block/ContentBlockRenderer.astro";
-import CategorySummaryPanel from "../category/CategorySummaryPanel.astro";
 
 interface Props {
   categoryId: string;
@@ -80,82 +78,41 @@ const labelParts = await makeLabelPartsForPopulationResources(populationId);
     surfaceVariantKey={1}
     image={populationEntry.data.image}
   >
-    <div class="md:h-full md:flex md:flex-col">
-      <div class="md:h-full md:flex md:items-center">
-        <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
-          <div class="basis-100">
-            <Typography
-              marginBottom={2}
-              as="h1"
-              variant="title-1"
-              colorVariant="primaryContrast"
-            >
-              {root.data.displayTitle ?? root.data.title}
-            </Typography>
-            {
-              root.data.shortDescription && (
-                <Typography
-                  as="p"
-                  variant="body-2"
-                  colorVariant="primaryContrast"
-                  marginBottom={2}
-                >
-                  {root.data.shortDescription}
-                </Typography>
-              )
-            }
-            {
-              filteredSubcategoryEntries.length > 0 && (
-                <Stack spacing={3}>
-                  <Typography colorVariant="primaryContrast" variant="title-4">
-                    {"Explore further:"}
-                  </Typography>
-                  <Stack as="ul" spacing={2} marginBottom={4}>
-                    {filteredSubcategoryEntries.map((c) => (
-                      <li>
-                        <Link
-                          to={`/${c.data.slug}/${populationEntry.data.slug}`}
-                          label={c.data.title}
-                          colorVariant="primaryContrast"
-                        />
-                      </li>
-                    ))}
-                  </Stack>
-                </Stack>
-              )
-            }
-          </div>
-        </div>
-      </div>
-      <LayoutSurface colorVariant="tertiary" colorVariantKey={3}>
-        <div class="px-8 py-6 md:flex md:items-center md:justify-end">
-          <div class="basis-100">
-            {
-              labelParts.length > 0 && (
-                <p class="mb-3">
-                  <Typography as="span" variant="body-2" class="block">
-                    <span class="italic">{`${labelParts[0]} `}</span>
-                  </Typography>
-                  <Typography as="span" variant="title-2">
-                    {labelParts[1]}
-                  </Typography>
-                </p>
-              )
-            }
-            <Button
-              as="a"
-              colorVariant="primaryContrast"
-              href={`/${root.data.slug}`}
-              class="inline-block"
-            >
-              <Typography as="span" colorVariant="primaryContrast">
-                {"See all resources for this topic"}
-              </Typography>
-            </Button>
-          </div>
-        </div>
-      </LayoutSurface>
-    </div>
+    <Typography
+      marginBottom={2}
+      as="h1"
+      variant="title-1"
+      colorVariant="primaryContrast"
+    >
+      {root.data.displayTitle ?? root.data.title}
+    </Typography>
+    {
+      root.data.shortDescription && (
+        <Typography
+          as="p"
+          variant="body-2"
+          colorVariant="primaryContrast"
+          marginBottom={2}
+        >
+          {root.data.shortDescription}
+        </Typography>
+      )
+    }
+    {
+      filteredSubcategoryEntries.length > 0 && (
+        <ExploreLinks
+          links={filteredSubcategoryEntries.map((c) => ({
+            url: `/${c.data.slug}/${populationEntry.data.slug}`,
+            label: c.data.title,
+          }))}
+        />
+      )
+    }
+    <PopulationHeaderBar
+      slot="footer"
+      labelParts={labelParts}
+      allResourcesHref={`/${root.data.slug}`}
+    />
   </PageHeaderLayout>
   {
     leadInContentBlockRefs && (
@@ -173,25 +130,10 @@ const labelParts = await makeLabelPartsForPopulationResources(populationId);
       </Section>
     )
   }
-  <Section>
-    <Stack spacing={4}>
-      {
-        filteredSubcategoryRefs.map((cat) => (
-          <ContentSurface
-            prominence="muted"
-            variant="tertiary"
-            paddingX={5}
-            paddingY={4}
-          >
-            <CategorySummaryPanel
-              colorVariant="tertiary"
-              categoryId={cat.id}
-              populationId={populationId}
-              populationSlug={populationEntry.data.slug}
-            />
-          </ContentSurface>
-        ))
-      }
-    </Stack>
-  </Section>
+  <CategorySummaryList
+    categoryRefs={filteredSubcategoryRefs}
+    colorVariant="tertiary"
+    populationId={populationId}
+    populationSlug={populationEntry.data.slug}
+  />
 </SitePageLayout>

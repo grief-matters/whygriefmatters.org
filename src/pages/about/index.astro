@@ -10,15 +10,15 @@ import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import Section from "@ui/layouts/Section.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
-import ContentSurface from "@ui/base/ContentSurface.astro";
 import Icon from "@ui/base/Icon.astro";
 import Link from "@ui/base/Link.astro";
+import PersonAvatar from "@ui/base/PersonAvatar.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
-import SanityImageComp from "@ui/base/SanityImage.astro";
 import Spacer from "@ui/base/Spacer.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
 
+import ExploreLinks from "@ui/composite/ExploreLinks.astro";
 import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
 
 const aboutContentGroup = await getCollection(
@@ -74,50 +74,23 @@ const contentGroupData = aboutContentGroup[0].data;
     surfaceVariantKey={1}
     image={contentGroupData.image ?? null}
   >
-    <div class="md:h-full md:flex md:items-center">
-      <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
-        <div class="basis-100">
-          <Spacer marginBottom={3}>
-            <Typography
-              marginBottom={2}
-              as="h1"
-              variant="title-1"
-              colorVariant="primaryContrast"
-            >
-              {contentGroupData.title}
-            </Typography>
-          </Spacer>
-          <Stack spacing={3}>
-            <Typography colorVariant="primaryContrast" variant="title-4">
-              {"Explore further:"}
-            </Typography>
-            <Stack as="ul" spacing={2} marginBottom={4}>
-              <li>
-                <Link
-                  to={`/about/our-story`}
-                  label={"Our Story"}
-                  colorVariant="primaryContrast"
-                />
-              </li>
-              <li>
-                <Link
-                  to={`/about/mission-and-values`}
-                  label={"Mission and Values"}
-                  colorVariant="primaryContrast"
-                />
-              </li>
-              <li>
-                <Link
-                  to={`/about/team`}
-                  label={"The Why Grief Matters Team"}
-                  colorVariant="primaryContrast"
-                />
-              </li>
-            </Stack>
-          </Stack>
-        </div>
-      </div>
-    </div>
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+      >
+        {contentGroupData.title}
+      </Typography>
+    </Spacer>
+    <ExploreLinks
+      links={[
+        { url: "/about/our-story", label: "Our Story" },
+        { url: "/about/mission-and-values", label: "Mission and Values" },
+        { url: "/about/team", label: "The Why Grief Matters Team" },
+      ]}
+    />
   </PageHeaderLayout>
   <Section>
     {
@@ -147,22 +120,9 @@ const contentGroupData = aboutContentGroup[0].data;
             >
               {member.data.avatar && (
                 <div class="flex justify-center md:block">
-                  <ContentSurface
-                    paddingX={2}
-                    paddingY={2}
-                    variant="featureCard"
-                    class:list={["max-w-sm"]}
-                  >
-                    <SanityImageComp
-                      useFallback={false}
-                      aspect="square"
-                      image={
-                        member.data.avatar !== null
-                          ? { image: member.data.avatar, altText: "" }
-                          : null
-                      }
-                    />
-                  </ContentSurface>
+                  <PersonAvatar
+                    image={{ image: member.data.avatar, altText: "" }}
+                  />
                 </div>
               )}
               <div class="space-y-3">

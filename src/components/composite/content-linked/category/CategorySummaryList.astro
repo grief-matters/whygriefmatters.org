@@ -1,0 +1,40 @@
+---
+import Section from "@ui/layouts/Section.astro";
+
+import ContentSurface from "@ui/base/ContentSurface.astro";
+import Stack from "@ui/base/Stack.astro";
+
+import CategorySummaryPanel from "./CategorySummaryPanel.astro";
+
+interface Props {
+  categoryRefs: Array<{ id: string }>;
+  colorVariant: "secondary" | "tertiary";
+  populationId?: string;
+  populationSlug?: string;
+}
+
+const { categoryRefs, colorVariant, populationId, populationSlug } =
+  Astro.props;
+---
+
+<Section>
+  <Stack spacing={4}>
+    {
+      categoryRefs.map((cat) => (
+        <ContentSurface
+          prominence="muted"
+          variant={colorVariant}
+          paddingX={5}
+          paddingY={4}
+        >
+          <CategorySummaryPanel
+            colorVariant={colorVariant}
+            categoryId={cat.id}
+            populationId={populationId}
+            populationSlug={populationSlug}
+          />
+        </ContentSurface>
+      ))
+    }
+  </Stack>
+</Section>

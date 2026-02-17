@@ -1,0 +1,17 @@
+---
+import type { PortableText } from "@content/model/portableText";
+
+import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
+
+interface Props {
+  description: PortableText;
+}
+
+const { description } = Astro.props;
+---
+
+<PortableTextContentBlock
+  textVariant="prominent-first"
+  textAlign="center"
+  portableText={description}
+/>

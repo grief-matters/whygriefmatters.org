@@ -1,20 +1,15 @@
 ---
-import startCase from "lodash/startCase";
-
 import type {
   InternetResourceCollectionKey,
   InternetResourceEntries,
 } from "@content/collections";
 
-import { textColorMap } from "@styles/utils/color";
-
 import Stack from "@ui/base/Stack.astro";
-import Typography from "@ui/base/Typography.astro";
 import Container from "@ui/base/Container.astro";
-import Link from "@ui/base/Link.astro";
 import Button from "@ui/base/Button.astro";
 import ResourceListingRenderer from "@ui/composite/content-linked/internet-resources/ResourceListingRenderer.astro";
 
+import JumpLinks from "./JumpLinks.astro";
 import ResourcesFilterPanel from "./ResourcesFilterPanel.astro";
 
 interface Props {
@@ -39,38 +34,7 @@ const { resourceTypes, internetResources } = Astro.props;
       <!-- Desktop Jump To Nav (sticky sidebar) -->
       <nav class="hidden md:block md:order-last" data-jump-nav>
         <div class="md:sticky md:top-40 md:mt-12">
-          <Stack spacing={3}>
-            <Typography
-              as="p"
-              variant="title-4"
-              colorVariant="warmNeutral"
-              set:text="Jump to"
-            />
-            <Stack>
-              {
-                resourceTypes.map((type) => (
-                  <div>
-                    <a
-                      data-jump-link={type}
-                      class:list={[
-                        "font-serif",
-                        "underline underline-offset-4 decoration-dotted decoration-onSurface-warmNeutral--default/40 hover:decoration-onSurface-warmNeutral--default",
-                        "transition duration-300",
-                        textColorMap.warmNeutral.default,
-                        "data-filtered:opacity-50",
-                      ]}
-                      href={`#${type}`}
-                    >
-                      {startCase(type)}
-                    </a>
-                  </div>
-                ))
-              }
-            </Stack>
-            <span class="italic">
-              <Link to="#" label={"Back to Top"} colorVariant="warmNeutral" />
-            </span>
-          </Stack>
+          <JumpLinks resourceTypes={resourceTypes} />
         </div>
       </nav>
 
@@ -88,46 +52,15 @@ const { resourceTypes, internetResources } = Astro.props;
           hidden
           class="bg-contentSurface-neutral--muted border border-line-neutral--default rounded-lg p-4 shadow-lg"
         >
-          <Stack spacing={3}>
-            <div class="flex justify-between">
-              <Typography
-                as="p"
-                variant="title-4"
-                colorVariant="warmNeutral"
-                set:text="Jump to"
-              />
-              <button
-                data-mobile-jump-close
-                class="text-onSurface-coolNeutral--muted hover:text-onSurface-coolNeutral--default"
-              >
-                ✕
-              </button>
-            </div>
-            <Stack>
-              {
-                resourceTypes.map((type) => (
-                  <div>
-                    <a
-                      data-jump-link={type}
-                      class:list={[
-                        "font-serif",
-                        "underline underline-offset-4 decoration-dotted decoration-onSurface-warmNeutral--default/40 hover:decoration-onSurface-warmNeutral--default",
-                        "transition duration-300",
-                        textColorMap.warmNeutral.default,
-                        "data-filtered:opacity-50",
-                      ]}
-                      href={`#${type}`}
-                    >
-                      {startCase(type)}
-                    </a>
-                  </div>
-                ))
-              }
-            </Stack>
-            <span class="italic">
-              <Link to="#" label={"Back to Top"} colorVariant="warmNeutral" />
-            </span>
-          </Stack>
+          <div class="flex justify-between mb-3">
+            <JumpLinks resourceTypes={resourceTypes} />
+            <button
+              data-mobile-jump-close
+              class="text-onSurface-coolNeutral--muted hover:text-onSurface-coolNeutral--default self-start"
+            >
+              ✕
+            </button>
+          </div>
         </div>
       </div>
       <div class="hidden lg:block"></div>

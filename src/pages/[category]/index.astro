@@ -21,9 +21,9 @@ import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
 import Container from "@ui/base/Container.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
-import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import Typography from "@ui/base/Typography.astro";
 
+import CategoryDescription from "@ui/composite/content-linked/category/CategoryDescription.astro";
 import CategoryPageHeader from "@ui/composite/content-linked/category/CategoryPageHeader.astro";
 import CategoryPopulationsNavigator from "@ui/composite/content-linked/category/CategoryPopulationsNavigator.astro";
 import FeaturedResourceRenderer from "@ui/composite/content-linked/internet-resources/FeaturedResourceRenderer.astro";
@@ -124,11 +124,9 @@ const props = Astro.props;
   {/* Category Description */}
   {
     props.categoryEntry.data.description && (
-      <Section as="div">
-        <PortableTextContentBlock
-          textVariant="prominent-first"
-          textAlign="center"
-          portableText={props.categoryEntry.data.description}
+      <Section>
+        <CategoryDescription
+          description={props.categoryEntry.data.description}
         />
       </Section>
     )

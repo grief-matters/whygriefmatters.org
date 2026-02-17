@@ -1,0 +1,31 @@
+---
+import Link from "@ui/base/Link.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import type { Link as LinkType } from "@ui/utils/link";
+
+interface Props {
+  links: Array<LinkType>;
+}
+
+const { links } = Astro.props;
+---
+
+<Stack spacing={3}>
+  <Typography colorVariant="primaryContrast" variant="title-4">
+    {"Explore further:"}
+  </Typography>
+  <Stack as="ul" spacing={2} marginBottom={4}>
+    {
+      links.map((link) => (
+        <li>
+          <Link
+            to={link.url}
+            label={link.label}
+            colorVariant="primaryContrast"
+          />
+        </li>
+      ))
+    }
+  </Stack>
+</Stack>

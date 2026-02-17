@@ -30,35 +30,29 @@ const mvData = missionAndValuesContentGroup[0].data;
     surfaceVariantKey={1}
     image={mvData.image ?? null}
   >
-    <div class="md:h-full md:flex md:items-center">
-      <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
-        <div class="basis-100">
-          <Spacer marginBottom={3}>
-            <Typography
-              marginBottom={2}
-              as="h1"
-              variant="title-1"
-              colorVariant="primaryContrast"
-            >
-              {mvData.title}
-            </Typography>
-          </Spacer>
-          <Button
-            as="a"
-            colorVariant="secondary"
-            href={`/about`}
-            class="inline-block"
-          >
-            <Typography>
-              {"Back to "}
-              <strong class="text-bold">
-                {"About Us"}
-              </strong>
-            </Typography>
-          </Button>
-        </div>
-      </div>
-    </div>
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+      >
+        {mvData.title}
+      </Typography>
+    </Spacer>
+    <Button
+      as="a"
+      colorVariant="secondary"
+      href={`/about`}
+      class="inline-block"
+    >
+      <Typography>
+        {"Back to "}
+        <strong class="text-bold">
+          {"About Us"}
+        </strong>
+      </Typography>
+    </Button>
   </PageHeaderLayout>
 
   <LayoutSurface as="section" colorVariant="neutral" paddingY={6}>

@@ -15,10 +15,11 @@ import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import Section from "@ui/layouts/Section.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
-import Button from "@ui/base/Button.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
-import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import Typography from "@ui/base/Typography.astro";
+
+import CategoryDescription from "@ui/composite/content-linked/category/CategoryDescription.astro";
+import PopulationHeaderBar from "@ui/composite/content-linked/population/PopulationHeaderBar.astro";
 
 interface Props {
   categoryEntry: CollectionEntry<"categories">;
@@ -121,70 +122,37 @@ const labelParts = labelMaker(populationEntry.data.name);
     surfaceVariantKey={1}
     image={populationEntry.data.image}
   >
-    <div class="md:h-full md:flex md:flex-col">
-      <div class="md:h-full md:flex md:items-center">
-        <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
-          <div class="basis-100">
-            <Typography
-              marginBottom={2}
-              as="h1"
-              variant="title-1"
-              colorVariant="primaryContrast"
-            >
-              {categoryEntry.data.displayTitle ?? categoryEntry.data.title}
-            </Typography>
-            {
-              categoryEntry.data.shortDescription && (
-                <Typography
-                  as="p"
-                  variant="body-2"
-                  colorVariant="primaryContrast"
-                  marginBottom={2}
-                >
-                  {categoryEntry.data.shortDescription}
-                </Typography>
-              )
-            }
-          </div>
-        </div>
-      </div>
-      <LayoutSurface colorVariant="tertiary" colorVariantKey={3}>
-        <div class="px-8 py-6 md:flex md:items-center md:justify-end">
-          <div class="basis-100">
-            <p class="mb-3">
-              <Typography as="span" variant="body-2" class="block">
-                <span class="italic">
-                  {`${labelParts[0]} `}
-                </span>
-              </Typography>
-              <Typography as="span" variant="title-2">
-                {labelParts[1]}
-              </Typography>
-            </p>
-            <Button
-              as="a"
-              colorVariant="primaryContrast"
-              href={`/${categoryEntry.data.slug}`}
-              class="inline-block"
-            >
-              <Typography as="span" colorVariant="primaryContrast">
-                {"See all resources for this topic"}
-              </Typography>
-            </Button>
-          </div>
-        </div>
-      </LayoutSurface>
-    </div>
+    <Typography
+      marginBottom={2}
+      as="h1"
+      variant="title-1"
+      colorVariant="primaryContrast"
+    >
+      {categoryEntry.data.displayTitle ?? categoryEntry.data.title}
+    </Typography>
+    {
+      categoryEntry.data.shortDescription && (
+        <Typography
+          as="p"
+          variant="body-2"
+          colorVariant="primaryContrast"
+          marginBottom={2}
+        >
+          {categoryEntry.data.shortDescription}
+        </Typography>
+      )
+    }
+    <PopulationHeaderBar
+      slot="footer"
+      labelParts={labelParts}
+      allResourcesHref={`/${categoryEntry.data.slug}`}
+    />
   </PageHeaderLayout>
   {/* Category Description */}
   {
     categoryEntry.data.description && (
-      <Section as="div">
-        <PortableTextContentBlock
-          textVariant="prominent-first"
-          textAlign="center"
-          portableText={categoryEntry.data.description}
-        />
+      <Section>
+        <CategoryDescription description={categoryEntry.data.description} />
       </Section>
     )
   }

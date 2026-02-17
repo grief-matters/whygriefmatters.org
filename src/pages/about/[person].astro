@@ -7,11 +7,10 @@ import Section from "@ui/layouts/Section.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
 import Container from "@ui/base/Container.astro";
-import ContentSurface from "@ui/base/ContentSurface.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Link from "@ui/base/Link.astro";
+import PersonAvatar from "@ui/base/PersonAvatar.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
-import SanityImage from "@ui/base/SanityImage.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
 
@@ -52,20 +51,11 @@ const { personData } = Astro.props;
           </Typography>
         </Stack>
         <div class="flex justify-center">
-          <ContentSurface
-            class:list={["max-w-sm"]}
-            paddingX={2}
-            paddingY={2}
-            variant="featureCard"
-          >
-            <SanityImage
-              useFallback={false}
-              aspect="square"
-              image={personData.avatar !== null
-                ? { image: personData.avatar, altText: "" }
-                : null}
-            />
-          </ContentSurface>
+          <PersonAvatar
+            image={personData.avatar !== null
+              ? { image: personData.avatar, altText: "" }
+              : null}
+          />
         </div>
       </div>
     </Container>
