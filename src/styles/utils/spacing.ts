@@ -64,7 +64,7 @@ export const marginBottomMap: SpaceSettingClassMap = {
 };
 export const gapMap: SpaceSettingClassMap = {
   1: "gap-1.5",
-  2: "gap3-",
+  2: "gap-3",
   3: "gap-4",
   4: "gap-6",
   5: "gap-8",
