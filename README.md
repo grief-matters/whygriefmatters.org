@@ -68,34 +68,34 @@ See [Getting Set Up](#getting-set-up) below for details on each step.
 
 The project needs two env files:
 
-| File | Used by | Purpose |
-|------|---------|---------|
-| `.env` | Astro dev server | All environment variables (public and secret) |
+| File        | Used by                      | Purpose                                                                 |
+| ----------- | ---------------------------- | ----------------------------------------------------------------------- |
+| `.env`      | Astro dev server             | All environment variables (public and secret)                           |
 | `.dev.vars` | Wrangler (`npm run preview`) | Secret variables only — Wrangler reads public vars from `wrangler.toml` |
 
 **Variable reference:**
 
-| Variable | Access | Where to get it |
-|----------|--------|-----------------|
-| `SANITY_STUDIO_API_VERSION` | Public | Pre-configured: `"2023-07-16"` |
-| `SANITY_STUDIO_DATASET` | Public | Pre-configured: `"production"` |
-| `SANITY_STUDIO_PROJECT_ID` | Public | Pre-configured: `"vg3sb730"` |
-| `SANITY_AUTH_TOKEN` | Secret | [Sanity dashboard](https://www.sanity.io/manage) → API → Tokens |
-| `PUBLIC_CLERK_PUBLISHABLE_KEY` | Public | [Clerk dashboard](https://dashboard.clerk.com/) → API Keys |
-| `CLERK_SECRET_KEY` | Secret | Clerk dashboard → API Keys |
-| `RESEND_API_KEY` | Secret | [Resend dashboard](https://resend.com/) → API Keys |
-| `RESEND_FROM_ADDRESS` | Public | Pre-configured (see Quick Start) |
-| `RESEND_TO_ADDRESS` | Public | Pre-configured (see Quick Start) |
+| Variable                       | Access | Where to get it                                                 |
+| ------------------------------ | ------ | --------------------------------------------------------------- |
+| `SANITY_STUDIO_API_VERSION`    | Public | Pre-configured: `"2023-07-16"`                                  |
+| `SANITY_STUDIO_DATASET`        | Public | Pre-configured: `"production"`                                  |
+| `SANITY_STUDIO_PROJECT_ID`     | Public | Pre-configured: `"vg3sb730"`                                    |
+| `SANITY_AUTH_TOKEN`            | Secret | [Sanity dashboard](https://www.sanity.io/manage) → API → Tokens |
+| `PUBLIC_CLERK_PUBLISHABLE_KEY` | Public | [Clerk dashboard](https://dashboard.clerk.com/) → API Keys      |
+| `CLERK_SECRET_KEY`             | Secret | Clerk dashboard → API Keys                                      |
+| `RESEND_API_KEY`               | Secret | [Resend dashboard](https://resend.com/) → API Keys              |
+| `RESEND_FROM_ADDRESS`          | Public | Pre-configured (see Quick Start)                                |
+| `RESEND_TO_ADDRESS`            | Public | Pre-configured (see Quick Start)                                |
 
 > [!NOTE]
 > The Clerk publishable key and Wrangler public vars are already configured in `wrangler.toml`, so `.dev.vars` only needs the secret values.
 
 ### Scripts
 
-| Command | What it does |
-|---------|--------------|
-| `npm run dev` | Generates Wrangler types, then starts the Astro dev server |
-| `npm run build` | Generates Wrangler types → runs `astro check` (type checking) → builds the site → runs Pagefind indexing |
+| Command           | What it does                                                                                              |
+| ----------------- | --------------------------------------------------------------------------------------------------------- |
+| `npm run dev`     | Generates Wrangler types, then starts the Astro dev server                                                |
+| `npm run build`   | Generates Wrangler types → runs `astro check` (type checking) → builds the site → runs Pagefind indexing  |
 | `npm run preview` | Generates Wrangler types, then runs `wrangler dev` to simulate the Cloudflare Workers environment locally |
 
 ---
@@ -104,16 +104,16 @@ The project needs two env files:
 
 ### Tech Stack
 
-| Dependency | Role |
-|-----------|------|
-| [Astro 5](https://astro.build/) | Static site generator with content collections and file-based routing |
-| [TypeScript](https://www.typescriptlang.org/) (strict) | Type safety across components and content |
-| [Tailwind CSS 4](https://tailwindcss.com/) | Utility-first styling with custom design tokens |
-| [Sanity.io](https://www.sanity.io/) | Headless CMS — all resources, categories, and populations |
-| [Zod](https://zod.dev/) | Runtime validation of CMS data at build time |
-| [Clerk](https://clerk.com/) | Authentication |
-| [Cloudflare Workers](https://workers.cloudflare.com/) / Wrangler | Deployment target and local preview |
-| [Pagefind](https://pagefind.app/) | Static search indexing (runs post-build) |
+| Dependency                                                       | Role                                                                  |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [Astro 5](https://astro.build/)                                  | Static site generator with content collections and file-based routing |
+| [TypeScript](https://www.typescriptlang.org/) (strict)           | Type safety across components and content                             |
+| [Tailwind CSS 4](https://tailwindcss.com/)                       | Utility-first styling with custom design tokens                       |
+| [Sanity.io](https://www.sanity.io/)                              | Headless CMS — all resources, categories, and populations             |
+| [Zod](https://zod.dev/)                                          | Runtime validation of CMS data at build time                          |
+| [Clerk](https://clerk.com/)                                      | Authentication                                                        |
+| [Cloudflare Workers](https://workers.cloudflare.com/) / Wrangler | Deployment target and local preview                                   |
+| [Pagefind](https://pagefind.app/)                                | Static search indexing (runs post-build)                              |
 
 ### Data Loading & Content Collections
 
@@ -129,13 +129,13 @@ Content flows from the CMS to rendered pages through a pipeline:
 
 Components are organized into tiers by responsibility:
 
-| Tier | Directory | Purpose | Examples |
-|------|-----------|---------|---------|
-| Base | `/src/components/base/` | Atomic reusable elements — no business logic | `Button`, `Stack`, `Container`, `Typography`, `Link`, `Icon` |
-| Composite | `/src/components/composite/` | Feature-specific combinations of base components | `Card`, `SiteHeader`, `SiteFooter` |
-| Scripted | `/src/components/scripted/` | Components with client-side JavaScript | Main navigation, resource listings controller, `Search` |
-| Layouts | `/src/components/layouts/` | Page structure wrappers | `Shell`, `SitePageLayout`, `PageHeaderLayout` |
-| Utils | `/src/components/utils/` | Shared helper functions for components | Spacing, styles, icon definitions, navigation utilities |
+| Tier      | Directory                    | Purpose                                          | Examples                                                     |
+| --------- | ---------------------------- | ------------------------------------------------ | ------------------------------------------------------------ |
+| Base      | `/src/components/base/`      | Atomic reusable elements — no business logic     | `Button`, `Stack`, `Container`, `Typography`, `Link`, `Icon` |
+| Composite | `/src/components/composite/` | Feature-specific combinations of base components | `Card`, `SiteHeader`, `SiteFooter`                           |
+| Scripted  | `/src/components/scripted/`  | Components with client-side JavaScript           | Main navigation, resource listings controller, `Search`      |
+| Layouts   | `/src/components/layouts/`   | Page structure wrappers                          | `Shell`, `SitePageLayout`, `PageHeaderLayout`                |
+| Utils     | `/src/components/utils/`     | Shared helper functions for components           | Spacing, styles, icon definitions, navigation utilities      |
 
 A typical page composes these tiers: `Shell` wraps the full page → `SitePageLayout` provides the standard page structure → content is built from base and composite components inside `Container` and `LayoutSurface`.
 
@@ -180,14 +180,14 @@ Card, panel, and interactive element backgrounds.
 bg-contentSurface-{variant}--{prominence}
 ```
 
-| Variant | Prominence levels |
-|---------|-------------------|
-| `neutral` | `muted`, `default`, `prominent` |
-| `primary` | `muted`, `default`, `prominent` |
+| Variant           | Prominence levels               |
+| ----------------- | ------------------------------- |
+| `neutral`         | `muted`, `default`, `prominent` |
+| `primary`         | `muted`, `default`, `prominent` |
 | `primaryContrast` | `muted`, `default`, `prominent` |
-| `secondary` | `muted`, `default`, `prominent` |
-| `tertiary` | `muted`, `default`, `prominent` |
-| `donate` | `muted`, `default`, `prominent` |
+| `secondary`       | `muted`, `default`, `prominent` |
+| `tertiary`        | `muted`, `default`, `prominent` |
+| `donate`          | `muted`, `default`, `prominent` |
 
 #### On Surface
 
@@ -197,14 +197,14 @@ Text and icon colors.
 text-onSurface-{variant}--{prominence}
 ```
 
-| Variant | Prominence levels |
-|---------|-------------------|
-| `coolNeutral` | `default`, `muted` |
-| `warmNeutral` | `default`, `muted` |
-| `primary` | `default`, `muted` |
+| Variant           | Prominence levels  |
+| ----------------- | ------------------ |
+| `coolNeutral`     | `default`, `muted` |
+| `warmNeutral`     | `default`, `muted` |
+| `primary`         | `default`, `muted` |
 | `primaryContrast` | `default`, `muted` |
-| `secondary` | `default`, `muted` |
-| `tertiary` | `default`, `muted` |
+| `secondary`       | `default`, `muted` |
+| `tertiary`        | `default`, `muted` |
 
 #### Line
 
@@ -214,57 +214,57 @@ Borders and dividers.
 border-line-{variant}--{prominence}
 ```
 
-| Variant | Prominence levels |
-|---------|-------------------|
-| `neutral` | `muted`, `default`, `prominent` |
-| `coolNeutral` | `muted`, `default` |
-| `primary` | `muted`, `default`, `prominent` |
-| `primaryContrast` | `default`, `muted` |
-| `secondary` | `muted`, `default`, `prominent` |
-| `tertiary` | `muted`, `default`, `prominent` |
-| `brand` | `accent` |
+| Variant           | Prominence levels               |
+| ----------------- | ------------------------------- |
+| `neutral`         | `muted`, `default`, `prominent` |
+| `coolNeutral`     | `muted`, `default`              |
+| `primary`         | `muted`, `default`, `prominent` |
+| `primaryContrast` | `default`, `muted`              |
+| `secondary`       | `muted`, `default`, `prominent` |
+| `tertiary`        | `muted`, `default`, `prominent` |
+| `brand`           | `accent`                        |
 
 ### Text Presets
 
 Text presets are defined in `/src/components/utils/styles.ts` and consumed via the `Typography` component. Each preset specifies a font family, size, and weight.
 
-| Preset | Font | Size | Weight |
-|--------|------|------|--------|
-| `title-1` | serif | 4xl | bold |
-| `title-2` | serif | 3xl | bold |
-| `title-3` | serif | 2xl | bold |
-| `title-4` | serif | xl | bold |
-| `title-5` | serif | lg | bold |
-| `body-1` | serif | base | normal |
-| `body-2` | serif | lg | normal |
-| `body-small` | serif | sm | normal |
-| `subtitle-1` | sans-b | sm | normal |
-| `button-1` | sans-a | base | bold |
-| `button-2` | serif | base | bold |
+| Preset       | Font   | Size | Weight |
+| ------------ | ------ | ---- | ------ |
+| `title-1`    | serif  | 4xl  | bold   |
+| `title-2`    | serif  | 3xl  | bold   |
+| `title-3`    | serif  | 2xl  | bold   |
+| `title-4`    | serif  | xl   | bold   |
+| `title-5`    | serif  | lg   | bold   |
+| `body-1`     | serif  | base | normal |
+| `body-2`     | serif  | lg   | normal |
+| `body-small` | serif  | sm   | normal |
+| `subtitle-1` | sans-b | sm   | normal |
+| `button-1`   | sans-a | base | bold   |
+| `button-2`   | serif  | base | bold   |
 
 ### Fonts
 
 Three font families are defined in `main.css` via `@theme` (sourced from [Modern Font Stacks](https://modernfontstacks.com)):
 
-| Token | Primary font | Category |
-|-------|-------------|----------|
-| `font-serif` | Charter | Transitional |
-| `font-sans-a` | Seravek / Gill Sans Nova | Humanist |
-| `font-sans-b` | Optima / Candara | Classical Humanist |
+| Token         | Primary font             | Category           |
+| ------------- | ------------------------ | ------------------ |
+| `font-serif`  | Charter                  | Transitional       |
+| `font-sans-a` | Seravek / Gill Sans Nova | Humanist           |
+| `font-sans-b` | Optima / Candara         | Classical Humanist |
 
 ### Spacing Scale
 
 A 1–7 semantic spacing scale is defined in `/src/components/utils/spacing.ts`. Components accept a `SpaceSetting` (1–7) rather than raw Tailwind values, keeping spacing consistent.
 
-| Level | Tailwind value | rem |
-|-------|---------------|-----|
-| 1 | `1.5` | 0.375 |
-| 2 | `3` | 0.75 |
-| 3 | `4` | 1 |
-| 4 | `6` | 1.5 |
-| 5 | `8` | 2 |
-| 6 | `12` | 3 |
-| 7 | `16` | 4 |
+| Level | Tailwind value | rem   |
+| ----- | -------------- | ----- |
+| 1     | `1.5`          | 0.375 |
+| 2     | `3`            | 0.75  |
+| 3     | `4`            | 1     |
+| 4     | `6`            | 1.5   |
+| 5     | `8`            | 2     |
+| 6     | `12`           | 3     |
+| 7     | `16`           | 4     |
 
 ---
 
@@ -330,14 +330,14 @@ For internet resources that follow the standard shape, use `getBasicInternetReso
 
 **Path aliases** (defined in `tsconfig.json`):
 
-| Alias | Maps to |
-|-------|---------|
-| `@ui/*` | `src/components/*` |
-| `@content/*` | `src/content/*` |
+| Alias                   | Maps to                     |
+| ----------------------- | --------------------------- |
+| `@ui/*`                 | `src/components/*`          |
+| `@content/*`            | `src/content/*`             |
 | `@sanity-integration/*` | `src/integrations/sanity/*` |
 
 ---
 
 ## Contributing
 
-We welcome contributions of all sizes and skill levels. See the [Contributing guide](./CONTRIBUTING.md) for more information.
+We welcome contributions of all sizes and skill levels. See the [Contributing guide](./CONTRIBUTING.md) for more information
