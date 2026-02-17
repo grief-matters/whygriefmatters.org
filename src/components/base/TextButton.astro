@@ -1,15 +1,11 @@
 ---
 import type { Polymorphic } from "astro/types";
-import type {
-  OnSurfaceColorVariant,
-  TextPreset,
-} from "src/components/utils/styles";
-import { textPresetClassMap } from "src/components/utils/styles";
+import { textPresetClassMap, type OnSurfaceColorVariant, type TextPreset } from "@ui/utils/styles";
 
 type TextButtonTag = "button" | "a";
 
 type Props<T extends TextButtonTag = "button"> = Polymorphic<{ as: T }> & {
-  color?: OnSurfaceColorVariant;
+  colorVariant?: OnSurfaceColorVariant;
   variant?: TextPreset;
   hoverToMuted?: boolean;
   label?: string;
@@ -17,7 +13,7 @@ type Props<T extends TextButtonTag = "button"> = Polymorphic<{ as: T }> & {
 
 const {
   as: Tag = "button",
-  color = "primary",
+  colorVariant = "primary",
   variant = "button-1",
   hoverToMuted = true,
   label,
@@ -26,12 +22,36 @@ const {
 
 const baseClasses = ["cursor-pointer", "transition-colors duration-300"];
 
+const textColorHoverMap: Record<OnSurfaceColorVariant, { defaultToMuted: string[]; mutedToDefault: string[] }> = {
+  primary: {
+    defaultToMuted: ["text-onSurface-primary--default", "hover:text-onSurface-primary--muted"],
+    mutedToDefault: ["text-onSurface-primary--muted", "hover:text-onSurface-primary--default"],
+  },
+  secondary: {
+    defaultToMuted: ["text-onSurface-secondary--default", "hover:text-onSurface-secondary--muted"],
+    mutedToDefault: ["text-onSurface-secondary--muted", "hover:text-onSurface-secondary--default"],
+  },
+  tertiary: {
+    defaultToMuted: ["text-onSurface-tertiary--default", "hover:text-onSurface-tertiary--muted"],
+    mutedToDefault: ["text-onSurface-tertiary--muted", "hover:text-onSurface-tertiary--default"],
+  },
+  coolNeutral: {
+    defaultToMuted: ["text-onSurface-coolNeutral--default", "hover:text-onSurface-coolNeutral--muted"],
+    mutedToDefault: ["text-onSurface-coolNeutral--muted", "hover:text-onSurface-coolNeutral--default"],
+  },
+  warmNeutral: {
+    defaultToMuted: ["text-onSurface-warmNeutral--default", "hover:text-onSurface-warmNeutral--muted"],
+    mutedToDefault: ["text-onSurface-warmNeutral--muted", "hover:text-onSurface-warmNeutral--default"],
+  },
+  primaryContrast: {
+    defaultToMuted: ["text-onSurface-primaryContrast--default", "hover:text-onSurface-primaryContrast--muted"],
+    mutedToDefault: ["text-onSurface-primaryContrast--muted", "hover:text-onSurface-primaryContrast--default"],
+  },
+};
+
 const colorClasses = hoverToMuted
-  ? [`text-onSurface-${color}--default`, `hover:text-onSurface-${color}--muted`]
-  : [
-      `text-onSurface-${color}--muted`,
-      `hover:text-onSurface-${color}--default`,
-    ];
+  ? textColorHoverMap[colorVariant].defaultToMuted
+  : textColorHoverMap[colorVariant].mutedToDefault;
 
 const hasDefaultSlot = Astro.slots.has("default");
 ---

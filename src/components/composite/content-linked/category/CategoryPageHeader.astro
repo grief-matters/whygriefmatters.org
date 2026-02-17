@@ -12,11 +12,11 @@ interface Props {
   parentCategory?: CollectionEntry<"categories">;
 }
 
-const props = Astro.props;
+const { categoryEntryData, parentCategory } = Astro.props;
 
 let resolvedSubcategories: Array<CollectionEntry<"categories">> | null = null;
-if (props.categoryEntryData.subcategories.length > 0) {
-  const c = await getEntries(props.categoryEntryData.subcategories);
+if (categoryEntryData.subcategories.length > 0) {
+  const c = await getEntries(categoryEntryData.subcategories);
   resolvedSubcategories = c;
 }
 ---
@@ -24,7 +24,7 @@ if (props.categoryEntryData.subcategories.length > 0) {
 <PageHeaderLayout
   surfaceVariant="primaryContrast"
   surfaceVariantKey={1}
-  image={props.categoryEntryData.image}
+  image={categoryEntryData.image}
 >
   <div class="md:h-full md:flex md:items-center">
     <div class="px-8 py-12 md:flex md:items-center md:justify-end md:grow">
@@ -35,23 +35,23 @@ if (props.categoryEntryData.subcategories.length > 0) {
             marginBottom={2}
             as="h1"
             variant="title-1"
-            color="primaryContrast"
+            colorVariant="primaryContrast"
           >
             {
-              props.categoryEntryData.displayTitle ??
-                props.categoryEntryData.title
+              categoryEntryData.displayTitle ??
+                categoryEntryData.title
             }
           </Typography>
           <!-- description -->
           {
-            props.categoryEntryData.shortDescription && (
+            categoryEntryData.shortDescription && (
               <Typography
                 as="p"
                 variant="body-2"
-                color="primaryContrast"
+                colorVariant="primaryContrast"
                 marginBottom={2}
               >
-                {props.categoryEntryData.shortDescription}
+                {categoryEntryData.shortDescription}
               </Typography>
             )
           }
@@ -62,7 +62,7 @@ if (props.categoryEntryData.subcategories.length > 0) {
           resolvedSubcategories !== null &&
             resolvedSubcategories?.length > 0 && (
               <Stack spacing={3}>
-                <Typography color="primaryContrast" variant="title-4">
+                <Typography colorVariant="primaryContrast" variant="title-4">
                   {"Explore further:"}
                 </Typography>
                 <Stack as="ul" spacing={2} marginBottom={4}>
@@ -71,7 +71,7 @@ if (props.categoryEntryData.subcategories.length > 0) {
                       <Link
                         to={`/${c.data.slug}`}
                         label={c.data.title}
-                        color="primaryContrast"
+                        colorVariant="primaryContrast"
                       />
                     </li>
                   ))}
@@ -81,18 +81,18 @@ if (props.categoryEntryData.subcategories.length > 0) {
         }
         {/* button */}
         {
-          props.parentCategory && (
+          parentCategory && (
             <Button
               as="a"
               colorVariant="secondary"
-              href={`/${props.parentCategory.data.slug}`}
+              href={`/${parentCategory.data.slug}`}
               class="inline-block"
             >
               <Typography>
                 {"Part of "}
                 <strong class="text-bold">
-                  {props.parentCategory.data.displayTitle ??
-                    props.parentCategory.data.title}
+                  {parentCategory.data.displayTitle ??
+                    parentCategory.data.title}
                 </strong>
               </Typography>
             </Button>

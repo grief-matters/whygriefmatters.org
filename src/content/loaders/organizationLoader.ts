@@ -1,7 +1,6 @@
 import { loadSanityQuery } from "./sanityQueryLoader";
 
-import { zOrganization } from "@content/model/organization";
-import type { Organization } from "@content/model/organization";
+import { zOrganization, type Organization } from "@content/model/organization";
 import organizationQuery from "@content/queries/organization.groq?raw";
 
 let cachedOrganization: Organization | undefined;

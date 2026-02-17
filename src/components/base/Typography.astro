@@ -7,8 +7,8 @@ import {
   type OnSurfaceColorVariant,
   type TextPreset,
   type TextProminence,
-} from "../utils/styles";
-import type { SpaceSetting } from "src/components/utils/spacing";
+} from "@ui/utils/styles";
+import type { SpaceSetting } from "@ui/utils/spacing";
 
 type TextElement = "p" | "span" | "h1" | "h2" | "h3" | "h4";
 
@@ -16,7 +16,7 @@ type TextProps = {
   as: TextElement;
   variant?: TextPreset;
   prominence?: TextProminence;
-  color?: OnSurfaceColorVariant;
+  colorVariant?: OnSurfaceColorVariant;
   textAlign?: "center" | "left";
   marginBottom?: SpaceSetting;
   bold?: boolean;
@@ -40,7 +40,7 @@ const {
   textAlign = "left",
   variant = "body-1",
   prominence = "default",
-  color = "primary",
+  colorVariant = "primary",
   marginBottom,
   bold,
   italic,
@@ -55,7 +55,7 @@ const variantClasses = [
   italic ? "italic" : null,
   variant === "subtitle-1"
     ? textColorMap.coolNeutral.muted
-    : textColorMap[color][prominence],
+    : textColorMap[colorVariant][prominence],
   Tag.startsWith("h") ? "leading-8 text-balance" : "leading-7",
   textAlign === "center" ? "text-center" : null,
   marginBottom && marginBottomMap[marginBottom],

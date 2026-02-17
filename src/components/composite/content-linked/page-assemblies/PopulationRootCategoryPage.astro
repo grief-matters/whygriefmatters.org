@@ -86,7 +86,7 @@ const labelParts = await makeLabelPartsForPopulationResources(populationId);
               marginBottom={2}
               as="h1"
               variant="title-1"
-              color="primaryContrast"
+              colorVariant="primaryContrast"
             >
               {root.data.displayTitle ?? root.data.title}
             </Typography>
@@ -95,7 +95,7 @@ const labelParts = await makeLabelPartsForPopulationResources(populationId);
                 <Typography
                   as="p"
                   variant="body-2"
-                  color="primaryContrast"
+                  colorVariant="primaryContrast"
                   marginBottom={2}
                 >
                   {root.data.shortDescription}
@@ -105,7 +105,7 @@ const labelParts = await makeLabelPartsForPopulationResources(populationId);
             {
               filteredSubcategoryEntries.length > 0 && (
                 <Stack spacing={3}>
-                  <Typography color="primaryContrast" variant="title-4">
+                  <Typography colorVariant="primaryContrast" variant="title-4">
                     {"Explore further:"}
                   </Typography>
                   <Stack as="ul" spacing={2} marginBottom={4}>
@@ -114,7 +114,7 @@ const labelParts = await makeLabelPartsForPopulationResources(populationId);
                         <Link
                           to={`/${c.data.slug}/${populationEntry.data.slug}`}
                           label={c.data.title}
-                          color="primaryContrast"
+                          colorVariant="primaryContrast"
                         />
                       </li>
                     ))}
@@ -146,7 +146,7 @@ const labelParts = await makeLabelPartsForPopulationResources(populationId);
               href={`/${root.data.slug}`}
               class="inline-block"
             >
-              <Typography as="span" color="primaryContrast">
+              <Typography as="span" colorVariant="primaryContrast">
                 {"See all resources for this topic"}
               </Typography>
             </Button>

@@ -13,7 +13,7 @@ const populationSlugs = [
 const zPopulationSlug = z.enum(populationSlugs);
 export type PopulationSlug = z.infer<typeof zPopulationSlug>;
 
-export default z.object({
+export const zPopulation = z.object({
   name: z.string(),
   slug: zPopulationSlug,
   description: z.string().nullable(),

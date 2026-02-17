@@ -14,22 +14,22 @@ import {
   getSourceFromResourceUrl,
   isLink,
   type Link,
-} from "src/components/utils/helpers";
-import { resourceTypeIconConfigMap } from "src/components/utils/icons";
+} from "@ui/utils/helpers";
+import { resourceTypeIconConfigMap } from "@ui/utils/icons";
 
 interface Props {
   entry: CollectionEntry<BasicInternetResourceCollectionKey>;
 }
 
-const props = Astro.props;
+const { entry } = Astro.props;
 
 const lastReviewedDate = getLocaleDateStringFromIsoString(
-  props.entry.data.updatedAt,
+  entry.data.updatedAt,
 );
 
 let source: Link | null = null;
-if (props.entry.data.sourceWebsiteId) {
-  const sourceWebsiteEntry = await getEntry(props.entry.data.sourceWebsiteId);
+if (entry.data.sourceWebsiteId) {
+  const sourceWebsiteEntry = await getEntry(entry.data.sourceWebsiteId);
   source = {
     label: sourceWebsiteEntry.data.name,
     url: sourceWebsiteEntry.data.resourceUrl,
@@ -37,29 +37,29 @@ if (props.entry.data.sourceWebsiteId) {
 }
 
 const processedSource =
-  source ?? getSourceFromResourceUrl(props.entry.data.resourceUrl);
+  source ?? getSourceFromResourceUrl(entry.data.resourceUrl);
 
-const resourceType = collectionKeyToResourceTypeMap[props.entry.collection];
+const resourceType = collectionKeyToResourceTypeMap[entry.collection];
 
 const iconConfig = resourceTypeIconConfigMap[resourceType];
 ---
 
 <article
-  id={`resource--${props.entry.id}`}
-  data-resource-type={props.entry.collection}
+  id={`resource--${entry.id}`}
+  data-resource-type={entry.collection}
 >
   <Stack as="header" reverse>
     <div>
-      <LinkComp external variant="title-4" to={props.entry.data.resourceUrl}>
+      <LinkComp external variant="title-4" to={entry.data.resourceUrl}>
         <h4
-          id={props.entry.id}
+          id={entry.id}
           class="inline m-0"
-          set:text={props.entry.data.title}
+          set:text={entry.data.title}
         />
         <span class="inline-block">
           <Icon
             size={2}
-            color="primary"
+            colorVariant="primary"
             getIcon={(icons) => icons.arrowTopRightOnSquare}
           />
         </span>
@@ -73,7 +73,7 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
         processedSource !== null && (
           <div class:list={["flex gap-1.5 items-center"]}>
             <Icon
-              color={iconConfig.colorVariant}
+              colorVariant={iconConfig.colorVariant}
               getIcon={() => iconConfig.icon}
               size={1}
               display="inline"
@@ -101,7 +101,7 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
         lastReviewedDate && (
           <Typography variant="subtitle-1">
             {"last reviewed "}
-            <time datetime={props.entry.data.updatedAt}>
+            <time datetime={entry.data.updatedAt}>
               {lastReviewedDate}
             </time>
           </Typography>
@@ -110,6 +110,6 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
     </div>
   </Stack>
   <Typography>
-    {props.entry.data.description}
+    {entry.data.description}
   </Typography>
 </article>

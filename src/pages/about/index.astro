@@ -3,7 +3,7 @@ import { getCollection, getEntries, getEntry } from "astro:content";
 import kebabCase from "lodash/kebabCase";
 
 import type { SocialVal } from "@content/model/person";
-import type { IconKey } from "src/components/utils/icons";
+import type { IconKey } from "@ui/utils/icons";
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 import Container from "@ui/base/Container.astro";
@@ -79,13 +79,13 @@ const contentGroupData = aboutContentGroup[0].data;
               marginBottom={2}
               as="h1"
               variant="title-1"
-              color="primaryContrast"
+              colorVariant="primaryContrast"
             >
               {contentGroupData.title}
             </Typography>
           </Spacer>
           <Stack spacing={3}>
-            <Typography color="primaryContrast" variant="title-4">
+            <Typography colorVariant="primaryContrast" variant="title-4">
               {"Explore further:"}
             </Typography>
             <Stack as="ul" spacing={2} marginBottom={4}>
@@ -93,21 +93,21 @@ const contentGroupData = aboutContentGroup[0].data;
                 <Link
                   to={`/about/our-story`}
                   label={"Our Story"}
-                  color="primaryContrast"
+                  colorVariant="primaryContrast"
                 />
               </li>
               <li>
                 <Link
                   to={`/about/mission-and-values`}
                   label={"Mission and Values"}
-                  color="primaryContrast"
+                  colorVariant="primaryContrast"
                 />
               </li>
               <li>
                 <Link
                   to={`/about/team`}
                   label={"The Why Grief Matters Team"}
-                  color="primaryContrast"
+                  colorVariant="primaryContrast"
                 />
               </li>
             </Stack>

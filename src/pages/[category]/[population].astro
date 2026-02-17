@@ -104,17 +104,17 @@ export async function getStaticPaths() {
   return staticPaths;
 }
 
-const props = Astro.props;
+const { categoryEntry, populationEntry, internetResources, resourceTypes } = Astro.props;
 
-const labelMaker = labelMakerFnMap[props.populationEntry.data.slug];
-const labelParts = labelMaker(props.populationEntry.data.name);
+const labelMaker = labelMakerFnMap[populationEntry.data.slug];
+const labelParts = labelMaker(populationEntry.data.name);
 ---
 
 <SitePageLayout>
   <PageHeaderLayout
     surfaceVariant="primaryContrast"
     surfaceVariantKey={1}
-    image={props.populationEntry.data.image}
+    image={populationEntry.data.image}
   >
     <div class="md:h-full md:flex md:flex-col">
       <div class="md:h-full md:flex md:items-center">
@@ -124,22 +124,22 @@ const labelParts = labelMaker(props.populationEntry.data.name);
               marginBottom={2}
               as="h1"
               variant="title-1"
-              color="primaryContrast"
+              colorVariant="primaryContrast"
             >
               {
-                props.categoryEntry.data.displayTitle ??
-                  props.categoryEntry.data.title
+                categoryEntry.data.displayTitle ??
+                  categoryEntry.data.title
               }
             </Typography>
             {
-              props.categoryEntry.data.shortDescription && (
+              categoryEntry.data.shortDescription && (
                 <Typography
                   as="p"
                   variant="body-2"
-                  color="primaryContrast"
+                  colorVariant="primaryContrast"
                   marginBottom={2}
                 >
-                  {props.categoryEntry.data.shortDescription}
+                  {categoryEntry.data.shortDescription}
                 </Typography>
               )
             }
@@ -162,10 +162,10 @@ const labelParts = labelMaker(props.populationEntry.data.name);
             <Button
               as="a"
               colorVariant="primaryContrast"
-              href={`/${props.categoryEntry.data.slug}`}
+              href={`/${categoryEntry.data.slug}`}
               class="inline-block"
             >
-              <Typography as="span" color="primaryContrast">
+              <Typography as="span" colorVariant="primaryContrast">
                 {"See all resources for this topic"}
               </Typography>
             </Button>
@@ -176,13 +176,13 @@ const labelParts = labelMaker(props.populationEntry.data.name);
   </PageHeaderLayout>
   {/* Category Description */}
   {
-    props.categoryEntry.data.description && (
+    categoryEntry.data.description && (
       <LayoutSurface paddingY={6}>
         <Container paddingX={4}>
           <PortableTextContentBlock
             textVariant="prominent-first"
             textAlign="center"
-            portableText={props.categoryEntry.data.description}
+            portableText={categoryEntry.data.description}
           />
         </Container>
       </LayoutSurface>
@@ -191,8 +191,8 @@ const labelParts = labelMaker(props.populationEntry.data.name);
 
   <LayoutSurface as="section" paddingX={2} paddingY={5}>
     <ResourceListingsOrchestrator
-      internetResources={props.internetResources}
-      resourceTypes={props.resourceTypes}
+      internetResources={internetResources}
+      resourceTypes={resourceTypes}
     />
   </LayoutSurface>
 </SitePageLayout>

@@ -76,7 +76,7 @@ export const zInternetResourceReference = z.object({
 /**
  * Default export is the standard Zod schema for a basic Internet Resource
  */
-export default z.object({
+export const zBasicInternetResource = z.object({
   id: z.string(),
   title: z.string(),
   updatedAt: z.string().datetime(),

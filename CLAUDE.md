@@ -33,22 +33,21 @@ npm run preview   # Preview production build on Cloudflare
 │   ├── /queries      # GROQ queries (.groq files)
 │   └── /model        # TypeScript types & Zod schemas
 ├── /pages            # Astro routes
-├── /ui               # UI components (tiered architecture)
-│   ├── /primitives   # Atomic components (Link, Stack, Container)
-│   ├── /composites   # Feature components (Card, ResourceListing)
-│   ├── /orchestrators # Smart data-rendering components
-│   └── /layouts      # Page layouts (Shell)
+├── /components       # UI components (tiered architecture, alias: @ui/)
+│   ├── /base         # Atomic components (Link, Stack, Container)
+│   ├── /composite    # Feature components (Card, ResourceListing)
+│   ├── /scripted     # Smart data-rendering components
+│   ├── /layouts      # Page layouts (Shell)
+│   └── /utils        # Shared utilities (styles, spacing, icons, helpers)
 ├── /integrations/sanity  # Sanity client setup
 └── /styles           # Global CSS & design tokens
 ```
 
 ## Path Aliases
 
-- `@ui/*` - UI components
-- `@content/*` - Content models and loaders
-- `@styles/*` - Stylesheets
-- `@server/*` - Server-side code
-- `@sanity-integration/*` - Sanity client
+- `@ui/*` - UI components (`src/components/*`)
+- `@content/*` - Content models and loaders (`src/content/*`)
+- `@sanity-integration/*` - Sanity client (`src/integrations/sanity/*`)
 
 ## Key Conventions
 

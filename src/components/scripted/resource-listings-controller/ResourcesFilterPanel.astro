@@ -7,14 +7,14 @@ import Button from "@ui/base/Button.astro";
 import ContentSurface from "@ui/base/ContentSurface.astro";
 import Icon from "@ui/base/Icon.astro";
 import Typography from "@ui/base/Typography.astro";
-import { resourceTypeIconConfigMap } from "src/components/utils/icons";
+import { resourceTypeIconConfigMap } from "@ui/utils/icons";
 import startCase from "lodash/startCase";
 
 interface Props {
   resourceTypes: Array<InternetResourceCollectionKey>;
 }
 
-const props = Astro.props;
+const { resourceTypes } = Astro.props;
 ---
 
 <ContentSurface variant="neutral" prominence="muted" paddingY={3} paddingX={5}>
@@ -22,7 +22,7 @@ const props = Astro.props;
     <Typography
       as="h2"
       variant="title-4"
-      color="warmNeutral"
+      colorVariant="warmNeutral"
       set:text="Filter by:"
     />
     <Button
@@ -35,7 +35,7 @@ const props = Astro.props;
   </div>
   <div class="flex flex-wrap gap-4 sm:grid sm:grid-cols-3">
     {
-      props.resourceTypes.map((resourceType: InternetResourceCollectionKey) => (
+      resourceTypes.map((resourceType: InternetResourceCollectionKey) => (
         <Button
           id={`${resourceType}--filter-btn`}
           class:list={[
@@ -57,14 +57,14 @@ const props = Astro.props;
                   collectionKeyToResourceTypeMap[resourceType]
                 ].icon
               }
-              color={
+              colorVariant={
                 resourceTypeIconConfigMap[
                   collectionKeyToResourceTypeMap[resourceType]
                 ].colorVariant
               }
             />
             <Typography
-              color={"warmNeutral"}
+              colorVariant={"warmNeutral"}
               variant={"button-2"}
               set:text={startCase(resourceType)}
             />

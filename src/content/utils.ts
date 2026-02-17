@@ -4,7 +4,8 @@ import {
   type CollectionEntry,
 } from "astro:content";
 
-import zBasicInternetResource, {
+import {
+  zBasicInternetResource,
   type InternetResourceType,
 } from "./model/internetResource";
 import { loadSanityQuery } from "./loaders/sanityQueryLoader";

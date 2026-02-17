@@ -1,7 +1,7 @@
 import { reference, z } from "astro:content";
 import { zSanityImage } from "./image";
 
-export default z.object({
+export const zWebsite = z.object({
   id: z.string(),
   name: z.string(),
   updatedAt: z.string().datetime(),

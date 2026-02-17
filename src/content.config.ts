@@ -10,15 +10,15 @@ import personGroupsQuery from "@content/queries/personGroups.groq?raw";
 import populationsQuery from "@content/queries/populations.groq?raw";
 import websitesQuery from "@content/queries/websites.groq?raw";
 
-import zApp from "@content/model/app";
-import zCategory from "@content/model/category";
+import { zApp } from "@content/model/app";
+import { zCategory } from "@content/model/category";
 import zContentBlock from "@content/model/contentBlock";
 import zContentGroup from "@content/model/contentGroup";
 import zImageCollection from "@content/model/imageCollection";
 import zPerson from "@content/model/person";
 import zPersonGroup from "@content/model/personGroup";
-import zPopulation from "@content/model/population";
-import zWebsite from "@content/model/website";
+import { zPopulation } from "@content/model/population";
+import { zWebsite } from "@content/model/website";
 
 import { loadSanityQuery } from "@content/loaders/sanityQueryLoader";
 import { getBasicInternetResourceCollectionDef } from "@content/utils";

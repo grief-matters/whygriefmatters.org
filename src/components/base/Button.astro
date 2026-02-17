@@ -1,8 +1,7 @@
 ---
 import type { Polymorphic } from "astro/types";
 import Typography from "./Typography.astro";
-import type { SurfaceColorVariant } from "src/components/utils/styles";
-import type { TextPreset } from "src/components/utils/styles";
+import type { SurfaceColorVariant, TextPreset } from "@ui/utils/styles";
 
 type ButtonTag = "a" | "button";
 type StyleVariant = "outlined" | "filled";
@@ -83,7 +82,7 @@ const hasDefaultSlot = Astro.slots.has("default");
       <slot />
     ) : (
       <Typography
-        color={
+        colorVariant={
           colorVariant === "neutral"
             ? "warmNeutral"
             : colorVariant === "donate"

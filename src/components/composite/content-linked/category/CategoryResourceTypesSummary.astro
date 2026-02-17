@@ -8,8 +8,8 @@ import Button from "@ui/base/Button.astro";
 import Icon from "@ui/base/Icon.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import { resourceTypeIconConfigMap } from "src/components/utils/icons";
-import type { OnSurfaceColorVariant } from "src/components/utils/styles";
+import { resourceTypeIconConfigMap } from "@ui/utils/icons";
+import type { OnSurfaceColorVariant } from "@ui/utils/styles";
 import startCase from "lodash/startCase";
 import sum from "lodash/sum";
 import { getResourceTypeCountsForCategory } from "@ui/utils/nav-utils";
@@ -89,12 +89,12 @@ function getOtherResourcesLabel(count: number) {
 ---
 
 <Stack spacing={2}>
-  <Typography variant="title-4" color={colorVariant}>
+  <Typography variant="title-4" colorVariant={colorVariant}>
     {"Resources on this topic"}
   </Typography>
   {
     totalResourceCount > 25 && (
-      <Typography color={colorVariant}>
+      <Typography colorVariant={colorVariant}>
         {`We have collected over ${Math.floor(totalResourceCount / 10) * 10} resources across this topic`}
       </Typography>
     )
@@ -127,14 +127,14 @@ function getOtherResourcesLabel(count: number) {
             <span class="flex items-center gap-1">
               <Icon
                 size={2}
-                color={iconConfig.colorVariant}
+                colorVariant={iconConfig.colorVariant}
                 getIcon={() => iconConfig.icon}
               />
               <Typography
                 as="span"
                 set:text={`${count} ${startCase(collectionKey)}`}
                 variant="button-2"
-                color={colorVariant}
+                colorVariant={colorVariant}
               />
             </span>
           </Button>
@@ -144,7 +144,7 @@ function getOtherResourcesLabel(count: number) {
   </Stack>
   {
     otherResourcesCount > 0 && (
-      <Typography color={colorVariant}>
+      <Typography colorVariant={colorVariant}>
         {getOtherResourcesLabel(otherResourcesCount)}
       </Typography>
     )

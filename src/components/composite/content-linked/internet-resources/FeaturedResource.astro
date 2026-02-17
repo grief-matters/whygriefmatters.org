@@ -6,7 +6,7 @@ import type { BasicInternetResourceCollectionKey } from "@content/collections";
 import {
   getSourceFromResourceUrl,
   getSourceLinkFromWebsiteRef,
-} from "src/components/utils/helpers";
+} from "@ui/utils/helpers";
 import Typography from "@ui/base/Typography.astro";
 import Card from "@ui/composite/Card.astro";
 import ResourceSource from "./ResourceSource.astro";
@@ -16,12 +16,12 @@ interface Props {
   fullHeight?: boolean;
 }
 
-const props = Astro.props;
+const { resourceRef, fullHeight } = Astro.props;
 
-const { data } = await getEntry(props.resourceRef);
+const { data } = await getEntry(resourceRef);
 if (!data) {
   throw new Error(
-    `[BasicFeaturedResource] could not get resource from reference: ${props.resourceRef.id}`,
+    `[BasicFeaturedResource] could not get resource from reference: ${resourceRef.id}`,
   );
 }
 
@@ -36,7 +36,7 @@ const image = data.image ? { image: data.image.image, altText: "" } : null;
 
 <Card
   external
-  fullHeight={props.fullHeight}
+  fullHeight={fullHeight}
   image={image}
   title={data.title}
   titleHref={data.resourceUrl}

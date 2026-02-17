@@ -13,12 +13,12 @@ import LayoutSurface, {
 import Link from "@ui/base/Link.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import { spaceSettingKeys } from "src/components/utils/spacing";
+import { spaceSettingKeys } from "@ui/utils/spacing";
 import {
   type Prominence,
   colorVariants,
   textPresets,
-} from "src/components/utils/styles";
+} from "@ui/utils/styles";
 import startCase from "lodash/startCase";
 
 const org = await getOrganization();
@@ -122,14 +122,14 @@ const codeClasses =
           ([1, 2, 3, 4] as LayoutSurfaceVariantKey[]).map((n) => (
             <LayoutSurface as="div" variant={variant} variantKey={n}>
               <Container paddingX={1} paddingY={1}>
-                <Typography color="coolNeutral">{`${variant} - ${n}`}</Typography>
+                <Typography colorVariant="coolNeutral">{`${variant} - ${n}`}</Typography>
               </Container>
             </LayoutSurface>
           ))
         ) : (
           <LayoutSurface as="div" variant={variant}>
             <Container paddingX={1} paddingY={1}>
-              <Typography color={variant}>{variant}</Typography>
+              <Typography colorVariant={variant}>{variant}</Typography>
             </Container>
           </LayoutSurface>
         ),
@@ -156,7 +156,7 @@ const codeClasses =
                   prominence={p}
                 >
                   <Typography
-                    color={variant === "neutral" ? "warmNeutral" : variant}
+                    colorVariant={variant === "neutral" ? "warmNeutral" : variant}
                     set:html={`The <code class="${codeClasses}">${variant}-${p}</code> content surface using matched typography color.`}
                   />
                 </ContentSurface>

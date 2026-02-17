@@ -1,7 +1,7 @@
 ---
-import { iconMap, type IconMapValue } from "src/components/utils/icons";
-import type { OnSurfaceColorVariant } from "src/components/utils/styles";
-import { assertNever } from "src/components/utils/assertNever";
+import { iconMap, type IconMapValue } from "@ui/utils/icons";
+import { type OnSurfaceColorVariant } from "@ui/utils/styles";
+import { assertNever } from "@ui/utils/assertNever";
 
 type ColorVariantMap = Record<OnSurfaceColorVariant, Array<string>>;
 type IconSize = 1 | 2 | 3;
@@ -24,22 +24,22 @@ const sizeMap: Record<IconSize, string> = {
 
 interface Props {
   getIcon: (icons: typeof iconMap) => IconMapValue;
-  color?: OnSurfaceColorVariant;
+  colorVariant?: OnSurfaceColorVariant;
   size?: IconSize;
   display?: "block" | "inline";
 }
 
-const props = Astro.props;
+const { getIcon, colorVariant, size, display } = Astro.props;
 
-const icon = props.getIcon(iconMap);
+const icon = getIcon(iconMap);
 
 const classes = [
-  sizeMap[props.size ?? 2],
-  props.display,
-  props.display === "inline" && "inline align-middle",
-  props.display === "block" && "block",
-  props.color
-    ? (colorVariantMap[props.color] ?? "stroke-current")
+  sizeMap[size ?? 2],
+  display,
+  display === "inline" && "inline align-middle",
+  display === "block" && "block",
+  colorVariant
+    ? (colorVariantMap[colorVariant] ?? "stroke-current")
     : "stroke-current",
 ];
 ---

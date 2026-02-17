@@ -1,8 +1,8 @@
 import { z } from "astro:content";
 
-import zBaseInternetResource from "@content/model/internetResource";
+import { zBasicInternetResource } from "@content/model/internetResource";
 
-export default zBaseInternetResource
+export const zApp = zBasicInternetResource
   .extend({
     resourceUrl: z.string().url().nullable(),
     appleUrl: z.string().url().nullable(),

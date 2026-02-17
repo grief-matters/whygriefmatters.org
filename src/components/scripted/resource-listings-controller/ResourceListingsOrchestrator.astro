@@ -9,7 +9,7 @@ import startCase from "lodash/startCase";
 import Container from "@ui/base/Container.astro";
 import Link from "@ui/base/Link.astro";
 import Button from "@ui/base/Button.astro";
-import { textColorMap } from "src/components/utils/styles";
+import { textColorMap } from "@ui/utils/styles";
 import ResourceListingRenderer from "@ui/composite/content-linked/internet-resources/ResourceListingRenderer.astro";
 import ResourcesFilterPanel from "./ResourcesFilterPanel.astro";
 
@@ -18,14 +18,14 @@ interface Props {
   internetResources: InternetResourceEntries;
 }
 
-const props = Astro.props;
+const { resourceTypes, internetResources } = Astro.props;
 ---
 
 <resource-filter-controller>
   <!-- Main content column -->
   <Stack spacing={5}>
     <Container>
-      <ResourcesFilterPanel resourceTypes={props.resourceTypes} />
+      <ResourcesFilterPanel resourceTypes={resourceTypes} />
     </Container>
     <div
       class:list={[
@@ -39,12 +39,12 @@ const props = Astro.props;
             <Typography
               as="p"
               variant="title-4"
-              color="warmNeutral"
+              colorVariant="warmNeutral"
               set:text="Jump to"
             />
             <Stack>
               {
-                props.resourceTypes.map((type) => (
+                resourceTypes.map((type) => (
                   <div>
                     <a
                       data-jump-link={type}
@@ -64,7 +64,7 @@ const props = Astro.props;
               }
             </Stack>
             <span class="italic">
-              <Link to="#" label={"Back to Top"} color="warmNeutral" />
+              <Link to="#" label={"Back to Top"} colorVariant="warmNeutral" />
             </span>
           </Stack>
         </div>
@@ -89,7 +89,7 @@ const props = Astro.props;
               <Typography
                 as="p"
                 variant="title-4"
-                color="warmNeutral"
+                colorVariant="warmNeutral"
                 set:text="Jump to"
               />
               <button
@@ -101,7 +101,7 @@ const props = Astro.props;
             </div>
             <Stack>
               {
-                props.resourceTypes.map((type) => (
+                resourceTypes.map((type) => (
                   <div>
                     <a
                       data-jump-link={type}
@@ -121,14 +121,14 @@ const props = Astro.props;
               }
             </Stack>
             <span class="italic">
-              <Link to="#" label={"Back to Top"} color="warmNeutral" />
+              <Link to="#" label={"Back to Top"} colorVariant="warmNeutral" />
             </span>
           </Stack>
         </div>
       </div>
       <div class="hidden lg:block"></div>
       <Container>
-        <ResourceListingRenderer internetResources={props.internetResources} />
+        <ResourceListingRenderer internetResources={internetResources} />
       </Container>
     </div>
   </Stack>

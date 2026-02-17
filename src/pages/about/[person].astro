@@ -29,7 +29,7 @@ export async function getStaticPaths() {
   }));
 }
 
-const props = Astro.props;
+const { personData } = Astro.props;
 ---
 
 <SitePageLayout>
@@ -37,15 +37,15 @@ const props = Astro.props;
     <Container paddingX={4} paddingY={4} size={2}>
       <div class="space-y-3 md:gap-6 md:flex md:items-center md:justify-evenly">
         <Stack spacing={1}>
-          <Typography as="h1" variant="title-1" color="primaryContrast">
-            {props.personData.fullName}
+          <Typography as="h1" variant="title-1" colorVariant="primaryContrast">
+            {personData.fullName}
           </Typography>
-          <Typography variant="title-4" color="primaryContrast">
-            {props.personData.role}
+          <Typography variant="title-4" colorVariant="primaryContrast">
+            {personData.role}
           </Typography>
-          <Typography color="primaryContrast">
+          <Typography colorVariant="primaryContrast">
             {
-              `Learn more about our ${props.personData.role}, ${props.personData.fullName}`
+              `Learn more about our ${personData.role}, ${personData.fullName}`
             }
           </Typography>
         </Stack>
@@ -59,8 +59,8 @@ const props = Astro.props;
             <SanityImage
               useFallback={false}
               aspect="square"
-              image={props.personData.avatar !== null
-                ? { image: props.personData.avatar, altText: "" }
+              image={personData.avatar !== null
+                ? { image: personData.avatar, altText: "" }
                 : null}
             />
           </ContentSurface>
@@ -71,10 +71,10 @@ const props = Astro.props;
   <LayoutSurface paddingY={6} as="section">
     <Container paddingX={2}>
       {
-        props.personData.shortBio && (
+        personData.shortBio && (
           <PortableTextContentBlock
             textAlign="center"
-            portableText={props.personData.shortBio}
+            portableText={personData.shortBio}
           />
         )
       }
@@ -89,9 +89,9 @@ const props = Astro.props;
         marginBottom={3}
       />
       {
-        props.personData.personalStory && (
+        personData.personalStory && (
           <PortableTextContentBlock
-            portableText={props.personData.personalStory}
+            portableText={personData.personalStory}
           />
         )
       }

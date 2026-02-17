@@ -9,7 +9,7 @@ import Typography from "@ui/base/Typography.astro";
 import {
   paddingXSettingMap,
   paddingYSettingMap,
-} from "src/components/utils/spacing";
+} from "@ui/utils/spacing";
 import ContentSurface from "@ui/base/ContentSurface.astro";
 import type { CategoryTreeNode } from "@ui/utils/nav-utils";
 import CategoryResourceTypesSummary from "@ui/composite/content-linked/category/CategoryResourceTypesSummary.astro";
@@ -134,13 +134,13 @@ const { navTree } = Astro.props;
                               to={tier3.href}
                               label={tier3.title}
                               variant="body-2"
-                              color="warmNeutral"
+                              colorVariant="warmNeutral"
                             />
                           ) : (
                             <Typography
                               as="span"
                               variant="body-2"
-                              color="warmNeutral"
+                              colorVariant="warmNeutral"
                               set:text={tier3.title}
                             />
                           )}
@@ -154,12 +154,12 @@ const { navTree } = Astro.props;
                                       <Link
                                         to={tier4.href}
                                         label={tier4.title}
-                                        color="warmNeutral"
+                                        colorVariant="warmNeutral"
                                       />
                                     ) : (
                                       <Typography
                                         as="span"
-                                        color="warmNeutral"
+                                        colorVariant="warmNeutral"
                                         set:text={tier4.title}
                                       />
                                     )}
@@ -186,7 +186,7 @@ const { navTree } = Astro.props;
                 </div>
                 {tier2.href && (
                   <div class="my-4 grow flex items-end justify-end">
-                    <Link to={tier2.href} variant="title-5" color="warmNeutral">
+                    <Link to={tier2.href} variant="title-5" colorVariant="warmNeutral">
                       <span class="font-normal">{"Explore "}</span>
                       {tier2.title}
                     </Link>

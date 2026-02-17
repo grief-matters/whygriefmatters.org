@@ -4,7 +4,7 @@ import { zImage } from "./image";
 import { zInternetResourceReference } from "./internetResource";
 import { zPortableText } from "./portableText";
 
-export default z.object({
+export const zCategory = z.object({
   id: z.string(),
   slug: z.string(),
   title: z.string(),

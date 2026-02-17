@@ -3,11 +3,11 @@ import { getEntry, type ReferenceDataEntry } from "astro:content";
 
 import type { InternetResourceType } from "@content/model/internetResource";
 
-import { isNonEmptyString } from "src/components/utils/helpers";
+import { isNonEmptyString } from "@ui/utils/helpers";
 
 import EmphasizedPageLink from "@ui/base/EmphasizedPageLink.astro";
 import Link from "@ui/base/Link.astro";
-import type { TextPreset } from "src/components/utils/styles";
+import type { TextPreset } from "@ui/utils/styles";
 
 interface BaseProps {
   emphasized?: boolean;

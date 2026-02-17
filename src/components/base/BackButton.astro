@@ -7,7 +7,7 @@ const attrs = Astro.props;
 
 <button type="button" color="coolNeutral" {...attrs}>
   <span class="flex items-center gap-1">
-    <Icon color="primary" getIcon={(icons) => icons.chevronLeft} />
-    <Typography variant="body-2" color="primary" set:text={"Back"} />
+    <Icon colorVariant="primary" getIcon={(icons) => icons.chevronLeft} />
+    <Typography variant="body-2" colorVariant="primary" set:text={"Back"} />
   </span>
 </button>

@@ -4,13 +4,13 @@ import {
   textPresetClassMap,
   type OnSurfaceColorVariant,
   type TextPreset,
-} from "../utils/styles";
+} from "@ui/utils/styles";
 
 interface Props {
   to: string;
   label?: string;
   variant?: TextPreset;
-  color?: OnSurfaceColorVariant;
+  colorVariant?: OnSurfaceColorVariant;
   external?: boolean;
   textAlign?: "center" | "left";
 }
@@ -19,7 +19,7 @@ const {
   to,
   label,
   variant = "body-1",
-  color = "primary",
+  colorVariant = "primary",
   external = false,
   textAlign,
   ...attrs
@@ -57,11 +57,11 @@ const decorationStyle =
     decorationStyle,
     textPresetClassMap[variant],
     "underline underline-offset-4",
-    decorationColorMap[color],
+    decorationColorMap[colorVariant],
     "transition duration-300",
     variant === "subtitle-1"
       ? textColorMap.coolNeutral.muted
-      : textColorMap[color]["default"],
+      : textColorMap[colorVariant]["default"],
     textAlign && "text-center inline-block",
   ]}
   href={to}

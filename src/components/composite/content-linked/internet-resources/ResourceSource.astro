@@ -5,7 +5,7 @@ import {
   isLink,
   isNonEmptyString,
   type Link,
-} from "src/components/utils/helpers";
+} from "@ui/utils/helpers";
 
 interface Props {
   source: string | Link;
@@ -25,7 +25,7 @@ const { source, prefaceTextOverride } = Astro.props;
         to={source.url}
         label={source.label}
         variant="subtitle-1"
-        color="coolNeutral"
+        colorVariant="coolNeutral"
       />
     ) : (
       source
