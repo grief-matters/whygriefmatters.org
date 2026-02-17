@@ -38,13 +38,15 @@ const contentBlock = await getEntry(contentBlockRef);
     switch (contentItem.contentType) {
       case "headingText":
         return (
-          <Typography as="h2" variant="title-2" textAlign="center">
-            {contentItem.text}
-          </Typography>
+          <Container paddingX={3}>
+            <Typography as="h2" variant="title-2" textAlign="center">
+              {contentItem.text}
+            </Typography>
+          </Container>
         );
       case "richTextContentBlock":
         return (
-          <Container paddingX={1}>
+          <Container paddingX={3}>
             <PortableTextContentBlock
               textAlign={textAlign}
               portableText={contentItem.portableText}
@@ -56,7 +58,7 @@ const contentBlock = await getEntry(contentBlockRef);
         );
       case "richTextWithHeading":
         return (
-          <Container>
+          <Container paddingX={3}>
             <Typography as="h3" variant="title-3" textAlign="center">
               {contentItem.headingText}
             </Typography>
@@ -125,7 +127,7 @@ const contentBlock = await getEntry(contentBlockRef);
         );
       case "featuredWebsites":
         return (
-          <Container size={2}>
+          <Container paddingX={3} size={2}>
             <div class="grid grid-cols-2 md:grid-cols-3">
               {contentItem.websites.map((w) => (
                 <FeaturedWebsite websiteRef={w} />
@@ -147,7 +149,7 @@ const contentBlock = await getEntry(contentBlockRef);
         );
       case "resourcePageLink":
         return (
-          <Container>
+          <Container paddingX={3}>
             <div class={textAlign === "center" ? "text-center" : ""}>
               <DynamicPageLink
                 linkType={contentItem.contentType}
@@ -161,7 +163,7 @@ const contentBlock = await getEntry(contentBlockRef);
         );
       case "categoryPageLink":
         return (
-          <Container>
+          <Container paddingX={3}>
             <DynamicPageLink
               linkType={contentItem.contentType}
               label={contentItem.label}
@@ -172,7 +174,7 @@ const contentBlock = await getEntry(contentBlockRef);
       case "pageLinks":
         if (contentItem.showImages) {
           return (
-            <Container size={2} paddingX={1}>
+            <Container size={2} paddingX={3}>
               <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {contentItem.links.map((link) => (
                   <div>
@@ -191,7 +193,7 @@ const contentBlock = await getEntry(contentBlockRef);
         }
 
         return (
-          <Container>
+          <Container paddingX={3}>
             <PageLinksRenderer
               emphasized={contentItem.emphasized}
               links={contentItem.links}
