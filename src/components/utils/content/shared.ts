@@ -4,14 +4,16 @@ import {
 } from "@content/collections";
 import { getCollection } from "astro:content";
 
+import { buildCache } from "../cache";
+
 /**
  * Builds a Set of "categoryId:populationId" strings for O(1) existence checking.
  * Iterates each resource collection once. Result is memoized for the build.
  */
-let cachedExistenceSet: Set<string> | undefined;
-
 export async function buildResourceExistenceSet(): Promise<Set<string>> {
-  if (cachedExistenceSet) return cachedExistenceSet;
+  if (buildCache.resourceExistence) {
+    return buildCache.resourceExistence;
+  }
 
   const existenceSet = new Set<string>();
 
@@ -26,7 +28,7 @@ export async function buildResourceExistenceSet(): Promise<Set<string>> {
     }
   }
 
-  cachedExistenceSet = existenceSet;
+  buildCache.resourceExistence = existenceSet;
   return existenceSet;
 }
 

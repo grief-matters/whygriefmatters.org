@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
+import { buildCache } from "./cache";
 import { type CategoryTreeNode, buildCategoryTree } from "./content/category";
 import { buildUnderservedCommunitiesNode } from "./content/population";
 
@@ -6,10 +7,10 @@ import { buildUnderservedCommunitiesNode } from "./content/population";
  * Returns the full nav tree (category trees + underserved communities node).
  * Memoized so all pages share the same result during a build.
  */
-let cachedNavTree: CategoryTreeNode[] | undefined;
-
 export async function getNavTree(): Promise<CategoryTreeNode[]> {
-  if (cachedNavTree) return cachedNavTree;
+  if (buildCache.navTree) {
+    return buildCache.navTree;
+  }
 
   const categories = await getCollection("categories");
   if ((categories ?? []).length === 0) {
@@ -47,6 +48,6 @@ export async function getNavTree(): Promise<CategoryTreeNode[]> {
     navTree.push(underservedNode);
   }
 
-  cachedNavTree = navTree;
+  buildCache.navTree = navTree;
   return navTree;
 }

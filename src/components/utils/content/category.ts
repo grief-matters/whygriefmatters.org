@@ -2,6 +2,7 @@ import { getCollection, type CollectionEntry } from "astro:content";
 
 import { internetResourceCollectionKeys } from "@content/collections";
 
+import { buildCache } from "../cache";
 import type { ResourceTypeCounts } from "./shared";
 
 export interface CategoryTreeNode {
@@ -62,8 +63,6 @@ export function buildCategoryTree(
   };
 }
 
-const resourceTypeCountsCache = new Map<string, ResourceTypeCounts>();
-
 /**
  * Returns resource type counts for a category and all its descendants.
  * Memoized per categoryId so each category is computed at most once per build.
@@ -71,8 +70,10 @@ const resourceTypeCountsCache = new Map<string, ResourceTypeCounts>();
 export async function getResourceTypeCountsForCategory(
   categoryId: string,
 ): Promise<ResourceTypeCounts> {
-  const cached = resourceTypeCountsCache.get(categoryId);
-  if (cached) return cached;
+  const cached = buildCache.resourceTypeCounts.get(categoryId);
+  if (cached) {
+    return cached;
+  }
 
   const categoryEntries = await getCollection("categories");
   const allCategoryIds = getAllDescendantCategoryIds(
@@ -92,6 +93,6 @@ export async function getResourceTypeCountsForCategory(
     }
   }
 
-  resourceTypeCountsCache.set(categoryId, counts);
+  buildCache.resourceTypeCounts.set(categoryId, counts);
   return counts;
 }

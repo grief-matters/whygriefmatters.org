@@ -1,5 +1,7 @@
 import { internetResourceCollectionKeys } from "@content/collections";
 import { type CollectionEntry, getCollection } from "astro:content";
+
+import { buildCache } from "../cache";
 import {
   buildCategoryTree,
   getAllDescendantCategoryIds,
@@ -95,15 +97,15 @@ export function pruneTreeForPopulation(
  * Returns resource type counts for a given category + population (including descendants).
  * Memoized per categoryId:populationId so each combo is computed at most once per build.
  */
-const resourceTypeCountsPopulationCache = new Map<string, ResourceTypeCounts>();
-
 export async function getResourceTypeCountsForCategoryAndPopulation(
   categoryId: string,
   populationId: string,
 ): Promise<ResourceTypeCounts> {
   const cacheKey = `${categoryId}:${populationId}`;
-  const cached = resourceTypeCountsPopulationCache.get(cacheKey);
-  if (cached) return cached;
+  const cached = buildCache.resourceTypeCountsPopulation.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
 
   const categoryEntries = await getCollection("categories");
   const allCategoryIds = getAllDescendantCategoryIds(
@@ -126,6 +128,6 @@ export async function getResourceTypeCountsForCategoryAndPopulation(
     }
   }
 
-  resourceTypeCountsPopulationCache.set(cacheKey, counts);
+  buildCache.resourceTypeCountsPopulation.set(cacheKey, counts);
   return counts;
 }
