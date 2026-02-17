@@ -1,11 +1,14 @@
 ---
 import type { Polymorphic } from "astro/types";
-import type { SurfaceColorVariant } from "@ui/utils/styles";
+import type {
+  LayoutSurfaceVariantKey,
+  SurfaceColorVariant,
+} from "@styles/utils/color";
 import {
   paddingXSettingMap,
   paddingYSettingMap,
   type SpaceSetting,
-} from "@ui/utils/spacing";
+} from "@styles/utils/spacing";
 
 type SurfaceElement =
   | "div"
@@ -14,7 +17,6 @@ type SurfaceElement =
   | "section"
   | "header"
   | "footer";
-export type LayoutSurfaceVariantKey = 1 | 2 | 3 | 4;
 
 interface SurfaceOwnProps {
   as: SurfaceElement;

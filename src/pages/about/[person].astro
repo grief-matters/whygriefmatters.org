@@ -1,5 +1,10 @@
 ---
+import { getCollection, type CollectionEntry } from "astro:content";
+
+import kebabCase from "lodash/kebabCase";
+
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
 import Container from "@ui/base/Container.astro";
 import ContentSurface from "@ui/base/ContentSurface.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
@@ -8,8 +13,6 @@ import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import SanityImage from "@ui/base/SanityImage.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import { getCollection, type CollectionEntry } from "astro:content";
-import kebabCase from "lodash/kebabCase";
 
 interface Props {
   personData: CollectionEntry<"people">["data"];
@@ -44,9 +47,7 @@ const { personData } = Astro.props;
             {personData.role}
           </Typography>
           <Typography colorVariant="primaryContrast">
-            {
-              `Learn more about our ${personData.role}, ${personData.fullName}`
-            }
+            {`Learn more about our ${personData.role}, ${personData.fullName}`}
           </Typography>
         </Stack>
         <div class="flex justify-center">
@@ -90,9 +91,7 @@ const { personData } = Astro.props;
       />
       {
         personData.personalStory && (
-          <PortableTextContentBlock
-            portableText={personData.personalStory}
-          />
+          <PortableTextContentBlock portableText={personData.personalStory} />
         )
       }
       <div class="text-center my-6">

@@ -1,11 +1,12 @@
 ---
-import LayoutSurface from "@ui/base/LayoutSurface.astro";
-import Icon from "@ui/base/Icon.astro";
+import type { CategoryTreeNode } from "@ui/utils/content/category";
+
+import BackButton from "@ui/base/BackButton.astro";
 import Button from "@ui/base/Button.astro";
+import Icon from "@ui/base/Icon.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Typography from "@ui/base/Typography.astro";
 import TextButton from "@ui/base/TextButton.astro";
-import BackButton from "@ui/base/BackButton.astro";
-import type { CategoryTreeNode } from "@ui/utils/nav-utils";
 
 interface Props {
   navTree: CategoryTreeNode[];

@@ -1,10 +1,13 @@
 ---
+import { getCollection } from "astro:content";
+
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
 import Container from "@ui/base/Container.astro";
 import ContentSurface from "@ui/base/ContentSurface.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Stack from "@ui/base/Stack.astro";
-import { getCollection } from "astro:content";
+
 import ContentBlockRenderer from "../content-block/ContentBlockRenderer.astro";
 import CategoryPageHeader from "../category/CategoryPageHeader.astro";
 import CategorySummaryPanel from "../category/CategorySummaryPanel.astro";

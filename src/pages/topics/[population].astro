@@ -1,6 +1,7 @@
 ---
-import PopulationRootCategoryPage from "@ui/composite/content-linked/page-assemblies/PopulationRootCategoryPage.astro";
 import { getCollection } from "astro:content";
+
+import PopulationRootCategoryPage from "@ui/composite/content-linked/page-assemblies/PopulationRootCategoryPage.astro";
 
 export async function getStaticPaths() {
   const populationEntries = await getCollection("populations");

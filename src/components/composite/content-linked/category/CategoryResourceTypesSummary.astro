@@ -1,19 +1,22 @@
 ---
+import { getEntry } from "astro:content";
+import sum from "lodash/sum";
+import startCase from "lodash/startCase";
+
 import {
   collectionKeyToResourceTypeMap,
   type InternetResourceCollectionKey,
 } from "@content/collections";
 import { primaryResourceTypes } from "@content/model/internetResource";
+
+import type { OnSurfaceColorVariant } from "@styles/utils/color";
+import { resourceTypeIconConfigMap } from "@ui/utils/icon";
+import { getResourceTypeCountsForCategory } from "@ui/utils/content/category";
+
 import Button from "@ui/base/Button.astro";
 import Icon from "@ui/base/Icon.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import { resourceTypeIconConfigMap } from "@ui/utils/icons";
-import type { OnSurfaceColorVariant } from "@ui/utils/styles";
-import startCase from "lodash/startCase";
-import sum from "lodash/sum";
-import { getResourceTypeCountsForCategory } from "@ui/utils/nav-utils";
-import { getEntry } from "astro:content";
 
 interface Props {
   categoryId: string;

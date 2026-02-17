@@ -1,15 +1,16 @@
 ---
 import { getCollection, getEntries, getEntry } from "astro:content";
 
-import { getAllDescendantCategoryIds } from "@content/utils";
-import { buildResourceExistenceSet } from "@ui/utils/nav-utils";
+import type { ColorVariant } from "@styles/utils/color";
+import { buildResourceExistenceSet } from "@ui/utils/content/shared";
+import { getAllDescendantCategoryIds } from "@ui/utils/content/category";
+
 import Link from "@ui/base/Link.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import type { ColorVariant } from "@ui/utils/styles";
+import LinkButton from "@ui/base/LinkButton.astro";
 
 import CategoryResourceTypesSummary from "./CategoryResourceTypesSummary.astro";
-import LinkButton from "@ui/base/LinkButton.astro";
 
 interface Props {
   categoryId: string;

@@ -3,13 +3,9 @@ import {
   paddingXSettingMap,
   paddingYSettingMap,
   type SpaceSetting,
-} from "@ui/utils/spacing";
+} from "@styles/utils/spacing";
 
 type ContainerSize = 1 | 2;
-const containerSizeToTWClass: Record<ContainerSize, string> = {
-  1: "max-w-4xl",
-  2: "max-w-6xl",
-};
 
 interface Props {
   size?: ContainerSize;
@@ -17,6 +13,11 @@ interface Props {
   paddingY?: SpaceSetting;
   additiveClasses?: string[];
 }
+
+const containerSizeToTWClass: Record<ContainerSize, string> = {
+  1: "max-w-4xl",
+  2: "max-w-6xl",
+};
 
 const { size, paddingX, paddingY, additiveClasses } = Astro.props;
 ---

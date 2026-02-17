@@ -1,17 +1,13 @@
 ---
+import { paddingXSettingMap, paddingYSettingMap } from "@styles/utils/spacing";
+import type { CategoryTreeNode } from "@ui/utils/content/category";
+
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Button from "@ui/base/Button.astro";
 import Link from "@ui/base/Link.astro";
 import Stack from "@ui/base/Stack.astro";
-
 import Typography from "@ui/base/Typography.astro";
-
-import {
-  paddingXSettingMap,
-  paddingYSettingMap,
-} from "@ui/utils/spacing";
 import ContentSurface from "@ui/base/ContentSurface.astro";
-import type { CategoryTreeNode } from "@ui/utils/nav-utils";
 import CategoryResourceTypesSummary from "@ui/composite/content-linked/category/CategoryResourceTypesSummary.astro";
 
 interface Props {
@@ -186,7 +182,11 @@ const { navTree } = Astro.props;
                 </div>
                 {tier2.href && (
                   <div class="my-4 grow flex items-end justify-end">
-                    <Link to={tier2.href} variant="title-5" colorVariant="warmNeutral">
+                    <Link
+                      to={tier2.href}
+                      variant="title-5"
+                      colorVariant="warmNeutral"
+                    >
                       <span class="font-normal">{"Explore "}</span>
                       {tier2.title}
                     </Link>

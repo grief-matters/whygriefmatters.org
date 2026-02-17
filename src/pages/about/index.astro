@@ -3,9 +3,12 @@ import { getCollection, getEntries, getEntry } from "astro:content";
 import kebabCase from "lodash/kebabCase";
 
 import type { SocialVal } from "@content/model/person";
-import type { IconKey } from "@ui/utils/icons";
+
+import type { IconKey } from "@ui/utils/icon";
+
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
 import Container from "@ui/base/Container.astro";
 import ContentSurface from "@ui/base/ContentSurface.astro";
 import Icon from "@ui/base/Icon.astro";
@@ -16,6 +19,7 @@ import SanityImageComp from "@ui/base/SanityImage.astro";
 import Spacer from "@ui/base/Spacer.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
+
 import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
 
 const aboutContentGroup = await getCollection(

@@ -6,11 +6,10 @@ import { getOrganization } from "@content/loaders/organizationLoader";
 import Button from "@ui/base/Button.astro";
 import Link from "@ui/base/Link.astro";
 
-import { getNavTree } from "@ui/utils/nav-utils";
-
 import Search from "@ui/scripted/Search.astro";
 import DesktopNav from "@ui/scripted/main-nav/DesktopNav.astro";
 import MobileNav from "@ui/scripted/main-nav/MobileNav.astro";
+import { getNavTree } from "@ui/utils/main-nav";
 
 const org = await getOrganization();
 if (!org) {

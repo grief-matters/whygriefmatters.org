@@ -1,9 +1,11 @@
 ---
-import {
-  getSourceFromResourceUrl,
-  getSourceLinkFromWebsiteRef,
-} from "@ui/utils/helpers";
 import { getEntry, type ReferenceDataEntry } from "astro:content";
+
+import {
+  getSourceLinkFromWebsiteRef,
+  getSourceFromResourceUrl,
+} from "@ui/utils/content/content";
+
 import ResourceSource from "./ResourceSource.astro";
 
 interface Props {

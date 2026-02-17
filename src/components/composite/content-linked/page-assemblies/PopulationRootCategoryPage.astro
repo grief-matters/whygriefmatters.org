@@ -1,7 +1,14 @@
 ---
-import { makeLabelPartsForPopulationResources } from "@content/utils";
+import { getCollection, getEntry } from "astro:content";
+
+import { buildCategoryTree } from "@ui/utils/content/category";
+import { pruneTreeForPopulation } from "@ui/utils/content/population";
+import { buildResourceExistenceSet } from "@ui/utils/content/shared";
+import { makeLabelPartsForPopulationResources } from "@ui/utils/content/content";
+
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
 import Button from "@ui/base/Button.astro";
 import Container from "@ui/base/Container.astro";
 import ContentSurface from "@ui/base/ContentSurface.astro";
@@ -9,13 +16,7 @@ import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Link from "@ui/base/Link.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import {
-  buildResourceExistenceSet,
-  buildCategoryTree,
-  pruneTreeForPopulation,
-} from "@ui/utils/nav-utils";
 
-import { getCollection, getEntry } from "astro:content";
 import ContentBlockRenderer from "../content-block/ContentBlockRenderer.astro";
 import CategorySummaryPanel from "../category/CategorySummaryPanel.astro";
 

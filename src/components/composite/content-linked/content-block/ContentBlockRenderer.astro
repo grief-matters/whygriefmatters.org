@@ -1,25 +1,27 @@
 ---
 import { getEntry, type ReferenceDataEntry } from "astro:content";
 
-import { assertNever } from "@ui/utils/assertNever";
-
-import Container from "@ui/base/Container.astro";
-import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
-import Typography from "@ui/base/Typography.astro";
-import SanityImage from "@ui/base/SanityImage.astro";
-
-import Slider from "@ui/layouts/slider/Slider.astro";
-import Slide from "@ui/layouts/slider/Slide.astro";
 import type {
   CategoryPageLinkContentItem,
   ResourcePageLinkContentItem,
 } from "@content/model/contentBlock/pageLinksContentItem";
+
+import { assertNever } from "@ui/utils/ts-utils";
+
+import Slider from "@ui/layouts/slider/Slider.astro";
+import Slide from "@ui/layouts/slider/Slide.astro";
+
+import Container from "@ui/base/Container.astro";
 import Link from "@ui/base/Link.astro";
-import DynamicPageLink from "../DynamicPageLink.astro";
+import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
+import Typography from "@ui/base/Typography.astro";
+import SanityImage from "@ui/base/SanityImage.astro";
+
 import FeaturedResourceRenderer from "../internet-resources/FeaturedResourceRenderer.astro";
-import PageLinksRenderer from "../PageLinksRenderer.astro";
-import ResourcePageLinkCard from "../category/ResourcePageLinkCard.astro";
 import FeaturedWebsite from "../internet-resources/FeaturedWebsite.astro";
+import ResourcePageLinkCard from "../category/ResourcePageLinkCard.astro";
+import PageLinksRenderer from "../PageLinksRenderer.astro";
+import DynamicPageLink from "../DynamicPageLink.astro";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;

@@ -1,11 +1,12 @@
 ---
+import { getEntry, type ReferenceDataEntry } from "astro:content";
+import partition from "lodash/partition";
+
 import Container from "@ui/base/Container.astro";
 import Link from "@ui/base/Link.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import { getEntry, type ReferenceDataEntry } from "astro:content";
-import partition from "lodash/partition";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;

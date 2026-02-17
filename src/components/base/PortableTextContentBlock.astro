@@ -1,15 +1,12 @@
 ---
+import { clsx } from "clsx";
 import sanitizeHtml, { type AllowedAttribute } from "sanitize-html";
 import { toHTML } from "@portabletext/to-html";
-import { clsx } from "clsx";
 
 import type { PortableText } from "@content/model/portableText";
-import {
-  textColorMap,
-  textPresetClassMap,
-  type OnSurfaceColorVariant,
-  type TextPreset,
-} from "@ui/utils/styles";
+import { textColorMap, type OnSurfaceColorVariant } from "@styles/utils/color";
+import { textPresetClassMap, type TextPreset } from "@styles/utils/typography";
+
 import Stack from "./Stack.astro";
 
 interface Props {

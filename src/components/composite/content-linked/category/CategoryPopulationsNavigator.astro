@@ -1,9 +1,10 @@
 ---
-import LinkButton from "@ui/base/LinkButton.astro";
+import type { CollectionEntry } from "astro:content";
+
 import ContentSurface from "@ui/base/ContentSurface.astro";
+import LinkButton from "@ui/base/LinkButton.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import type { CollectionEntry } from "astro:content";
 
 interface Props {
   category: CollectionEntry<"categories">;

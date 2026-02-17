@@ -1,5 +1,6 @@
 import { defineCollection } from "astro:content";
 
+import basicInternetResourceQuery from "@content/queries/basicInternetResource.groq?raw";
 import appsQuery from "@content/queries/apps.groq?raw";
 import categoriesQuery from "@content/queries/categories.groq?raw";
 import contentBlocksQuery from "@content/queries/contentBlocks.groq?raw";
@@ -21,7 +22,30 @@ import { zPopulation } from "@content/model/population";
 import { zWebsite } from "@content/model/website";
 
 import { loadSanityQuery } from "@content/loaders/sanityQueryLoader";
-import { getBasicInternetResourceCollectionDef } from "@content/utils";
+import {
+  zBasicInternetResource,
+  type InternetResourceType,
+} from "@content/model/internetResource";
+
+/**
+ * Produces a standard content collection definition based any give resource type
+ *
+ * @param resourceType - must be a valid InternetResourceType
+ * @returns a preconfigured defineCollection method
+ */
+function getBasicInternetResourceCollectionDef(
+  resourceType: InternetResourceType,
+) {
+  return defineCollection({
+    loader: async () =>
+      loadSanityQuery({
+        query: basicInternetResourceQuery,
+        queryParams: { resourceType },
+        schema: zBasicInternetResource,
+      }),
+    schema: zBasicInternetResource,
+  });
+}
 
 export const collections = {
   // Internet Resources collections

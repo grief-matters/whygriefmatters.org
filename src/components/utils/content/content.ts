@@ -1,34 +1,43 @@
-import { zNonEmptyString } from "@content/model/utils";
 import { getEntry, type ReferenceDataEntry } from "astro:content";
 
-export function getLocaleDateStringFromIsoString(
-  isoStringDateTime: string,
-): string | null {
-  const d = new Date(isoStringDateTime);
-  if (d.toString() === "Invalid Date") {
-    return null;
+import type { Link } from "../link";
+
+/**
+ * Creates the requisite parts to create a label for a population with correct grammar in the format 'Resources for...'
+ *
+ * @param populationId
+ * @returns label parts as a string array
+ */
+export async function makeLabelPartsForPopulationResources(
+  populationId: string,
+): Promise<Array<string>> {
+  const entry = await getEntry("populations", populationId);
+
+  let labelParts = null;
+  switch (entry?.data.slug) {
+    case "african-american-black":
+    case "asian-american-and-pacific-islander":
+    case "indigenous-communities":
+    case "latino-and-hispanic-americans":
+    case "people-with-disabilities":
+      labelParts = ["Resources for", entry.data.name];
+      break;
+    case "lgbtq-community":
+      labelParts = ["Resources for the", entry.data.name];
+      break;
+    default:
+      break;
   }
 
-  const dateString = d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-
-  return dateString;
+  return labelParts ?? [];
 }
 
 /**
- * Type guard function to determine if a value is a Source object
- * @param link - The value to check
- * @returns True if 'link' is a Link object, false if it's a string
+ * Get a source link for a Website resource
+ *
+ * @param websiteRef
+ * @returns source link as `Link` type
  */
-export function isLink(link: unknown): link is Link {
-  return (
-    (link as Link)?.url !== undefined && (link as Link)?.label !== undefined
-  );
-}
-
 export async function getSourceLinkFromWebsiteRef(
   websiteRef: ReferenceDataEntry<"websites", string>,
 ) {
@@ -39,6 +48,12 @@ export async function getSourceLinkFromWebsiteRef(
   };
 }
 
+/**
+ * Get a website source from a resource URL
+ *
+ * @param inputUrl
+ * @returns source or null
+ */
 export function getSourceFromResourceUrl(
   inputUrl: string,
 ): Link | string | null {
@@ -65,14 +80,4 @@ export function getSourceFromResourceUrl(
     label,
     url,
   };
-}
-
-export type Link = {
-  label: string;
-  url: string;
-};
-
-export function isNonEmptyString(input: unknown): input is string {
-  const parsed = zNonEmptyString.safeParse(input);
-  return parsed.success;
 }

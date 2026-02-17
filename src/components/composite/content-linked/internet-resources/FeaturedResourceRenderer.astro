@@ -1,7 +1,9 @@
 ---
 import type { InternetResourceType } from "@content/model/internetResource";
 import { resourceTypeToCollectionKeyMap } from "@content/collections";
-import { assertNever } from "@ui/utils/assertNever";
+
+import { assertNever } from "@ui/utils/ts-utils";
+
 import FeaturedApp from "./FeaturedApp.astro";
 import FeaturedWebsite from "./FeaturedWebsite.astro";
 import FeaturedResource from "./FeaturedResource.astro";

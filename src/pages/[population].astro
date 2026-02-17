@@ -1,18 +1,22 @@
 ---
+import { getCollection, type CollectionEntry } from "astro:content";
+
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
-import Typography from "@ui/base/Typography.astro";
+
 import {
   type CategoryTreeNode,
   buildCategoryTree,
-  buildResourceExistenceSet,
-  pruneTreeForPopulation,
-} from "@ui/utils/nav-utils";
-import { getCollection, type CollectionEntry } from "astro:content";
-import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
-import { makeLabelPartsForPopulationResources } from "@content/utils";
-import LayoutSurface from "@ui/base/LayoutSurface.astro";
+} from "@ui/utils/content/category";
+import { makeLabelPartsForPopulationResources } from "@ui/utils/content/content";
+import { pruneTreeForPopulation } from "@ui/utils/content/population";
+import { buildResourceExistenceSet } from "@ui/utils/content/shared";
+
 import Container from "@ui/base/Container.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Typography from "@ui/base/Typography.astro";
 import Stack from "@ui/base/Stack.astro";
+
 import CategoryTree from "@ui/composite/content-linked/category/CategoryTree.astro";
 
 interface Props {

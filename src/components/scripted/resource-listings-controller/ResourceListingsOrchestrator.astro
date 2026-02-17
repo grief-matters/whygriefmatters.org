@@ -1,16 +1,20 @@
 ---
+import startCase from "lodash/startCase";
+
 import type {
   InternetResourceCollectionKey,
   InternetResourceEntries,
 } from "@content/collections";
+
+import { textColorMap } from "@styles/utils/color";
+
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import startCase from "lodash/startCase";
 import Container from "@ui/base/Container.astro";
 import Link from "@ui/base/Link.astro";
 import Button from "@ui/base/Button.astro";
-import { textColorMap } from "@ui/utils/styles";
 import ResourceListingRenderer from "@ui/composite/content-linked/internet-resources/ResourceListingRenderer.astro";
+
 import ResourcesFilterPanel from "./ResourcesFilterPanel.astro";
 
 interface Props {

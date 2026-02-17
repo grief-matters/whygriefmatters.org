@@ -1,9 +1,12 @@
 ---
+import startCase from "lodash/startCase";
+
+import type { InternetResourceEntries } from "@content/collections";
+
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import startCase from "lodash/startCase";
+
 import InternetResourceListingRenderer from "./InternetResourceListingRenderer.astro";
-import type { InternetResourceEntries } from "@content/collections";
 
 interface Props {
   internetResources: InternetResourceEntries;

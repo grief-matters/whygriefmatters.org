@@ -1,13 +1,16 @@
 ---
+import { getEntry } from "astro:content";
+
 import type {
   CategoryPageLinkContentItem,
   ResourcePageLinkContentItem,
 } from "@content/model/contentBlock/pageLinksContentItem";
+
+import { isNonEmptyString } from "@ui/utils/string";
+
 import ContentSurface from "@ui/base/ContentSurface.astro";
-import { getEntry } from "astro:content";
 import SanityImagePrimitive from "@ui/base/SanityImage.astro";
 import Link from "@ui/base/Link.astro";
-import { isNonEmptyString } from "@ui/utils/helpers";
 
 interface Props {
   pageLink: CategoryPageLinkContentItem | ResourcePageLinkContentItem;

@@ -1,25 +1,26 @@
 ---
-import { getOrganization } from "@content/loaders/organizationLoader";
+import startCase from "lodash/startCase";
 import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
-import "../styles/main.css";
-import Shell from "@ui/layouts/Shell.astro";
 
+import { getOrganization } from "@content/loaders/organizationLoader";
+
+import "@styles/main.css";
+import {
+  type LayoutSurfaceVariantKey,
+  colorVariants,
+} from "@styles/utils/color";
+import type { Prominence } from "@styles/utils/shared";
+import { spaceSettingKeys } from "@styles/utils/spacing";
+import { textPresets } from "@styles/utils/typography";
+
+import Shell from "@ui/layouts/Shell.astro";
 import Button from "@ui/base/Button.astro";
 import Container from "@ui/base/Container.astro";
 import ContentSurface from "@ui/base/ContentSurface.astro";
-import LayoutSurface, {
-  type LayoutSurfaceVariantKey,
-} from "@ui/base/LayoutSurface.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Link from "@ui/base/Link.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import { spaceSettingKeys } from "@ui/utils/spacing";
-import {
-  type Prominence,
-  colorVariants,
-  textPresets,
-} from "@ui/utils/styles";
-import startCase from "lodash/startCase";
 
 const org = await getOrganization();
 if (!org) {
@@ -156,7 +157,9 @@ const codeClasses =
                   prominence={p}
                 >
                   <Typography
-                    colorVariant={variant === "neutral" ? "warmNeutral" : variant}
+                    colorVariant={
+                      variant === "neutral" ? "warmNeutral" : variant
+                    }
                     set:html={`The <code class="${codeClasses}">${variant}-${p}</code> content surface using matched typography color.`}
                   />
                 </ContentSurface>

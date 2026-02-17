@@ -1,10 +1,21 @@
 import type { InternetResourceType } from "@content/model/internetResource";
-import type { OnSurfaceColorVariant } from "./styles";
 
+import type { OnSurfaceColorVariant } from "@styles/utils/color";
+
+/**
+ * Types
+ */
+
+export type IconKey = keyof typeof iconMap;
+export type IconMapValue = (typeof iconMap)[keyof typeof iconMap];
 type IconConfig = {
   colorVariant: OnSurfaceColorVariant;
   icon: IconMapValue;
 };
+
+/**
+ * Maps
+ */
 
 export const iconMap = {
   academicCap: "academic-cap",
@@ -32,9 +43,6 @@ export const iconMap = {
   users: "users",
   linkedIn: "linked-in",
 } as const;
-
-export type IconKey = keyof typeof iconMap;
-export type IconMapValue = (typeof iconMap)[keyof typeof iconMap];
 
 export const resourceTypeIconConfigMap: Record<
   InternetResourceType,

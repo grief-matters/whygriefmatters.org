@@ -4,9 +4,10 @@ import { getEntry, type ReferenceDataEntry } from "astro:content";
 import type { BasicInternetResourceCollectionKey } from "@content/collections";
 
 import {
-  getSourceFromResourceUrl,
   getSourceLinkFromWebsiteRef,
-} from "@ui/utils/helpers";
+  getSourceFromResourceUrl,
+} from "@ui/utils/content/content";
+
 import Typography from "@ui/base/Typography.astro";
 import Card from "@ui/composite/Card.astro";
 import ResourceSource from "./ResourceSource.astro";

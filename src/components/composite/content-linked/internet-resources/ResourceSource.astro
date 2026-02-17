@@ -1,11 +1,9 @@
 ---
+import { isLink, type Link } from "@ui/utils/link";
+import { isNonEmptyString } from "@ui/utils/string";
+
 import LinkComponent from "@ui/base/Link.astro";
 import Typography from "@ui/base/Typography.astro";
-import {
-  isLink,
-  isNonEmptyString,
-  type Link,
-} from "@ui/utils/helpers";
 
 interface Props {
   source: string | Link;

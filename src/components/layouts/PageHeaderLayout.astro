@@ -1,10 +1,13 @@
 ---
 import type { SanityImage } from "@content/model/image";
-import LayoutSurface, {
-  type LayoutSurfaceVariantKey,
-} from "@ui/base/LayoutSurface.astro";
+
+import type {
+  SurfaceColorVariant,
+  LayoutSurfaceVariantKey,
+} from "@styles/utils/color";
+
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import SanityImageComp from "@ui/base/SanityImage.astro";
-import type { SurfaceColorVariant } from "@ui/utils/styles";
 
 interface Props {
   surfaceVariant: SurfaceColorVariant;

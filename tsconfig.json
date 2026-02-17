@@ -8,6 +8,7 @@
     "paths": {
       "@content/*": ["./src/content/*"],
       "@ui/*": ["src/components/*"],
+      "@styles/*": ["src/styles/*"],
       "@sanity-integration/*": ["./src/integrations/sanity/*"]
     }
   }

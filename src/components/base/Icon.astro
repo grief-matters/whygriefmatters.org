@@ -1,7 +1,7 @@
 ---
-import { iconMap, type IconMapValue } from "@ui/utils/icons";
-import { type OnSurfaceColorVariant } from "@ui/utils/styles";
-import { assertNever } from "@ui/utils/assertNever";
+import type { OnSurfaceColorVariant } from "@styles/utils/color";
+import { iconMap, type IconMapValue } from "@ui/utils/icon";
+import { assertNever } from "@ui/utils/ts-utils";
 
 type ColorVariantMap = Record<OnSurfaceColorVariant, Array<string>>;
 type IconSize = 1 | 2 | 3;

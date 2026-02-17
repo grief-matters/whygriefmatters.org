@@ -2,13 +2,12 @@
 import type { Polymorphic } from "astro/types";
 
 import {
-  textColorMap,
   textPresetMap,
-  type OnSurfaceColorVariant,
   type TextPreset,
   type TextProminence,
-} from "@ui/utils/styles";
-import type { SpaceSetting } from "@ui/utils/spacing";
+} from "@styles/utils/typography";
+import { textColorMap, type OnSurfaceColorVariant } from "@styles/utils/color";
+import type { SpaceSetting } from "@styles/utils/spacing";
 
 type TextElement = "p" | "span" | "h1" | "h2" | "h3" | "h4";
 

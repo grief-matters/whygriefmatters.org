@@ -1,12 +1,15 @@
 ---
+import { getCollection } from "astro:content";
+
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
 import Button from "@ui/base/Button.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Spacer from "@ui/base/Spacer.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import { getCollection } from "astro:content";
+
 import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
 import CoreValuesRenderer from "@ui/composite/content-linked/content-block/CoreValuesRenderer.astro";
 

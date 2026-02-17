@@ -1,14 +1,16 @@
 ---
 import { getEntry } from "astro:content";
 
-import LayoutSurface, {
-  type LayoutSurfaceVariantKey,
-} from "@ui/base/LayoutSurface.astro";
 import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
 import { getOrganization } from "@content/loaders/organizationLoader";
 
-import Stack from "@ui/base/Stack.astro";
+import type { LayoutSurfaceVariantKey } from "@styles/utils/color";
+
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
+import Stack from "@ui/base/Stack.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+
 import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
 
 const org = await getOrganization();

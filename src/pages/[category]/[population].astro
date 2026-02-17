@@ -1,11 +1,16 @@
 ---
+import { getCollection, type CollectionEntry } from "astro:content";
+
 import {
   internetResourceCollectionKeys,
   type InternetResourceCollectionKey,
   type InternetResourceEntries,
 } from "@content/collections";
 import type { PopulationSlug } from "@content/model/population";
-import { getAllDescendantCategoryIds } from "@content/utils";
+
+import { getAllDescendantCategoryIds } from "@ui/utils/content/category";
+import ResourceListingsOrchestrator from "@ui/scripted/resource-listings-controller/ResourceListingsOrchestrator.astro";
+
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 import Button from "@ui/base/Button.astro";
@@ -13,8 +18,6 @@ import Container from "@ui/base/Container.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import Typography from "@ui/base/Typography.astro";
-import ResourceListingsOrchestrator from "@ui/scripted/resource-listings-controller/ResourceListingsOrchestrator.astro";
-import { getCollection, type CollectionEntry } from "astro:content";
 
 interface Props {
   categoryEntry: CollectionEntry<"categories">;
@@ -104,7 +107,8 @@ export async function getStaticPaths() {
   return staticPaths;
 }
 
-const { categoryEntry, populationEntry, internetResources, resourceTypes } = Astro.props;
+const { categoryEntry, populationEntry, internetResources, resourceTypes } =
+  Astro.props;
 
 const labelMaker = labelMakerFnMap[populationEntry.data.slug];
 const labelParts = labelMaker(populationEntry.data.name);
@@ -126,10 +130,7 @@ const labelParts = labelMaker(populationEntry.data.name);
               variant="title-1"
               colorVariant="primaryContrast"
             >
-              {
-                categoryEntry.data.displayTitle ??
-                  categoryEntry.data.title
-              }
+              {categoryEntry.data.displayTitle ?? categoryEntry.data.title}
             </Typography>
             {
               categoryEntry.data.shortDescription && (
