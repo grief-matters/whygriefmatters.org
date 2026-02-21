@@ -20,4 +20,5 @@ RESEND_TO_ADDRESS="contact@whygriefmatters.org"
 vars = { PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_c3dlZXBpbmctdG91Y2FuLTQxLmNsZXJrLmFjY291bnRzLmRldiQ", SANITY_STUDIO_API_VERSION = "2023-07-16", SANITY_STUDIO_DATASET = "production", SANITY_STUDIO_PROJECT_ID = "vg3sb730", RESEND_FROM_ADDRESS="Why Grief Matters <system@noreply.whygriefmatters.org>", RESEND_TO_ADDRESS="contact@whygriefmatters.org"}
 
 [env.production]
+name = "grief-matters-web-production"
 vars = { PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_Y2xlcmsud2h5Z3JpZWZtYXR0ZXJzLm9yZyQ", SANITY_STUDIO_API_VERSION = "2023-07-16", SANITY_STUDIO_DATASET = "production", SANITY_STUDIO_PROJECT_ID = "vg3sb730", RESEND_FROM_ADDRESS="Why Grief Matters <system@noreply.whygriefmatters.org>", RESEND_TO_ADDRESS="contact@whygriefmatters.org"}
