@@ -1,0 +1,56 @@
+---
+import { getEntry } from "astro:content";
+
+import { gapMap } from "@styles/utils/spacing";
+
+import Section from "@ui/layouts/Section.astro";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
+import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
+import { getCollection } from "astro:content";
+
+const entries = await getCollection("contentGroups");
+console.log(entries.map((x) => ({ id: x.id, name: x.data.slug })));
+
+const contentGroupEntry = await getEntry({
+  collection: "contentGroups",
+  id: "donate",
+});
+if (!contentGroupEntry) {
+  throw new Error('Could not get entry for "donate" page');
+}
+---
+
+<SitePageLayout>
+  <Section>
+    {
+      contentGroupEntry.data.contentBlocks[0] !== undefined && (
+        <ContentBlockRenderer
+          textAlign="left"
+          contentBlockRef={contentGroupEntry.data.contentBlocks[0]}
+        />
+      )
+    }
+  </Section>
+  <Section colorVariantKey={3}>
+    <div class:list={["md:flex", gapMap[3]]}>
+      <div class:list={["md:grow md:basis-106"]}>
+        <dbox-widget
+          campaign="why-grief-matters-a-vision-for-tomorrow"
+          type="donation_form"
+          enable-auto-scroll="true"
+        >
+        </dbox-widget>
+      </div>
+      <div class="md:shrink md:max-w-[50%]">
+        <ContentBlockRenderer
+          textAlign="left"
+          contentBlockRef={contentGroupEntry.data.contentBlocks[1]}
+        />
+      </div>
+    </div>
+  </Section>
+</SitePageLayout>
+
+<script is:inline type="module" src="https://donorbox.org/widgets.js" async
+></script>

@@ -7,24 +7,27 @@ import { getOrganization } from "@content/loaders/organizationLoader";
 import "@styles/main.css";
 import {
   type LayoutSurfaceVariantKey,
+  type OnSurfaceColorVariant,
   colorVariants,
 } from "@styles/utils/color";
 import type { Prominence } from "@styles/utils/shared";
 import { spaceSettingKeys } from "@styles/utils/spacing";
-import { textPresets } from "@styles/utils/typography";
+import { textPresets, textPresetMap } from "@styles/utils/typography";
 
 import Shell from "@ui/layouts/Shell.astro";
 import Button from "@ui/base/Button.astro";
 import Container from "@ui/base/Container.astro";
 import ContentSurface from "@ui/base/ContentSurface.astro";
+import Icon from "@ui/base/Icon.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Link from "@ui/base/Link.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
+import { iconMap } from "@ui/utils/icon";
 
 const org = await getOrganization();
 if (!org) {
-  throw new Error('Failed to [getOrganization] for "src/pages/index.astro"');
+  throw new Error('Failed to [getOrganization] for "src/pages/wgm-ui.astro"');
 }
 
 const logoUrl = org.logos.onLight
@@ -33,6 +36,64 @@ const logoUrl = org.logos.onLight
 
 const codeClasses =
   "outline outline-line-primary--prominent text-sm bg-contentSurface-neutral--muted rounded-sm px-2 mx-1 text-onSurface-coolNeutral--default text-nowrap";
+
+const onSurfaceVariants: OnSurfaceColorVariant[] = [
+  "coolNeutral",
+  "warmNeutral",
+  "primary",
+  "secondary",
+  "tertiary",
+  "primaryContrast",
+];
+
+const layoutSurfaceSwatches: {
+  variant: (typeof colorVariants)[number];
+  keys: LayoutSurfaceVariantKey[];
+}[] = [
+  { variant: "neutral", keys: [1, 2, 3, 4] },
+  { variant: "primary", keys: [1] },
+  { variant: "secondary", keys: [1] },
+  { variant: "tertiary", keys: [1, 2, 3] },
+  { variant: "primaryContrast", keys: [1, 2] },
+];
+
+const spacingPixelValues: Record<number, number> = {
+  1: 6,
+  2: 12,
+  3: 16,
+  4: 24,
+  5: 32,
+  6: 48,
+  7: 64,
+};
+
+const lineVariants = [
+  { label: "neutral — muted", cls: "border-line-neutral--muted" },
+  { label: "neutral — default", cls: "border-line-neutral--default" },
+  { label: "neutral — prominent", cls: "border-line-neutral--prominent" },
+  { label: "primary — muted", cls: "border-line-primary--muted" },
+  { label: "primary — default", cls: "border-line-primary--default" },
+  { label: "primary — prominent", cls: "border-line-primary--prominent" },
+  { label: "secondary — muted", cls: "border-line-secondary--muted" },
+  { label: "secondary — default", cls: "border-line-secondary--default" },
+  {
+    label: "secondary — prominent",
+    cls: "border-line-secondary--prominent",
+  },
+  { label: "tertiary — muted", cls: "border-line-tertiary--muted" },
+  { label: "tertiary — default", cls: "border-line-tertiary--default" },
+  { label: "tertiary — prominent", cls: "border-line-tertiary--prominent" },
+  {
+    label: "primaryContrast — default",
+    cls: "border-line-primaryContrast--default",
+  },
+  { label: "brand — accent", cls: "border-line-brand--accent" },
+];
+
+const iconEntries = Object.entries(iconMap) as [
+  keyof typeof iconMap,
+  (typeof iconMap)[keyof typeof iconMap],
+][];
 ---
 
 <Shell>
@@ -71,177 +132,734 @@ const codeClasses =
     </div>
   </header>
   <main data-pagefind-ignore="all">
-    <LayoutSurface colorVariant="neutral" colorVariantKey={1} paddingY={6}>
+    <!-- Section 1: Intro -->
+    <LayoutSurface
+      id="intro"
+      colorVariant="neutral"
+      colorVariantKey={1}
+      paddingY={6}
+    >
       <Container paddingX={1} paddingY={1}>
         <Stack>
-          <Typography as="h1" variant="title-1">Why Grief Matters UI</Typography
-          >
+          <Typography as="h1" variant="title-1">WGM Design System</Typography>
           <Typography variant="body-1">
-            {"Welcome to the Why Grief Matters UI."}
+            This page documents the visual building blocks of Why Grief Matters.
+            The system is intentionally constrained — a small set of surfaces,
+            colors, type presets, and spacing values that compose into cohesive
+            layouts without requiring per-page design decisions.
           </Typography>
+          <nav>
+            <Stack spacing={1}>
+              <Typography variant="subtitle-1" prominence="muted"
+                >Sections</Typography
+              >
+              <div class="flex flex-wrap gap-3">
+                <Link to="#layout-surfaces" label="Layout Surfaces" />
+                <Link to="#content-surfaces" label="Content Surfaces" />
+                <Link to="#on-surface-colors" label="On-Surface Colors" />
+                <Link to="#lines-borders" label="Lines & Borders" />
+                <Link to="#typography" label="Typography" />
+                <Link to="#spacing" label="Spacing" />
+                <Link to="#components" label="Base Components" />
+                <Link to="#composition" label="Composition" />
+              </div>
+            </Stack>
+          </nav>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+
+    <!-- Section 2: Layout Surfaces -->
+    <LayoutSurface
+      id="layout-surfaces"
+      colorVariant="neutral"
+      colorVariantKey={3}
+      paddingY={6}
+    >
+      <Container paddingX={1} paddingY={1}>
+        <Stack>
+          <Typography as="h2" variant="title-2">Layout Surfaces</Typography>
           <Typography
             variant="body-1"
-            set:text="Building templates and components for the Why Grief Matters website is kept intentionally constrained in order to maintain simplicity and design coherence."
+            set:html={`<code class="${codeClasses}">LayoutSurface</code> sets page-section backgrounds. The <code class="${codeClasses}">neutral</code> variant has 4 tonal keys for subtle variation. Other variants use fewer meaningful keys.`}
           />
         </Stack>
       </Container>
     </LayoutSurface>
-    <LayoutSurface colorVariant="neutral" colorVariantKey={3} paddingY={6}>
+    {
+      layoutSurfaceSwatches.map(({ variant, keys }) =>
+        keys.map((key) => (
+          <LayoutSurface as="div" colorVariant={variant} colorVariantKey={key}>
+            <Container paddingX={1} paddingY={2}>
+              <Typography
+                colorVariant={
+                  variant === "primaryContrast"
+                    ? "primaryContrast"
+                    : "coolNeutral"
+                }
+              >
+                {variant} — key {key}
+              </Typography>
+            </Container>
+          </LayoutSurface>
+        )),
+      )
+    }
+
+    <!-- Section 3: Content Surfaces -->
+    <LayoutSurface
+      id="content-surfaces"
+      colorVariant="neutral"
+      colorVariantKey={2}
+      paddingY={6}
+    >
       <Container paddingX={1} paddingY={1}>
-        <Stack>
-          <Typography as="h2" variant="title-2">Typography</Typography>
+        <Stack spacing={3}>
+          <Typography as="h2" variant="title-2">Content Surfaces</Typography>
           <Typography
-            set:text="The number of style variants available is kept intentionally limited
-            but offers more than enough to create compelling pages with good
-            visual hierarchy"
+            variant="body-1"
+            set:html={`<code class="${codeClasses}">ContentSurface</code> groups content within page sections. Each variant has three prominence levels: <strong>muted</strong>, <strong>default</strong>, and <strong>prominent</strong>.`}
           />
           {
-            textPresets.map((preset) => (
+            colorVariants.map((variant) => (
+              <Stack spacing={1}>
+                <Typography variant="subtitle-1" prominence="muted">
+                  {variant}
+                </Typography>
+                <div class="grid grid-cols-3 gap-3">
+                  {(["muted", "default", "prominent"] as Prominence[]).map(
+                    (p) => (
+                      <ContentSurface
+                        paddingX={2}
+                        paddingY={2}
+                        variant={variant}
+                        prominence={p}
+                      >
+                        <Typography
+                          variant="body-small"
+                          colorVariant={
+                            variant === "neutral"
+                              ? "warmNeutral"
+                              : variant === "primaryContrast"
+                                ? "primaryContrast"
+                                : variant
+                          }
+                        >
+                          {p}
+                        </Typography>
+                      </ContentSurface>
+                    ),
+                  )}
+                </div>
+              </Stack>
+            ))
+          }
+          <Stack spacing={1}>
+            <Typography variant="subtitle-1" prominence="muted"
+              >featureCard</Typography
+            >
+            <div class="max-w-sm">
+              <ContentSurface variant="featureCard" paddingX={2} paddingY={2}>
+                <Typography>Feature card content surface</Typography>
+              </ContentSurface>
+            </div>
+          </Stack>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+
+    <!-- Section 4: On-Surface Colors -->
+    <LayoutSurface
+      id="on-surface-colors"
+      colorVariant="neutral"
+      colorVariantKey={1}
+      paddingY={6}
+    >
+      <Container paddingX={1} paddingY={1}>
+        <Stack spacing={3}>
+          <Typography as="h2" variant="title-2">On-Surface Colors</Typography>
+          <Typography variant="body-1">
+            Text colors have two prominence levels: default and muted.
+          </Typography>
+          {
+            onSurfaceVariants
+              .filter((v) => v !== "primaryContrast")
+              .map((variant) => (
+                <Stack spacing={1}>
+                  <Typography variant="subtitle-1" prominence="muted">
+                    {variant}
+                  </Typography>
+                  <div class="flex gap-6">
+                    <Typography colorVariant={variant}>
+                      {variant} — default
+                    </Typography>
+                    <Typography colorVariant={variant} prominence="muted">
+                      {variant} — muted
+                    </Typography>
+                  </div>
+                </Stack>
+              ))
+          }
+          <Stack spacing={1}>
+            <Typography variant="subtitle-1" prominence="muted"
+              >primaryContrast</Typography
+            >
+            <LayoutSurface
+              as="div"
+              colorVariant="primaryContrast"
+              colorVariantKey={1}
+            >
+              <div class="flex gap-6 p-4">
+                <Typography colorVariant="primaryContrast">
+                  primaryContrast — default
+                </Typography>
+                <Typography colorVariant="primaryContrast" prominence="muted">
+                  primaryContrast — muted
+                </Typography>
+              </div>
+            </LayoutSurface>
+          </Stack>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+
+    <!-- Section 5: Lines & Borders -->
+    <LayoutSurface
+      id="lines-borders"
+      colorVariant="neutral"
+      colorVariantKey={3}
+      paddingY={6}
+    >
+      <Container paddingX={1} paddingY={1}>
+        <Stack spacing={2}>
+          <Typography as="h2" variant="title-2">Lines & Borders</Typography>
+          <Typography variant="body-1">
+            Line tokens used for borders, dividers, and decorative rules.
+          </Typography>
+          {
+            lineVariants.map(({ label, cls }) => (
               <div>
-                <Typography variant={preset}>{startCase(preset)}</Typography>
-                <Typography variant="subtitle-1">{preset}</Typography>
+                <div class:list={["border-b-2", cls, "mb-1"]} />
+                <Typography variant="subtitle-1" prominence="muted">
+                  {label}
+                </Typography>
               </div>
             ))
           }
         </Stack>
       </Container>
     </LayoutSurface>
-    <LayoutSurface paddingY={6}>
+
+    <!-- Section 6: Typography -->
+    <LayoutSurface
+      id="typography"
+      colorVariant="neutral"
+      colorVariantKey={2}
+      paddingY={6}
+    >
       <Container paddingX={1} paddingY={1}>
-        <Stack>
-          <Typography as="h2" variant="title-2">Layout Surface</Typography>
-          <Typography
-            variant="body-1"
-            set:html={`The <code class="${codeClasses}">LayoutSurface</code> component should be used to define sections on a page. It can be used with a number of color variants.`}
-          />
-        </Stack>
-      </Container>
-    </LayoutSurface>
-    {
-      colorVariants.map((variant) =>
-        variant === "neutral" ? (
-          ([1, 2, 3, 4] as LayoutSurfaceVariantKey[]).map((n) => (
-            <LayoutSurface as="div" colorVariant={variant} colorVariantKey={n}>
-              <Container paddingX={1} paddingY={1}>
-                <Typography colorVariant="coolNeutral">{`${variant} - ${n}`}</Typography>
-              </Container>
-            </LayoutSurface>
-          ))
-        ) : (
-          <LayoutSurface as="div" colorVariant={variant}>
-            <Container paddingX={1} paddingY={1}>
-              <Typography colorVariant={variant}>{variant}</Typography>
-            </Container>
-          </LayoutSurface>
-        ),
-      )
-    }
-    <LayoutSurface colorVariantKey={2} paddingY={6}>
-      <Container paddingX={1} paddingY={1}>
-        <Stack spacing={2}>
-          <Typography as="h2" variant="title-2">Content Surface</Typography>
-          <Typography
-            variant="body-1"
-            set:html={`The <code class="${codeClasses}">ContentSurface</code> component should be used to create areas where content is grouped together in some logical way.`}
-          />
-          <ContentSurface variant="featureCard">
-            <p class="p-3">{`Feature Card content surface`}</p>
-          </ContentSurface>
+        <Stack spacing={3}>
+          <Typography as="h2" variant="title-2">Typography</Typography>
+          <Typography variant="body-1">
+            Three font stacks: serif (Charter), sans-a/Humanist (Seravek), and
+            sans-b/Classical Humanist (Optima). A constrained set of presets
+            provides clear visual hierarchy.
+          </Typography>
           {
-            colorVariants.map((variant) =>
-              (["muted", "default", "prominent"] as Prominence[]).map((p) => (
-                <ContentSurface
-                  paddingX={1}
-                  paddingY={1}
-                  variant={variant}
-                  prominence={p}
-                >
-                  <Typography
-                    colorVariant={
-                      variant === "neutral" ? "warmNeutral" : variant
-                    }
-                    set:html={`The <code class="${codeClasses}">${variant}-${p}</code> content surface using matched typography color.`}
-                  />
-                </ContentSurface>
-              )),
-            )
+            textPresets.map((preset) => {
+              const meta = textPresetMap[preset];
+              return (
+                <div>
+                  <Typography variant={preset}>{startCase(preset)}</Typography>
+                  <Typography variant="subtitle-1" prominence="muted">
+                    {preset} — {meta.fontFamily}, {meta.fontSize},{" "}
+                    {meta.fontWeight}
+                  </Typography>
+                </div>
+              );
+            })
           }
-          <Typography
-            set:text="We can combine different content surfaces together to create layered effects, giving us a lot of flexibility when building new designs."
-          />
-          <ContentSurface
-            prominence="muted"
-            paddingX={1}
-            paddingY={1}
-            variant="neutral"
-          >
-            <Stack>
-              <Typography
-                set:text={"Imagine that this is some kind of panel component"}
-              />
-              <ContentSurface paddingX={1} paddingY={1}>
-                <Typography
-                  set:text=`We can create different effects using the "prominence" concept`
-                />
-              </ContentSurface>
-            </Stack>
-          </ContentSurface>
         </Stack>
       </Container>
     </LayoutSurface>
-    <LayoutSurface colorVariantKey={3} paddingY={6}>
-      <Container paddingX={1} paddingY={1}>
-        <Stack spacing={2}>
-          <Typography as="h2" variant="title-2">Buttons</Typography>
-          <Typography as="p">
-            {"Buttons can be rendered as link or button tags"}
-          </Typography>
-          <div class="flex gap-1.5">
-            {
-              colorVariants.map((c) => (
-                <Button
-                  as="a"
-                  colorVariant={c}
-                  label={`${startCase(c)} Button`}
-                />
-              ))
-            }
-          </div>
-          <Typography>
-            {
-              "Button labels cab set using the `label` prop or by passing content to its `slot`. Be aware you will be responsible for styling if using the slot"
-            }
-          </Typography>
-          <Button>
-            <Typography>
-              {"Button using a "}
-              <strong class="text-bold">{"Typography"}</strong>
-              {" component as its label"}
-            </Typography>
-          </Button>
-        </Stack>
-      </Container>
-    </LayoutSurface>
-    <LayoutSurface paddingY={6}>
+
+    <!-- Section 7: Spacing -->
+    <LayoutSurface
+      id="spacing"
+      colorVariant="neutral"
+      colorVariantKey={1}
+      paddingY={6}
+    >
       <Container paddingX={1} paddingY={1}>
         <Stack spacing={2}>
           <Typography as="h2" variant="title-2">Spacing</Typography>
-          <Typography as="p">
-            {"Spacing"}
+          <Typography variant="body-1">
+            A 7-level spacing scale used for padding, margin, and gap values.
           </Typography>
-          <div class="flex flex-col space-y-3">
+          <div class="flex flex-col gap-3">
             {
               spaceSettingKeys.map((k) => (
-                <div class="self-start">
-                  <ContentSurface paddingX={k} paddingY={k} variant={"primary"}>
-                    <Typography
-                      set:text={`Space Setting ${k} - equivalent to ${k * 4} in Figma`}
-                    />
-                  </ContentSurface>
+                <div class="flex items-center gap-3">
+                  <div class="self-start">
+                    <ContentSurface
+                      paddingX={k}
+                      paddingY={1}
+                      variant="primary"
+                      prominence="muted"
+                    >
+                      <Typography variant="body-small" set:text={"\u00A0"} />
+                    </ContentSurface>
+                  </div>
+                  <Typography variant="subtitle-1" prominence="muted">
+                    Level {k} — {spacingPixelValues[k]}px
+                  </Typography>
                 </div>
               ))
             }
           </div>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+
+    <!-- Section 8: Base Components -->
+    <LayoutSurface
+      id="components"
+      colorVariant="neutral"
+      colorVariantKey={3}
+      paddingY={6}
+    >
+      <Container paddingX={1} paddingY={1}>
+        <Stack spacing={3}>
+          <Typography as="h2" variant="title-2">Base Components</Typography>
+
+          <!-- 8a: Container -->
+          <Stack spacing={2}>
+            <Typography as="h3" variant="title-3">Container</Typography>
+            <Typography variant="body-1">
+              Centers content with a max-width. Size 1 = max-w-4xl, size 2 =
+              max-w-6xl.
+            </Typography>
+          </Stack>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+    <LayoutSurface colorVariant="neutral" colorVariantKey={2} paddingY={3}>
+      <Container size={1} paddingX={1}>
+        <ContentSurface
+          paddingX={2}
+          paddingY={2}
+          variant="primary"
+          prominence="muted"
+        >
+          <Typography variant="subtitle-1" colorVariant="primary">
+            Container size 1 (max-w-4xl)
+          </Typography>
+        </ContentSurface>
+      </Container>
+      <div class="mt-4">
+        <Container size={2} paddingX={1}>
+          <ContentSurface
+            paddingX={2}
+            paddingY={2}
+            variant="secondary"
+            prominence="muted"
+          >
+            <Typography variant="subtitle-1" colorVariant="secondary">
+              Container size 2 (max-w-6xl)
+            </Typography>
+          </ContentSurface>
+        </Container>
+      </div>
+    </LayoutSurface>
+
+    <!-- 8b: Stack -->
+    <LayoutSurface colorVariant="neutral" colorVariantKey={3} paddingY={6}>
+      <Container paddingX={1} paddingY={1}>
+        <Stack spacing={2}>
+          <Typography as="h3" variant="title-3">Stack</Typography>
+          <Typography variant="body-1">
+            Vertical layout with configurable spacing between children.
+          </Typography>
+          <div class="grid grid-cols-3 gap-6">
+            {
+              ([1, 3, 6] as const).map((sp) => (
+                <div>
+                  <Typography
+                    variant="subtitle-1"
+                    prominence="muted"
+                    marginBottom={1}
+                  >
+                    spacing={sp}
+                  </Typography>
+                  <Stack spacing={sp}>
+                    {[1, 2, 3].map(() => (
+                      <ContentSurface
+                        paddingX={2}
+                        paddingY={2}
+                        variant="tertiary"
+                        prominence="muted"
+                      >
+                        <Typography
+                          variant="body-small"
+                          colorVariant="tertiary"
+                        >
+                          Item
+                        </Typography>
+                      </ContentSurface>
+                    ))}
+                  </Stack>
+                </div>
+              ))
+            }
+          </div>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+
+    <!-- 8c: Buttons -->
+    <LayoutSurface colorVariant="neutral" colorVariantKey={2} paddingY={6}>
+      <Container paddingX={1} paddingY={1}>
+        <Stack spacing={3}>
+          <Typography as="h3" variant="title-3">Buttons</Typography>
+          <Stack spacing={1}>
+            <Typography variant="subtitle-1" prominence="muted"
+              >Filled (default)</Typography
+            >
+            <div class="flex flex-wrap gap-2">
+              {
+                colorVariants.map((c) => (
+                  <Button as="a" colorVariant={c} label={startCase(c)} />
+                ))
+              }
+            </div>
+          </Stack>
+          <Stack spacing={1}>
+            <Typography variant="subtitle-1" prominence="muted"
+              >Outlined</Typography
+            >
+            <div class="flex flex-wrap gap-2">
+              {
+                colorVariants.map((c) => (
+                  <Button
+                    as="a"
+                    colorVariant={c}
+                    styleVariant="outlined"
+                    label={startCase(c)}
+                  />
+                ))
+              }
+            </div>
+          </Stack>
+          <Stack spacing={1}>
+            <Typography variant="subtitle-1" prominence="muted"
+              >Donate variant</Typography
+            >
+            <div>
+              <Button
+                label="Donate"
+                textVariant="button-1"
+                styleVariant="outlined"
+                colorVariant="donate"
+              />
+            </div>
+          </Stack>
+          <Stack spacing={1}>
+            <Typography variant="subtitle-1" prominence="muted"
+              >Slot usage</Typography
+            >
+            <div>
+              <Button>
+                <Typography>
+                  Button with <strong class="font-bold">Typography</strong> slot
+                </Typography>
+              </Button>
+            </div>
+          </Stack>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+
+    <!-- 8d: Links -->
+    <LayoutSurface colorVariant="neutral" colorVariantKey={3} paddingY={6}>
+      <Container paddingX={1} paddingY={1}>
+        <Stack spacing={3}>
+          <Typography as="h3" variant="title-3">Links</Typography>
+          <Stack spacing={1}>
+            <Typography variant="subtitle-1" prominence="muted"
+              >Text presets</Typography
+            >
+            <div class="flex flex-wrap items-baseline gap-4">
+              <Link to="#" label="title-3 link" variant="title-3" />
+              <Link to="#" label="body-1 link" variant="body-1" />
+              <Link to="#" label="subtitle-1 link" variant="subtitle-1" />
+            </div>
+          </Stack>
+          <Stack spacing={1}>
+            <Typography variant="subtitle-1" prominence="muted"
+              >Color variants</Typography
+            >
+            <div class="flex flex-wrap items-baseline gap-4">
+              <Link to="#" label="primary" colorVariant="primary" />
+              <Link to="#" label="secondary" colorVariant="secondary" />
+              <Link to="#" label="tertiary" colorVariant="tertiary" />
+              <Link to="#" label="coolNeutral" colorVariant="coolNeutral" />
+              <Link to="#" label="warmNeutral" colorVariant="warmNeutral" />
+            </div>
+          </Stack>
+          <Stack spacing={1}>
+            <Typography variant="subtitle-1" prominence="muted"
+              >primaryContrast (on dark background)</Typography
+            >
+            <LayoutSurface
+              as="div"
+              colorVariant="primaryContrast"
+              colorVariantKey={1}
+            >
+              <div class="p-4">
+                <Link
+                  to="#"
+                  label="primaryContrast link"
+                  colorVariant="primaryContrast"
+                />
+              </div>
+            </LayoutSurface>
+          </Stack>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+
+    <!-- 8e: Icons -->
+    <LayoutSurface colorVariant="neutral" colorVariantKey={2} paddingY={6}>
+      <Container paddingX={1} paddingY={1}>
+        <Stack spacing={3}>
+          <Typography as="h3" variant="title-3">Icons</Typography>
+          <Typography variant="body-1">
+            All available icons from the icon map, rendered at default size.
+          </Typography>
+          <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4">
+            {
+              iconEntries.map(([key, _value]) => (
+                <div class="flex flex-col items-center gap-1">
+                  <Icon
+                    getIcon={(icons) => icons[key]}
+                    colorVariant="primary"
+                  />
+                  <Typography variant="body-small" prominence="muted">
+                    {key}
+                  </Typography>
+                </div>
+              ))
+            }
+          </div>
+          <Stack spacing={1}>
+            <Typography variant="subtitle-1" prominence="muted"
+              >Size variants</Typography
+            >
+            <div class="flex items-end gap-6">
+              {
+                ([1, 2, 3] as const).map((s) => (
+                  <div class="flex flex-col items-center gap-1">
+                    <Icon
+                      getIcon={(icons) => icons.heart}
+                      colorVariant="secondary"
+                      size={s}
+                    />
+                    <Typography variant="body-small" prominence="muted">
+                      size={s}
+                    </Typography>
+                  </div>
+                ))
+              }
+            </div>
+          </Stack>
+          <Stack spacing={1}>
+            <Typography variant="subtitle-1" prominence="muted"
+              >Color variants</Typography
+            >
+            <div class="flex items-center gap-6">
+              {
+                onSurfaceVariants
+                  .filter((v) => v !== "primaryContrast")
+                  .map((v) => (
+                    <div class="flex flex-col items-center gap-1">
+                      <Icon
+                        getIcon={(icons) => icons.heart}
+                        colorVariant={v}
+                        size={3}
+                      />
+                      <Typography variant="body-small" prominence="muted">
+                        {v}
+                      </Typography>
+                    </div>
+                  ))
+              }
+            </div>
+          </Stack>
+        </Stack>
+      </Container>
+    </LayoutSurface>
+
+    <!-- Section 9: Composition Patterns -->
+    <LayoutSurface
+      id="composition"
+      colorVariant="primary"
+      colorVariantKey={1}
+      paddingY={6}
+    >
+      <Container paddingX={1} paddingY={1}>
+        <Stack spacing={3}>
+          <Typography as="h2" variant="title-2" colorVariant="primary"
+            >Composition</Typography
+          >
+          <Typography variant="body-1" colorVariant="primary">
+            Base components combine into real UI patterns. Below are common
+            arrangements.
+          </Typography>
+
+          <!-- 9a: Card pattern -->
+          <Stack spacing={1}>
+            <Typography
+              variant="subtitle-1"
+              prominence="muted"
+              colorVariant="primary">Card pattern</Typography
+            >
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {
+                (["neutral", "primary", "secondary"] as const).map((v) => (
+                  <ContentSurface
+                    paddingX={3}
+                    paddingY={3}
+                    variant={v}
+                    prominence="default"
+                  >
+                    <Stack spacing={2}>
+                      <Typography
+                        as="h4"
+                        variant="title-4"
+                        colorVariant={v === "neutral" ? "warmNeutral" : v}
+                      >
+                        Card Title
+                      </Typography>
+                      <Typography
+                        variant="body-1"
+                        colorVariant={v === "neutral" ? "warmNeutral" : v}
+                      >
+                        A brief description of the card content goes here.
+                      </Typography>
+                      <div>
+                        <Button
+                          as="a"
+                          colorVariant={v}
+                          label="Action"
+                          styleVariant="outlined"
+                          textVariant="button-2"
+                        />
+                      </div>
+                    </Stack>
+                  </ContentSurface>
+                ))
+              }
+            </div>
+          </Stack>
+
+          <!-- 9b: Nested surfaces -->
+          <Stack spacing={1}>
+            <Typography
+              variant="subtitle-1"
+              prominence="muted"
+              colorVariant="primary">Nested surfaces</Typography
+            >
+            <ContentSurface
+              paddingX={3}
+              paddingY={3}
+              variant="neutral"
+              prominence="muted"
+            >
+              <Stack spacing={2}>
+                <Typography colorVariant="warmNeutral">
+                  Outer: ContentSurface(neutral, muted)
+                </Typography>
+                <div class="grid grid-cols-2 gap-3">
+                  <ContentSurface
+                    paddingX={2}
+                    paddingY={2}
+                    variant="primary"
+                    prominence="default"
+                  >
+                    <Typography variant="body-small" colorVariant="primary">
+                      Inner: primary, default
+                    </Typography>
+                  </ContentSurface>
+                  <ContentSurface
+                    paddingX={2}
+                    paddingY={2}
+                    variant="secondary"
+                    prominence="prominent"
+                  >
+                    <Typography variant="body-small" colorVariant="secondary">
+                      Inner: secondary, prominent
+                    </Typography>
+                  </ContentSurface>
+                </div>
+              </Stack>
+            </ContentSurface>
+          </Stack>
+
+          <!-- 9c: Page section pattern -->
+          <Stack spacing={1}>
+            <Typography
+              variant="subtitle-1"
+              prominence="muted"
+              colorVariant="primary">Page section pattern</Typography
+            >
+            <ContentSurface
+              paddingX={3}
+              paddingY={3}
+              variant="neutral"
+              prominence="default"
+            >
+              <Stack spacing={2}>
+                <Typography variant="subtitle-1" prominence="muted">
+                  LayoutSurface
+                </Typography>
+                <ContentSurface
+                  paddingX={2}
+                  paddingY={2}
+                  variant="primary"
+                  prominence="muted"
+                >
+                  <Stack spacing={1}>
+                    <Typography
+                      variant="subtitle-1"
+                      prominence="muted"
+                      colorVariant="primary"
+                    >
+                      Container
+                    </Typography>
+                    <ContentSurface
+                      paddingX={2}
+                      paddingY={2}
+                      variant="secondary"
+                      prominence="muted"
+                    >
+                      <Stack spacing={1}>
+                        <Typography
+                          variant="subtitle-1"
+                          prominence="muted"
+                          colorVariant="secondary"
+                        >
+                          Stack
+                        </Typography>
+                        <Typography colorVariant="secondary">
+                          Content goes here
+                        </Typography>
+                      </Stack>
+                    </ContentSurface>
+                  </Stack>
+                </ContentSurface>
+              </Stack>
+            </ContentSurface>
+          </Stack>
         </Stack>
       </Container>
     </LayoutSurface>
