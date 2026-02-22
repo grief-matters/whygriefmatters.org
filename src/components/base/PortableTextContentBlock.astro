@@ -55,8 +55,11 @@ const classListMap = {
     ]),
   },
   list: {
-    bullet: clsx(["mb-6", "list-disc"]),
+    bullet: clsx(["mb-6", "list-disc", "*:mb-3 *:ml-4 *:font-serif"]),
     number: clsx(["mb-6"]),
+  },
+  listItem: {
+    bullet: clsx(["font-serif text-white"]),
   },
   marks: {
     strong: "font-bold",
@@ -82,6 +85,10 @@ const htmlString = toHTML(props.portableText, {
         `<ul class="${classListMap.list.bullet}">${children}</ul>`,
       number: ({ children }) =>
         `<ol class="${classListMap.list.number}">${children}</ul>`,
+    },
+    listItem: {
+      bullet: ({ children }) =>
+        `<li class="${classListMap.listItem.bullet}">${children}</li>`,
     },
     marks: {
       underline: ({ children }) =>
