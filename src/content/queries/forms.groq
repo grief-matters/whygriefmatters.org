@@ -1,0 +1,16 @@
+*[_type == "form"]{
+  "id": _id,
+  title,
+  description,
+  fields[]{
+    label,
+    description,
+    name,
+    type,
+    inputOptions,
+    placeholder,
+    required
+  },
+  submitButtonText,
+  successMessage
+}

@@ -9,6 +9,7 @@ import imageCollectionsQuery from "@content/queries/imageCollections.groq?raw";
 import peopleQuery from "@content/queries/people.groq?raw";
 import personGroupsQuery from "@content/queries/personGroups.groq?raw";
 import populationsQuery from "@content/queries/populations.groq?raw";
+import formsQuery from "@content/queries/forms.groq?raw";
 import websitesQuery from "@content/queries/websites.groq?raw";
 
 import { zApp } from "@content/model/app";
@@ -19,6 +20,7 @@ import zImageCollection from "@content/model/imageCollection";
 import zPerson from "@content/model/person";
 import zPersonGroup from "@content/model/personGroup";
 import { zPopulation } from "@content/model/population";
+import { zForm } from "@content/model/form";
 import { zWebsite } from "@content/model/website";
 
 import { loadSanityQuery } from "@content/loaders/sanityQueryLoader";
@@ -83,6 +85,14 @@ export const collections = {
   }),
 
   // Other Collections
+  forms: defineCollection({
+    loader: async () =>
+      loadSanityQuery({
+        query: formsQuery,
+        schema: zForm,
+      }),
+    schema: zForm,
+  }),
   categories: defineCollection({
     loader: async () =>
       loadSanityQuery({
