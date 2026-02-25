@@ -1,0 +1,6 @@
+*[_type == "endorsement"]{
+  "id": _id,
+  endorsement,
+  excerpt,
+  "endorser": endorser->_id
+}
