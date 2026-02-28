@@ -1,0 +1,169 @@
+---
+import { getCollection, getEntries } from "astro:content";
+
+import Link from "@ui/base/Link.astro";
+import Typography from "@ui/base/Typography.astro";
+
+const endorsements = await getCollection("endorsements");
+if (!endorsements) {
+  throw new Error("Could not get [endorsements] in [EndorsementCarousel]");
+}
+
+const endorsers = await getEntries(
+  endorsements.map((x) => ({
+    collection: x.data.endorser.collection,
+    id: x.data.endorser.id,
+  })),
+);
+
+function getEndorser(id: string) {
+  return endorsers.find((x) => x.id === id)?.data;
+}
+
+const fallbackIndex = Math.floor(Math.random() * endorsements.length);
+---
+
+<endorsement-carousel class="block space-y-3">
+  <div
+    data-slides
+    class="relative transition-[height] duration-500 ease-in-out"
+  >
+    {
+      endorsements.map((entry, i) => (
+        <article
+          data-endorsement
+          data-index={i}
+          class:list={[
+            "transition-opacity duration-500 ease-in-out",
+            i === fallbackIndex
+              ? "relative opacity-100"
+              : "absolute inset-0 opacity-0 invisible",
+          ]}
+        >
+          <blockquote class:list={["mb-3"]}>
+            <Typography
+              italic
+              variant="body-2"
+              class:list={[
+                `before:content-(--open-quote) after:content-(--close-quote)`,
+                "md:mb-5",
+              ]}
+            >
+              {entry.data.excerpt}
+            </Typography>
+          </blockquote>
+          <div class:list={["flex flex-col items-end gap-2 mb-4 md:mb-6"]}>
+            <p class:list={["font-bold font-sans-b"]}>
+              {getEndorser(entry.data.endorser.id)?.fullName}
+            </p>
+            <p
+              class:list={[
+                "text-end",
+                "text-sm font-sans-b text-onSurface-coolNeutral--muted",
+              ]}
+            >
+              {getEndorser(entry.data.endorser.id)?.role}
+            </p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+  <div class:list={["flex justify-center"]}>
+    <Link to="/about/endorsements" label="See what other experts are saying" />
+  </div>
+</endorsement-carousel>
+
+<script is:inline>
+  class EndorsementCarousel extends HTMLElement {
+    connectedCallback() {
+      this.slides = this.querySelectorAll("[data-endorsement]");
+
+      if (this.slides.length <= 1) {
+        return;
+      }
+
+      this.currentIndex = Math.floor(Math.random() * this.slides.length);
+      this.paused = false;
+      this.transitioning = false;
+
+      // Initialize: activate random start, deactivate all others
+      this.slides.forEach((slide, i) => {
+        if (i === this.currentIndex) {
+          this.activate(slide);
+        } else {
+          this.deactivate(slide);
+        }
+      });
+
+      this.timer = setInterval(() => this.advance(), 10000);
+
+      this.addEventListener("mouseenter", () => (this.paused = true));
+      this.addEventListener("mouseleave", () => (this.paused = false));
+      this.addEventListener("focusin", () => (this.paused = true));
+      this.addEventListener("focusout", () => (this.paused = false));
+    }
+
+    activate(slide) {
+      slide.classList.remove("absolute", "inset-0", "opacity-0", "invisible");
+      slide.classList.add("relative", "opacity-100");
+    }
+
+    deactivate(slide) {
+      slide.classList.remove("relative", "opacity-100");
+      slide.classList.add("absolute", "inset-0", "opacity-0", "invisible");
+    }
+
+    advance() {
+      if (this.paused || this.transitioning) {
+        return;
+      }
+
+      this.transitioning = true;
+
+      const container = this.querySelector("[data-slides]");
+      const current = this.slides[this.currentIndex];
+      const nextIndex = (this.currentIndex + 1) % this.slides.length;
+      const next = this.slides[nextIndex];
+
+      // Lock the current height so the transition has a start value
+      container.style.height = container.offsetHeight + "px";
+
+      // Fade out current
+      current.classList.remove("opacity-100");
+      current.classList.add("opacity-0");
+
+      setTimeout(() => {
+        // Swap layout: deactivate current, activate next (but transparent)
+        this.deactivate(current);
+        next.classList.remove("absolute", "inset-0", "invisible");
+        next.classList.add("relative", "opacity-0");
+
+        // Measure the new natural height and transition to it
+        const newHeight = next.scrollHeight;
+        container.style.height = newHeight + "px";
+
+        // Next frame: fade in
+        requestAnimationFrame(() => {
+          next.classList.remove("opacity-0");
+          next.classList.add("opacity-100");
+          this.currentIndex = nextIndex;
+          this.transitioning = false;
+        });
+
+        // After height transition completes, remove explicit height
+        container.addEventListener("transitionend", function handler(e) {
+          if (e.propertyName === "height") {
+            container.style.height = "";
+            container.removeEventListener("transitionend", handler);
+          }
+        });
+      }, 750);
+    }
+
+    disconnectedCallback() {
+      if (this.timer) clearInterval(this.timer);
+    }
+  }
+  customElements.define("endorsement-carousel", EndorsementCarousel);
+</script>
