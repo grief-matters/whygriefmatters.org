@@ -8,6 +8,7 @@ import Typography from "@ui/base/Typography.astro";
 import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 
 import ExploreLinks from "@ui/composite/ExploreLinks.astro";
+import Link from "@ui/base/Link.astro";
 
 interface Props {
   categoryEntryData: CollectionEntry<"categories">["data"];
@@ -78,4 +79,11 @@ if (categoryEntryData.subcategories.length > 0) {
       </Button>
     )
   }
+  <div class:list={"mt-6"}>
+    <Link
+      colorVariant="primaryContrast"
+      to="#resource-listings-container"
+      label="Jump to Resources"
+    />
+  </div>
 </PageHeaderLayout>
