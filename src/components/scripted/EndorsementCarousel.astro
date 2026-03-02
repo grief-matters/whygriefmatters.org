@@ -1,0 +1,330 @@
+---
+import { getCollection, getEntries } from "astro:content";
+
+import Icon from "@ui/base/Icon.astro";
+import Link from "@ui/base/Link.astro";
+import Typography from "@ui/base/Typography.astro";
+
+const endorsements = await getCollection("endorsements");
+if (!endorsements) {
+  throw new Error("Could not get [endorsements] in [EndorsementCarousel]");
+}
+
+const endorsers = await getEntries(
+  endorsements.map((x) => ({
+    collection: x.data.endorser.collection,
+    id: x.data.endorser.id,
+  })),
+);
+
+function getEndorser(id: string) {
+  return endorsers.find((x) => x.id === id)?.data;
+}
+
+const fallbackIndex = Math.floor(Math.random() * endorsements.length);
+---
+
+<endorsement-carousel
+  role="region"
+  aria-roledescription="carousel"
+  aria-label="Expert endorsements"
+  class="block space-y-3"
+>
+  <div
+    data-slides
+    aria-live="off"
+    class="relative transition-[height] duration-500 ease-in-out"
+  >
+    {
+      endorsements.map((entry, i) => (
+        <figure
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`Endorsement ${i + 1} of ${endorsements.length}`}
+          data-endorsement
+          data-index={i}
+          inert={i !== fallbackIndex ? true : undefined}
+          class:list={[
+            "transition-opacity duration-500 ease-in-out",
+            i === fallbackIndex
+              ? "relative opacity-100"
+              : "absolute inset-0 opacity-0 invisible",
+          ]}
+        >
+          <blockquote class:list={["mb-3"]}>
+            <Typography
+              italic
+              variant="body-2"
+              class:list={[
+                `before:content-(--open-quote) after:content-(--close-quote)`,
+                "md:mb-5",
+              ]}
+            >
+              {entry.data.excerpt}
+            </Typography>
+          </blockquote>
+          <figcaption
+            class:list={["flex flex-col items-end gap-2 mb-4 md:mb-6"]}
+          >
+            <Typography as="p" variant="body-1" bold>
+              {getEndorser(entry.data.endorser.id)?.fullName}
+            </Typography>
+            <Typography as="p" variant="subtitle-1" class:list={["text-end"]}>
+              {getEndorser(entry.data.endorser.id)?.role}
+            </Typography>
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+  <div class="flex items-center justify-between">
+    <div class="flex gap-2">
+      <button
+        data-rotation-toggle
+        type="button"
+        aria-label="Stop auto-rotation"
+        class="inline-flex items-center justify-center size-8 rounded-full stroke-2 text-on-surface-coolNeutral--default hover:bg-surface-coolNeutral--hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-surface-coolNeutral--default"
+      >
+        <Icon getIcon={(i) => i.pause} size={2} />
+      </button>
+      <button
+        data-prev
+        type="button"
+        aria-label="Previous slide"
+        class="inline-flex items-center justify-center size-8 rounded-full stroke-2 text-on-surface-coolNeutral--default hover:bg-surface-coolNeutral--hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-surface-coolNeutral--default"
+      >
+        <Icon getIcon={(i) => i.chevronLeft} size={2} />
+      </button>
+      <button
+        data-next
+        type="button"
+        aria-label="Next slide"
+        class="inline-flex items-center justify-center size-8 rounded-full stroke-2 text-on-surface-coolNeutral--default hover:bg-surface-coolNeutral--hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-surface-coolNeutral--default"
+      >
+        <Icon getIcon={(i) => i.chevronRight} size={2} />
+      </button>
+    </div>
+    <Link to="/about/endorsements" label="See what other experts are saying" />
+  </div>
+</endorsement-carousel>
+
+<script>
+  class EndorsementCarousel extends HTMLElement {
+    slides!: NodeListOf<HTMLElement>;
+    slidesContainer!: HTMLElement;
+    rotationToggle!: HTMLButtonElement;
+    currentIndex!: number;
+    rotating!: boolean;
+    transitioning!: boolean;
+    timer?: ReturnType<typeof setInterval>;
+
+    connectedCallback() {
+      this.slides = this.querySelectorAll("[data-endorsement]");
+
+      if (this.slides.length <= 1) {
+        this.querySelector("[data-rotation-toggle]")?.remove();
+        this.querySelector("[data-prev]")?.remove();
+        this.querySelector("[data-next]")?.remove();
+        return;
+      }
+
+      this.slidesContainer = this.querySelector("[data-slides]") as HTMLElement;
+      this.rotationToggle = this.querySelector(
+        "[data-rotation-toggle]",
+      ) as HTMLButtonElement;
+
+      // Read the server-rendered active index to avoid an initialization flash
+      this.currentIndex = 0;
+      this.slides.forEach((slide, i) => {
+        if (slide.classList.contains("relative")) {
+          this.currentIndex = i;
+        }
+      });
+
+      this.rotating = false;
+      this.transitioning = false;
+
+      // Respect prefers-reduced-motion — no auto-rotation, but keep controls
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (!prefersReducedMotion) {
+        this.startRotation();
+      } else {
+        this.updateToggleButton(false);
+      }
+
+      // Rotation toggle
+      this.rotationToggle.addEventListener("click", () => {
+        if (this.rotating) {
+          this.stopRotation();
+        } else {
+          this.startRotation();
+        }
+      });
+
+      // Prev/next buttons
+      this.querySelector("[data-prev]")?.addEventListener("click", () => {
+        this.stopRotation();
+        this.goTo(
+          (this.currentIndex - 1 + this.slides.length) % this.slides.length,
+          true,
+        );
+      });
+
+      this.querySelector("[data-next]")?.addEventListener("click", () => {
+        this.stopRotation();
+        this.goTo((this.currentIndex + 1) % this.slides.length, true);
+      });
+
+      // Pause on hover
+      this.addEventListener("mouseenter", () => {
+        if (this.rotating) this.clearTimer();
+      });
+      this.addEventListener("mouseleave", () => {
+        if (this.rotating) this.setTimer();
+      });
+
+      // Focus entering the carousel stops rotation permanently (APG)
+      this.addEventListener("focusin", () => {
+        if (this.rotating) this.stopRotation();
+      });
+    }
+
+    startRotation() {
+      this.rotating = true;
+      this.slidesContainer.setAttribute("aria-live", "off");
+      this.updateToggleButton(true);
+      this.setTimer();
+    }
+
+    stopRotation() {
+      this.rotating = false;
+      this.clearTimer();
+      this.updateToggleButton(false);
+    }
+
+    setTimer() {
+      this.clearTimer();
+      this.timer = setInterval(() => this.advance(), 10000);
+    }
+
+    clearTimer() {
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = undefined;
+      }
+    }
+
+    updateToggleButton(isRotating: boolean) {
+      const pauseIcon = this.rotationToggle.querySelector("svg:first-child");
+      if (isRotating) {
+        this.rotationToggle.setAttribute("aria-label", "Stop auto-rotation");
+        if (pauseIcon) {
+          // Replace with pause icon paths
+          pauseIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />`;
+        }
+      } else {
+        this.rotationToggle.setAttribute("aria-label", "Start auto-rotation");
+        if (pauseIcon) {
+          // Replace with play icon paths
+          pauseIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />`;
+        }
+      }
+    }
+
+    activate(slide: HTMLElement) {
+      slide.classList.remove("absolute", "inset-0", "opacity-0", "invisible");
+      slide.classList.add("relative", "opacity-100");
+      slide.removeAttribute("inert");
+    }
+
+    deactivate(slide: HTMLElement) {
+      slide.classList.remove("relative", "opacity-100");
+      slide.classList.add("absolute", "inset-0", "opacity-0", "invisible");
+      slide.setAttribute("inert", "");
+    }
+
+    goTo(nextIndex: number, announceToAT: boolean) {
+      if (nextIndex === this.currentIndex || this.transitioning) {
+        return;
+      }
+
+      this.transitioning = true;
+
+      // Enable live region for manual navigation so AT announces the new slide
+      if (announceToAT) {
+        this.slidesContainer.setAttribute("aria-live", "polite");
+      }
+
+      const current = this.slides[this.currentIndex];
+      const next = this.slides[nextIndex];
+
+      // Lock the current height so the transition has a start value
+      this.slidesContainer.style.height =
+        this.slidesContainer.offsetHeight + "px";
+
+      // Fade out current
+      current.classList.remove("opacity-100");
+      current.classList.add("opacity-0");
+
+      setTimeout(() => {
+        // Swap layout: deactivate current, activate next (but transparent)
+        this.deactivate(current);
+        next.classList.remove("absolute", "inset-0", "invisible");
+        next.removeAttribute("inert");
+        next.classList.add("relative", "opacity-0");
+
+        // Measure the new natural height and transition to it
+        const newHeight = next.scrollHeight;
+        this.slidesContainer.style.height = newHeight + "px";
+
+        // Next frame: fade in
+        requestAnimationFrame(() => {
+          next.classList.remove("opacity-0");
+          next.classList.add("opacity-100");
+          this.currentIndex = nextIndex;
+          this.transitioning = false;
+
+          // Reset live region after AT has had time to pick up the change
+          if (announceToAT) {
+            setTimeout(() => {
+              if (!this.rotating) {
+                this.slidesContainer.setAttribute("aria-live", "polite");
+              } else {
+                this.slidesContainer.setAttribute("aria-live", "off");
+              }
+            }, 1000);
+          }
+        });
+
+        // After height transition completes, remove explicit height
+        this.slidesContainer.addEventListener(
+          "transitionend",
+          function handler(e) {
+            if (e.propertyName === "height") {
+              (e.currentTarget as HTMLElement).style.height = "";
+              (e.currentTarget as HTMLElement).removeEventListener(
+                "transitionend",
+                handler,
+              );
+            }
+          },
+        );
+      }, 750);
+    }
+
+    advance() {
+      if (this.transitioning) {
+        return;
+      }
+      this.goTo((this.currentIndex + 1) % this.slides.length, false);
+    }
+
+    disconnectedCallback() {
+      this.clearTimer();
+    }
+  }
+  customElements.define("endorsement-carousel", EndorsementCarousel);
+</script>

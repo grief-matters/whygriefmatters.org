@@ -26,6 +26,7 @@ export const iconMap = {
   chatBubbleLeftEllipsis: "chat-bubble-left-ellipsis",
   chatBubbleLeftRight: "chat-bubble-left-right",
   chevronLeft: "chevron-left",
+  chevronRight: "chevron-right",
   computerDesktop: "computer-desktop",
   devicePhoneMobile: "device-phone-mobile",
   documentDuplicate: "document-duplicate",
@@ -42,6 +43,8 @@ export const iconMap = {
   userGroup: "user-group",
   users: "users",
   linkedIn: "linked-in",
+  pause: "pause",
+  play: "play",
 } as const;
 
 export const resourceTypeIconConfigMap: Record<

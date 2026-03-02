@@ -1,4 +1,7 @@
 :root {
+  --open-quote: "\201C";
+  --close-quote: "\201D";
+
   --token-color-white: #ffffff;
   --token-color-black: #000000;
 

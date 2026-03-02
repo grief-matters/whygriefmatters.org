@@ -1,0 +1,84 @@
+---
+import { getCollection, getEntries } from "astro:content";
+
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import Section from "@ui/layouts/Section.astro";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
+import Button from "@ui/base/Button.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Typography from "@ui/base/Typography.astro";
+
+const endorsements = await getCollection("endorsements");
+if (!endorsements) {
+  throw new Error("Could not get [endorsements] in [EndorsementCarousel]");
+}
+
+const endorsers = await getEntries(
+  endorsements.map((x) => ({
+    collection: x.data.endorser.collection,
+    id: x.data.endorser.id,
+  })),
+);
+
+function getEndorser(id: string) {
+  return endorsers.find((x) => x.id === id)?.data;
+}
+---
+
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={null}
+  >
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+      >
+        {"Endorsements"}
+      </Typography>
+      <Typography
+        as="p"
+        variant="body-2"
+        colorVariant="primaryContrast"
+        marginBottom={2}
+      >
+        {"What experts are saying about Why Grief Matters"}
+      </Typography>
+    </Spacer>
+    <Button
+      as="a"
+      colorVariant="secondary"
+      href={`/about`}
+      class="inline-block"
+    >
+      <Typography>
+        {"Back to "}
+        <strong class="text-bold">
+          {"About Us"}
+        </strong>
+      </Typography>
+    </Button>
+  </PageHeaderLayout>
+  {
+    endorsements.map((e) => (
+      <Section as="article">
+        <blockquote class:list={["font-serif text-lg italic text-italic mb-4"]}>
+          {e.data.endorsement}
+        </blockquote>
+        <div class:list={["text-right"]}>
+          <Typography as="p" variant="body-2" bold>
+            {getEndorser(e.data.endorser.id)?.fullName}
+          </Typography>
+          <Typography as="p" variant="subtitle-1" class:list={["text-end"]}>
+            {getEndorser(e.data.endorser.id)?.role}
+          </Typography>
+        </div>
+      </Section>
+    ))
+  }
+</SitePageLayout>
