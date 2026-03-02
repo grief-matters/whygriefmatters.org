@@ -28,7 +28,7 @@ const fallbackIndex = Math.floor(Math.random() * endorsements.length);
   role="region"
   aria-roledescription="carousel"
   aria-label="Expert endorsements"
-  class="block space-y-3"
+  class="block"
 >
   <div
     data-slides
@@ -63,13 +63,11 @@ const fallbackIndex = Math.floor(Math.random() * endorsements.length);
               {entry.data.excerpt}
             </Typography>
           </blockquote>
-          <figcaption
-            class:list={["flex flex-col items-end gap-2 mb-4 md:mb-6"]}
-          >
+          <figcaption class:list={["text-right"]}>
             <Typography as="p" variant="body-1" bold>
               {getEndorser(entry.data.endorser.id)?.fullName}
             </Typography>
-            <Typography as="p" variant="subtitle-1" class:list={["text-end"]}>
+            <Typography as="p" variant="subtitle-1">
               {getEndorser(entry.data.endorser.id)?.role}
             </Typography>
           </figcaption>
@@ -77,7 +75,9 @@ const fallbackIndex = Math.floor(Math.random() * endorsements.length);
       ))
     }
   </div>
-  <div class="flex items-center justify-between">
+  <div
+    class="flex gap-3 flex-col-reverse md:flex-row md:items-center md:justify-between"
+  >
     <div class="flex gap-2">
       <button
         data-rotation-toggle
