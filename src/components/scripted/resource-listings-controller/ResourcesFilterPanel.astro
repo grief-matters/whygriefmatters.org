@@ -37,6 +37,11 @@ const { resourceTypes } = Astro.props;
       label="Clear Filter"
     />
   </div>
+  <div class:list={[marginBottomMap[3]]}>
+    <Typography colorVariant="warmNeutral">
+      {"Select from the options below to only show resources of those types"}
+    </Typography>
+  </div>
   <div class:list={[gapMap[3], "flex flex-wrap sm:grid sm:grid-cols-3"]}>
     {
       resourceTypes.map((resourceType: InternetResourceCollectionKey) => (
