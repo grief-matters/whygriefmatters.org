@@ -21,7 +21,7 @@ If you have lost someone and are looking for support, or you're supporting someo
 ```bash
 git clone https://github.com/grief-matters/whygriefmatters.org
 cd whygriefmatters.org
-nvm use                # Node 24.13.0
+nvm use
 npm install
 ```
 
