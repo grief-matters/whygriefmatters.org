@@ -27,7 +27,6 @@
   "dependencies": {
     "@astrojs/check": "0.9.6",
     "@astrojs/cloudflare": "12.6.12",
-    "@clerk/astro": "2.16.12",
     "@portabletext/to-html": "5.0.1",
     "@sanity/client": "7.14.0",
     "@sanity/image-url": "2.0.2",

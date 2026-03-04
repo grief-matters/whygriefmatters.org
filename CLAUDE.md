@@ -52,21 +52,25 @@ npm run preview   # Preview production build on Cloudflare
 ## Key Conventions
 
 ### Component Architecture
+
 - **Primitives**: Basic reusable components
 - **Composites**: Feature-specific combinations
 - **Orchestrators**: Smart components handling data and rendering logic
 
 ### Naming
+
 - Components: PascalCase (`Card.astro`)
 - Functions/variables: camelCase
 - Content types: camelCase (`articleResourceType`)
 
 ### TypeScript
+
 - Strict mode enabled
 - Use type imports: `import type { Foo } from '...'`
 - Unused params prefixed with `_` are allowed
 
 ### Styling
+
 - Design tokens in `/src/styles/tokens.css` and `main.css`
 - Color system: `layoutSurface`, `contentSurface`, `onSurface`
 - Text presets: `title-1` through `title-4`, `body-1`, `body-2`
@@ -74,6 +78,7 @@ npm run preview   # Preview production build on Cloudflare
 ## Content & CMS
 
 Content is fetched from Sanity and validated with Zod schemas. Key content types:
+
 - Internet resources (articles, books, podcasts, videos, etc.)
 - Categories (hierarchical)
 - Populations (target audiences)
@@ -83,12 +88,14 @@ GROQ queries are in `/src/content/queries/`. Loaders in `/src/content/loaders/`.
 ## Environment Variables
 
 Required for full functionality:
+
 - `SANITY_AUTH_TOKEN` - Sanity API token (server-only)
-- `PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk public key
-- `CLERK_SECRET_KEY` - Clerk secret key
 - `RESEND_API_KEY` - Email service key
 
-Pre-configured (public):
+Pre-configured via Wrangler config (public):
+
 - `SANITY_STUDIO_PROJECT_ID` - "vg3sb730"
 - `SANITY_STUDIO_DATASET` - "production"
 - `SANITY_STUDIO_API_VERSION` - "2023-07-16"
+- `RESEND_FROM_ADDRESS` - "Why Grief Matters <system@noreply.whygriefmatters.org>"
+- `RESEND_TO_ADDRESS` - "contact@whygriefmatters.org"
