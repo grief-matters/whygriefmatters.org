@@ -91,6 +91,7 @@ const contentGroupData = aboutContentGroup[0].data;
         { url: "/about/our-story", label: "Our Story" },
         { url: "/about/mission-and-values", label: "Mission and Values" },
         { url: "/about/team", label: "The Why Grief Matters Team" },
+        { url: "/about/endorsements", label: "What Experts Are Saying" },
       ]}
     />
   </PageHeaderLayout>
@@ -113,7 +114,13 @@ const contentGroupData = aboutContentGroup[0].data;
     <Stack spacing={2}>
       {
         teamMembers.map((member) => (
-          <div class:list={[paddingBottomMap[4], marginBottomMap[4], "not-last:border-b border-b-line-coolNeutral--default"]}>
+          <div
+            class:list={[
+              paddingBottomMap[4],
+              marginBottomMap[4],
+              "not-last:border-b border-b-line-coolNeutral--default",
+            ]}
+          >
             <div
               class:list={[
                 "space-y-3  md:gap-6",
