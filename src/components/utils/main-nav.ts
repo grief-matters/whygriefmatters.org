@@ -40,7 +40,10 @@ export async function getNavTree(): Promise<CategoryTreeNode[]> {
   );
 
   // Add the "Get Support" custom node at position 2
-  const getSupportNode = buildGetSupportNode();
+  const getSupportNode = await buildGetSupportNode(
+    authoritativeRootCategories,
+    categories,
+  );
   navTree.splice(2, 0, getSupportNode);
 
   // Add the "Underserved Communities" node
