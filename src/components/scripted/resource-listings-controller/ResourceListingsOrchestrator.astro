@@ -52,7 +52,10 @@ const { resourceTypes, internetResources } = Astro.props;
         <div
           data-mobile-jump-panel
           hidden
-          class:list={[paddingSettingMap[3], "bg-contentSurface-neutral--muted border border-line-neutral--default rounded-lg shadow-lg"]}
+          class:list={[
+            paddingSettingMap[3],
+            "bg-contentSurface-neutral--muted border border-line-neutral--default rounded-lg shadow-lg",
+          ]}
         >
           <div class:list={[marginBottomMap[2], "flex justify-between"]}>
             <JumpLinks resourceTypes={resourceTypes} />
@@ -66,7 +69,7 @@ const { resourceTypes, internetResources } = Astro.props;
         </div>
       </div>
       <div class="hidden lg:block"></div>
-      <Container>
+      <Container data-pagefind-body>
         <ResourceListingRenderer internetResources={internetResources} />
       </Container>
     </div>

@@ -116,6 +116,44 @@ import Typography from "@ui/base/Typography.astro";
   import type { Pagefind, PagefindSearchResult } from "../../types/pagefind";
 
   class SearchController extends HTMLElement {
+    static STOP_WORDS = new Set([
+      "a",
+      "an",
+      "and",
+      "are",
+      "as",
+      "at",
+      "be",
+      "but",
+      "by",
+      "for",
+      "if",
+      "in",
+      "into",
+      "is",
+      "it",
+      "no",
+      "not",
+      "of",
+      "on",
+      "or",
+      "such",
+      "that",
+      "the",
+      "their",
+      "then",
+      "there",
+      "these",
+      "they",
+      "this",
+      "to",
+      "was",
+      "will",
+      "with",
+      "my",
+      "died",
+    ]);
+
     private pagefind: Pagefind | null = null;
     private selectedIndex: number = -1;
     private results: Array<{ url: string; title: string; excerpt: string }> =
@@ -204,11 +242,21 @@ import Typography from "@ui/base/Typography.astro";
       }
     }
 
+    private removeStopWords(query: string): string {
+      return query
+        .split(/\s+/)
+        .filter((word) => !SearchController.STOP_WORDS.has(word.toLowerCase()))
+        .join(" ");
+    }
+
     async handleSearch(query: string) {
       if (!query.trim()) {
         this.clearResults();
         return;
       }
+
+      const filtered = this.removeStopWords(query);
+      const searchQuery = filtered || query.trim();
 
       if (!this.pagefind) {
         await this.initPagefind();
@@ -221,7 +269,8 @@ import Typography from "@ui/base/Typography.astro";
       this.showLoading();
 
       try {
-        const search = await this.pagefind.debouncedSearch(query);
+        console.log(searchQuery);
+        const search = await this.pagefind.debouncedSearch(searchQuery);
         if (!search || !search.results) {
           this.hideLoading();
           this.showEmpty();
