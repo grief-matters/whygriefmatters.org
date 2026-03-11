@@ -1,24 +1,45 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 
 import type { InternetResourceEntries } from "@content/collections";
 
 import {
+  buildCategoryExistenceForCollection,
+  buildPopulationExistenceForCollection,
+  pruneTreeForCollection,
   supportCollections,
   type SupportCollectionKey,
 } from "@ui/utils/content/support";
+import {
+  buildCategoryTree,
+  type CategoryTreeNode,
+} from "@ui/utils/content/category";
 
 import Container from "@ui/base/Container.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import ResourceListingRenderer from "@ui/composite/content-linked/internet-resources/ResourceListingRenderer.astro";
+import SupportPopulationsNavigator from "@ui/composite/content-linked/support/SupportPopulationsNavigator.astro";
+import SupportTypesOfLossNavigator from "@ui/composite/content-linked/support/SupportTypesOfLossNavigator.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Typography from "@ui/base/Typography.astro";
 
 interface Props {
   resourceType: SupportCollectionKey;
   resources: InternetResourceEntries;
+  populations: Array<CollectionEntry<"populations">>;
+  typesOfLossTree: CategoryTreeNode[];
 }
 
 export async function getStaticPaths() {
+  const allPopulations = await getCollection("populations");
+  const allCategories = await getCollection("categories");
+
+  const typesOfLossRoot = allCategories.find(
+    (c) => c.data.slug === "types-of-loss",
+  );
+
   const paths = [];
 
   for (const c of supportCollections) {
@@ -28,19 +49,90 @@ export async function getStaticPaths() {
       [c.key]: collection,
     };
 
+    // Build populations with resources for this support type
+    const populationExistence = await buildPopulationExistenceForCollection(
+      c.key,
+    );
+    const populations = allPopulations.filter((p) =>
+      populationExistence.has(p.id),
+    );
+
+    // Build pruned types-of-loss tree for this support type
+    let typesOfLossTree: CategoryTreeNode[] = [];
+    if (typesOfLossRoot) {
+      const categoryExistence = await buildCategoryExistenceForCollection(
+        c.key,
+      );
+      const fullTree = buildCategoryTree(typesOfLossRoot, allCategories);
+      const prunedTree = pruneTreeForCollection(
+        fullTree,
+        categoryExistence,
+        c.key,
+      );
+      typesOfLossTree = prunedTree ? prunedTree.children : [];
+    }
+
     paths.push({
       params: { slug: c.slug },
-      props: { resourceType: c.key, resources },
+      props: { resourceType: c.key, resources, populations, typesOfLossTree },
     });
   }
 
   return paths;
 }
 
-const props = Astro.props;
+const { resourceType, resources, populations, typesOfLossTree } = Astro.props;
+
+const typeLabel = supportCollections.find((x) => x.key === resourceType)?.title;
+
+if (!typeLabel) {
+  throw new Error(
+    "Could net get header text in [src/pages/get-support/[slug].astro]",
+  );
+}
 ---
 
 <SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={null}
+  >
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+      >
+        {`Find ${typeLabel}`}
+      </Typography>
+    </Spacer>
+  </PageHeaderLayout>
+  {
+    populations.length > 0 && (
+      <LayoutSurface paddingX={2} paddingY={4}>
+        <Container>
+          <SupportPopulationsNavigator
+            resourceType={resourceType}
+            populations={populations}
+          />
+        </Container>
+      </LayoutSurface>
+    )
+  }
+  {
+    typesOfLossTree.length > 0 && (
+      <LayoutSurface paddingX={2} paddingY={4} colorVariantKey={2}>
+        <Container>
+          <SupportTypesOfLossNavigator
+            resourceType={resourceType}
+            categories={typesOfLossTree}
+          />
+        </Container>
+      </LayoutSurface>
+    )
+  }
   <LayoutSurface
     id="resource-listings-container"
     as="section"
@@ -48,7 +140,7 @@ const props = Astro.props;
     paddingY={5}
   >
     <Container data-pagefind-body>
-      <ResourceListingRenderer internetResources={props.resources} />
+      <ResourceListingRenderer internetResources={resources} />
     </Container>
   </LayoutSurface>
 </SitePageLayout>

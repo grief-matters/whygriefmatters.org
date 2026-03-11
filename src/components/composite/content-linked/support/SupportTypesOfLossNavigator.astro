@@ -1,0 +1,40 @@
+---
+import type { CategoryTreeNode } from "@ui/utils/content/category";
+
+import ContentSurface from "@ui/base/ContentSurface.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import CategoryTreeBranch from "@ui/composite/content-linked/category/CategoryTreeBranch.astro";
+import {
+  supportCollections,
+  type SupportCollectionKey,
+} from "@ui/utils/content/support";
+
+interface Props {
+  categories: CategoryTreeNode[];
+  resourceType: SupportCollectionKey;
+}
+
+const { resourceType, categories } = Astro.props;
+
+const typeLabel =
+  supportCollections.find((x) => x.key === resourceType)?.title ?? "Resources";
+---
+
+<ContentSurface variant="neutral" paddingY={3} paddingX={5}>
+  <Stack spacing={2}>
+    <Typography colorVariant="warmNeutral" as="h2" variant="title-4">
+      {`Find ${typeLabel} by Type of Loss`}
+    </Typography>
+    <Typography colorVariant="warmNeutral">
+      {`We've identified ${typeLabel} by specific type of loss.`}
+    </Typography>
+    <ul class="space-y-2">
+      {
+        categories.map((node) => (
+          <CategoryTreeBranch colorVariant="warmNeutral" node={node} />
+        ))
+      }
+    </ul>
+  </Stack>
+</ContentSurface>

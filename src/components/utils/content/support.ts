@@ -19,7 +19,7 @@ export type SupportCollectionKey = (typeof supportCollections)[number]["key"];
  * Builds a Set of category IDs that have at least 1 resource of the given
  * support collection type.
  */
-async function buildCategoryExistenceForCollection(
+export async function buildCategoryExistenceForCollection(
   collectionKey: SupportCollectionKey,
 ): Promise<Set<string>> {
   const resources = await getCollection(collectionKey);
@@ -36,7 +36,7 @@ async function buildCategoryExistenceForCollection(
  * Builds a Set of population IDs that have at least 1 resource of the given
  * support collection type.
  */
-async function buildPopulationExistenceForCollection(
+export async function buildPopulationExistenceForCollection(
   collectionKey: SupportCollectionKey,
 ): Promise<Set<string>> {
   const resources = await getCollection(collectionKey);
@@ -54,7 +54,7 @@ async function buildPopulationExistenceForCollection(
  * is in the existence set (or has a descendant that is).
  * Surviving nodes get href: `/${node.slug}?filter=${supportKey}`.
  */
-function pruneTreeForCollection(
+export function pruneTreeForCollection(
   node: CategoryTreeNode,
   categoryExistenceSet: Set<string>,
   supportKey: string,
@@ -77,7 +77,7 @@ function pruneTreeForCollection(
     title: node.title,
     displayTitle: node.displayTitle,
     children: prunedChildren,
-    href: `/${node.slug}?filter=${supportKey}`,
+    href: `/${node.slug}?filter=${supportKey}#resource-listings-container`,
   };
 }
 
