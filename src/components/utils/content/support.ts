@@ -52,16 +52,16 @@ async function buildPopulationExistenceForCollection(
 /**
  * Recursively prunes a category tree to only include nodes whose category ID
  * is in the existence set (or has a descendant that is).
- * Surviving nodes get href: `/${node.slug}?filter=${supportSlug}`.
+ * Surviving nodes get href: `/${node.slug}?filter=${supportKey}`.
  */
 function pruneTreeForCollection(
   node: CategoryTreeNode,
   categoryExistenceSet: Set<string>,
-  supportSlug: string,
+  supportKey: string,
 ): CategoryTreeNode | null {
   const prunedChildren = node.children
     .map((child) =>
-      pruneTreeForCollection(child, categoryExistenceSet, supportSlug),
+      pruneTreeForCollection(child, categoryExistenceSet, supportKey),
     )
     .filter((child): child is CategoryTreeNode => child !== null);
 
@@ -77,7 +77,7 @@ function pruneTreeForCollection(
     title: node.title,
     displayTitle: node.displayTitle,
     children: prunedChildren,
-    href: `/${node.slug}?filter=${supportSlug}`,
+    href: `/${node.slug}?filter=${supportKey}`,
   };
 }
 
@@ -118,7 +118,7 @@ export async function buildGetSupportNode(
       const prunedTree = pruneTreeForCollection(
         fullTree,
         categoryExistence,
-        slug,
+        key,
       );
 
       if (prunedTree && prunedTree.children.length > 0) {
@@ -143,7 +143,7 @@ export async function buildGetSupportNode(
         title: p.data.name,
         displayTitle: p.data.name,
         children: [] as CategoryTreeNode[],
-        href: `/get-support/${p.data.slug}?filter=${slug}`,
+        href: `/get-support/${p.data.slug}?filter=${key}`,
       }));
 
     if (populationChildren.length > 0) {
