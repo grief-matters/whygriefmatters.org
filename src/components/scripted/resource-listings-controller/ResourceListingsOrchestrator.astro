@@ -108,6 +108,8 @@ const { resourceTypes, internetResources } = Astro.props;
 
       mobileBtn?.addEventListener("click", () => this.toggleMobilePanel());
       mobileCloseBtn?.addEventListener("click", () => this.toggleMobilePanel());
+
+      this.loadFiltersFromUrl();
     }
 
     toggleFilter(btn: Element) {
@@ -151,6 +153,7 @@ const { resourceTypes, internetResources } = Astro.props;
       });
 
       this.updateJumpLinkStates();
+      this.syncFiltersToUrl();
     }
 
     handleJumpClick(e: Event, link: Element) {
@@ -199,6 +202,31 @@ const { resourceTypes, internetResources } = Astro.props;
       const btn = this.querySelector("[data-mobile-jump-btn]");
       panel?.toggleAttribute("hidden");
       btn?.toggleAttribute("hidden");
+    }
+
+    syncFiltersToUrl() {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("filter");
+      this.activeFilters.forEach((f) => url.searchParams.append("filter", f));
+      history.replaceState(null, "", url);
+    }
+
+    loadFiltersFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const filters = params.getAll("filter");
+      if (filters.length === 0) return;
+
+      filters.forEach((filter) => {
+        const btn = this.querySelector(
+          `[data-filter-btn][data-resource-type="${filter}"]`,
+        );
+        if (btn) {
+          this.activeFilters.add(filter);
+          btn.setAttribute("data-active", "");
+        }
+      });
+
+      this.applyFilters();
     }
 
     updateJumpLinkStates() {

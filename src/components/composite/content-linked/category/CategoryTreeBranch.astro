@@ -3,14 +3,16 @@ import type { TextPreset } from "@styles/utils/typography";
 import type { CategoryTreeNode } from "@ui/utils/content/category";
 
 import Link from "@ui/base/Link.astro";
+import type { OnSurfaceColorVariant } from "@styles/utils/color";
 
 interface Props {
   node: CategoryTreeNode;
   level?: number;
+  colorVariant?: OnSurfaceColorVariant;
 }
 
 const Self = Astro.self;
-const { node, level = 0 } = Astro.props;
+const { colorVariant, node, level = 0 } = Astro.props;
 
 const textVariantMap: Record<number, TextPreset> = {
   0: "title-4",
@@ -26,6 +28,7 @@ const textVariantMap: Record<number, TextPreset> = {
         to={node.href}
         label={node.displayTitle}
         variant={textVariantMap[level]}
+        colorVariant={colorVariant}
       />
     ) : (
       <span>{node.displayTitle}</span>
@@ -35,7 +38,7 @@ const textVariantMap: Record<number, TextPreset> = {
     node.children.length > 0 && (
       <ul class="mt-2 space-y-2">
         {node.children.map((child) => (
-          <Self node={child} level={level + 1} />
+          <Self colorVariant={colorVariant} node={child} level={level + 1} />
         ))}
       </ul>
     )

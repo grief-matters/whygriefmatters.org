@@ -168,20 +168,21 @@ const { navTree } = Astro.props;
                       ))}
                     </ul>
                   )}
-                  {!tier2.id.startsWith("population-") && (
-                    <div class="shrink">
-                      <ContentSurface
-                        prominence="muted"
-                        paddingX={5}
-                        paddingY={4}
-                      >
-                        <CategoryResourceTypesSummary categoryId={tier2.id} />
-                      </ContentSurface>
-                    </div>
-                  )}
+                  {!tier2.id.startsWith("population-") &&
+                    tier1.slug !== "get-support" && (
+                      <div class="shrink">
+                        <ContentSurface
+                          prominence="muted"
+                          paddingX={5}
+                          paddingY={4}
+                        >
+                          <CategoryResourceTypesSummary categoryId={tier2.id} />
+                        </ContentSurface>
+                      </div>
+                    )}
                 </div>
-                {tier2.href && (
-                  <div class="my-4 grow flex items-end justify-end">
+                <div class="my-4 grow flex items-end justify-end">
+                  {tier2.href && (
                     <Link
                       to={tier2.href}
                       variant="title-5"
@@ -190,8 +191,8 @@ const { navTree } = Astro.props;
                       <span class="font-normal">{"Explore "}</span>
                       {tier2.title}
                     </Link>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             )),
           )

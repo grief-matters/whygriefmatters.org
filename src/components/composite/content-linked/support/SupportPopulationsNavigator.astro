@@ -1,0 +1,41 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import { gapMap } from "@styles/utils/spacing";
+
+import ContentSurface from "@ui/base/ContentSurface.astro";
+import LinkButton from "@ui/base/LinkButton.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+
+import type { SupportCollectionKey } from "@ui/utils/content/support";
+
+interface Props {
+  resourceType: SupportCollectionKey;
+  populations: Array<CollectionEntry<"populations">>;
+}
+
+const { resourceType, populations } = Astro.props;
+---
+
+<ContentSurface variant="tertiary" paddingY={3} paddingX={5}>
+  <Stack spacing={2}>
+    <Typography as="h2" variant="title-4">{"Underserved Groups"}</Typography>
+    <Typography>
+      {
+        `We've identified resources of this type that are more centered to the unique needs and perspectives of the following communities.`
+      }
+    </Typography>
+    <ul class:list={[gapMap[3], "flex flex-wrap"]}>
+      {
+        populations.map((p) => (
+          <LinkButton
+            colorVariant="tertiary"
+            to={`/get-support/${p.data.slug}?filter=${resourceType}`}
+            label={p.data.name}
+          />
+        ))
+      }
+    </ul>
+  </Stack>
+</ContentSurface>
