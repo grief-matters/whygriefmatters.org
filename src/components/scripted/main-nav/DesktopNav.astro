@@ -181,8 +181,8 @@ const { navTree } = Astro.props;
                       </div>
                     )}
                 </div>
-                {tier2.href && (
-                  <div class="my-4 grow flex items-end justify-end">
+                <div class="my-4 grow flex items-end justify-end">
+                  {tier2.href && (
                     <Link
                       to={tier2.href}
                       variant="title-5"
@@ -191,8 +191,8 @@ const { navTree } = Astro.props;
                       <span class="font-normal">{"Explore "}</span>
                       {tier2.title}
                     </Link>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             )),
           )

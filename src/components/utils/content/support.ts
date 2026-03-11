@@ -1,6 +1,6 @@
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
-import { buildCategoryTree, type CategoryTreeNode } from "./category";
+import { type CategoryTreeNode } from "./category";
 
 export const supportCollections = [
   { key: "supportGroups", title: "Support Groups", slug: "support-groups" },
@@ -86,14 +86,7 @@ export function pruneTreeForCollection(
  * for each support type: a "Find" link, a pruned types-of-loss subtree,
  * and a pruned community-specific subtree.
  */
-export async function buildGetSupportNode(
-  authoritativeRootCategories: CollectionEntry<"categories">[],
-  allCategories: CollectionEntry<"categories">[],
-): Promise<CategoryTreeNode> {
-  const typesOfLossRoot = authoritativeRootCategories.find(
-    (c) => c.data.slug === "types-of-loss",
-  );
-
+export async function buildGetSupportNode(): Promise<CategoryTreeNode> {
   const populations = await getCollection("populations");
 
   const tier2Children: CategoryTreeNode[] = [];
@@ -101,7 +94,7 @@ export async function buildGetSupportNode(
   for (const { key, title, slug } of supportCollections) {
     const tier3Children: CategoryTreeNode[] = [];
 
-    // 1. "Find [title]" link
+    // "Find [title]" link
     tier3Children.push({
       id: `${key}-find`,
       slug,
@@ -111,28 +104,7 @@ export async function buildGetSupportNode(
       href: `/get-support/${slug}`,
     });
 
-    // 2. "Find [title] by Type Of Loss" — pruned types-of-loss subtree
-    if (typesOfLossRoot) {
-      const categoryExistence = await buildCategoryExistenceForCollection(key);
-      const fullTree = buildCategoryTree(typesOfLossRoot, allCategories);
-      const prunedTree = pruneTreeForCollection(
-        fullTree,
-        categoryExistence,
-        key,
-      );
-
-      if (prunedTree && prunedTree.children.length > 0) {
-        tier3Children.push({
-          id: `${key}-by-loss`,
-          slug: `${slug}-by-loss`,
-          title: `Find ${title} by Type Of Loss`,
-          displayTitle: `Find ${title} by Type Of Loss`,
-          children: prunedTree.children,
-        });
-      }
-    }
-
-    // 3. "Community Specific [title]" — pruned population list
+    // "Community Specific [title]" — pruned population list
     const populationExistence =
       await buildPopulationExistenceForCollection(key);
     const populationChildren = populations
