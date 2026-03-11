@@ -22,9 +22,9 @@ const logoUrl = org.logos.onDarkMono
   : null;
 ---
 
-<LayoutSurface colorVariant="primaryContrast" as="footer">
-  <Container size={2} paddingY={6}>
-    <div class:list={[marginBottomMap[5], "flex justify-between items-center"]}>
+<LayoutSurface colorVariant="primaryContrast" as="footer" paddingX={3}>
+  <Container size={2}>
+    <div class:list={["pt-6", "flex gap-6 justify-between items-center"]}>
       <a class="block" href="/">
         <img class:list={["h-18"]} src={logoUrl} alt={`${org.name} logo`} />
       </a>
