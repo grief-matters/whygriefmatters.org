@@ -1,0 +1,97 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+
+import type {
+  InternetResourceCollectionKey,
+  InternetResourceEntries,
+} from "@content/collections";
+
+import { supportCollections } from "@ui/utils/content/support";
+import { makeLabelPartsForPopulationSupportResources } from "@ui/utils/content/content";
+import ResourceListingsOrchestrator from "@ui/scripted/resource-listings-controller/ResourceListingsOrchestrator.astro";
+
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import PopulationLabel from "@ui/base/PopulationLabel.astro";
+
+interface Props {
+  populationEntry: CollectionEntry<"populations">;
+  internetResources: InternetResourceEntries;
+  resourceTypes: Array<InternetResourceCollectionKey>;
+}
+
+export async function getStaticPaths() {
+  const populationEntries = await getCollection("populations");
+
+  // Pre-fetch all support resource collections once
+  const allResources = new Map<
+    string,
+    Array<CollectionEntry<(typeof supportCollections)[number]["key"]>>
+  >();
+  for (const { key } of supportCollections) {
+    allResources.set(key, await getCollection(key));
+  }
+
+  const staticPaths = [];
+
+  for (const populationEntry of populationEntries) {
+    const internetResources: InternetResourceEntries = {};
+
+    for (const { key } of supportCollections) {
+      const resourcesForKey = allResources
+        .get(key)!
+        .filter(({ data }) =>
+          data.populations.some((p) => p.id === populationEntry.id),
+        );
+
+      if (resourcesForKey.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (internetResources as any)[key] = resourcesForKey;
+      }
+    }
+
+    if (Object.values(internetResources).flat().length === 0) {
+      continue;
+    }
+
+    const resourceTypes = Object.keys(internetResources);
+
+    staticPaths.push({
+      params: {
+        population: populationEntry.data.slug,
+      },
+      props: {
+        populationEntry,
+        internetResources,
+        resourceTypes,
+      },
+    });
+  }
+
+  return staticPaths;
+}
+
+const { populationEntry, internetResources, resourceTypes } = Astro.props;
+
+const labelParts = await makeLabelPartsForPopulationSupportResources(
+  populationEntry.id,
+);
+---
+
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="tertiary"
+    surfaceVariantKey={3}
+    image={populationEntry.data.image}
+  >
+    <PopulationLabel labelParts={labelParts} />
+  </PageHeaderLayout>
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <ResourceListingsOrchestrator
+      internetResources={internetResources}
+      resourceTypes={resourceTypes}
+    />
+  </LayoutSurface>
+</SitePageLayout>

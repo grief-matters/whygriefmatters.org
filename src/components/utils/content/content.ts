@@ -33,6 +33,36 @@ export async function makeLabelPartsForPopulationResources(
 }
 
 /**
+ * Creates the requisite parts to create a label for a population with correct grammar in the format 'Support Resources for...'
+ *
+ * @param populationId
+ * @returns label parts as a string array
+ */
+export async function makeLabelPartsForPopulationSupportResources(
+  populationId: string,
+): Promise<Array<string>> {
+  const entry = await getEntry("populations", populationId);
+
+  let labelParts = null;
+  switch (entry?.data.slug) {
+    case "african-american-black":
+    case "asian-american-and-pacific-islander":
+    case "indigenous-communities":
+    case "latino-and-hispanic-americans":
+    case "people-with-disabilities":
+      labelParts = ["Support Resources for", entry.data.name];
+      break;
+    case "lgbtq-community":
+      labelParts = ["Support Resources for the", entry.data.name];
+      break;
+    default:
+      break;
+  }
+
+  return labelParts ?? [];
+}
+
+/**
  * Get a source link for a Website resource
  *
  * @param websiteRef
