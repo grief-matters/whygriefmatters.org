@@ -2,6 +2,7 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import { buildCache } from "./cache";
 import { type CategoryTreeNode, buildCategoryTree } from "./content/category";
 import { buildUnderservedCommunitiesNode } from "./content/population";
+import { buildGetSupportNode } from "./content/support";
 
 /**
  * Returns the full nav tree (category trees + underserved communities node).
@@ -28,7 +29,6 @@ export async function getNavTree(): Promise<CategoryTreeNode[]> {
     "topics",
     "types-of-loss",
     "supporting-the-bereaved",
-    "finding-peer-support-and-support-groups",
   ] as const;
   const authoritativeRootCategories = authoritativeRootCategorySlugs
     .map((slug) => rootCategories.find((c) => c.data.slug === slug))
@@ -38,6 +38,10 @@ export async function getNavTree(): Promise<CategoryTreeNode[]> {
   const navTree: CategoryTreeNode[] = authoritativeRootCategories.map((item) =>
     buildCategoryTree(item, categories),
   );
+
+  // Add the "Get Support" custom node at position 2
+  const getSupportNode = buildGetSupportNode();
+  navTree.splice(2, 0, getSupportNode);
 
   // Add the "Underserved Communities" node
   const underservedNode = await buildUnderservedCommunitiesNode(
