@@ -1,0 +1,54 @@
+---
+import { getCollection } from "astro:content";
+
+import type { InternetResourceEntries } from "@content/collections";
+
+import {
+  supportCollections,
+  type SupportCollectionKey,
+} from "@ui/utils/content/support";
+
+import Container from "@ui/base/Container.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import ResourceListingRenderer from "@ui/composite/content-linked/internet-resources/ResourceListingRenderer.astro";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
+interface Props {
+  resourceType: SupportCollectionKey;
+  resources: InternetResourceEntries;
+}
+
+export async function getStaticPaths() {
+  const paths = [];
+
+  for (const c of supportCollections) {
+    const collection = await getCollection(c.key);
+
+    const resources: InternetResourceEntries = {
+      [c.key]: collection,
+    };
+
+    paths.push({
+      params: { slug: c.slug },
+      props: { resourceType: c.key, resources },
+    });
+  }
+
+  return paths;
+}
+
+const props = Astro.props;
+---
+
+<SitePageLayout>
+  <LayoutSurface
+    id="resource-listings-container"
+    as="section"
+    paddingX={2}
+    paddingY={5}
+  >
+    <Container data-pagefind-body>
+      <ResourceListingRenderer internetResources={props.resources} />
+    </Container>
+  </LayoutSurface>
+</SitePageLayout>
