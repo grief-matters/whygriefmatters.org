@@ -11,4 +11,7 @@
   "sourceWebsiteId": sourceWebsite->._id,
   "categories": coalesce(categories[]->._id, []),
   "populations": coalesce(populations[]->._id, []),
+  "paywalled": coalesce(paywalled, false),
+  "registrationRequired": coalesce(registrationRequired, false),
+  "hasSpanishVersion": coalesce(hasSpanishVersion, false),
 }

@@ -26,24 +26,6 @@ export const paddingXSettingMap: SpaceSettingClassMap = {
   6: "px-12",
   7: "px-16",
 };
-export const paddingSettingMap: SpaceSettingClassMap = {
-  1: "p-1.5",
-  2: "p-3",
-  3: "p-4",
-  4: "p-6",
-  5: "p-8",
-  6: "p-12",
-  7: "p-16",
-};
-export const marginSettingMap: SpaceSettingClassMap = {
-  1: "m-1.5",
-  2: "m-3",
-  3: "m-4",
-  4: "m-6",
-  5: "m-8",
-  6: "m-12",
-  7: "m-16",
-};
 export const paddingBottomMap: SpaceSettingClassMap = {
   1: "pb-1.5",
   2: "pb-3",
@@ -53,6 +35,36 @@ export const paddingBottomMap: SpaceSettingClassMap = {
   6: "pb-12",
   7: "pb-16",
 };
+export const paddingSettingMap: SpaceSettingClassMap = {
+  1: "p-1.5",
+  2: "p-3",
+  3: "p-4",
+  4: "p-6",
+  5: "p-8",
+  6: "p-12",
+  7: "p-16",
+};
+
+export const marginSettingMap: SpaceSettingClassMap = {
+  1: "m-1.5",
+  2: "m-3",
+  3: "m-4",
+  4: "m-6",
+  5: "m-8",
+  6: "m-12",
+  7: "m-16",
+};
+
+export const marginTopMap: SpaceSettingClassMap = {
+  1: "mt-1.5",
+  2: "mt-3",
+  3: "mt-4",
+  4: "mt-6",
+  5: "mt-8",
+  6: "mt-12",
+  7: "mt-16",
+};
+
 export const marginBottomMap: SpaceSettingClassMap = {
   1: "mb-1.5",
   2: "mb-3",

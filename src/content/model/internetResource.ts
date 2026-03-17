@@ -86,4 +86,7 @@ export const zBasicInternetResource = z.object({
   sourceWebsiteId: reference("websites").nullable(),
   categories: z.array(reference("categories")),
   populations: z.array(reference("populations")),
+  hasSpanishVersion: z.boolean().optional(),
+  paywalled: z.boolean().optional(),
+  registrationRequired: z.boolean().optional(),
 });
