@@ -11,6 +11,7 @@ import personGroupsQuery from "@content/queries/personGroups.groq?raw";
 import populationsQuery from "@content/queries/populations.groq?raw";
 import formsQuery from "@content/queries/forms.groq?raw";
 import endorsementsQuery from "@content/queries/endorsements.groq?raw";
+import wdynrnEntriesQuery from "@content/queries/wdynrnEntries.groq?raw";
 import websitesQuery from "@content/queries/websites.groq?raw";
 
 import { zApp } from "@content/model/app";
@@ -24,6 +25,7 @@ import { zPopulation } from "@content/model/population";
 import { zEndorsement } from "@content/model/endorsement";
 import { zForm } from "@content/model/form";
 import { zWebsite } from "@content/model/website";
+import { zWdynrnEntry } from "@content/model/wdynrnEntry";
 
 import { loadSanityQuery } from "@content/loaders/sanityQueryLoader";
 import {
@@ -158,5 +160,13 @@ export const collections = {
         schema: zImageCollection,
       }),
     schema: zImageCollection,
+  }),
+  wdynrnEntries: defineCollection({
+    loader: async () =>
+      loadSanityQuery({
+        query: wdynrnEntriesQuery,
+        schema: zWdynrnEntry,
+      }),
+    schema: zWdynrnEntry,
   }),
 };

@@ -1,0 +1,5 @@
+*[_type == "wdynrnEntry"]{
+  "id": _id,
+  entryText,
+  "pageSlug": coalesce(url, category->slug.current)
+}
