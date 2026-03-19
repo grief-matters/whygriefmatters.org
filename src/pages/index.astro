@@ -12,6 +12,8 @@ import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
 import Button from "@ui/base/Button.astro";
 import Typography from "@ui/base/Typography.astro";
+import WdynrnNavigator from "@ui/scripted/WdynrnNavigator.astro";
+import Container from "@ui/base/Container.astro";
 
 const org = await getOrganization();
 if (!org) {
@@ -85,6 +87,17 @@ const bgVar = `url(${heroImgUrl})`;
       </div>
     </div>
   </div>
+
+  <LayoutSurface
+    as="section"
+    colorVariant="primaryContrast"
+    colorVariantKey={2}
+    paddingY={3}
+  >
+    <Container paddingX={3}>
+      <WdynrnNavigator />
+    </Container>
+  </LayoutSurface>
 
   {
     homePageEntry.data.contentBlocks.map((block, i) => (

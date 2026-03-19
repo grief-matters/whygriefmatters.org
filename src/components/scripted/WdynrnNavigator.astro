@@ -1,0 +1,68 @@
+---
+import { getCollection } from "astro:content";
+
+import Button from "@ui/base/Button.astro";
+import Typography from "@ui/base/Typography.astro";
+
+const entries = await getCollection("wdynrnEntries");
+---
+
+<wdynrn-navigator class="block max-w-full">
+  <form data-wdynrn-form class="flex flex-row items-center gap-4 flex-wrap">
+    <label for="wdynrn-select">
+      <Typography
+        bold
+        as="span"
+        colorVariant="primaryContrast"
+        class="font-serif"
+      >
+        What do you need right now?
+      </Typography>
+    </label>
+    <select
+      id="wdynrn-select"
+      data-wdynrn-select
+      class:list={[
+        "grow",
+        "font-serif text-base",
+        "rounded border border-line-primaryContrast--default",
+        "bg-contentSurface-neutral--prominent",
+        "text-onSurface-coolNeutral--default",
+        "py-1.5 px-3",
+      ]}
+    >
+      <option disabled selected value="">Select an option</option>
+      {
+        entries.map((entry) => (
+          <option value={entry.data.pageSlug}>{entry.data.entryText}</option>
+        ))
+      }
+    </select>
+    <Button as="button" type="submit" colorVariant="secondary">
+      <Typography>
+        <strong class="text-bold font-serif">Show Me</strong>
+      </Typography>
+    </Button>
+  </form>
+</wdynrn-navigator>
+
+<script>
+  class WdynrnNavigator extends HTMLElement {
+    connectedCallback() {
+      const form = this.querySelector("[data-wdynrn-form]");
+      const select = this.querySelector(
+        "[data-wdynrn-select]",
+      ) as HTMLSelectElement | null;
+
+      form?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const slug = select?.value;
+        if (slug) {
+          window.location.href =
+            slug.startsWith("/") || slug.startsWith("http") ? slug : `/${slug}`;
+        }
+      });
+    }
+  }
+  customElements.define("wdynrn-navigator", WdynrnNavigator);
+</script>
