@@ -11,6 +11,7 @@ export const supportCollections = [
     slug: "therapy-resources",
   },
   { key: "forums", title: "Forums", slug: "forums" },
+  { key: "crisisResources", title: "Crisis/Urgent Help", slug: "crisis" },
 ] as const;
 
 export type SupportCollectionKey = (typeof supportCollections)[number]["key"];

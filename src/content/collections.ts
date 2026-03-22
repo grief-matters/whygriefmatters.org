@@ -66,4 +66,4 @@ export const collectionKeyToResourceTypeMap = Object.fromEntries(
     value,
     key,
   ]),
-) as Record<CollectionKey, InternetResourceType>;
+) as Record<InternetResourceCollectionKey, InternetResourceType>;
