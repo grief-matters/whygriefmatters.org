@@ -45,6 +45,7 @@ export const iconMap = {
   linkedIn: "linked-in",
   pause: "pause",
   play: "play",
+  phone: "phone",
 } as const;
 
 export const resourceTypeIconConfigMap: Record<
