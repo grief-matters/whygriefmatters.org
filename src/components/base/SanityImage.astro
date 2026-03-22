@@ -38,7 +38,8 @@ const mediaMimeTypeMap: Record<Format, string> = {
 };
 
 const widths = [2500, 2048, 1536, 1024, 768, 640, 480, 320];
-const selectedWidths = widths.filter((w) => w <= maxWidth);
+const filtered = widths.filter((w) => w <= maxWidth);
+const selectedWidths = filtered.length > 0 ? filtered : [maxWidth];
 
 // Fallback images entry
 const fallbackImagesEntry = await getEntry(
@@ -99,8 +100,8 @@ const optimizedFallbackImgConfig = {
 
 const returnFragment = sanityImageSource === null && !useFallback;
 
-const hotspotX = `${(sanityImageSource?.image.hotspot?.x ?? 0.5) * 100}%`;
-const hotspotY = `${(sanityImageSource?.image.hotspot?.y ?? 0.5) * 100}%`;
+const hotspotX = `${(sanityImageSource?.image?.hotspot?.x ?? 0.5) * 100}%`;
+const hotspotY = `${(sanityImageSource?.image?.hotspot?.y ?? 0.5) * 100}%`;
 
 const aspectMap = {
   square: "aspect-square",
