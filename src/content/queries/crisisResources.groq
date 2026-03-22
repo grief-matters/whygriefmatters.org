@@ -1,0 +1,26 @@
+*[_type == 'crisisResource']{
+  "id": _id,
+  "updatedAt": _updatedAt,
+  name,
+  description,
+  resourceUrl,
+  "sourceWebsiteId": website->._id,
+  "categories": coalesce(categories[]->._id, []),
+  "populations": coalesce(populations[]->._id, []),
+  logo,
+  languages,
+  contactMethods[]{
+    contactType,
+    telephoneNumber,
+    smsBody,
+    email,
+    contactForm,
+    liveChatUrl,
+    availabilities[]{
+      days,
+      availableFrom,
+      availableTo,
+      timezone
+    }
+  }
+}
