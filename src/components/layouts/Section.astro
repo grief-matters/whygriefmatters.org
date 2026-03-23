@@ -13,7 +13,7 @@ interface Props {
   colorVariantKey?: LayoutSurfaceVariantKey;
 }
 
-const { as = "section", colorVariant, colorVariantKey } = Astro.props;
+const { as = "section", colorVariant, colorVariantKey } = Astro.props as Props;
 ---
 
 <LayoutSurface
