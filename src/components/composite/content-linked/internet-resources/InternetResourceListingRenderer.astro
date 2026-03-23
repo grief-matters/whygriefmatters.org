@@ -7,10 +7,13 @@ import { assertNever } from "@ui/utils/ts-utils";
 
 import AppListing from "./AppListing.astro";
 import BasicInternetResourceListing from "./BasicInternetResourceListing.astro";
+import CrisisResourceListing from "./CrisisResourceListing.astro";
 import WebsiteListing from "./WebsiteListing.astro";
 
 interface Props {
-  entry: CollectionEntry<InternetResourceCollectionKey>;
+  entry:
+    | CollectionEntry<InternetResourceCollectionKey>
+    | CollectionEntry<"crisisResources">;
 }
 
 const { entry } = Astro.props;
@@ -42,6 +45,8 @@ const { entry } = Astro.props;
           return <AppListing entry={entry} />;
         case "websites":
           return <WebsiteListing entry={entry} />;
+        case "crisisResources":
+          return <CrisisResourceListing entry={entry} />;
         default:
           assertNever(entry);
       }

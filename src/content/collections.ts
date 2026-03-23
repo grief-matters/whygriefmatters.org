@@ -36,9 +36,13 @@ export const internetResourceCollectionKeys = [
 export type InternetResourceCollectionKey =
   (typeof internetResourceCollectionKeys)[number];
 
-export type InternetResourceEntries = Partial<{
-  [K in InternetResourceCollectionKey]: Array<CollectionEntry<K>>;
-}>;
+export type InternetResourceEntries = Partial<
+  {
+    [K in InternetResourceCollectionKey]: Array<CollectionEntry<K>>;
+  } & {
+    crisisResources: Array<CollectionEntry<"crisisResources">>;
+  }
+>;
 
 export const resourceTypeToCollectionKeyMap = {
   app: "apps",
