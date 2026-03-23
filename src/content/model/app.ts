@@ -7,6 +7,10 @@ export const zApp = zBasicInternetResource
     resourceUrl: z.string().url().nullable(),
     appleUrl: z.string().url().nullable(),
     playStoreUrl: z.string().url().nullable(),
+    appleRating: z.number().min(0).max(5).nullable().default(null),
+    appleRatingCount: z.number().int().nullable().default(null),
+    applePrice: z.string().nullable().default(null),
+    appleIconUrl: z.string().url().nullable().default(null),
   })
   .refine(
     (data) =>

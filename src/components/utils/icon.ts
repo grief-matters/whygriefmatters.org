@@ -46,6 +46,7 @@ export const iconMap = {
   pause: "pause",
   play: "play",
   phone: "phone",
+  star: "star",
 } as const;
 
 export const resourceTypeIconConfigMap: Record<

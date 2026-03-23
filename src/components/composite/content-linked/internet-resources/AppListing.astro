@@ -1,14 +1,122 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
+import { textPresetClassMap } from "@styles/utils/typography";
+import { paddingXSettingMap } from "@styles/utils/spacing";
+
+import StarRating from "@ui/base/StarRating.astro";
+import Typography from "@ui/base/Typography.astro";
+import Stack from "@ui/base/Stack.astro";
+
 interface Props {
   entry: CollectionEntry<"apps">;
 }
 
-const props = Astro.props;
+const { entry } = Astro.props;
 ---
 
-<article id={props.entry.id} data-pagefind-body>
-  <h4 id={props.entry.id}>{props.entry.data.title}</h4>
-  <p>{props.entry.data.description}</p>
+<article id={entry.id} data-pagefind-body>
+  <Stack spacing={2}>
+    <Typography as="h4" variant="title-4">
+      {entry.data.title}
+    </Typography>
+
+    <div class="flex gap-6">
+      {
+        entry.data.appleIconUrl && (
+          <div class="shrink-0">
+            <img
+              src={entry.data.appleIconUrl}
+              alt={`${entry.data.title} app icon`}
+              width="125"
+              height="125"
+              class="rounded-3xl"
+              loading="lazy"
+            />
+          </div>
+        )
+      }
+      <Stack spacing={3}>
+        {
+          entry.data.description && (
+            <Typography>{entry.data.description}</Typography>
+          )
+        }
+        {
+          (entry.data.applePrice !== null ||
+            entry.data.appleRating !== null) && (
+            <div class="flex gap-3">
+              {entry.data.applePrice !== null && (
+                <span
+                  class:list={[
+                    "block",
+                    "bg-contentSurface-neutral--default",
+                    "text-onSurface-warmNeutral--default",
+                    textPresetClassMap["subtitle-1"],
+                    paddingXSettingMap[2],
+                    "py-1",
+                    "rounded-full",
+                    "border border-line-neutral--default",
+                  ]}
+                >
+                  {entry.data.applePrice}
+                </span>
+              )}
+              {entry.data.appleRating !== null &&
+                entry.data.appleRatingCount !== null && (
+                  <div class="flex items-center gap-1.5">
+                    <Typography variant="subtitle-1" colorVariant="coolNeutral">
+                      App store rating:{" "}
+                    </Typography>
+                    <span class="text-onSurface-coolNeutral--default">
+                      <StarRating
+                        rating={entry.data.appleRating}
+                        count={entry.data.appleRatingCount}
+                        colorVariant="primary"
+                      />
+                    </span>
+                  </div>
+                )}
+            </div>
+          )
+        }
+        <div class="flex flex-wrap items-center gap-3">
+          {
+            entry.data.appleUrl && (
+              <a
+                class="block"
+                rel="noopener noreferrer"
+                target="_blank"
+                href={entry.data.appleUrl}
+              >
+                <span class="sr-only">Download on the Apple App Store</span>
+                <img
+                  class="h-[40px]"
+                  height="40"
+                  src="/img/apple-app-store.svg"
+                />
+              </a>
+            )
+          }
+          {
+            entry.data.playStoreUrl && (
+              <a
+                class="block"
+                rel="noopener noreferrer"
+                target="_blank"
+                href={entry.data.playStoreUrl}
+              >
+                <span class="sr-only">Download on the Google Play Store</span>
+                <img
+                  class="h-[40px]"
+                  height="40"
+                  src="/img/google-play-store.svg"
+                />
+              </a>
+            )
+          }
+        </div>
+      </Stack>
+    </div>
+  </Stack>
 </article>

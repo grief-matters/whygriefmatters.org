@@ -1,0 +1,107 @@
+---
+import type { OnSurfaceColorVariant } from "@styles/utils/color";
+
+type StarColorClasses = { fill: string; stroke: string };
+
+const colorVariantMap: Record<OnSurfaceColorVariant, StarColorClasses> = {
+  coolNeutral: { fill: "fill-line-coolNeutral--default", stroke: "stroke-line-coolNeutral--default" },
+  warmNeutral: { fill: "fill-line-warmNeutral--default", stroke: "stroke-line-warmNeutral--default" },
+  primary: { fill: "fill-line-primary--prominent", stroke: "stroke-line-primary--prominent" },
+  secondary: { fill: "fill-line-secondary--prominent", stroke: "stroke-line-secondary--prominent" },
+  tertiary: { fill: "fill-line-tertiary--prominent", stroke: "stroke-line-tertiary--prominent" },
+  primaryContrast: { fill: "fill-line-primaryContrast--default", stroke: "stroke-line-primaryContrast--default" },
+};
+
+interface Props {
+  rating: number;
+  count: number;
+  colorVariant?: OnSurfaceColorVariant;
+}
+
+const { rating, count, colorVariant = "primary" } = Astro.props;
+
+const fullStars = Math.floor(rating);
+const hasHalfStar = rating - fullStars >= 0.25 && rating - fullStars < 0.75;
+const adjustedFull = rating - fullStars >= 0.75 ? fullStars + 1 : fullStars;
+const emptyStars = 5 - adjustedFull - (hasHalfStar ? 1 : 0);
+
+const formattedCount =
+  count >= 1000
+    ? `${(count / 1000).toFixed(1).replace(/\.0$/, "")}k`
+    : `${count}`;
+
+const { fill: fillClass, stroke: strokeClass } = colorVariantMap[colorVariant];
+
+const solidPath =
+  "M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z";
+
+const outlinePath =
+  "M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z";
+---
+
+<div class="flex items-center gap-1">
+  <div
+    class="flex"
+    role="img"
+    aria-label={`${rating.toFixed(1)} out of 5 stars`}
+  >
+    {
+      Array.from({ length: adjustedFull }).map(() => (
+        <svg
+          class:list={["size-4", fillClass]}
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path d={solidPath} />
+        </svg>
+      ))
+    }
+    {
+      hasHalfStar && (
+        <svg
+          class:list={["size-4", strokeClass]}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke-width="1.5"
+          aria-hidden="true"
+        >
+          <defs>
+            <clipPath id="half-star-clip">
+              <rect x="0" y="0" width="12" height="24" />
+            </clipPath>
+          </defs>
+          <path
+            d={outlinePath}
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d={solidPath}
+            class={fillClass}
+            clip-path="url(#half-star-clip)"
+          />
+        </svg>
+      )
+    }
+    {
+      Array.from({ length: emptyStars }).map(() => (
+        <svg
+          class:list={["size-4", strokeClass]}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke-width="1.5"
+          aria-hidden="true"
+        >
+          <path
+            d={outlinePath}
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      ))
+    }
+  </div>
+  <span class="font-sans-b text-sm text-onSurface-coolNeutral--muted">
+    {rating.toFixed(1)} ({formattedCount})
+  </span>
+</div>

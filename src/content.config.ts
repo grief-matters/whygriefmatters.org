@@ -30,6 +30,7 @@ import { zWebsite } from "@content/model/website";
 import { zWdynrnEntry } from "@content/model/wdynrnEntry";
 
 import { loadSanityQuery } from "@content/loaders/sanityQueryLoader";
+import { fetchAppleStoreMetadata } from "@content/loaders/appleStoreMetadata";
 import { knownContentTypes } from "@content/model/contentBlock/contentType";
 import {
   zBasicInternetResource,
@@ -75,11 +76,40 @@ export const collections = {
   videos: getBasicInternetResourceCollectionDef("video"),
   webinars: getBasicInternetResourceCollectionDef("webinar"),
   apps: defineCollection({
-    loader: async () =>
-      loadSanityQuery({
-        query: appsQuery,
-        schema: zApp,
-      }),
+    loader: async () => {
+      const results = await loadSanityQuery({ query: appsQuery });
+
+      const enriched = await Promise.allSettled(
+        results.map(async (app: { appleUrl: string | null }) => {
+          if (app.appleUrl) {
+            const metadata = await fetchAppleStoreMetadata(app.appleUrl);
+            if (metadata) {
+              return {
+                ...app,
+                appleRating: metadata.averageUserRating,
+                appleRatingCount: metadata.userRatingCount,
+                applePrice: metadata.formattedPrice,
+                appleIconUrl: metadata.artworkUrl512,
+              };
+            }
+          }
+          return app;
+        }),
+      );
+
+      const apps = enriched.map((result, i) =>
+        result.status === "fulfilled" ? result.value : results[i],
+      );
+
+      const parsed = zApp.array().safeParse(apps);
+      if (!parsed.success) {
+        throw new Error(
+          `App collection validation failed: ${parsed.error.message}`,
+        );
+      }
+
+      return apps;
+    },
     schema: zApp,
   }),
   websites: defineCollection({
