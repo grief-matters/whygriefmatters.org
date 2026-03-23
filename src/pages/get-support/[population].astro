@@ -1,9 +1,10 @@
 ---
 import { getCollection, type CollectionEntry } from "astro:content";
 
-import type {
-  InternetResourceCollectionKey,
-  InternetResourceEntries,
+import {
+  internetResourceCollectionKeys,
+  type InternetResourceCollectionKey,
+  type InternetResourceEntries,
 } from "@content/collections";
 
 import { supportCollections } from "@ui/utils/content/support";
@@ -25,12 +26,16 @@ interface Props {
 export async function getStaticPaths() {
   const populationEntries = await getCollection("populations");
 
-  // Pre-fetch all support resource collections once
+  const internetResourceSupportCollections = supportCollections.filter(
+    ({ key }) => (internetResourceCollectionKeys as readonly string[]).includes(key),
+  );
+
+  // Pre-fetch all internet resource support collections once
   const allResources = new Map<
     string,
-    Array<CollectionEntry<(typeof supportCollections)[number]["key"]>>
+    Array<CollectionEntry<(typeof internetResourceSupportCollections)[number]["key"]>>
   >();
-  for (const { key } of supportCollections) {
+  for (const { key } of internetResourceSupportCollections) {
     allResources.set(key, await getCollection(key));
   }
 
@@ -39,7 +44,7 @@ export async function getStaticPaths() {
   for (const populationEntry of populationEntries) {
     const internetResources: InternetResourceEntries = {};
 
-    for (const { key } of supportCollections) {
+    for (const { key } of internetResourceSupportCollections) {
       const resourcesForKey = allResources
         .get(key)!
         .filter(({ data }) =>

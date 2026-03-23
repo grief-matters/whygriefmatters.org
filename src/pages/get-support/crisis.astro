@@ -1,0 +1,59 @@
+---
+import { getCollection } from "astro:content";
+
+import { paddingBottomMap } from "@styles/utils/spacing";
+
+import Container from "@ui/base/Container.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
+import CrisisResourceListing from "@ui/composite/content-linked/internet-resources/CrisisResourceListing.astro";
+
+const crisisResourceCollection = await getCollection("crisisResources");
+---
+
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={null}
+  >
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+      >
+        {`Crisis Resources`}
+      </Typography>
+    </Spacer>
+  </PageHeaderLayout>
+  <LayoutSurface
+    id="resource-listings-container"
+    as="section"
+    paddingX={2}
+    paddingY={5}
+  >
+    <Container data-pagefind-body>
+      <Stack spacing={4}>
+        {
+          crisisResourceCollection.map((resource) => (
+            <div
+              class:list={[
+                paddingBottomMap[4],
+                "not-last:border-b border-b-line-coolNeutral--default",
+              ]}
+            >
+              <CrisisResourceListing entry={resource} />
+            </div>
+          ))
+        }
+      </Stack>
+    </Container>
+  </LayoutSurface>
+</SitePageLayout>
