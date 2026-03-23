@@ -30,6 +30,7 @@ import { zWebsite } from "@content/model/website";
 import { zWdynrnEntry } from "@content/model/wdynrnEntry";
 
 import { loadSanityQuery } from "@content/loaders/sanityQueryLoader";
+import { knownContentTypes } from "@content/model/contentBlock/contentType";
 import {
   zBasicInternetResource,
   type InternetResourceType,
@@ -125,11 +126,22 @@ export const collections = {
     schema: zCategory,
   }),
   contentBlocks: defineCollection({
-    loader: async () =>
-      loadSanityQuery({
-        query: contentBlocksQuery,
-        schema: zContentBlock,
-      }),
+    loader: async () => {
+      const results = await loadSanityQuery({ query: contentBlocksQuery });
+      for (const block of results) {
+        block.content = block.content.filter((item: { contentType: string }) =>
+          knownContentTypes.has(item.contentType),
+        );
+      }
+      // Validate after filtering unknown content types
+      const parsed = zContentBlock.array().safeParse(results);
+      if (!parsed.success) {
+        throw new Error(
+          `Content block validation failed: ${parsed.error.message}`,
+        );
+      }
+      return results;
+    },
     schema: zContentBlock,
   }),
   contentGroups: defineCollection({

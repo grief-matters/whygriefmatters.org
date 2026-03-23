@@ -23,3 +23,5 @@ const contentTypes = [
 ] as const;
 export const zContentType = z.enum(contentTypes);
 export type ContentBlockType = z.infer<typeof zContentType>;
+
+export const knownContentTypes = new Set<string>(zContentType.options);
