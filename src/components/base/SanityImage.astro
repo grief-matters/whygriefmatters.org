@@ -7,7 +7,14 @@ import type { SanityImage } from "@content/model/image";
 
 import fallbackImg from "../../img/fallback.jpg";
 
+const aspectMap = {
+  default: "aspect-7/5",
+  square: "aspect-square",
+  none: undefined,
+};
+
 type Format = "webp" | "jpg" | "png";
+type Aspect = keyof typeof aspectMap;
 
 interface ImageSources {
   srcSet: string;
@@ -21,7 +28,7 @@ interface Props {
   priority?: boolean;
   useFallback?: boolean;
   objectFit?: "contain" | "cover";
-  aspect?: "square";
+  aspect?: Exclude<Aspect, "default">;
 }
 
 const {
@@ -103,9 +110,6 @@ const returnFragment = sanityImageSource === null && !useFallback;
 const hotspotX = `${(sanityImageSource?.image?.hotspot?.x ?? 0.5) * 100}%`;
 const hotspotY = `${(sanityImageSource?.image?.hotspot?.y ?? 0.5) * 100}%`;
 
-const aspectMap = {
-  square: "aspect-square",
-};
 ---
 
 {
@@ -123,7 +127,7 @@ const aspectMap = {
         sizes={optimizedFallbackImgConfig.sizes}
         loading={props.priority ? "eager" : "lazy"}
         class:list={[
-          props.aspect ? aspectMap[props.aspect] : "aspect-7/5",
+          aspectMap[props.aspect ?? "default"],
           objectFit === "cover" ? "object-cover" : "object-contain",
           ...(props.classList ?? []),
         ]}
