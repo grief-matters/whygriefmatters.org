@@ -78,7 +78,10 @@ export function pruneTreeForCollection(
     title: node.title,
     displayTitle: node.displayTitle,
     children: prunedChildren,
-    href: `/${node.slug}?filter=${supportKey}#resource-listings-container`,
+    href:
+      supportKey === "crisisResources"
+        ? `/get-support/crisis/${node.slug}`
+        : `/${node.slug}?filter=${supportKey}#resource-listings-container`,
   };
 }
 
@@ -116,7 +119,10 @@ export async function buildGetSupportNode(): Promise<CategoryTreeNode> {
         title: p.data.name,
         displayTitle: p.data.name,
         children: [] as CategoryTreeNode[],
-        href: `/get-support/${p.data.slug}?filter=${key}`,
+        href:
+          key === "crisisResources"
+            ? `/get-support/crisis/${p.data.slug}`
+            : `/get-support/${p.data.slug}?filter=${key}`,
       }));
 
     if (populationChildren.length > 0) {

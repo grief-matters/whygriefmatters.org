@@ -16,6 +16,11 @@ interface Props {
 }
 
 const { resourceType, populations } = Astro.props;
+
+const getPopulationHref = (popSlug: string) =>
+  resourceType === "crisisResources"
+    ? `/get-support/crisis/${popSlug}`
+    : `/get-support/${popSlug}?filter=${resourceType}`;
 ---
 
 <ContentSurface variant="tertiary" paddingY={3} paddingX={5}>
@@ -31,7 +36,7 @@ const { resourceType, populations } = Astro.props;
         populations.map((p) => (
           <LinkButton
             colorVariant="tertiary"
-            to={`/get-support/${p.data.slug}?filter=${resourceType}`}
+            to={getPopulationHref(p.data.slug)}
             label={p.data.name}
           />
         ))

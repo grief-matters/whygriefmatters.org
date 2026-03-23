@@ -1,0 +1,148 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+
+import { getAllDescendantCategoryIds } from "@ui/utils/content/category";
+
+import Container from "@ui/base/Container.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import CrisisResourceListing from "@ui/composite/content-linked/internet-resources/CrisisResourceListing.astro";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import Spacer from "@ui/base/Spacer.astro";
+
+import { paddingBottomMap } from "@styles/utils/spacing";
+
+type PopulationProps = {
+  kind: "population";
+  populationEntry: CollectionEntry<"populations">;
+  resources: Array<CollectionEntry<"crisisResources">>;
+};
+
+type CategoryProps = {
+  kind: "category";
+  categoryEntry: CollectionEntry<"categories">;
+  resources: Array<CollectionEntry<"crisisResources">>;
+};
+
+type Props = PopulationProps | CategoryProps;
+
+export async function getStaticPaths() {
+  const crisisResources = await getCollection("crisisResources");
+  const populations = await getCollection("populations");
+  const categories = await getCollection("categories");
+
+  const paths: Array<{
+    params: { slug: string };
+    props: Props;
+  }> = [];
+
+  const usedSlugs = new Set<string>();
+
+  // Population paths
+  for (const pop of populations) {
+    const filtered = crisisResources.filter((r) =>
+      r.data.populations.some((p) => p.id === pop.id),
+    );
+
+    if (filtered.length === 0) continue;
+
+    if (usedSlugs.has(pop.data.slug)) {
+      throw new Error(
+        `Crisis subpage slug collision: "${pop.data.slug}" is used by both a population and a category`,
+      );
+    }
+    usedSlugs.add(pop.data.slug);
+
+    paths.push({
+      params: { slug: pop.data.slug },
+      props: { kind: "population", populationEntry: pop, resources: filtered },
+    });
+  }
+
+  // Category paths (types-of-loss descendants)
+  const typesOfLossRoot = categories.find(
+    (c) => c.data.slug === "types-of-loss",
+  );
+
+  if (typesOfLossRoot) {
+    const allDescendantIds = getAllDescendantCategoryIds(
+      typesOfLossRoot.id,
+      categories,
+    );
+
+    for (const cat of categories) {
+      if (!allDescendantIds.has(cat.id)) continue;
+
+      const catIds = getAllDescendantCategoryIds(cat.id, categories);
+      const filtered = crisisResources.filter((r) =>
+        r.data.categories.some((c) => catIds.has(c.id)),
+      );
+
+      if (filtered.length === 0) continue;
+
+      if (usedSlugs.has(cat.data.slug)) {
+        throw new Error(
+          `Crisis subpage slug collision: "${cat.data.slug}" is used by both a population and a category`,
+        );
+      }
+      usedSlugs.add(cat.data.slug);
+
+      paths.push({
+        params: { slug: cat.data.slug },
+        props: { kind: "category", categoryEntry: cat, resources: filtered },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const props = Astro.props;
+
+const isPopulation = props.kind === "population";
+const title = isPopulation
+  ? `Crisis/Urgent Help for ${props.populationEntry.data.name}`
+  : `Crisis/Urgent Help — ${props.categoryEntry.data.displayTitle ?? props.categoryEntry.data.title}`;
+const image = isPopulation ? props.populationEntry.data.image : null;
+const surfaceVariant = isPopulation ? "tertiary" : "primaryContrast";
+const surfaceVariantKey = isPopulation ? 3 : 1;
+---
+
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant={surfaceVariant}
+    surfaceVariantKey={surfaceVariantKey}
+    image={image}
+  >
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant={surfaceVariant}
+      >
+        {title}
+      </Typography>
+    </Spacer>
+  </PageHeaderLayout>
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <Container data-pagefind-body>
+      <Stack spacing={4}>
+        {
+          props.resources.map((entry) => (
+            <div
+              class:list={[
+                paddingBottomMap[4],
+                "not-last:border-b border-b-line-coolNeutral--default",
+              ]}
+            >
+              <CrisisResourceListing entry={entry} />
+            </div>
+          ))
+        }
+      </Stack>
+    </Container>
+  </LayoutSurface>
+</SitePageLayout>
