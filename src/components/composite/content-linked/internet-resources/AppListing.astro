@@ -1,9 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
-import { textPresetClassMap } from "@styles/utils/typography";
-import { paddingXSettingMap } from "@styles/utils/spacing";
-
+import Badge from "@ui/base/Badge.astro";
 import StarRating from "@ui/base/StarRating.astro";
 import Typography from "@ui/base/Typography.astro";
 import Stack from "@ui/base/Stack.astro";
@@ -21,7 +19,7 @@ const { entry } = Astro.props;
       {entry.data.title}
     </Typography>
 
-    <div class="flex gap-6">
+    <div class="flex flex-col sm:flex-row gap-6">
       {
         entry.data.appleIconUrl && (
           <div class="shrink-0">
@@ -47,20 +45,7 @@ const { entry } = Astro.props;
             entry.data.appleRating !== null) && (
             <div class="flex gap-3">
               {entry.data.applePrice !== null && (
-                <span
-                  class:list={[
-                    "block",
-                    "bg-contentSurface-neutral--default",
-                    "text-onSurface-warmNeutral--default",
-                    textPresetClassMap["subtitle-1"],
-                    paddingXSettingMap[2],
-                    "py-1",
-                    "rounded-full",
-                    "border border-line-neutral--default",
-                  ]}
-                >
-                  {entry.data.applePrice}
-                </span>
+                <Badge label={entry.data.applePrice} />
               )}
               {entry.data.appleRating !== null &&
                 entry.data.appleRatingCount !== null && (
@@ -90,11 +75,7 @@ const { entry } = Astro.props;
                 href={entry.data.appleUrl}
               >
                 <span class="sr-only">Download on the Apple App Store</span>
-                <img
-                  class="h-[40px]"
-                  height="40"
-                  src="/img/apple-app-store.svg"
-                />
+                <img class="h-10" height="40" src="/img/apple-app-store.svg" />
               </a>
             )
           }
@@ -108,7 +89,7 @@ const { entry } = Astro.props;
               >
                 <span class="sr-only">Download on the Google Play Store</span>
                 <img
-                  class="h-[40px]"
+                  class="h-10"
                   height="40"
                   src="/img/google-play-store.svg"
                 />

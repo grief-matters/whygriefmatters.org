@@ -8,18 +8,16 @@ import {
   getContactLabel,
 } from "@ui/utils/content/crisisResource";
 
+import { gapMap, marginTopMap } from "@styles/utils/spacing";
+import { textColorMap } from "@styles/utils/color";
+import { textPresetClassMap } from "@styles/utils/typography";
+
+import Badge from "@ui/base/Badge.astro";
 import Icon from "@ui/base/Icon.astro";
 import LinkComp from "@ui/base/Link.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import SanityImage from "@ui/base/SanityImage.astro";
 import Typography from "@ui/base/Typography.astro";
-import {
-  gapMap,
-  marginTopMap,
-  paddingXSettingMap,
-} from "@styles/utils/spacing";
-import { standardVariantsClassMap, textColorMap } from "@styles/utils/color";
-import { textPresetClassMap } from "@styles/utils/typography";
 
 interface Props {
   entry: CollectionEntry<"crisisResources">;
@@ -124,18 +122,7 @@ const logo = entry.data.logo
       {
         hasSpanish && (
           <div class:list={["flex", gapMap[2], marginTopMap[3]]}>
-            <div
-              class:list={[
-                ...standardVariantsClassMap.neutral.default,
-                textColorMap.warmNeutral.default,
-                textPresetClassMap["subtitle-1"],
-                paddingXSettingMap[2],
-                "py-1",
-                "rounded-full",
-              ]}
-            >
-              Available in Spanish
-            </div>
+            <Badge label="Available in Spanish" />
           </div>
         )
       }
