@@ -1,0 +1,13 @@
+# Cloudflare Worker local dev variables
+# Copy this file to .dev.vars and fill in the secret values.
+# These are used by `wrangler dev` / `npm run preview`.
+
+# Sanity CMS (secret) — request from maintainers
+SANITY_AUTH_TOKEN=""
+
+# Email via Resend (secret) — request from maintainers
+RESEND_API_KEY=""
+
+# Clerk authentication (secret) — request from maintainers
+CLERK_PUBLISHABLE_KEY=""
+CLERK_SECRET_KEY=""
