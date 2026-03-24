@@ -39,7 +39,11 @@ const hasFooter = Astro.slots.has("footer");
       <div class:list={["md:h-full md:flex md:flex-col"]}>
         <div class:list={["md:h-full", "md:flex md:items-center"]}>
           <div
-            class:list={[paddingXSettingMap[5], paddingYSettingMap[6], "md:flex md:items-center md:justify-end md:grow"]}
+            class:list={[
+              paddingXSettingMap[5],
+              paddingYSettingMap[6],
+              "md:flex md:items-center md:justify-end md:grow",
+            ]}
           >
             <div class="basis-100">
               <slot />

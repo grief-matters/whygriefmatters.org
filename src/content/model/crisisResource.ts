@@ -41,5 +41,7 @@ export const zCrisisResource = z.object({
 });
 
 export type CrisisResource = z.infer<typeof zCrisisResource>;
-export type ContactMethod = NonNullable<CrisisResource["contactMethods"]>[number];
+export type ContactMethod = NonNullable<
+  CrisisResource["contactMethods"]
+>[number];
 export type Availability = NonNullable<ContactMethod["availabilities"]>[number];

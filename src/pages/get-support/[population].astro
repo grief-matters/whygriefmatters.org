@@ -27,13 +27,18 @@ export async function getStaticPaths() {
   const populationEntries = await getCollection("populations");
 
   const internetResourceSupportCollections = supportCollections.filter(
-    ({ key }) => (internetResourceCollectionKeys as readonly string[]).includes(key),
+    ({ key }) =>
+      (internetResourceCollectionKeys as readonly string[]).includes(key),
   );
 
   // Pre-fetch all internet resource support collections once
   const allResources = new Map<
     string,
-    Array<CollectionEntry<(typeof internetResourceSupportCollections)[number]["key"]>>
+    Array<
+      CollectionEntry<
+        (typeof internetResourceSupportCollections)[number]["key"]
+      >
+    >
   >();
   for (const { key } of internetResourceSupportCollections) {
     allResources.set(key, await getCollection(key));

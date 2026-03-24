@@ -22,9 +22,7 @@ export async function fetchAppleStoreMetadata(
   }
 
   try {
-    const response = await fetch(
-      `https://itunes.apple.com/lookup?id=${appId}`,
-    );
+    const response = await fetch(`https://itunes.apple.com/lookup?id=${appId}`);
     if (!response.ok) {
       console.warn(
         `[appleStoreMetadata] iTunes lookup failed for ID ${appId}: ${response.status}`,

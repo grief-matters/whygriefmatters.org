@@ -1,5 +1,9 @@
 ---
-import { paddingXSettingMap, paddingYSettingMap, marginBottomMap } from "@styles/utils/spacing";
+import {
+  paddingXSettingMap,
+  paddingYSettingMap,
+  marginBottomMap,
+} from "@styles/utils/spacing";
 
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Button from "@ui/base/Button.astro";
@@ -20,7 +24,13 @@ const {
 ---
 
 <LayoutSurface colorVariant="tertiary" colorVariantKey={3}>
-  <div class:list={[paddingXSettingMap[5], paddingYSettingMap[4], "md:flex md:items-center md:justify-end"]}>
+  <div
+    class:list={[
+      paddingXSettingMap[5],
+      paddingYSettingMap[4],
+      "md:flex md:items-center md:justify-end",
+    ]}
+  >
     <div class="basis-100">
       <p class:list={[marginBottomMap[2]]}>
         <PopulationLabel labelParts={labelParts} />

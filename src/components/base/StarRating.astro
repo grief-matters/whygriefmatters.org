@@ -4,12 +4,30 @@ import type { OnSurfaceColorVariant } from "@styles/utils/color";
 type StarColorClasses = { fill: string; stroke: string };
 
 const colorVariantMap: Record<OnSurfaceColorVariant, StarColorClasses> = {
-  coolNeutral: { fill: "fill-line-coolNeutral--default", stroke: "stroke-line-coolNeutral--default" },
-  warmNeutral: { fill: "fill-line-warmNeutral--default", stroke: "stroke-line-warmNeutral--default" },
-  primary: { fill: "fill-line-primary--prominent", stroke: "stroke-line-primary--prominent" },
-  secondary: { fill: "fill-line-secondary--prominent", stroke: "stroke-line-secondary--prominent" },
-  tertiary: { fill: "fill-line-tertiary--prominent", stroke: "stroke-line-tertiary--prominent" },
-  primaryContrast: { fill: "fill-line-primaryContrast--default", stroke: "stroke-line-primaryContrast--default" },
+  coolNeutral: {
+    fill: "fill-line-coolNeutral--default",
+    stroke: "stroke-line-coolNeutral--default",
+  },
+  warmNeutral: {
+    fill: "fill-line-warmNeutral--default",
+    stroke: "stroke-line-warmNeutral--default",
+  },
+  primary: {
+    fill: "fill-line-primary--prominent",
+    stroke: "stroke-line-primary--prominent",
+  },
+  secondary: {
+    fill: "fill-line-secondary--prominent",
+    stroke: "stroke-line-secondary--prominent",
+  },
+  tertiary: {
+    fill: "fill-line-tertiary--prominent",
+    stroke: "stroke-line-tertiary--prominent",
+  },
+  primaryContrast: {
+    fill: "fill-line-primaryContrast--default",
+    stroke: "stroke-line-primaryContrast--default",
+  },
 };
 
 interface Props {
