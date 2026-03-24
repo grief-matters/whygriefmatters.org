@@ -14,9 +14,8 @@ import { type Link, isLink } from "@ui/utils/link";
 import Icon from "@ui/base/Icon.astro";
 import LinkComp from "@ui/base/Link.astro";
 import Typography from "@ui/base/Typography.astro";
-import { gapMap, marginTopMap } from "@styles/utils/spacing";
 
-import Badge from "@ui/base/Badge.astro";
+import ResourceMetadataBadges from "./ResourceMetadataBadges.astro";
 
 interface Props {
   entry: CollectionEntry<BasicInternetResourceCollectionKey>;
@@ -41,6 +40,8 @@ const processedSource =
 const resourceType = collectionKeyToResourceTypeMap[entry.collection];
 
 const iconConfig = resourceTypeIconConfigMap[resourceType];
+
+const isFacebookPage = entry.data.resourceUrl.includes("facebook.com");
 ---
 
 <article id={`resource--${entry.id}`} data-resource-type={entry.collection}>
@@ -102,19 +103,10 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
   <Typography>
     {entry.data.description}
   </Typography>
-  {
-    (entry.data.hasSpanishVersion ||
-      entry.data.registrationRequired ||
-      entry.data.paywalled) && (
-      <div class:list={["flex", gapMap[2], marginTopMap[3]]}>
-        {entry.data.hasSpanishVersion && <Badge label="Available in Spanish" />}
-        {entry.data.paywalled && (
-          <Badge label="Payment or Subscription Required" />
-        )}
-        {entry.data.registrationRequired && (
-          <Badge label="Registration Required" />
-        )}
-      </div>
-    )
-  }
+  <ResourceMetadataBadges
+    hasSpanishVersion={entry.data.hasSpanishVersion}
+    registrationRequired={entry.data.registrationRequired}
+    paywalled={entry.data.paywalled}
+    isFacebookPage={isFacebookPage}
+  />
 </article>
