@@ -1,0 +1,54 @@
+---
+import type { SurfaceColorVariant } from "@styles/utils/color";
+import type { OnSurfaceColorVariant } from "@styles/utils/color";
+import { standardVariantsClassMap, textColorMap } from "@styles/utils/color";
+import { textPresetClassMap } from "@styles/utils/typography";
+import { paddingXSettingMap } from "@styles/utils/spacing";
+
+import Icon from "./Icon.astro";
+import type { iconMap, IconMapValue } from "@ui/utils/icon";
+
+type SurfaceToOnSurfaceMap = Record<SurfaceColorVariant, OnSurfaceColorVariant>;
+
+const surfaceToOnSurfaceMap: SurfaceToOnSurfaceMap = {
+  neutral: "warmNeutral",
+  primary: "primary",
+  secondary: "secondary",
+  tertiary: "tertiary",
+  primaryContrast: "primaryContrast",
+};
+
+interface Props {
+  label: string;
+  colorVariant?: SurfaceColorVariant;
+  getIcon?: (icons: typeof iconMap) => IconMapValue;
+}
+
+const { label, colorVariant = "neutral", getIcon } = Astro.props;
+
+const onSurfaceVariant = surfaceToOnSurfaceMap[colorVariant];
+---
+
+<div
+  class:list={[
+    standardVariantsClassMap[colorVariant]["muted"],
+    textColorMap[onSurfaceVariant]["default"],
+    textPresetClassMap["subtitle-1"],
+    paddingXSettingMap[2],
+    "py-1",
+    "rounded-full",
+    "flex items-center gap-1.5",
+  ]}
+>
+  {
+    getIcon && (
+      <Icon
+        colorVariant={onSurfaceVariant}
+        getIcon={getIcon}
+        size={1}
+        display="inline"
+      />
+    )
+  }
+  <span>{label}</span>
+</div>

@@ -1,0 +1,32 @@
+---
+import Badge from "@ui/base/Badge.astro";
+import { gapMap, marginTopMap } from "@styles/utils/spacing";
+
+interface Props {
+  hasSpanishVersion?: boolean;
+  registrationRequired?: boolean;
+  paywalled?: boolean;
+  isFacebookPage?: boolean;
+}
+
+const { hasSpanishVersion, registrationRequired, paywalled, isFacebookPage } =
+  Astro.props;
+
+const hasBadges =
+  hasSpanishVersion || registrationRequired || paywalled || isFacebookPage;
+---
+
+{
+  hasBadges && (
+    <div class:list={["flex flex-wrap", gapMap[2], marginTopMap[3]]}>
+      {hasSpanishVersion && <Badge label="Available in Spanish" />}
+      {paywalled && <Badge label="Payment or Subscription Required" />}
+      {isFacebookPage && (
+        <Badge label="Facebook Account Required" colorVariant="primary" />
+      )}
+      {registrationRequired && !isFacebookPage && (
+        <Badge label="Registration Required" />
+      )}
+    </div>
+  )
+}
