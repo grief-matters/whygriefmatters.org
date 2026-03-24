@@ -9,9 +9,11 @@ interface Props {
   isFacebookPage?: boolean;
 }
 
-const { hasSpanishVersion, registrationRequired, paywalled, isFacebookPage } = Astro.props;
+const { hasSpanishVersion, registrationRequired, paywalled, isFacebookPage } =
+  Astro.props;
 
-const hasBadges = hasSpanishVersion || registrationRequired || paywalled || isFacebookPage;
+const hasBadges =
+  hasSpanishVersion || registrationRequired || paywalled || isFacebookPage;
 ---
 
 {
@@ -19,8 +21,12 @@ const hasBadges = hasSpanishVersion || registrationRequired || paywalled || isFa
     <div class:list={["flex flex-wrap", gapMap[2], marginTopMap[3]]}>
       {hasSpanishVersion && <Badge label="Available in Spanish" />}
       {paywalled && <Badge label="Payment or Subscription Required" />}
-      {isFacebookPage && <Badge label="Facebook Account Required" colorVariant="primary" />}
-      {registrationRequired && !isFacebookPage && <Badge label="Registration Required" />}
+      {isFacebookPage && (
+        <Badge label="Facebook Account Required" colorVariant="primary" />
+      )}
+      {registrationRequired && !isFacebookPage && (
+        <Badge label="Registration Required" />
+      )}
     </div>
   )
 }
