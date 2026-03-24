@@ -1,7 +1,10 @@
+import { defineConfig, globalIgnores } from "eslint/config";
+
 import eslintPluginAstro from "eslint-plugin-astro";
 import tseslint from "typescript-eslint";
 
-export default [
+export default defineConfig([
+  globalIgnores(["dist/", ".astro/", "worker-configuration.d.ts"]),
   ...tseslint.configs.recommended,
   ...eslintPluginAstro.configs.recommended,
   {
@@ -23,4 +26,4 @@ export default [
       ],
     },
   },
-];
+]);
