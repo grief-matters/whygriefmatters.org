@@ -14,12 +14,9 @@ import { type Link, isLink } from "@ui/utils/link";
 import Icon from "@ui/base/Icon.astro";
 import LinkComp from "@ui/base/Link.astro";
 import Typography from "@ui/base/Typography.astro";
-import {
-  gapMap,
-  marginTopMap,
-  paddingXSettingMap,
-} from "@styles/utils/spacing";
-import { textPresetClassMap } from "@styles/utils/typography";
+import { gapMap, marginTopMap } from "@styles/utils/spacing";
+
+import Badge from "@ui/base/Badge.astro";
 
 interface Props {
   entry: CollectionEntry<BasicInternetResourceCollectionKey>;
@@ -110,50 +107,12 @@ const iconConfig = resourceTypeIconConfigMap[resourceType];
       entry.data.registrationRequired ||
       entry.data.paywalled) && (
       <div class:list={["flex", gapMap[2], marginTopMap[3]]}>
-        {entry.data.hasSpanishVersion && (
-          <div
-            class:list={[
-              "bg-contentSurface-neutral--default",
-              "text-onSurface-warmNeutral--default",
-              textPresetClassMap["subtitle-1"],
-              paddingXSettingMap[2],
-              "py-1",
-              "rounded-full",
-              "border border-line-neutral--default",
-            ]}
-          >
-            Available in Spanish
-          </div>
-        )}
+        {entry.data.hasSpanishVersion && <Badge label="Available in Spanish" />}
         {entry.data.paywalled && (
-          <div
-            class:list={[
-              "bg-contentSurface-neutral--default",
-              "text-onSurface-warmNeutral--default",
-              textPresetClassMap["subtitle-1"],
-              paddingXSettingMap[2],
-              "py-1",
-              "rounded-full",
-              "border border-line-neutral--default",
-            ]}
-          >
-            Payment or Subscription Required
-          </div>
+          <Badge label="Payment or Subscription Required" />
         )}
         {entry.data.registrationRequired && (
-          <div
-            class:list={[
-              "bg-contentSurface-neutral--default",
-              "text-onSurface-warmNeutral--default",
-              textPresetClassMap["subtitle-1"],
-              paddingXSettingMap[2],
-              "py-1",
-              "rounded-full",
-              "border border-line-neutral--default",
-            ]}
-          >
-            Registration Required
-          </div>
+          <Badge label="Registration Required" />
         )}
       </div>
     )
