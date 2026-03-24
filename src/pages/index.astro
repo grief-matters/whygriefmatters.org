@@ -74,7 +74,7 @@ const bgVar = `url(${heroImgUrl})`;
       </div>
     </div>
     <div class:list={["w-full max-w-5xl"]}>
-      <div class="w-full flex items-end justify-end pb-3">
+      <div class="w-full flex items-end justify-end pb-4">
         <Button as="a" href={`/about/endorsements`}>
           <Typography>
             {"Read what "}
@@ -88,16 +88,20 @@ const bgVar = `url(${heroImgUrl})`;
     </div>
   </div>
 
-  <LayoutSurface
-    as="section"
-    colorVariant="primaryContrast"
-    colorVariantKey={2}
-    paddingY={3}
-  >
-    <Container paddingX={3}>
-      <WdynrnNavigator />
-    </Container>
-  </LayoutSurface>
+  {
+    /* hidden temporarily
+
+    <LayoutSurface
+      as="section"
+      colorVariant="primaryContrast"
+      colorVariantKey={2}
+      paddingY={3}
+    >
+      <Container paddingX={3}>
+        <WdynrnNavigator />
+      </Container>
+    </LayoutSurface> */
+  }
 
   {
     homePageEntry.data.contentBlocks.map((block, i) => (
