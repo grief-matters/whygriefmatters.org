@@ -68,6 +68,10 @@ export async function getStaticPaths() {
 
     const allCategoryIds = descendantMap.get(categoryEntry.id)!;
 
+    const featuredIds = new Set(
+      categoryEntry.data.featuredResources.map((ref) => ref.refId),
+    );
+
     const internetResources: InternetResourceEntries = {};
     const populationMap: Record<
       string,
@@ -77,8 +81,10 @@ export async function getStaticPaths() {
     for (const key of internetResourceCollectionKeys) {
       const resourcesForKey = allResources
         .get(key)!
-        .filter(({ data }) =>
-          data.categories.some((c) => allCategoryIds.has(c.id)),
+        .filter(
+          ({ id, data }) =>
+            data.categories.some((c) => allCategoryIds.has(c.id)) &&
+            !featuredIds.has(id),
         );
 
       resourcesForKey.forEach((r) =>
