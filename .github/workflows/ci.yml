@@ -31,3 +31,11 @@ jobs:
 
       - name: Typecheck
         run: npm run typecheck
+        env:
+          SANITY_STUDIO_API_VERSION: "placeholder"
+          SANITY_STUDIO_DATASET: "placeholder"
+          SANITY_STUDIO_PROJECT_ID: "placeholder"
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM_ADDRESS: "placeholder@example.com"
+          RESEND_TO_ADDRESS: "placeholder@example.com"
