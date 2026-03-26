@@ -8,6 +8,8 @@ import { assertNever } from "@ui/utils/ts-utils";
 import AppListing from "./AppListing.astro";
 import BasicInternetResourceListing from "./BasicInternetResourceListing.astro";
 import CrisisResourceListing from "./CrisisResourceListing.astro";
+import PodcastListing from "./PodcastListing.astro";
+import PodcastEpisodeListing from "./PodcastEpisodeListing.astro";
 import WebsiteListing from "./WebsiteListing.astro";
 
 interface Props {
@@ -32,8 +34,6 @@ const { entry } = Astro.props;
         case "forums":
         case "memorials":
         case "peerSupports":
-        case "podcastEpisodes":
-        case "podcasts":
         case "printedMaterials":
         case "stories":
         case "supportGroups":
@@ -43,6 +43,10 @@ const { entry } = Astro.props;
           return <BasicInternetResourceListing entry={entry} />;
         case "apps":
           return <AppListing entry={entry} />;
+        case "podcasts":
+          return <PodcastListing entry={entry} />;
+        case "podcastEpisodes":
+          return <PodcastEpisodeListing entry={entry} />;
         case "websites":
           return <WebsiteListing entry={entry} />;
         case "crisisResources":

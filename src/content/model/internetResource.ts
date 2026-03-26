@@ -55,8 +55,6 @@ export const basicInternetResourceTypes: Array<InternetResourceType> = [
   "forum",
   "memorial",
   "peerSupport",
-  "podcast",
-  "podcastEpisode",
   "printedMaterial",
   "story",
   "supportGroup",

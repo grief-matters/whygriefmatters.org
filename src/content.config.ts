@@ -2,6 +2,8 @@ import { defineCollection } from "astro:content";
 
 import basicInternetResourceQuery from "@content/queries/basicInternetResource.groq?raw";
 import appsQuery from "@content/queries/apps.groq?raw";
+import podcastsQuery from "@content/queries/podcasts.groq?raw";
+import podcastEpisodesQuery from "@content/queries/podcastEpisodes.groq?raw";
 import categoriesQuery from "@content/queries/categories.groq?raw";
 import contentBlocksQuery from "@content/queries/contentBlocks.groq?raw";
 import contentGroupsQuery from "@content/queries/contentGroups.groq?raw";
@@ -16,6 +18,8 @@ import crisisResourcesQuery from "@content/queries/crisisResources.groq?raw";
 import websitesQuery from "@content/queries/websites.groq?raw";
 
 import { zApp } from "@content/model/app";
+import { zPodcast } from "@content/model/podcast";
+import { zPodcastEpisode } from "@content/model/podcastEpisode";
 import { zCategory } from "@content/model/category";
 import zContentBlock from "@content/model/contentBlock";
 import zContentGroup from "@content/model/contentGroup";
@@ -31,6 +35,7 @@ import { zWdynrnEntry } from "@content/model/wdynrnEntry";
 
 import { loadSanityQuery } from "@content/loaders/sanityQueryLoader";
 import { fetchAppleStoreMetadata } from "@content/loaders/appleStoreMetadata";
+import { fetchApplePodcastMetadata } from "@content/loaders/applePodcastMetadata";
 import { knownContentTypes } from "@content/model/contentBlock/contentType";
 import {
   zBasicInternetResource,
@@ -67,8 +72,50 @@ export const collections = {
   forums: getBasicInternetResourceCollectionDef("forum"),
   memorials: getBasicInternetResourceCollectionDef("memorial"),
   peerSupports: getBasicInternetResourceCollectionDef("peerSupport"),
-  podcastEpisodes: getBasicInternetResourceCollectionDef("podcastEpisode"),
-  podcasts: getBasicInternetResourceCollectionDef("podcast"),
+  podcastEpisodes: defineCollection({
+    loader: async () =>
+      loadSanityQuery({
+        query: podcastEpisodesQuery,
+        schema: zPodcastEpisode,
+      }),
+    schema: zPodcastEpisode,
+  }),
+  podcasts: defineCollection({
+    loader: async () => {
+      const results = await loadSanityQuery({ query: podcastsQuery });
+
+      const enriched = await Promise.allSettled(
+        results.map(async (podcast: { appleUrl: string | null }) => {
+          if (podcast.appleUrl) {
+            const metadata = await fetchApplePodcastMetadata(podcast.appleUrl);
+            if (metadata) {
+              return {
+                ...podcast,
+                applePodcastArtworkUrl: metadata.artworkUrl100,
+                applePodcastArtistName: metadata.artistName,
+                applePodcastTrackCount: metadata.trackCount,
+              };
+            }
+          }
+          return podcast;
+        }),
+      );
+
+      const podcasts = enriched.map((result, i) =>
+        result.status === "fulfilled" ? result.value : results[i],
+      );
+
+      const parsed = zPodcast.array().safeParse(podcasts);
+      if (!parsed.success) {
+        throw new Error(
+          `Podcast collection validation failed: ${parsed.error.message}`,
+        );
+      }
+
+      return podcasts;
+    },
+    schema: zPodcast,
+  }),
   printedMaterials: getBasicInternetResourceCollectionDef("printedMaterial"),
   stories: getBasicInternetResourceCollectionDef("story"),
   supportGroups: getBasicInternetResourceCollectionDef("supportGroup"),

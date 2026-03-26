@@ -16,8 +16,6 @@ export const basicInternetResourceCollectionKeys = [
   "forums",
   "memorials",
   "peerSupports",
-  "podcastEpisodes",
-  "podcasts",
   "printedMaterials",
   "stories",
   "supportGroups",
@@ -31,6 +29,8 @@ export type BasicInternetResourceCollectionKey =
 export const internetResourceCollectionKeys = [
   ...basicInternetResourceCollectionKeys,
   "apps",
+  "podcasts",
+  "podcastEpisodes",
   "websites",
 ] as const satisfies readonly CollectionKey[];
 export type InternetResourceCollectionKey =

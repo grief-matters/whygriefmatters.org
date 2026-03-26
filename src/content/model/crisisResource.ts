@@ -29,7 +29,7 @@ const zContactMethod = z.object({
 export const zCrisisResource = z.object({
   id: z.string(),
   updatedAt: z.string().datetime(),
-  name: z.string(),
+  title: z.string(),
   description: zPortableText.nullable(),
   resourceUrl: z.string().url().nullable(),
   sourceWebsiteId: z.string().nullable(),

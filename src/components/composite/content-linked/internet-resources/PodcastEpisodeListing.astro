@@ -1,0 +1,91 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import Icon from "@ui/base/Icon.astro";
+import LinkComp from "@ui/base/Link.astro";
+import Typography from "@ui/base/Typography.astro";
+
+import ResourceMetadataBadges from "./ResourceMetadataBadges.astro";
+import Stack from "@ui/base/Stack.astro";
+
+interface Props {
+  entry: CollectionEntry<"podcastEpisodes">;
+}
+
+const { entry } = Astro.props;
+
+const parentPodcast = entry.data.parentPodcast;
+---
+
+<article id={`resource--${entry.id}`} data-resource-type={entry.collection}>
+  <Stack>
+    <header>
+      <div>
+        <LinkComp external variant="title-4" to={entry.data.resourceUrl}>
+          <h4 id={entry.id} class="inline m-0" set:text={entry.data.title} />
+          <span class="inline-block">
+            <Icon
+              size={2}
+              colorVariant="primary"
+              getIcon={(icons) => icons.arrowTopRightOnSquare}
+            />
+          </span>
+        </LinkComp>
+      </div>
+      {
+        parentPodcast && (
+          <Typography variant="subtitle-1">
+            {"An episode from "}
+            <span class="font-semibold">{parentPodcast.title}</span>
+          </Typography>
+        )
+      }
+    </header>
+    <Typography>
+      {entry.data.description}
+    </Typography>
+    {
+      parentPodcast && (
+        <div class="flex flex-wrap items-center gap-3 mt-3">
+          {parentPodcast.appleUrl && (
+            <a
+              class="block"
+              rel="noopener noreferrer"
+              target="_blank"
+              href={parentPodcast.appleUrl}
+            >
+              <span class="sr-only">Listen on Apple Podcasts</span>
+              <img
+                class="h-10"
+                height="40"
+                src="/img/apple-podcast.svg"
+                alt=""
+              />
+            </a>
+          )}
+          {parentPodcast.spotifyUrl && (
+            <a
+              class="block"
+              rel="noopener noreferrer"
+              target="_blank"
+              href={parentPodcast.spotifyUrl}
+            >
+              <span class="sr-only">Listen on Spotify</span>
+              <img
+                class="h-10 p-1.5 border border-line-neutral--muted rounded-md"
+                height="40"
+                src="/img/spotify.svg"
+                alt=""
+              />
+            </a>
+          )}
+        </div>
+      )
+    }
+    <ResourceMetadataBadges
+      hasSpanishVersion={entry.data.hasSpanishVersion}
+      registrationRequired={entry.data.registrationRequired}
+      paywalled={entry.data.paywalled}
+    />
+  </Stack>
+</article>

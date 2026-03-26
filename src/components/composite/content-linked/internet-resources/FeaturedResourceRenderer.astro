@@ -37,8 +37,6 @@ if (!safeCollectionKey) {
       case "courses":
       case "forums":
       case "peerSupports":
-      case "podcastEpisodes":
-      case "podcasts":
       case "stories":
       case "supportGroups":
       case "therapyResources":
@@ -52,6 +50,10 @@ if (!safeCollectionKey) {
             }}
           />
         );
+      case "podcasts":
+        return <div>[[TODO]]</div>;
+      case "podcastEpisodes":
+        return <div>[[TODO]]</div>;
       case "apps":
         return (
           <FeaturedApp

@@ -3,7 +3,7 @@ import { zSanityImage } from "./image";
 
 export const zWebsite = z.object({
   id: z.string(),
-  name: z.string(),
+  title: z.string(),
   updatedAt: z.string().datetime(),
   resourceUrl: z.string().url(),
   description: z.string().nullable(),
