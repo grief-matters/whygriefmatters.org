@@ -1,7 +1,7 @@
 *[_type == 'crisisResource']{
   "id": _id,
   "updatedAt": _updatedAt,
-  name,
+  title,
   description,
   resourceUrl,
   "sourceWebsiteId": website->._id,

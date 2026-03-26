@@ -269,7 +269,6 @@ import Typography from "@ui/base/Typography.astro";
       this.showLoading();
 
       try {
-        console.log(searchQuery);
         const search = await this.pagefind.debouncedSearch(searchQuery);
         if (!search || !search.results) {
           this.hideLoading();

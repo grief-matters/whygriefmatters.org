@@ -18,7 +18,7 @@ const { entry } = Astro.props;
 const iconConfig = resourceTypeIconConfigMap["website"];
 
 const logo = entry.data.logo
-  ? { image: entry.data.logo, altText: `${entry.data.name} logo` }
+  ? { image: entry.data.logo, altText: `${entry.data.title} logo` }
   : null;
 
 const lastReviewedDate = getLocaleDateStringFromIsoString(entry.data.updatedAt);
@@ -28,7 +28,7 @@ const lastReviewedDate = getLocaleDateStringFromIsoString(entry.data.updatedAt);
   <header class="flex flex-col-reverse space-y-reverse space-y-1.5">
     <div class="mb-1.5">
       <LinkComp external variant="title-4" to={entry.data.resourceUrl}>
-        <h4 id={entry.id} class="inline m-0" set:text={entry.data.name} />
+        <h4 id={entry.id} class="inline m-0" set:text={entry.data.title} />
         <span class="inline-block">
           <Icon
             size={2}

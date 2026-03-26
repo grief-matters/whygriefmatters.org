@@ -73,7 +73,7 @@ export async function getSourceLinkFromWebsiteRef(
 ) {
   const sourceWebsiteEntry = await getEntry(websiteRef);
   return {
-    label: sourceWebsiteEntry.data.name,
+    label: sourceWebsiteEntry.data.title,
     url: sourceWebsiteEntry.data.resourceUrl,
   };
 }

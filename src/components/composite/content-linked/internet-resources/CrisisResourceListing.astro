@@ -27,7 +27,7 @@ const { entry } = Astro.props;
 const hasSpanish = entry.data.languages?.includes("Spanish");
 const contactMethods = entry.data.contactMethods ?? [];
 const logo = entry.data.logo
-  ? { image: entry.data.logo, altText: `${entry.data.name} logo` }
+  ? { image: entry.data.logo, altText: `${entry.data.title} logo` }
   : null;
 ---
 
@@ -36,7 +36,7 @@ const logo = entry.data.logo
     <div class="flex items-center gap-3">
       <div>
         <LinkComp external variant="title-4" to={entry.data.resourceUrl ?? ""}>
-          <h4 id={entry.id} class="inline m-0" set:text={entry.data.name} />
+          <h4 id={entry.id} class="inline m-0" set:text={entry.data.title} />
           <span class="inline-block">
             <Icon
               size={2}
