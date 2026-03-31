@@ -1,0 +1,124 @@
+---
+import { getEntry } from "astro:content";
+import kebabCase from "lodash/kebabCase";
+
+import type { SocialVal } from "@content/model/person";
+
+import type { IconKey } from "@ui/utils/icon";
+
+import { paddingBottomMap, marginBottomMap } from "@styles/utils/spacing";
+
+import Container from "@ui/base/Container.astro";
+import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+import PersonAvatar from "@ui/base/PersonAvatar.astro";
+import Link from "@ui/base/Link.astro";
+import Icon from "@ui/base/Icon.astro";
+
+type SocialConfig = {
+  type: SocialVal;
+  hrefFn: (val: string) => string;
+  icon: IconKey;
+  a11yLabel: string;
+};
+
+const socialConfigMap: Record<SocialVal, SocialConfig> = {
+  linkedIn: {
+    type: "linkedIn",
+    hrefFn: (val) => val,
+    icon: "linkedIn",
+    a11yLabel: "Linked In profile",
+  },
+  email: {
+    type: "email",
+    hrefFn: (val) => `mailto:${val}`,
+    icon: "envelope",
+    a11yLabel: "Email",
+  },
+};
+
+const { personRef } = Astro.props;
+
+const personEntry = await getEntry("people", personRef);
+---
+
+<Stack spacing={4}>
+  <Container size={2}>
+    <div
+      class:list={[
+        paddingBottomMap[4],
+        marginBottomMap[4],
+        "not-last:border-b border-b-line-coolNeutral--default",
+      ]}
+    >
+      <div
+        class:list={[
+          "space-y-3  md:gap-6",
+          personEntry?.data.avatar && "md:grid md:grid-cols-[1fr_2fr]",
+        ]}
+      >
+        {
+          personEntry?.data.avatar && (
+            <div class="flex justify-center md:block">
+              <PersonAvatar
+                image={{ image: personEntry?.data.avatar, altText: "" }}
+              />
+            </div>
+          )
+        }
+        <Stack spacing={2}>
+          <div>
+            <Typography as="h3" variant="title-3">
+              {personEntry?.data.fullName}
+            </Typography>
+            <Typography variant="subtitle-1">
+              {personEntry?.data.role}
+            </Typography>
+          </div>
+          {
+            personEntry?.data.shortBio && (
+              <PortableTextContentBlock
+                portableText={personEntry?.data.shortBio}
+              />
+            )
+          }
+          {
+            personEntry?.data.socials && (
+              <div class="flex gap-3">
+                {Object.entries(personEntry?.data.socials).map(([key, val]) => {
+                  if (!val) {
+                    return null;
+                  }
+
+                  const socialConfig = socialConfigMap[key as SocialVal];
+
+                  return (
+                    <a
+                      class="text-onSurface-coolNeutral--muted"
+                      href={socialConfig.hrefFn(val)}
+                    >
+                      <Icon
+                        size={3}
+                        getIcon={(icons) => icons[socialConfig.icon as IconKey]}
+                      />
+                      <span class="sr-only">{socialConfig.a11yLabel}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            )
+          }
+          {
+            personEntry?.data.personalStory && (
+              <Link
+                to={`/about/${kebabCase(personEntry?.data.fullName)}`}
+                label="Read More"
+              />
+            )
+          }
+        </Stack>
+      </div>
+    </div>
+  </Container>
+</Stack>

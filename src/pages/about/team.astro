@@ -1,12 +1,277 @@
 ---
+import { getCollection, getEntries, getEntry } from "astro:content";
+import kebabCase from "lodash/kebabCase";
+
+import type { SocialVal } from "@content/model/person";
+
+import type { IconKey } from "@ui/utils/icon";
+
+import { paddingBottomMap, marginBottomMap } from "@styles/utils/spacing";
+
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import Section from "@ui/layouts/Section.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
+import Icon from "@ui/base/Icon.astro";
+import Link from "@ui/base/Link.astro";
+import PersonAvatar from "@ui/base/PersonAvatar.astro";
+import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Stack from "@ui/base/Stack.astro";
 import Container from "@ui/base/Container.astro";
 import Typography from "@ui/base/Typography.astro";
+import Button from "@ui/base/Button.astro";
+import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
+import PersonGroupRenderer from "@ui/composite/content-linked/content-block/PersonGroupRenderer.astro";
+
+const contentGroup = await getCollection(
+  "contentGroups",
+  (col) => col.data.slug === "team",
+);
+if (contentGroup.length === 0) {
+  throw new Error("Could not get team content group for team page");
+}
+
+const leadInSection = await getEntry(
+  "contentBlocks",
+  "895ccee1-e22a-4e55-b117-584c178a5efc",
+);
+if (!leadInSection) {
+  throw new Error(
+    "Could not get 'lead in' section content block for team page",
+  );
+}
+
+const coreTeamSection = await getEntry(
+  "personGroups",
+  "97b9fbc2-3085-459f-8af8-38670b97d08c",
+);
+if (!coreTeamSection) {
+  throw new Error("Could not get 'core team' for team page");
+}
+
+const coreTeamSectionMembers = await getEntries(
+  coreTeamSection.data.members.map((x) => ({
+    collection: x.collection,
+    id: x.id,
+  })),
+);
+if (!coreTeamSectionMembers || coreTeamSectionMembers.length === 0) {
+  throw new Error("Could not get 'core team members' for team page");
+}
+
+const volunteerSection = await getEntry(
+  "contentBlocks",
+  "7e0659f4-3d8d-455b-b516-8f4e82079540",
+);
+if (!volunteerSection) {
+  throw new Error(
+    "Could not get volunteer section content block for team page",
+  );
+}
+
+type SocialConfig = {
+  type: SocialVal;
+  hrefFn: (val: string) => string;
+  icon: IconKey;
+  a11yLabel: string;
+};
+const socialConfigMap: Record<SocialVal, SocialConfig> = {
+  linkedIn: {
+    type: "linkedIn",
+    hrefFn: (val) => val,
+    icon: "linkedIn",
+    a11yLabel: "Linked In profile",
+  },
+  email: {
+    type: "email",
+    hrefFn: (val) => `mailto:${val}`,
+    icon: "envelope",
+    a11yLabel: "Email",
+  },
+};
+
+const specialRecognitionSection = await getEntry(
+  "contentBlocks",
+  "fa8fa24a-5a64-4200-9cd2-ab829a9fdbe0",
+);
+if (!specialRecognitionSection) {
+  throw new Error(
+    "Could not get 'special recognition' section content block for team page",
+  );
+}
+
+const contentGroupData = contentGroup[0].data;
 ---
 
 <SitePageLayout>
-  <Container>
-    <Typography set:text={"Coming soon..."} />
-  </Container>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={contentGroupData.image ?? null}
+  >
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+      >
+        {"The Why Grief Matters Team"}
+      </Typography>
+    </Spacer>
+    <Button
+      as="a"
+      colorVariant="secondary"
+      href={`/about`}
+      class="inline-block"
+    >
+      <Typography>
+        {"Back to "}
+        <strong class="text-bold">
+          {"About Us"}
+        </strong>
+      </Typography>
+    </Button>
+  </PageHeaderLayout>
+  <Section>
+    {
+      leadInSection && (
+        <Stack spacing={4}>
+          <ContentBlockRenderer
+            textAlign="center"
+            contentBlockRef={leadInSection}
+          />
+        </Stack>
+      )
+    }
+  </Section>
+  <Section colorVariantKey={3}>
+    <Typography
+      as="h2"
+      variant="title-2"
+      set:text="Core Team"
+      marginBottom={3}
+    />
+    <Stack spacing={2}>
+      {
+        coreTeamSectionMembers.map((member) => (
+          <div
+            class:list={[
+              paddingBottomMap[4],
+              marginBottomMap[4],
+              "not-last:border-b border-b-line-coolNeutral--default",
+            ]}
+          >
+            <div
+              class:list={[
+                "space-y-3  md:gap-6",
+                member.data.avatar && "md:grid md:grid-cols-[1fr_2fr]",
+              ]}
+            >
+              {member.data.avatar && (
+                <div class="flex justify-center md:block">
+                  <PersonAvatar
+                    image={{ image: member.data.avatar, altText: "" }}
+                  />
+                </div>
+              )}
+              <Stack spacing={2}>
+                <div>
+                  <Typography as="h3" variant="title-3">
+                    {member.data.fullName}
+                  </Typography>
+                  <Typography variant="subtitle-1">
+                    {member.data.role}
+                  </Typography>
+                </div>
+                {member.data.shortBio && (
+                  <PortableTextContentBlock
+                    portableText={member.data.shortBio}
+                  />
+                )}
+                {member.data.socials && (
+                  <div class="flex gap-3">
+                    {Object.entries(member.data.socials).map(([key, val]) => {
+                      if (!val) {
+                        return null;
+                      }
+
+                      const socialConfig = socialConfigMap[key as SocialVal];
+
+                      return (
+                        <a
+                          class="text-onSurface-coolNeutral--muted"
+                          href={socialConfig.hrefFn(val)}
+                        >
+                          <Icon
+                            size={3}
+                            getIcon={(icons) =>
+                              icons[socialConfig.icon as IconKey]
+                            }
+                          />
+                          <span class="sr-only">{socialConfig.a11yLabel}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
+                {member.data.personalStory && (
+                  <Link
+                    to={`/about/${kebabCase(member.data.fullName)}`}
+                    label="Read More"
+                  />
+                )}
+              </Stack>
+            </div>
+          </div>
+        ))
+      }
+    </Stack>
+    {
+      specialRecognitionSection && (
+        <Stack
+          spacing={4}
+          class="border-t border-t-line-coolNeutral--default py-8"
+        >
+          <ContentBlockRenderer
+            textAlign="left"
+            contentBlockRef={specialRecognitionSection}
+          />
+        </Stack>
+      )
+    }
+    {
+      volunteerSection && (
+        <Stack
+          spacing={4}
+          class="border-t border-t-line-coolNeutral--default py-8"
+        >
+          <ContentBlockRenderer
+            textAlign="left"
+            contentBlockRef={volunteerSection}
+          />
+          <Container paddingX={2} paddingY={4}>
+            <div class="columns-2">
+              {volunteerSection.data.content.map((contentItem) => {
+                if (contentItem.contentType === "personGroup") {
+                  return (
+                    <PersonGroupRenderer
+                      personGroupRef={contentItem.refId.id}
+                    />
+                  );
+                }
+              })}
+            </div>
+          </Container>
+        </Stack>
+      )
+    }
+    <div class="text-center mt-12">
+      <Link to={`/about`}>
+        {"Back to "}
+        <strong>{"About Us"}</strong>
+      </Link>
+    </div>
+  </Section>
 </SitePageLayout>

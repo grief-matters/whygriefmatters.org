@@ -11,6 +11,8 @@ import featuredWebsites from "./featuredWebsitesContentItem";
 import headingText from "./headingTextContentItem";
 import imageRow from "./imageRowContentItem";
 import pageLinks from "./pageLinksContentItem";
+import person from "./personContentItem";
+import personGroup from "./personGroupContentItem";
 import relativePageLink from "./relativeLinkContentItem";
 import resourceLinks from "./resourceLinksContentItem";
 import resourcePageLink from "./resourcePageLinkContentItem";
@@ -32,6 +34,8 @@ const contentBlockSchemas = [
   headingText,
   imageRow,
   pageLinks,
+  person,
+  personGroup,
   relativePageLink,
   resourceLinks,
   resourcePageLink,

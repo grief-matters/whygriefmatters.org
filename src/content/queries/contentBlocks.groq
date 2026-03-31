@@ -100,7 +100,15 @@
           "category": category._ref,
           label
         },
-      }
+      },
+    _type == "person" => {
+      "contentType": _type,
+      "refId": _ref
+    },
+    _type == "personGroup" => {
+      "contentType": _type,
+      "refId": _ref
+    },
     }
   }, [])
 }
