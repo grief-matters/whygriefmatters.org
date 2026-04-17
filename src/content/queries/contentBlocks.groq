@@ -101,6 +101,7 @@
           label
         },
       },
+    },
     _type == "person" => {
       "contentType": _type,
       "refId": _ref
@@ -109,6 +110,5 @@
       "contentType": _type,
       "refId": _ref
     },
-    }
   }, [])
 }
