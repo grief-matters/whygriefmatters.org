@@ -23,6 +23,7 @@ import FeaturedWebsite from "../internet-resources/FeaturedWebsite.astro";
 import ResourcePageLinkCard from "../category/ResourcePageLinkCard.astro";
 import PageLinksRenderer from "../PageLinksRenderer.astro";
 import DynamicPageLink from "../DynamicPageLink.astro";
+import PersonRenderer from "./PersonRenderer.astro";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
@@ -211,6 +212,14 @@ const contentBlock = await getEntry(contentBlockRef);
             />
           </Container>
         );
+      case "person":
+        return (
+          <Container paddingX={3}>
+            <PersonRenderer personRef={contentItem.refId.id} />
+          </Container>
+        );
+      case "personGroup":
+        return;
       default:
         assertNever(contentItem);
     }
