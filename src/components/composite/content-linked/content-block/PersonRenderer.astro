@@ -43,7 +43,7 @@ const { personRef } = Astro.props;
 const personEntry = await getEntry("people", personRef);
 ---
 
-<Stack spacing={4}>
+<Stack>
   <Container size={2}>
     <div
       class:list={[

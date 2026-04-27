@@ -21,6 +21,7 @@ import Stack from "@ui/base/Stack.astro";
 import Container from "@ui/base/Container.astro";
 import Typography from "@ui/base/Typography.astro";
 import Button from "@ui/base/Button.astro";
+
 import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
 import PersonGroupRenderer from "@ui/composite/content-linked/content-block/PersonGroupRenderer.astro";
 
@@ -32,13 +33,18 @@ if (contentGroup.length === 0) {
   throw new Error("Could not get team content group for team page");
 }
 
-const leadInSection = await getEntry(
-  "contentBlocks",
-  "895ccee1-e22a-4e55-b117-584c178a5efc",
-);
+// TODO: render content dynamically
+const contentGroupData = contentGroup[0].data;
+
+const leadInSection = contentGroupData.contentBlocks[0];
 if (!leadInSection) {
+  throw new Error("Could not get lead in section content block for team page");
+}
+
+const specialRecognitionSection = contentGroupData.contentBlocks[1];
+if (!specialRecognitionSection) {
   throw new Error(
-    "Could not get 'lead in' section content block for team page",
+    "Could not get special recognition section content block for team page",
   );
 }
 
@@ -62,12 +68,33 @@ if (!coreTeamSectionMembers || coreTeamSectionMembers.length === 0) {
 
 const volunteerSection = await getEntry(
   "contentBlocks",
-  "7e0659f4-3d8d-455b-b516-8f4e82079540",
+  contentGroupData.contentBlocks[2].id,
 );
 if (!volunteerSection) {
   throw new Error(
     "Could not get volunteer section content block for team page",
   );
+}
+
+const volunteerSectionTitle = volunteerSection.data.content.find(
+  (contentItem) => contentItem.contentType === "headingText",
+)?.text;
+if (!volunteerSectionTitle) {
+  throw new Error("Could not find title for volunteer section");
+}
+
+const volunteerSectionLeadin = volunteerSection.data.content.find(
+  (contentItem) => contentItem.contentType === "richTextContentBlock",
+)?.portableText;
+if (!volunteerSectionLeadin) {
+  throw new Error("Could not find lead in content for volunteer section");
+}
+
+const volunteerGroups = volunteerSection.data.content.filter(
+  (contentItem) => contentItem.contentType === "personGroup",
+);
+if (volunteerGroups.length === 0) {
+  throw new Error("Could not find any volunteer groups in volunteer section");
 }
 
 type SocialConfig = {
@@ -90,18 +117,6 @@ const socialConfigMap: Record<SocialVal, SocialConfig> = {
     a11yLabel: "Email",
   },
 };
-
-const specialRecognitionSection = await getEntry(
-  "contentBlocks",
-  "fa8fa24a-5a64-4200-9cd2-ab829a9fdbe0",
-);
-if (!specialRecognitionSection) {
-  throw new Error(
-    "Could not get 'special recognition' section content block for team page",
-  );
-}
-
-const contentGroupData = contentGroup[0].data;
 ---
 
 <SitePageLayout>
@@ -228,50 +243,44 @@ const contentGroupData = contentGroup[0].data;
         ))
       }
     </Stack>
-    {
-      specialRecognitionSection && (
-        <Stack
-          spacing={4}
-          class="border-t border-t-line-coolNeutral--default py-8"
-        >
-          <ContentBlockRenderer
-            textAlign="left"
-            contentBlockRef={specialRecognitionSection}
-          />
-        </Stack>
-      )
-    }
-    {
-      volunteerSection && (
-        <Stack
-          spacing={4}
-          class="border-t border-t-line-coolNeutral--default py-8"
-        >
-          <ContentBlockRenderer
-            textAlign="left"
-            contentBlockRef={volunteerSection}
-          />
-          <Container paddingX={2} paddingY={4}>
-            <div class="columns-2">
-              {volunteerSection.data.content.map((contentItem) => {
-                if (contentItem.contentType === "personGroup") {
-                  return (
-                    <PersonGroupRenderer
-                      personGroupRef={contentItem.refId.id}
-                    />
-                  );
-                }
-              })}
-            </div>
-          </Container>
-        </Stack>
-      )
-    }
-    <div class="text-center mt-12">
-      <Link to={`/about`}>
-        {"Back to "}
-        <strong>{"About Us"}</strong>
-      </Link>
-    </div>
   </Section>
+
+  {
+    specialRecognitionSection && (
+      <Section>
+        <ContentBlockRenderer
+          textAlign="left"
+          contentBlockRef={specialRecognitionSection}
+        />
+      </Section>
+    )
+  }
+  {
+    volunteerSection && (
+      <Section colorVariantKey={3}>
+        <Typography as="h2" variant="title-2" textAlign="center">
+          {volunteerSectionTitle}
+        </Typography>
+        <Container paddingY={3}>
+          <PortableTextContentBlock
+            textAlign="left"
+            portableText={volunteerSectionLeadin || []}
+          />
+        </Container>
+        <Container paddingY={4}>
+          <div class="columns-2">
+            {volunteerGroups.map((group) => (
+              <PersonGroupRenderer personGroupRef={group.refId.id} />
+            ))}
+          </div>
+        </Container>
+        <div class="text-center">
+          <Link to={`/about`}>
+            {"Back to "}
+            <strong>{"About Us"}</strong>
+          </Link>
+        </div>
+      </Section>
+    )
+  }
 </SitePageLayout>

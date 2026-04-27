@@ -102,6 +102,7 @@
         },
       },
     },
+    // TODO: Wrap these references like the other content types
     _type == "person" => {
       "contentType": _type,
       "refId": _ref

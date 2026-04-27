@@ -8,13 +8,21 @@ const { personGroupRef } = Astro.props;
 
 const personGroupEntry = await getEntry("personGroups", personGroupRef);
 
-const groupMembers = personGroupEntry?.data.members
-  ? await Promise.all(
-      personGroupEntry.data.members.map((member) =>
-        getEntry(member.collection, member.id),
-      ),
-    )
-  : [];
+if (!personGroupEntry) {
+  throw new Error(`Person group entry not found for ref ${personGroupRef}`);
+}
+
+const groupMembers = await Promise.all(
+  personGroupEntry.data.members.map(async (memberRef) => {
+    const member = await getEntry(memberRef.collection, memberRef.id);
+    if (!member) {
+      throw new Error(
+        `Member not found for ref ${memberRef.collection}/${memberRef.id}`,
+      );
+    }
+    return member;
+  }),
+);
 ---
 
 <Stack marginBottom={6} class="break-inside-avoid">

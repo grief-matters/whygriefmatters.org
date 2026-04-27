@@ -213,12 +213,9 @@ const contentBlock = await getEntry(contentBlockRef);
           </Container>
         );
       case "person":
-        return (
-          <Container paddingX={3}>
-            <PersonRenderer personRef={contentItem.refId.id} />
-          </Container>
-        );
+        return <PersonRenderer personRef={contentItem.refId.id} />;
       case "personGroup":
+        // TODO: Render personGroup here; currently rendered in the team page
         return;
       default:
         assertNever(contentItem);
