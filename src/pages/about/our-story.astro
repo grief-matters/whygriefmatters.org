@@ -1,12 +1,71 @@
 ---
+import { getCollection } from "astro:content";
+
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
 import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
-import Container from "@ui/base/Container.astro";
+import Button from "@ui/base/Button.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
+import Link from "@ui/base/Link.astro";
+
+import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
+
+const ourStoryContentGroup = await getCollection(
+  "contentGroups",
+  (col) => col.data.slug === "our-story",
+);
+if (ourStoryContentGroup.length === 0) {
+  throw new Error("Could not get content group for our story page");
+}
+const ourStoryData = ourStoryContentGroup[0].data;
 ---
 
 <SitePageLayout>
-  <Container>
-    <Typography set:text={"Coming soon..."} />
-  </Container>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={ourStoryData.image ?? null}
+  >
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+      >
+        {ourStoryData.title}
+      </Typography>
+    </Spacer>
+    <Button
+      as="a"
+      colorVariant="secondary"
+      href={`/about`}
+      class="inline-block"
+    >
+      <Typography>
+        {"Back to "}
+        <strong class="text-bold">
+          {"About Us"}
+        </strong>
+      </Typography>
+    </Button>
+  </PageHeaderLayout>
+
+  <LayoutSurface as="section" colorVariant="neutral" paddingY={6}>
+    <Typography as="h2" variant="title-2" marginBottom={4} textAlign="center">
+      {ourStoryData.title}
+    </Typography>
+    <Stack>
+      <ContentBlockRenderer contentBlockRef={ourStoryData.contentBlocks[0]} />
+    </Stack>
+    <div class="text-center mt-6">
+      <Link to={`/about`}>
+        {"Back to "}
+        <strong>{"About Us"}</strong>
+      </Link>
+    </div>
+  </LayoutSurface>
 </SitePageLayout>
