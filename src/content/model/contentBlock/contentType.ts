@@ -14,6 +14,8 @@ const contentTypes = [
   "headingText",
   "imageRow",
   "pageLinks",
+  "person",
+  "personGroup",
   "relativeLink",
   "resourceLinks",
   "resourcePageLink",

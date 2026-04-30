@@ -1,0 +1,42 @@
+---
+import { getEntry } from "astro:content";
+
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+
+const { personGroupRef } = Astro.props;
+
+const personGroupEntry = await getEntry("personGroups", personGroupRef);
+
+if (!personGroupEntry) {
+  throw new Error(`Person group entry not found for ref ${personGroupRef}`);
+}
+
+const groupMembers = await Promise.all(
+  personGroupEntry.data.members.map(async (memberRef) => {
+    const member = await getEntry(memberRef.collection, memberRef.id);
+    if (!member) {
+      throw new Error(
+        `Member not found for ref ${memberRef.collection}/${memberRef.id}`,
+      );
+    }
+    return member;
+  }),
+);
+---
+
+<Stack marginBottom={6} class="break-inside-avoid">
+  <Typography variant="title-5">
+    {personGroupEntry?.data.name}
+  </Typography>
+  <Typography variant="subtitle-1">
+    {personGroupEntry?.data.description}
+  </Typography>
+  {
+    groupMembers.map((member) => (
+      <Typography variant="body-1" marginBottom={1}>
+        {member?.data.fullName}
+      </Typography>
+    ))
+  }
+</Stack>

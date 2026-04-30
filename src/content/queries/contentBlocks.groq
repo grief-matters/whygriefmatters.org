@@ -100,7 +100,16 @@
           "category": category._ref,
           label
         },
-      }
-    }
+      },
+    },
+    // TODO: Wrap these references like the other content types
+    _type == "person" => {
+      "contentType": _type,
+      "refId": _ref
+    },
+    _type == "personGroup" => {
+      "contentType": _type,
+      "refId": _ref
+    },
   }, [])
 }
