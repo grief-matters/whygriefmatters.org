@@ -4,8 +4,8 @@ import { zPortableText } from "./portableText";
 import { zSanityImage } from "./image";
 
 const zSocials = z.object({
-  linkedIn: z.string().url().nullable(),
-  email: z.string().email().nullable(),
+  linkedIn: z.url().nullable(),
+  email: z.email().nullable(),
 });
 
 export type SocialVal = keyof z.infer<typeof zSocials>;

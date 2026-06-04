@@ -8,7 +8,7 @@ export default z.object({
     z.object({
       title: z.string(),
       type: zInternetResourceType,
-      url: z.string().url(),
+      url: z.url(),
     }),
   ),
 });

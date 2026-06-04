@@ -4,12 +4,12 @@ import { zBasicInternetResource } from "@content/model/internetResource";
 
 export const zApp = zBasicInternetResource
   .extend({
-    appleUrl: z.string().url().nullable(),
-    playStoreUrl: z.string().url().nullable(),
+    appleUrl: z.url().nullable(),
+    playStoreUrl: z.url().nullable(),
     appleRating: z.number().min(0).max(5).nullable().default(null),
     appleRatingCount: z.number().int().nullable().default(null),
     applePrice: z.string().nullable().default(null),
-    appleIconUrl: z.string().url().nullable().default(null),
+    appleIconUrl: z.url().nullable().default(null),
   })
   .refine(
     (data) =>

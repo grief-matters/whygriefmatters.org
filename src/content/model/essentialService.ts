@@ -15,7 +15,7 @@ export const zEssentialService = z.object({
   updatedAt: z.string().datetime(),
   title: z.string(),
   description: zResourceDescription,
-  resourceUrl: z.string().url().nullable(),
+  resourceUrl: z.url().nullable(),
   sourceOrgId: reference("externalOrgs").nullable(),
   imageAssetId: reference("imageAssets").nullable(),
   availableLanguages: z.array(zAvailableLanguage),

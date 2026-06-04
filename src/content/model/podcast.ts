@@ -4,9 +4,9 @@ import { zBasicInternetResource } from "@content/model/internetResource";
 
 export const zPodcast = zBasicInternetResource
   .extend({
-    spotifyUrl: z.string().url().nullable(),
-    appleUrl: z.string().url().nullable(),
-    applePodcastArtworkUrl: z.string().url().nullable().default(null),
+    spotifyUrl: z.url().nullable(),
+    appleUrl: z.url().nullable(),
+    applePodcastArtworkUrl: z.url().nullable().default(null),
     applePodcastArtistName: z.string().nullable().default(null),
     applePodcastTrackCount: z.number().int().nullable().default(null),
   })
