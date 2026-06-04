@@ -1,27 +1,22 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 
 /**
  * Create a readonly set of content types that match our CMS content block schemas
  */
 const contentTypes = [
-  "accessibleImage",
-  "categoryPageLink",
-  "featuredCrisisResource",
+  "headingText",
+  "richTextContentBlock",
+  "richTextWithHeading",
+  "imageAsset",
+  "imageRow",
   "featuredResource",
   "featuredResources",
-  "featuredWebsite",
-  "featuredWebsites",
-  "headingText",
-  "imageRow",
-  "pageLinks",
+  "staticNavItem",
+  "navItem",
+  "navItems",
+  "resourceLinks",
   "person",
   "personGroup",
-  "relativeLink",
-  "resourceLinks",
-  "resourcePageLink",
-  "richTextWithHeading",
-  // TODO - we need to fix this type name but it will require a migration
-  "richTextContentBlock",
 ] as const;
 export const zContentType = z.enum(contentTypes);
 export type ContentBlockType = z.infer<typeof zContentType>;

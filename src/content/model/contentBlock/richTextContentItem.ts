@@ -1,10 +1,9 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 
 import { zPortableText } from "../portableText";
-import { zContentType } from "./contentType";
 
 export default z.object({
-  contentType: z.literal(zContentType.Enum.richTextContentBlock),
+  contentType: z.literal("richTextContentBlock"),
   portableText: zPortableText,
   emphasized: z.boolean(),
 });

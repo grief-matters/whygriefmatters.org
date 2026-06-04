@@ -1,0 +1,77 @@
+*[_type == 'navigationTree']{
+  "id": _id,
+  "slug": slug.current,
+  title,
+  "items": coalesce(navigationTreeItems[]{
+    _type == "navItem" => {
+      "kind": _type,
+      label,
+      "entryPoint": {
+        "refType": entryPoint->_type,
+        "refId": entryPoint->_id
+      },
+      "filters": coalesce(filters[]->{
+        "refType": _type,
+        "refId": _id
+      }, []),
+      mediaTypes
+    },
+    _type == "navItemGroup" => {
+      "kind": _type,
+      label,
+      "items": coalesce(items[]{
+        _type == "navItem" => {
+          "kind": _type,
+          label,
+          "entryPoint": {
+            "refType": entryPoint->_type,
+            "refId": entryPoint->_id
+          },
+          "filters": coalesce(filters[]->{
+            "refType": _type,
+            "refId": _id
+          }, []),
+          mediaTypes
+        },
+        _type == "navItemGroup" => {
+          "kind": _type,
+          label,
+          "items": coalesce(items[]{
+            _type == "navItem" => {
+              "kind": _type,
+              label,
+              "entryPoint": {
+                "refType": entryPoint->_type,
+                "refId": entryPoint->_id
+              },
+              "filters": coalesce(filters[]->{
+                "refType": _type,
+                "refId": _id
+              }, []),
+              mediaTypes
+            },
+            _type == "navItemGroup" => {
+              "kind": _type,
+              label,
+              "items": coalesce(items[]{
+                _type == "navItem" => {
+                  "kind": _type,
+                  label,
+                  "entryPoint": {
+                    "refType": entryPoint->_type,
+                    "refId": entryPoint->_id
+                  },
+                  "filters": coalesce(filters[]->{
+                    "refType": _type,
+                    "refId": _id
+                  }, []),
+                  mediaTypes
+                },
+              }, [])
+            },
+          }, [])
+        },
+      }, [])
+    },
+  }, [])
+}

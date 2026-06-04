@@ -1,0 +1,19 @@
+*[_type == 'lossRelationship']{
+  "id": _id,
+  "slug": slug.current,
+  title,
+  displayTitle,
+  shortDescription,
+  description,
+  "coverImage": coverImageRef->._id,
+  searchAliases,
+  aiPromptHint,
+  "featuredResources": coalesce(featuredResources[]->{
+    "refType": _type,
+    "refId": _id
+  }, []),
+  "secondaryFeaturedResources": coalesce(secondaryFeaturedResources[]->{
+    "refType": _type,
+    "refId": _id
+  }, []),
+}

@@ -1,5 +1,6 @@
 *[_type == "form"]{
   "id": _id,
+  "formId": formId.current,
   title,
   description,
   fields[]{
@@ -9,7 +10,7 @@
     type,
     inputOptions,
     placeholder,
-    required
+    "required": coalesce(required, true)
   },
   submitButtonText,
   successMessage

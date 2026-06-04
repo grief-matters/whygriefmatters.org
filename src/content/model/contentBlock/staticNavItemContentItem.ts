@@ -1,10 +1,9 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 
 import { zNonEmptyString } from "../utils";
-import { zContentType } from "./contentType";
 
 export default z.object({
-  contentType: z.literal(zContentType.Enum.relativeLink),
+  contentType: z.literal("staticNavItem"),
   label: zNonEmptyString,
   url: zNonEmptyString.startsWith("/"),
 });

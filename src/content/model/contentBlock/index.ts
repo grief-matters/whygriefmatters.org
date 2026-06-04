@@ -1,46 +1,38 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 import type { ZodDiscriminatedUnionOption } from "astro:schema";
 
-import accessibleImage from "./accessibleImageContentItem";
-import categoryPageLink from "./categoryPageLinkContentItem";
-import featuredCrisisResource from "./featuredCrisisResourceContentItem";
 import featuredResource from "./featuredResourceContentItem";
 import featuredResources from "./featuredResourcesContentItem";
-import featuredWebsite from "./featuredWebsiteContentItem";
-import featuredWebsites from "./featuredWebsitesContentItem";
 import headingText from "./headingTextContentItem";
+import imageAsset from "./imageAssetContentItem";
 import imageRow from "./imageRowContentItem";
-import pageLinks from "./pageLinksContentItem";
+import navItem from "./navItemContentItem";
+import navItems from "./navItemsContentItem";
 import person from "./personContentItem";
 import personGroup from "./personGroupContentItem";
-import relativePageLink from "./relativeLinkContentItem";
 import resourceLinks from "./resourceLinksContentItem";
-import resourcePageLink from "./resourcePageLinkContentItem";
 import richTextContentBlock from "./richTextContentItem";
 import richTextWithHeading from "./richTextWithHeadingContentItem";
+import staticNavItem from "./staticNavItemContentItem";
 import { zNonEmptyString } from "../utils";
 
 /**
  * Create a keyed set of schemas to ensure we add new content types correctly
  */
 const contentBlockSchemas = [
-  accessibleImage,
-  categoryPageLink,
-  featuredCrisisResource,
   featuredResource,
   featuredResources,
-  featuredWebsite,
-  featuredWebsites,
   headingText,
+  imageAsset,
   imageRow,
-  pageLinks,
+  navItem,
+  navItems,
   person,
   personGroup,
-  relativePageLink,
   resourceLinks,
-  resourcePageLink,
-  richTextWithHeading,
   richTextContentBlock,
+  richTextWithHeading,
+  staticNavItem,
 ] as const satisfies readonly [
   ZodDiscriminatedUnionOption<"contentType">,
   ...ZodDiscriminatedUnionOption<"contentType">[],
@@ -53,5 +45,3 @@ export default z.object({
   id: zNonEmptyString,
   content: z.array(z.discriminatedUnion("contentType", contentBlockSchemas)),
 });
-
-export type PageLinks = z.infer<typeof pageLinks>;

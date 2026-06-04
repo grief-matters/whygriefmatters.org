@@ -1,11 +1,10 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 
 import { zNonEmptyString } from "../utils";
 import { zPortableText } from "../portableText";
-import { zContentType } from "./contentType";
 
 export default z.object({
-  contentType: z.literal(zContentType.Enum.richTextWithHeading),
+  contentType: z.literal("richTextWithHeading"),
   headingText: zNonEmptyString,
   portableText: zPortableText,
 });

@@ -1,9 +1,6 @@
-import { z } from "astro:content";
-
-import { zImage } from "../image";
-import { zContentType } from "./contentType";
+import { reference, z } from "astro:content";
 
 export default z.object({
-  contentType: z.literal(zContentType.Enum.imageRow),
-  images: z.array(zImage),
+  contentType: z.literal("imageRow"),
+  images: z.array(reference("imageAssets")),
 });

@@ -10,16 +10,12 @@ export const collectionKeys: CollectionKey[] = [
 export const basicInternetResourceCollectionKeys = [
   "articles",
   "blogs",
-  "books",
   "communities",
   "courses",
   "forums",
   "memorials",
-  "peerSupports",
   "printedMaterials",
   "stories",
-  "supportGroups",
-  "therapyResources",
   "videos",
   "webinars",
 ] as const satisfies readonly CollectionKey[];
@@ -29,20 +25,23 @@ export type BasicInternetResourceCollectionKey =
 export const internetResourceCollectionKeys = [
   ...basicInternetResourceCollectionKeys,
   "apps",
+  "books",
+  "crisisResources",
+  "essentialServices",
+  "externalOrgs",
+  "listicles",
+  "peerSupports",
   "podcasts",
   "podcastEpisodes",
-  "websites",
+  "supportGroups",
+  "therapyResources",
 ] as const satisfies readonly CollectionKey[];
 export type InternetResourceCollectionKey =
   (typeof internetResourceCollectionKeys)[number];
 
-export type InternetResourceEntries = Partial<
-  {
-    [K in InternetResourceCollectionKey]: Array<CollectionEntry<K>>;
-  } & {
-    crisisResources: Array<CollectionEntry<"crisisResources">>;
-  }
->;
+export type InternetResourceEntries = Partial<{
+  [K in InternetResourceCollectionKey]: Array<CollectionEntry<K>>;
+}>;
 
 export const resourceTypeToCollectionKeyMap = {
   app: "apps",
@@ -51,7 +50,11 @@ export const resourceTypeToCollectionKeyMap = {
   book: "books",
   community: "communities",
   course: "courses",
+  crisisResource: "crisisResources",
+  essentialService: "essentialServices",
+  externalOrg: "externalOrgs",
   forum: "forums",
+  listicle: "listicles",
   memorial: "memorials",
   peerSupport: "peerSupports",
   podcast: "podcasts",
@@ -62,7 +65,6 @@ export const resourceTypeToCollectionKeyMap = {
   therapyResource: "therapyResources",
   video: "videos",
   webinar: "webinars",
-  website: "websites",
 } as const satisfies Record<InternetResourceType, CollectionKey>;
 
 export const collectionKeyToResourceTypeMap = Object.fromEntries(

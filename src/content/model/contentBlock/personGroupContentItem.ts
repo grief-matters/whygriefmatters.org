@@ -1,8 +1,6 @@
 import { reference, z } from "astro:content";
 
-import { zContentType } from "./contentType";
-
 export default z.object({
-  contentType: z.literal(zContentType.Enum.personGroup),
+  contentType: z.literal("personGroup"),
   refId: reference("personGroups"),
 });

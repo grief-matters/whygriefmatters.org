@@ -1,5 +1,9 @@
 *[_type == "wdynrnEntry"]{
   "id": _id,
   entryText,
-  "pageSlug": coalesce(url, category->slug.current)
+  "destination": select(
+    defined(causeOfDeath) => {"kind": "causeOfDeath", "ref": causeOfDeath->._id},
+    defined(lossRelationship) => {"kind": "lossRelationship", "ref": lossRelationship->._id},
+    defined(url) => {"kind": "url", "url": url}
+  )
 }

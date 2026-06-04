@@ -1,4 +1,4 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 
 import { zSchemaForType } from "./utils";
 import type { SanityImageSource } from "@sanity/image-url";

@@ -1,10 +1,9 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 
 import { zBasicInternetResource } from "@content/model/internetResource";
 
 export const zApp = zBasicInternetResource
   .extend({
-    resourceUrl: z.string().url().nullable(),
     appleUrl: z.string().url().nullable(),
     playStoreUrl: z.string().url().nullable(),
     appleRating: z.number().min(0).max(5).nullable().default(null),
@@ -19,6 +18,6 @@ export const zApp = zBasicInternetResource
       data.playStoreUrl !== null,
     {
       message:
-        "At least one of resourceUrl, appleAppStore, or googlePlayStore must be provided",
+        "At least one of resourceUrl, appleUrl, or playStoreUrl must be provided",
     },
   );

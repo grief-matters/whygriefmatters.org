@@ -1,10 +1,9 @@
 *[_type == 'contentGroup']{
   "id": coalesce(slug.current, _id),
+  name,
   title,
+  description,
   "slug": slug.current,
-  image{
-    image,
-    "altText": alt
-  },
+  "imageAssetId": imageRef->._id,
   "contentBlocks": coalesce(contentBlocks[]->._id, [])
 }

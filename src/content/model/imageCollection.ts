@@ -1,8 +1,7 @@
-import { z } from "astro:content";
-import { zImage } from "./image";
+import { reference, z } from "astro:content";
 
 export default z.object({
   id: z.string(),
   title: z.string(),
-  images: z.array(zImage),
+  images: z.array(reference("imageAssets")),
 });
