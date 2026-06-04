@@ -25,11 +25,18 @@ if (!homePageEntry) {
   throw new Error('Could not get content entry: ["contentGroups", "home"]');
 }
 
-if (!homePageEntry.data.image) {
-  throw new Error("Essential content missing: [homePageEntry.data.image]");
+if (!homePageEntry.data.imageAssetId) {
+  throw new Error(
+    "Essential content missing: [homePageEntry.data.imageAssetId]",
+  );
 }
 
-const heroImgUrl = getImageUrlBuilder(homePageEntry.data.image?.image).url();
+const heroImageAsset = await getEntry(homePageEntry.data.imageAssetId);
+if (!heroImageAsset) {
+  throw new Error("Essential content missing: [home hero imageAsset entry]");
+}
+
+const heroImgUrl = getImageUrlBuilder(heroImageAsset.data.image).url();
 
 const logoUrl = org.logos.onDark
   ? getImageUrlBuilder(org.logos.onDark).url()

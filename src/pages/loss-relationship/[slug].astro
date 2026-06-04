@@ -1,0 +1,36 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+
+import Container from "@ui/base/Container.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+
+interface Props {
+  entry: CollectionEntry<"lossRelationships">;
+}
+
+export async function getStaticPaths() {
+  const entries = await getCollection("lossRelationships");
+  return entries.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const title = entry.data.displayTitle ?? entry.data.title;
+---
+
+<SitePageLayout>
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <Container>
+      <Stack spacing={3}>
+        <Typography as="h1" variant="title-1">{title}</Typography>
+        <Typography variant="body-1">{entry.data.shortDescription}</Typography>
+      </Stack>
+    </Container>
+  </LayoutSurface>
+</SitePageLayout>
