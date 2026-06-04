@@ -34,7 +34,7 @@ import wdynrnEntriesQuery from "@content/queries/wdynrnEntries.groq?raw";
 import { zApp } from "@content/model/app";
 import { zBook } from "@content/model/book";
 import { zCauseOfDeath } from "@content/model/causeOfDeath";
-import zContentBlock from "@content/model/contentBlock";
+import { zContentBlock } from "@content/model/contentBlock";
 import { zContentFunction } from "@content/model/contentFunction";
 import zContentGroup from "@content/model/contentGroup";
 import { zCrisisResource } from "@content/model/crisisResource";
@@ -64,7 +64,7 @@ import { zWdynrnEntry } from "@content/model/wdynrnEntry";
 import { loadSanityQuery } from "@content/loaders/sanityQueryLoader";
 import { fetchAppleStoreMetadata } from "@content/loaders/appleStoreMetadata";
 import { fetchApplePodcastMetadata } from "@content/loaders/applePodcastMetadata";
-import { knownContentTypes } from "@content/model/contentBlock/contentType";
+import { knownContentTypes } from "@content/model/contentBlock";
 import {
   zBasicInternetResource,
   type InternetResourceType,

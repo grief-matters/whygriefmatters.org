@@ -2,7 +2,7 @@ import { z } from "astro/zod";
 
 import { zInternetResourceType } from "../internetResource";
 
-export default z.object({
+export const zResourceLinksContentItem = z.object({
   contentType: z.literal("resourceLinks"),
   resources: z.array(
     z.object({

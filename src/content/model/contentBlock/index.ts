@@ -1,47 +1,49 @@
 import { z } from "astro/zod";
-import type { ZodDiscriminatedUnionOption } from "astro:schema";
 
-import featuredResource from "./featuredResourceContentItem";
-import featuredResources from "./featuredResourcesContentItem";
-import headingText from "./headingTextContentItem";
-import imageAsset from "./imageAssetContentItem";
-import imageRow from "./imageRowContentItem";
-import navItem from "./navItemContentItem";
-import navItems from "./navItemsContentItem";
-import person from "./personContentItem";
-import personGroup from "./personGroupContentItem";
-import resourceLinks from "./resourceLinksContentItem";
-import richTextContentBlock from "./richTextContentItem";
-import richTextWithHeading from "./richTextWithHeadingContentItem";
-import staticNavItem from "./staticNavItemContentItem";
+import { zFeaturedResourceContentItem } from "./featuredResourceContentItem";
+import { zFeaturedResourcesContentItem } from "./featuredResourcesContentItem";
+import { zHeadingTextContentItem } from "./headingTextContentItem";
+import { zImageAssetContentItem } from "./imageAssetContentItem";
+import { zImageRowContentItem } from "./imageRowContentItem";
+import { zNavItemContentItem } from "./navItemContentItem";
+import { zNavItemsContentItem } from "./navItemsContentItem";
+import { zPersonContentItem } from "./personContentItem";
+import { zPersonGroupContentItem } from "./personGroupContentItem";
+import { zResourceLinksContentItem } from "./resourceLinksContentItem";
+import { zRichTextContentItem } from "./richTextContentItem";
+import { zRichTextWithHeadingContentItem } from "./richTextWithHeadingContentItem";
+import { zStaticNavItemContentItem } from "./staticNavItemContentItem";
 import { zNonEmptyString } from "../utils";
 
-/**
- * Create a keyed set of schemas to ensure we add new content types correctly
- */
-const contentBlockSchemas = [
-  featuredResource,
-  featuredResources,
-  headingText,
-  imageAsset,
-  imageRow,
-  navItem,
-  navItems,
-  person,
-  personGroup,
-  resourceLinks,
-  richTextContentBlock,
-  richTextWithHeading,
-  staticNavItem,
-] as const satisfies readonly [
-  ZodDiscriminatedUnionOption<"contentType">,
-  ...ZodDiscriminatedUnionOption<"contentType">[],
-];
+const contentItemSchemas = [
+  zFeaturedResourceContentItem,
+  zFeaturedResourcesContentItem,
+  zHeadingTextContentItem,
+  zImageAssetContentItem,
+  zImageRowContentItem,
+  zNavItemContentItem,
+  zNavItemsContentItem,
+  zPersonContentItem,
+  zPersonGroupContentItem,
+  zResourceLinksContentItem,
+  zRichTextContentItem,
+  zRichTextWithHeadingContentItem,
+  zStaticNavItemContentItem,
+] as const;
+
+export const zContentBlock = z.object({
+  id: zNonEmptyString,
+  content: z.array(z.discriminatedUnion("contentType", contentItemSchemas)),
+});
+
+export type ContentBlock = z.infer<typeof zContentBlock>;
 
 /**
- * Automatically build our content block schema from our keyed object
+ * Content types the frontend knows how to render — derived from the schemas
+ * above so adding a new content item updates this set automatically. Used to
+ * drop unknown CMS content types before validation, which lets the CMS ship
+ * new types ahead of the frontend without breaking the build.
  */
-export default z.object({
-  id: zNonEmptyString,
-  content: z.array(z.discriminatedUnion("contentType", contentBlockSchemas)),
-});
+export const knownContentTypes = new Set<string>(
+  contentItemSchemas.map((s) => s.shape.contentType.value),
+);

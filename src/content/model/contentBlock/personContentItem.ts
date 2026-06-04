@@ -1,7 +1,7 @@
 import { reference } from "astro:content";
 import { z } from "astro/zod";
 
-export default z.object({
+export const zPersonContentItem = z.object({
   contentType: z.literal("person"),
   refId: reference("people"),
 });
