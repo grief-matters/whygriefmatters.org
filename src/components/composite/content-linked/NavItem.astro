@@ -1,0 +1,34 @@
+---
+import type { OnSurfaceColorVariant } from "@styles/utils/color";
+import type { TextPreset } from "@styles/utils/typography";
+
+import Link from "@ui/base/Link.astro";
+import { buildNavItemHref, type NavTreeLeaf } from "@ui/utils/main-nav";
+
+interface Props {
+  node: NavTreeLeaf;
+  variant?: TextPreset;
+  colorVariant?: OnSurfaceColorVariant;
+  class?: string;
+}
+
+const {
+  node,
+  variant = "body-2",
+  colorVariant = "warmNeutral",
+  class: className,
+} = Astro.props;
+
+const href = buildNavItemHref(node);
+const label = node.label ?? "(untitled)";
+---
+
+{
+  className ? (
+    <span class={className}>
+      <Link to={href} label={label} variant={variant} colorVariant={colorVariant} />
+    </span>
+  ) : (
+    <Link to={href} label={label} variant={variant} colorVariant={colorVariant} />
+  )
+}

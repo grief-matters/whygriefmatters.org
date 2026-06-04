@@ -1,20 +1,53 @@
 ---
 import { paddingXSettingMap, paddingYSettingMap } from "@styles/utils/spacing";
-import type { CategoryTreeNode } from "@ui/utils/content/category";
+
+import type { NavTreeNode } from "@ui/utils/main-nav";
 
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Button from "@ui/base/Button.astro";
-import Link from "@ui/base/Link.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import ContentSurface from "@ui/base/ContentSurface.astro";
-import CategoryResourceTypesSummary from "@ui/composite/content-linked/category/CategoryResourceTypesSummary.astro";
+import NavItem from "@ui/composite/content-linked/NavItem.astro";
 
 interface Props {
-  navTree: CategoryTreeNode[];
+  navTree: NavTreeNode[];
 }
 
 const { navTree } = Astro.props;
+
+/**
+ * Path-based stable keys for the controller's data attributes.
+ * Top-level items are "0", "1", ...; children are "0.0", "0.1", ...
+ */
+const tier1Items = navTree.map((node, i) => ({
+  key: String(i),
+  node,
+}));
+
+const tier2Sections = tier1Items.flatMap(({ key: tier1Key, node }) => {
+  if (node.kind !== "navItemGroup") return [];
+  return [
+    {
+      tier1Key,
+      tier2List: node.items.map((child, j) => ({
+        key: `${tier1Key}.${j}`,
+        node: child,
+      })),
+    },
+  ];
+});
+
+const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
+  tier2List.flatMap(({ key: tier2Key, node }) => {
+    if (node.kind !== "navItemGroup") return [];
+    return [
+      {
+        tier2Key,
+        items: node.items,
+      },
+    ];
+  }),
+);
 ---
 
 <desktop-nav-controller>
@@ -25,26 +58,44 @@ const { navTree } = Astro.props;
       aria-label="Main navigation"
     >
       {
-        navTree.map((item) => (
-          <button
-            type="button"
-            data-tier1-btn={item.id}
-            class:list={[
-              "py-2",
-              paddingXSettingMap[3],
-              "cursor-pointer",
-              "transition duration-300",
-              "font-sans-a font-medium",
-              "text-onSurface-primaryContrast--default",
-              "bg-contentSurface-primaryContrast--prominent hover:bg-contentSurface-primaryContrast--default",
-              "data-active:bg-contentSurface-primary--default data-active:text-onSurface-primary--default",
-            ]}
-            aria-expanded="false"
-            aria-haspopup="true"
-          >
-            {item.title}
-          </button>
-        ))
+        tier1Items.map(({ key, node }) =>
+          node.kind === "navItemGroup" ? (
+            <button
+              type="button"
+              data-tier1-btn={key}
+              class:list={[
+                "py-2",
+                paddingXSettingMap[3],
+                "cursor-pointer",
+                "transition duration-300",
+                "font-sans-a font-medium",
+                "text-onSurface-primaryContrast--default",
+                "bg-contentSurface-primaryContrast--prominent hover:bg-contentSurface-primaryContrast--default",
+                "data-active:bg-contentSurface-primary--default data-active:text-onSurface-primary--default",
+              ]}
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              {node.label}
+            </button>
+          ) : (
+            <div
+              class:list={[
+                "py-2",
+                paddingXSettingMap[3],
+                "font-sans-a font-medium",
+                "text-onSurface-primaryContrast--default",
+                "bg-contentSurface-primaryContrast--prominent",
+              ]}
+            >
+              <NavItem
+                node={node}
+                variant="button-1"
+                colorVariant="primaryContrast"
+              />
+            </div>
+          ),
+        )
       }
     </nav>
   </LayoutSurface>
@@ -62,34 +113,49 @@ const { navTree } = Astro.props;
   >
     <nav class="grid grid-cols-[280px_1fr]">
       <!-- Left pane: Tier 2 items -->
-
       <div data-mega-tier2-pane class="py-12">
         {
-          navTree.map((tier1) => (
-            <ul data-mega-tier2-list={tier1.id} hidden>
-              {tier1.children.map((tier2, i) => (
-                <li>
-                  <button
-                    type="button"
-                    data-mega-tier2-btn={tier2.id}
-                    data-parent-tier1={tier1.id}
-                    data-first={i === 0 ? "" : undefined}
+          tier2Sections.map(({ tier1Key, tier2List }) => (
+            <ul data-mega-tier2-list={tier1Key} hidden>
+              {tier2List.map(({ key, node }, i) =>
+                node.kind === "navItemGroup" ? (
+                  <li>
+                    <button
+                      type="button"
+                      data-mega-tier2-btn={key}
+                      data-parent-tier1={tier1Key}
+                      data-first={i === 0 ? "" : undefined}
+                      class:list={[
+                        "font-bold font-serif text-left",
+                        "cursor-pointer",
+                        "w-full",
+                        paddingXSettingMap[4],
+                        paddingYSettingMap[2],
+                        "text-onSurface-primary--default",
+                        "transition-colors",
+                        "hover:bg-layoutSurface-primary--1 data-active:bg-layoutSurface-neutral--1",
+                        "border-l-4 border-transparent data-active:border-line-brand--accent",
+                      ]}
+                    >
+                      {node.label}
+                    </button>
+                  </li>
+                ) : (
+                  <li
                     class:list={[
-                      "font-bold font-serif text-left",
-                      "cursor-pointer",
-                      "w-full",
                       paddingXSettingMap[4],
                       paddingYSettingMap[2],
-                      "text-onSurface-primary--default",
-                      "transition-colors",
-                      "hover:bg-layoutSurface-primary--1 data-active:bg-layoutSurface-neutral--1",
-                      "border-l-4 border-transparent data-active:border-line-brand--accent",
+                      "border-l-4 border-transparent",
                     ]}
                   >
-                    {tier2.title}
-                  </button>
-                </li>
-              ))}
+                    <NavItem
+                      node={node}
+                      variant="title-5"
+                      colorVariant="primary"
+                    />
+                  </li>
+                ),
+              )}
             </ul>
           ))
         }
@@ -98,104 +164,66 @@ const { navTree } = Astro.props;
       <!-- Right pane: Tier 3 items -->
       <div data-mega-tier3-pane class="py-4 px-8 bg-layoutSurface-neutral--1">
         {
-          navTree.flatMap((tier1) =>
-            tier1.children.map((tier2) => (
-              <div
-                data-mega-tier3-section={tier2.id}
-                hidden
-                class="flex flex-col h-full"
-              >
-                <header class="flex justify-between mt-3 mb-4">
-                  <Typography variant="title-3" marginBottom={2}>
-                    {tier2.title}
-                  </Typography>
-                  <div>
-                    <Button
-                      data-mega-close
-                      type="button"
-                      styleVariant="outlined"
-                      colorVariant="neutral"
-                      textVariant="button-1"
-                      label="Close"
-                    />
-                  </div>
-                </header>
-                <div class="grid grid-cols-2 gap-3">
-                  {tier2.children.length > 0 && (
-                    <ul class="space-y-3">
-                      {tier2.children.map((tier3) => (
-                        <li>
-                          {tier3.href ? (
-                            <Link
-                              to={tier3.href}
-                              label={tier3.title}
-                              variant="body-2"
-                              colorVariant="warmNeutral"
-                            />
-                          ) : (
-                            <Typography
-                              as="span"
-                              variant="body-2"
-                              colorVariant="warmNeutral"
-                              set:text={tier3.title}
-                            />
-                          )}
-
-                          {tier3.children.length > 0 && (
-                            <div class="ml-4 mt-2 mb-1">
-                              <Stack>
-                                {tier3.children.map((tier4) => (
-                                  <div>
-                                    {tier4.href ? (
-                                      <Link
-                                        to={tier4.href}
-                                        label={tier4.title}
-                                        colorVariant="warmNeutral"
-                                      />
-                                    ) : (
-                                      <Typography
-                                        as="span"
-                                        colorVariant="warmNeutral"
-                                        set:text={tier4.title}
-                                      />
-                                    )}
-                                  </div>
-                                ))}
-                              </Stack>
-                            </div>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {!tier2.id.startsWith("population-") &&
-                    tier1.slug !== "get-support" && (
-                      <div class="shrink">
-                        <ContentSurface
-                          prominence="muted"
-                          paddingX={5}
-                          paddingY={4}
-                        >
-                          <CategoryResourceTypesSummary categoryId={tier2.id} />
-                        </ContentSurface>
-                      </div>
+          tier3Sections.map(({ tier2Key, items }) => (
+            <div
+              data-mega-tier3-section={tier2Key}
+              hidden
+              class="flex flex-col h-full"
+            >
+              <header class="flex justify-end mt-3 mb-4">
+                <Button
+                  data-mega-close
+                  type="button"
+                  styleVariant="outlined"
+                  colorVariant="neutral"
+                  textVariant="button-1"
+                  label="Close"
+                />
+              </header>
+              <ul class="space-y-3">
+                {items.map((node) => (
+                  <li>
+                    {node.kind === "navItem" ? (
+                      <NavItem
+                        node={node}
+                        variant="body-2"
+                        colorVariant="warmNeutral"
+                      />
+                    ) : (
+                      <Fragment>
+                        <Typography
+                          as="span"
+                          variant="body-2"
+                          colorVariant="warmNeutral"
+                          set:text={node.label}
+                        />
+                        <div class="ml-4 mt-2 mb-1">
+                          <Stack>
+                            {node.items.map((child) => (
+                              <div>
+                                {child.kind === "navItem" ? (
+                                  <NavItem
+                                    node={child}
+                                    colorVariant="warmNeutral"
+                                  />
+                                ) : (
+                                  <Typography
+                                    as="span"
+                                    colorVariant="warmNeutral"
+                                    set:text={child.label}
+                                  />
+                                )}
+                              </div>
+                            ))}
+                          </Stack>
+                        </div>
+                      </Fragment>
                     )}
-                </div>
-                <div class="my-4 grow flex items-end justify-end">
-                  {tier2.href && (
-                    <Link
-                      to={tier2.href}
-                      variant="title-5"
-                      colorVariant="warmNeutral"
-                    >
-                      <span class="font-normal">{"Explore "}</span>
-                      {tier2.title}
-                    </Link>
-                  )}
-                </div>
-              </div>
-            )),
-          )
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
         }
       </div>
     </nav>
@@ -204,8 +232,8 @@ const { navTree } = Astro.props;
 
 <script is:inline>
   class DesktopNavController extends HTMLElement {
-    selectedTier1Id = null;
-    selectedTier2Id = null;
+    selectedTier1Key = null;
+    selectedTier2Key = null;
 
     connectedCallback() {
       this.setupHandlers();
@@ -215,19 +243,19 @@ const { navTree } = Astro.props;
     setupHandlers() {
       this.querySelectorAll("[data-tier1-btn]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          const tier1Id = btn.getAttribute("data-tier1-btn");
-          if (this.selectedTier1Id === tier1Id) {
+          const tier1Key = btn.getAttribute("data-tier1-btn");
+          if (this.selectedTier1Key === tier1Key) {
             this.closeMegaNav();
           } else {
-            this.openMegaNav(tier1Id);
+            this.openMegaNav(tier1Key);
           }
         });
       });
 
       this.querySelectorAll("[data-mega-tier2-btn]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          const tier2Id = btn.getAttribute("data-mega-tier2-btn");
-          this.selectTier2(tier2Id);
+          const tier2Key = btn.getAttribute("data-mega-tier2-btn");
+          this.selectTier2(tier2Key);
         });
       });
 
@@ -246,12 +274,12 @@ const { navTree } = Astro.props;
       });
     }
 
-    openMegaNav(tier1Id) {
-      this.selectedTier1Id = tier1Id;
+    openMegaNav(tier1Key) {
+      this.selectedTier1Key = tier1Key;
 
       this.querySelectorAll("[data-tier1-btn]").forEach((btn) => {
-        const btnId = btn.getAttribute("data-tier1-btn");
-        if (btnId === tier1Id) {
+        const btnKey = btn.getAttribute("data-tier1-btn");
+        if (btnKey === tier1Key) {
           btn.setAttribute("data-active", "");
           btn.setAttribute("aria-expanded", "true");
         } else {
@@ -261,15 +289,19 @@ const { navTree } = Astro.props;
       });
 
       this.querySelectorAll("[data-mega-tier2-list]").forEach((list) => {
-        list.hidden = list.dataset.megaTier2List !== tier1Id;
+        list.hidden = list.dataset.megaTier2List !== tier1Key;
       });
 
       const firstTier2Btn = this.querySelector(
-        `[data-mega-tier2-list="${tier1Id}"] [data-first]`,
+        `[data-mega-tier2-list="${tier1Key}"] [data-first]`,
       );
       if (firstTier2Btn) {
-        const firstTier2Id = firstTier2Btn.getAttribute("data-mega-tier2-btn");
-        this.selectTier2(firstTier2Id);
+        const firstTier2Key = firstTier2Btn.getAttribute("data-mega-tier2-btn");
+        this.selectTier2(firstTier2Key);
+      } else {
+        this.querySelectorAll("[data-mega-tier3-section]").forEach((s) => {
+          s.hidden = true;
+        });
       }
 
       const megaNav = this.querySelector("[data-mega-nav]");
@@ -297,16 +329,16 @@ const { navTree } = Astro.props;
         btn.removeAttribute("data-active");
       });
 
-      this.selectedTier1Id = null;
-      this.selectedTier2Id = null;
+      this.selectedTier1Key = null;
+      this.selectedTier2Key = null;
     }
 
-    selectTier2(tier2Id) {
-      this.selectedTier2Id = tier2Id;
+    selectTier2(tier2Key) {
+      this.selectedTier2Key = tier2Key;
 
       this.querySelectorAll("[data-mega-tier2-btn]").forEach((btn) => {
-        const btnId = btn.getAttribute("data-mega-tier2-btn");
-        if (btnId === tier2Id) {
+        const btnKey = btn.getAttribute("data-mega-tier2-btn");
+        if (btnKey === tier2Key) {
           btn.setAttribute("data-active", "");
         } else {
           btn.removeAttribute("data-active");
@@ -314,7 +346,7 @@ const { navTree } = Astro.props;
       });
 
       this.querySelectorAll("[data-mega-tier3-section]").forEach((section) => {
-        section.hidden = section.dataset.megaTier3Section !== tier2Id;
+        section.hidden = section.dataset.megaTier3Section !== tier2Key;
       });
     }
 
