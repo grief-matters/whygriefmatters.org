@@ -8,7 +8,6 @@
   causeCategory,
   "coverImage": coverImageRef->._id,
   searchAliases,
-  aiPromptHint,
   "featuredResources": coalesce(featuredResources[]->{
     "refType": _type,
     "refId": _id

@@ -6,5 +6,4 @@ export const zContentFunction = z.object({
   title: z.string(),
   description: z.string(),
   searchAliases: z.array(z.string()).nullable(),
-  aiPromptHint: z.string().nullable(),
 });

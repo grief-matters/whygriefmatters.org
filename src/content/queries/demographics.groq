@@ -6,5 +6,4 @@
   "underserved": coalesce(underserved, false),
   "imageAsset": imageRef->._id,
   searchAliases,
-  aiPromptHint,
 }

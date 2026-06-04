@@ -13,7 +13,6 @@ export const zLossRelationship = z.object({
   description: zPortableText.nullable(),
   coverImage: reference("imageAssets").nullable(),
   searchAliases: z.array(z.string()).nullable(),
-  aiPromptHint: z.string().nullable(),
   featuredResources: z.array(zInternetResourceReference),
   secondaryFeaturedResources: z.array(zInternetResourceReference),
 });

@@ -18,7 +18,6 @@ export const zCauseOfDeath = z.object({
   causeCategory: z.array(zCauseCategory).nullable(),
   coverImage: reference("imageAssets").nullable(),
   searchAliases: z.array(z.string()).nullable(),
-  aiPromptHint: z.string().nullable(),
   featuredResources: z.array(zInternetResourceReference),
   secondaryFeaturedResources: z.array(zInternetResourceReference),
 });

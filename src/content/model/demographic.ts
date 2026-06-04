@@ -9,5 +9,4 @@ export const zDemographic = z.object({
   underserved: z.boolean(),
   imageAsset: reference("imageAssets").nullable(),
   searchAliases: z.array(z.string()).nullable(),
-  aiPromptHint: z.string().nullable(),
 });
