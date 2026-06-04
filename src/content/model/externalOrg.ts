@@ -1,5 +1,4 @@
-import { z } from "astro/zod";
-
+import type { z } from "astro/zod";
 import { zSanityImage } from "./image";
 import { zBasicInternetResource } from "./internetResource";
 

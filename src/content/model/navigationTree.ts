@@ -23,6 +23,9 @@ export const zTaxonomyReference = z.object({
 /**
  * Shape of a single `navItem` object — reused by `navigationTree`, the
  * `navItem` ContentBlock item, and the `navItems` ContentBlock item.
+ *
+ * Does NOT carry the `kind` discriminator; the navigationTree variant adds
+ * `kind: "navItem"` when composing the discriminated union below.
  */
 export const zNavItem = z.object({
   label: z.string().nullable(),
@@ -32,30 +35,32 @@ export const zNavItem = z.object({
 });
 export type NavItem = z.infer<typeof zNavItem>;
 
-type NavItemDiscriminated = NavItem & { kind: "navItem" };
-type NavItemGroup = {
-  kind: "navItemGroup";
-  label: string | null;
-  items: Array<NavItemDiscriminated | NavItemGroup>;
-};
+/**
+ * Recursive `navItem | navItemGroup` discriminated union used inside a
+ * `navigationTree`. The recursion uses Zod-v4's getter pattern; TypeScript
+ * can't infer the output type of a recursive discriminated union on its own,
+ * so we hand-roll the output type and annotate the schema with `z.ZodType<T>`
+ * (the documented v4 escape hatch — see zod.dev/api "recursive types").
+ */
+export type NavigationTreeItem =
+  | (NavItem & { kind: "navItem" })
+  | {
+      kind: "navItemGroup";
+      label: string | null;
+      items: NavigationTreeItem[];
+    };
 
-const zNavItemDiscriminated = zNavItem.extend({
-  kind: z.literal("navItem"),
-});
-
-const zNavItemGroup: z.ZodType<NavItemGroup> = z.lazy(() =>
-  z.object({
-    kind: z.literal("navItemGroup"),
-    label: z.string().nullable(),
-    items: z.array(z.union([zNavItemDiscriminated, zNavItemGroup])),
-  }),
-);
-
-export const zNavigationTreeItem = z.union([
-  zNavItemDiscriminated,
-  zNavItemGroup,
-]);
-export type NavigationTreeItem = z.infer<typeof zNavigationTreeItem>;
+export const zNavigationTreeItem: z.ZodType<NavigationTreeItem> =
+  z.discriminatedUnion("kind", [
+    zNavItem.extend({ kind: z.literal("navItem") }),
+    z.object({
+      kind: z.literal("navItemGroup"),
+      label: z.string().nullable(),
+      get items() {
+        return z.array(zNavigationTreeItem);
+      },
+    }),
+  ]);
 
 export const zNavigationTree = z.object({
   id: z.string(),

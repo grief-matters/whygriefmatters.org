@@ -1,4 +1,5 @@
-import { z, reference } from "astro:content";
+import { reference } from "astro:content";
+import { z } from "astro/zod";
 
 import { zInternetResourceReference } from "./internetResource";
 import { zPortableText } from "./portableText";
