@@ -1,35 +1,43 @@
 ---
 import { getCollection, type CollectionEntry } from "astro:content";
 
-import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import { getResourceIndex } from "@content/utils/resourceIndex";
+import {
+  buildEntryPageProps,
+  type TaxonomyEntryPageData,
+} from "@content/utils/buildEntryPageProps";
 
-import Container from "@ui/base/Container.astro";
-import LayoutSurface from "@ui/base/LayoutSurface.astro";
-import Stack from "@ui/base/Stack.astro";
-import Typography from "@ui/base/Typography.astro";
+import TaxonomyEntryPage from "@ui/composite/content-linked/page-assemblies/TaxonomyEntryPage.astro";
 
-interface Props {
+interface Props extends TaxonomyEntryPageData {
   entry: CollectionEntry<"emotionalStates">;
 }
 
 export async function getStaticPaths() {
-  const entries = await getCollection("emotionalStates");
+  const [entries, index] = await Promise.all([
+    getCollection("emotionalStates"),
+    getResourceIndex(),
+  ]);
+
   return entries.map((entry) => ({
     params: { slug: entry.data.slug },
-    props: { entry },
+    props: { entry, ...buildEntryPageProps(entry, index) },
   }));
 }
 
-const { entry } = Astro.props;
+const {
+  entry,
+  coverImage,
+  featuredResources,
+  secondaryFeaturedResources,
+  otherResources,
+} = Astro.props;
 ---
 
-<SitePageLayout>
-  <LayoutSurface as="section" paddingX={2} paddingY={5}>
-    <Container>
-      <Stack spacing={3}>
-        <Typography as="h1" variant="title-1">{entry.data.title}</Typography>
-        <Typography variant="body-1">{entry.data.description}</Typography>
-      </Stack>
-    </Container>
-  </LayoutSurface>
-</SitePageLayout>
+<TaxonomyEntryPage
+  entry={entry}
+  coverImage={coverImage}
+  featuredResources={featuredResources}
+  secondaryFeaturedResources={secondaryFeaturedResources}
+  otherResources={otherResources}
+/>
