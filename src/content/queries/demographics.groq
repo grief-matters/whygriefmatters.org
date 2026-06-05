@@ -1,7 +1,7 @@
 *[_type == 'demographic']{
   "id": _id,
   "slug": slug.current,
-  name,
+  "title": name,
   description,
   "underserved": coalesce(underserved, false),
   "imageAsset": imageRef->._id,
