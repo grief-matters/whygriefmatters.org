@@ -1,7 +1,7 @@
 import type {
   ContactMethod,
   Availability,
-} from "@content/model/crisisResource";
+} from "@content/model/shared/contactMethod";
 import type { IconKey } from "@ui/utils/icon";
 
 export const contactTypeIconMap: Record<ContactMethod["contactType"], IconKey> =

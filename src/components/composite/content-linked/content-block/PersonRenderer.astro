@@ -12,7 +12,7 @@ import Container from "@ui/base/Container.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import PersonAvatar from "@ui/base/PersonAvatar.astro";
+// import PersonAvatar from "@ui/base/PersonAvatar.astro";
 import Link from "@ui/base/Link.astro";
 import Icon from "@ui/base/Icon.astro";
 
@@ -61,9 +61,8 @@ const personEntry = await getEntry("people", personRef);
         {
           personEntry?.data.avatar && (
             <div class="flex justify-center md:block">
-              <PersonAvatar
-                image={{ image: personEntry?.data.avatar, altText: "" }}
-              />
+              {/* todo - fix */}
+              {/* <PersonAvatar image={personEntry?.data.avatar ?? null} /> */}
             </div>
           )
         }

@@ -4,7 +4,6 @@ import partition from "lodash/partition";
 
 import { gapMap, spaceYMap, paddingSettingMap } from "@styles/utils/spacing";
 import Container from "@ui/base/Container.astro";
-import Link from "@ui/base/Link.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
@@ -21,8 +20,6 @@ const [leadInContent, coreValues] = partition(
   contentBlock.data.content,
   (x) => x.contentType !== "richTextWithHeading",
 );
-
-const footerLink = leadInContent.find((x) => x.contentType === "relativeLink");
 ---
 
 <Stack spacing={4}>
@@ -81,13 +78,4 @@ const footerLink = leadInContent.find((x) => x.contentType === "relativeLink");
       }
     </div>
   </Container>
-  {
-    footerLink && (
-      <Container>
-        <div class="text-center">
-          <Link to={footerLink.url} label={footerLink.label} />
-        </div>
-      </Container>
-    )
-  }
 </Stack>

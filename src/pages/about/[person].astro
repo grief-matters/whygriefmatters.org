@@ -9,7 +9,7 @@ import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 import Container from "@ui/base/Container.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Link from "@ui/base/Link.astro";
-import PersonAvatar from "@ui/base/PersonAvatar.astro";
+// import PersonAvatar from "@ui/base/PersonAvatar.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
@@ -51,11 +51,12 @@ const { personData } = Astro.props;
           </Typography>
         </Stack>
         <div class="flex justify-center">
-          <PersonAvatar
+          <!-- todo fix -->
+          <!-- <PersonAvatar
             image={personData.avatar !== null
               ? { image: personData.avatar, altText: "" }
               : null}
-          />
+          /> -->
         </div>
       </div>
     </Container>

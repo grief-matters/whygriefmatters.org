@@ -14,7 +14,7 @@ import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 
 import Icon from "@ui/base/Icon.astro";
 import Link from "@ui/base/Link.astro";
-import PersonAvatar from "@ui/base/PersonAvatar.astro";
+// import PersonAvatar from "@ui/base/PersonAvatar.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import Spacer from "@ui/base/Spacer.astro";
 import Stack from "@ui/base/Stack.astro";
@@ -123,7 +123,7 @@ const socialConfigMap: Record<SocialVal, SocialConfig> = {
   <PageHeaderLayout
     surfaceVariant="primaryContrast"
     surfaceVariantKey={1}
-    image={contentGroupData.image ?? null}
+    image={null}
   >
     <Spacer marginBottom={3}>
       <Typography
@@ -186,9 +186,9 @@ const socialConfigMap: Record<SocialVal, SocialConfig> = {
             >
               {member.data.avatar && (
                 <div class="flex justify-center md:block">
-                  <PersonAvatar
+                  {/* <PersonAvatar
                     image={{ image: member.data.avatar, altText: "" }}
-                  />
+                  /> */}
                 </div>
               )}
               <Stack spacing={2}>
