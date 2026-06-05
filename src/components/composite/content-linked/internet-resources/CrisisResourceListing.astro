@@ -7,6 +7,7 @@ import {
   getContactHref,
   getContactLabel,
 } from "@ui/utils/content/crisisResource";
+import { getResourceFilterAttrs } from "@ui/utils/content/resourceFilterAttrs";
 
 import { gapMap, marginTopMap } from "@styles/utils/spacing";
 import { textColorMap } from "@styles/utils/color";
@@ -15,8 +16,6 @@ import { textPresetClassMap } from "@styles/utils/typography";
 import Badge from "@ui/base/Badge.astro";
 import Icon from "@ui/base/Icon.astro";
 import LinkComp from "@ui/base/Link.astro";
-import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
-import SanityImage from "@ui/base/SanityImage.astro";
 import Typography from "@ui/base/Typography.astro";
 
 interface Props {
@@ -24,14 +23,17 @@ interface Props {
 }
 const { entry } = Astro.props;
 
-const hasSpanish = entry.data.languages?.includes("Spanish");
+const hasSpanish = entry.data.availableLanguages?.includes("spanish");
 const contactMethods = entry.data.contactMethods ?? [];
-const logo = entry.data.logo
-  ? { image: entry.data.logo, altText: `${entry.data.title} logo` }
-  : null;
+
+const filterAttrs = await getResourceFilterAttrs(entry);
 ---
 
-<article id={`resource--${entry.id}`} data-resource-type={entry.collection}>
+<article
+  {...filterAttrs}
+  id={`resource--${entry.id}`}
+  data-resource-type={entry.collection}
+>
   <header class="flex flex-col-reverse space-y-reverse space-y-1.5 mb-3">
     <div class="flex items-center gap-3">
       <div>
@@ -52,7 +54,7 @@ const logo = entry.data.logo
     <div class="shrink">
       {
         entry.data.description && (
-          <PortableTextContentBlock portableText={entry.data.description} />
+          <Typography>{entry.data.description}</Typography>
         )
       }
       {
@@ -127,18 +129,5 @@ const logo = entry.data.logo
         )
       }
     </div>
-    {
-      logo && (
-        <div class="hidden md:flex md:max-w-62.5 self-center">
-          <SanityImage
-            image={logo}
-            maxWidth={250}
-            objectFit="contain"
-            useFallback={false}
-            aspect="none"
-          />
-        </div>
-      )
-    }
   </div>
 </article>

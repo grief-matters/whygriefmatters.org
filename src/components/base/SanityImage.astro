@@ -3,9 +3,8 @@ import { getImage } from "astro:assets";
 import { getEntry } from "astro:content";
 import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
 
-import type { SanityImage } from "@content/model/image";
-
 import fallbackImg from "../../img/fallback.jpg";
+import type { ImageAsset } from "@content/model/imageAsset";
 
 const aspectMap = {
   default: "aspect-7/5",
@@ -22,7 +21,7 @@ interface ImageSources {
 }
 
 interface Props {
-  image: SanityImage | null;
+  image?: ImageAsset;
   classList?: Array<string>;
   maxWidth?: number;
   priority?: boolean;
@@ -58,11 +57,14 @@ const fallbackImages = fallbackImagesEntry?.data.images ?? [];
 
 let sources: ImageSources[] = [];
 
-const sanityImageSource: SanityImage | null =
-  props.image ??
-  (useFallback
-    ? fallbackImages[Math.floor(Math.random() * fallbackImages.length)]
-    : null);
+let sanityImageSource: ImageAsset | null = props.image ?? null;
+
+if (!sanityImageSource && useFallback && fallbackImages.length > 0) {
+  const randomFallbackRef =
+    fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+  const fallbackEntry = await getEntry(randomFallbackRef);
+  sanityImageSource = fallbackEntry?.data ?? null;
+}
 
 if (sanityImageSource) {
   const baseBuilder = sanityImageSource

@@ -12,7 +12,7 @@ import { zContactMethod } from "./shared/contactMethod";
  */
 export const zEssentialService = z.object({
   id: z.string(),
-  updatedAt: z.string().datetime(),
+  updatedAt: z.iso.datetime(),
   title: z.string(),
   description: zResourceDescription,
   resourceUrl: z.url().nullable(),

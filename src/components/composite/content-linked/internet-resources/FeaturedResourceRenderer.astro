@@ -5,7 +5,6 @@ import { resourceTypeToCollectionKeyMap } from "@content/collections";
 import { assertNever } from "@ui/utils/ts-utils";
 
 import FeaturedApp from "./FeaturedApp.astro";
-import FeaturedWebsite from "./FeaturedWebsite.astro";
 import FeaturedResource from "./FeaturedResource.astro";
 
 interface Props {
@@ -27,33 +26,6 @@ if (!safeCollectionKey) {
 {
   () => {
     switch (safeCollectionKey) {
-      case "communities":
-      case "memorials":
-      case "webinars":
-      case "articles":
-      case "blogs":
-      case "printedMaterials":
-      case "books":
-      case "courses":
-      case "forums":
-      case "peerSupports":
-      case "stories":
-      case "supportGroups":
-      case "therapyResources":
-      case "videos":
-        return (
-          <FeaturedResource
-            fullHeight={props.fullHeight}
-            resourceRef={{
-              collection: safeCollectionKey,
-              id: props.resourceRef,
-            }}
-          />
-        );
-      case "podcasts":
-        return <div>[[TODO]]</div>;
-      case "podcastEpisodes":
-        return <div>[[TODO]]</div>;
       case "apps":
         return (
           <FeaturedApp
@@ -63,15 +35,37 @@ if (!safeCollectionKey) {
             }}
           />
         );
-      case "websites":
+      case "articles":
+      case "blogs":
+      case "communities":
+      case "courses":
+      case "forums":
+      case "memorials":
+      case "printedMaterials":
+      case "stories":
+      case "videos":
+      case "webinars":
         return (
-          <FeaturedWebsite
-            websiteRef={{
-              collection: "websites",
+          <FeaturedResource
+            fullHeight={props.fullHeight}
+            resourceRef={{
+              collection: safeCollectionKey,
               id: props.resourceRef,
             }}
           />
         );
+
+      case "books":
+      case "peerSupports":
+      case "supportGroups":
+      case "therapyResources":
+      case "listicles":
+      case "crisisResources":
+      case "essentialServices":
+      case "externalOrgs":
+      case "podcasts":
+      case "podcastEpisodes":
+        return <div>[[TODO]]</div>;
       default:
         assertNever(safeCollectionKey);
     }

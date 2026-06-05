@@ -1,6 +1,8 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
+import { getResourceFilterAttrs } from "@ui/utils/content/resourceFilterAttrs";
+
 import Icon from "@ui/base/Icon.astro";
 import LinkComp from "@ui/base/Link.astro";
 import Typography from "@ui/base/Typography.astro";
@@ -15,9 +17,15 @@ interface Props {
 const { entry } = Astro.props;
 
 const parentPodcast = entry.data.parentPodcast;
+
+const filterAttrs = await getResourceFilterAttrs(entry);
 ---
 
-<article id={`resource--${entry.id}`} data-resource-type={entry.collection}>
+<article
+  {...filterAttrs}
+  id={`resource--${entry.id}`}
+  data-resource-type={entry.collection}
+>
   <Stack>
     <header>
       <div>
@@ -83,7 +91,6 @@ const parentPodcast = entry.data.parentPodcast;
       )
     }
     <ResourceMetadataBadges
-      hasSpanishVersion={entry.data.hasSpanishVersion}
       registrationRequired={entry.data.registrationRequired}
       paywalled={entry.data.paywalled}
     />

@@ -101,10 +101,10 @@ export type AvailableLanguage = z.infer<typeof zAvailableLanguage>;
  */
 export const zBasicInternetResource = z.object({
   id: z.string(),
-  updatedAt: z.string().datetime(),
+  updatedAt: z.iso.datetime(),
   title: z.string(),
   description: zResourceDescription,
-  resourceUrl: z.url().nullable(),
+  resourceUrl: z.url(),
   sourceOrgId: reference("externalOrgs").nullable(),
   imageAssetId: reference("imageAssets").nullable(),
   availableLanguages: z.array(zAvailableLanguage),

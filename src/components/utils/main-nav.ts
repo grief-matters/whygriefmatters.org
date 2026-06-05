@@ -1,4 +1,5 @@
 import { getCollection, getEntry } from "astro:content";
+import { kebabCase } from "lodash";
 
 import type { InternetResourceType } from "@content/model/internetResource";
 import type { TaxonomyRefType } from "@content/model/navigationTree";
@@ -107,17 +108,17 @@ async function normalizeNode(node: RawNavNode): Promise<NavTreeNode | null> {
 }
 
 /**
- * Build the `?...` query string for a `NavTreeLeaf`.
+ * Build the entry-point URL (with optional query string) for a `NavTreeLeaf`.
  *
  * Encoding:
  *  - One param key per taxonomy filter type, value = comma-joined slugs.
- *  - `mediaType` param when present, value = comma-joined resource type names.
+ *  - `media-type` param when present, value = comma-joined resource type names.
  *
  * Example:
- *   /causeOfDeath/cancer/filter?lossRelationship=parent,sibling&theme=guilt&mediaType=podcast,article
+ *   /cause-of-death/cancer?loss-relationship=parent,sibling&theme=guilt&media-type=podcast,article
  */
 export function buildNavItemHref(node: NavTreeLeaf): string {
-  const base = `/${node.entryPoint.type}/${node.entryPoint.slug}/filter`;
+  const base = `/${kebabCase(node.entryPoint.type)}/${node.entryPoint.slug}`;
   const params = new URLSearchParams();
 
   const byType = new Map<TaxonomyRefType, string[]>();
@@ -127,11 +128,11 @@ export function buildNavItemHref(node: NavTreeLeaf): string {
     byType.set(f.type, list);
   }
   for (const [type, slugs] of byType) {
-    params.set(type, slugs.join(","));
+    params.set(kebabCase(type), slugs.join(","));
   }
 
   if (node.mediaTypes?.length) {
-    params.set("mediaType", node.mediaTypes.join(","));
+    params.set("media-type", node.mediaTypes.join(","));
   }
 
   const qs = params.toString();

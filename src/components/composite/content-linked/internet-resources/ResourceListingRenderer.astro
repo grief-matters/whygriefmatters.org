@@ -9,6 +9,7 @@ import Typography from "@ui/base/Typography.astro";
 import { paddingBottomMap } from "@styles/utils/spacing";
 
 import InternetResourceListingRenderer from "./InternetResourceListingRenderer.astro";
+import Spacer from "@ui/base/Spacer.astro";
 
 interface Props {
   internetResources: InternetResourceEntries;
@@ -20,29 +21,32 @@ const props = Astro.props;
 {
   Object.entries(props.internetResources).map(
     ([resourceType, resourceEntries]) => (
-      <Stack
-        as="section"
-        spacing={4}
-        id={resourceType}
-        data-resource-section={resourceType}
-      >
-        <Typography as="h2" variant="title-2">
-          {startCase(resourceType)}
-        </Typography>
+      <Spacer marginBottom={4}>
+        <Stack
+          as="section"
+          spacing={4}
+          id={resourceType}
+          data-resource-section={resourceType}
+        >
+          <Typography as="h2" variant="title-2">
+            {startCase(resourceType)}
+          </Typography>
 
-        <Stack spacing={4}>
-          {resourceEntries.map((entry) => (
-            <div
-              class:list={[
-                paddingBottomMap[4],
-                "not-last:border-b border-b-line-coolNeutral--default",
-              ]}
-            >
-              <InternetResourceListingRenderer entry={entry} />
-            </div>
-          ))}
+          <Stack spacing={4}>
+            {resourceEntries.map((entry) => (
+              <div
+                data-resource-item
+                class:list={[
+                  paddingBottomMap[4],
+                  "not-last:border-b border-b-line-coolNeutral--default",
+                ]}
+              >
+                <InternetResourceListingRenderer entry={entry} />
+              </div>
+            ))}
+          </Stack>
         </Stack>
-      </Stack>
+      </Spacer>
     ),
   )
 }

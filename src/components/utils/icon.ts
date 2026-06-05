@@ -73,7 +73,7 @@ export const resourceTypeIconConfigMap: Record<
     colorVariant: "secondary",
     icon: iconMap.chatBubbleLeftRight,
   },
-  website: {
+  externalOrg: {
     colorVariant: "tertiary",
     icon: iconMap.globeAlt,
   },
@@ -124,5 +124,17 @@ export const resourceTypeIconConfigMap: Record<
   webinar: {
     colorVariant: "tertiary",
     icon: iconMap.computerDesktop,
+  },
+  crisisResource: {
+    colorVariant: "coolNeutral",
+    icon: "academic-cap",
+  },
+  essentialService: {
+    colorVariant: "coolNeutral",
+    icon: "academic-cap",
+  },
+  listicle: {
+    colorVariant: "coolNeutral",
+    icon: "academic-cap",
   },
 };

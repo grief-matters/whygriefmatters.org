@@ -3,33 +3,31 @@ import { z } from "astro/zod";
 import { zSchemaForType } from "./utils";
 import type { SanityImageSource } from "@sanity/image-url";
 
-const zBaseSanityImage = z
-  .object({
-    crop: z
-      .object({
-        top: z.number(),
-        right: z.number(),
-        bottom: z.number(),
-        left: z.number(),
-        _type: z.literal("sanity.imageCrop"),
-      })
-      .nullish(),
-    hotspot: z
-      .object({
-        x: z.number(),
-        y: z.number(),
-        width: z.number(),
-        height: z.number(),
-        _type: z.literal("sanity.imageHotspot"),
-      })
-      .nullish(),
-    _type: z.literal("image"),
-    asset: z.object({
-      _ref: z.string(),
-      _type: z.literal("reference"),
-    }),
-  })
-  .passthrough();
+const zBaseSanityImage = z.looseObject({
+  crop: z
+    .object({
+      top: z.number(),
+      right: z.number(),
+      bottom: z.number(),
+      left: z.number(),
+      _type: z.literal("sanity.imageCrop"),
+    })
+    .nullish(),
+  hotspot: z
+    .object({
+      x: z.number(),
+      y: z.number(),
+      width: z.number(),
+      height: z.number(),
+      _type: z.literal("sanity.imageHotspot"),
+    })
+    .nullish(),
+  _type: z.literal("image"),
+  asset: z.object({
+    _ref: z.string(),
+    _type: z.literal("reference"),
+  }),
+});
 
 export const zSanityImage =
   zSchemaForType<SanityImageSource>()(zBaseSanityImage);

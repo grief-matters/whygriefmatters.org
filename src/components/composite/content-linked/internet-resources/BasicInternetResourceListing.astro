@@ -8,6 +8,7 @@ import {
 
 import { resourceTypeIconConfigMap } from "@ui/utils/icon";
 import { getSourceFromResourceUrl } from "@ui/utils/content/content";
+import { getResourceFilterAttrs } from "@ui/utils/content/resourceFilterAttrs";
 import { getLocaleDateStringFromIsoString } from "@ui/utils/date";
 import { type Link, isLink } from "@ui/utils/link";
 
@@ -26,8 +27,8 @@ const { entry } = Astro.props;
 const lastReviewedDate = getLocaleDateStringFromIsoString(entry.data.updatedAt);
 
 let source: Link | null = null;
-if (entry.data.sourceWebsiteId) {
-  const sourceWebsiteEntry = await getEntry(entry.data.sourceWebsiteId);
+if (entry.data.sourceOrgId) {
+  const sourceWebsiteEntry = await getEntry(entry.data.sourceOrgId);
   source = {
     label: sourceWebsiteEntry.data.title,
     url: sourceWebsiteEntry.data.resourceUrl,
@@ -42,9 +43,15 @@ const resourceType = collectionKeyToResourceTypeMap[entry.collection];
 const iconConfig = resourceTypeIconConfigMap[resourceType];
 
 const isFacebookPage = entry.data.resourceUrl.includes("facebook.com");
+
+const filterAttrs = await getResourceFilterAttrs(entry);
 ---
 
-<article id={`resource--${entry.id}`} data-resource-type={entry.collection}>
+<article
+  {...filterAttrs}
+  id={`resource--${entry.id}`}
+  data-resource-type={entry.collection}
+>
   <header class="flex flex-col space-y-1.5">
     <div class="mb-1.5">
       <LinkComp external variant="title-4" to={entry.data.resourceUrl}>
@@ -104,7 +111,6 @@ const isFacebookPage = entry.data.resourceUrl.includes("facebook.com");
     {entry.data.description}
   </Typography>
   <ResourceMetadataBadges
-    hasSpanishVersion={entry.data.hasSpanishVersion}
     registrationRequired={entry.data.registrationRequired}
     paywalled={entry.data.paywalled}
     isFacebookPage={isFacebookPage}

@@ -10,12 +10,10 @@ import BasicInternetResourceListing from "./BasicInternetResourceListing.astro";
 import CrisisResourceListing from "./CrisisResourceListing.astro";
 import PodcastListing from "./PodcastListing.astro";
 import PodcastEpisodeListing from "./PodcastEpisodeListing.astro";
-import WebsiteListing from "./WebsiteListing.astro";
+import ExternalOrgListing from "./ExternalOrgListing.astro";
 
 interface Props {
-  entry:
-    | CollectionEntry<InternetResourceCollectionKey>
-    | CollectionEntry<"crisisResources">;
+  entry: CollectionEntry<InternetResourceCollectionKey>;
 }
 
 const { entry } = Astro.props;
@@ -26,31 +24,34 @@ const { entry } = Astro.props;
     () => {
       // TODO - atm we're using the same component for all types but each should have its own over time
       switch (entry.collection) {
+        case "apps":
+          return <AppListing entry={entry} />;
         case "articles":
         case "blogs":
-        case "books":
         case "communities":
         case "courses":
         case "forums":
         case "memorials":
-        case "peerSupports":
         case "printedMaterials":
         case "stories":
-        case "supportGroups":
-        case "therapyResources":
         case "videos":
         case "webinars":
           return <BasicInternetResourceListing entry={entry} />;
-        case "apps":
-          return <AppListing entry={entry} />;
         case "podcasts":
           return <PodcastListing entry={entry} />;
         case "podcastEpisodes":
           return <PodcastEpisodeListing entry={entry} />;
-        case "websites":
-          return <WebsiteListing entry={entry} />;
+        case "externalOrgs":
+          return <ExternalOrgListing entry={entry} />;
         case "crisisResources":
           return <CrisisResourceListing entry={entry} />;
+        case "books":
+        case "essentialServices":
+        case "listicles":
+        case "peerSupports":
+        case "supportGroups":
+        case "therapyResources":
+          return <div>[[TODO]]</div>;
         default:
           assertNever(entry);
       }

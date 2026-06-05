@@ -1,29 +1,9 @@
 ---
 import { getEntry, type ReferenceDataEntry } from "astro:content";
 
-import type {
-  CategoryPageLinkContentItem,
-  ResourcePageLinkContentItem,
-} from "@content/model/contentBlock/pageLinksContentItem";
-
-import { gapMap } from "@styles/utils/spacing";
-import { assertNever } from "@ui/utils/ts-utils";
-
-import Slider from "@ui/layouts/slider/Slider.astro";
-import Slide from "@ui/layouts/slider/Slide.astro";
-
 import Container from "@ui/base/Container.astro";
-import Link from "@ui/base/Link.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import Typography from "@ui/base/Typography.astro";
-import SanityImage from "@ui/base/SanityImage.astro";
-
-import FeaturedResourceRenderer from "../internet-resources/FeaturedResourceRenderer.astro";
-import FeaturedWebsite from "../internet-resources/FeaturedWebsite.astro";
-import ResourcePageLinkCard from "../category/ResourcePageLinkCard.astro";
-import PageLinksRenderer from "../PageLinksRenderer.astro";
-import DynamicPageLink from "../DynamicPageLink.astro";
-import PersonRenderer from "./PersonRenderer.astro";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
@@ -70,155 +50,15 @@ const contentBlock = await getEntry(contentBlockRef);
             />
           </Container>
         );
-      case "accessibleImage":
-        return (
-          <Container>
-            <SanityImage
-              image={{ image: contentItem.image, altText: contentItem.altText }}
-            />
-          </Container>
-        );
-      case "imageRow":
-        return (
-          <Container size={2}>
-            <div
-              class:list={[
-                gapMap[3],
-                "grid grid-cols-1 md:grid-cols-2 md:px-3 lg:grid-cols-3",
-              ]}
-            >
-              {contentItem.images.map((img, index) => (
-                <div
-                  class={
-                    index === 0
-                      ? ""
-                      : index === 1
-                        ? "hidden md:block"
-                        : "hidden lg:block"
-                  }
-                >
-                  <SanityImage image={img} />
-                </div>
-              ))}
-            </div>
-          </Container>
-        );
-      case "featuredResource":
-        return (
-          <Container>
-            <FeaturedResourceRenderer
-              resourceRef={contentItem.refId}
-              resourceType={contentItem.refType}
-            />
-          </Container>
-        );
-      case "featuredResources":
-        return (
-          <Slider>
-            {contentItem.resources.map((resource) => (
-              <Slide paddingX={1} paddingY={2}>
-                <FeaturedResourceRenderer
-                  fullHeight
-                  resourceRef={resource.refId}
-                  resourceType={resource.refType}
-                />
-              </Slide>
-            ))}
-          </Slider>
-        );
-      case "featuredWebsite":
-        return (
-          <Container>
-            <FeaturedWebsite websiteRef={contentItem.refId} />
-          </Container>
-        );
-      case "featuredWebsites":
-        return (
-          <Container paddingX={3} size={2}>
-            <div class="grid grid-cols-2 md:grid-cols-3">
-              {contentItem.websites.map((w) => (
-                <FeaturedWebsite websiteRef={w} />
-              ))}
-            </div>
-          </Container>
-        );
-      case "featuredCrisisResource":
-        return <div>[Still to implement `{contentItem.contentType}`]</div>;
-      case "resourceLinks":
-        return <div>[Still to implement `{contentItem.contentType}`]</div>;
-      case "relativeLink":
-        return (
-          <Container>
-            <div class={textAlign === "center" ? "text-center" : ""}>
-              <Link to={contentItem.url} label={contentItem.label} />
-            </div>
-          </Container>
-        );
-      case "resourcePageLink":
-        return (
-          <Container paddingX={3}>
-            <div class={textAlign === "center" ? "text-center" : ""}>
-              <DynamicPageLink
-                linkType={contentItem.contentType}
-                label={contentItem.label}
-                categoryRef={contentItem.category ?? undefined}
-                populationRef={contentItem.population ?? undefined}
-                resourceTypes={contentItem.resourceTypes ?? undefined}
-              />
-            </div>
-          </Container>
-        );
-      case "categoryPageLink":
-        return (
-          <Container paddingX={3}>
-            <DynamicPageLink
-              linkType={contentItem.contentType}
-              label={contentItem.label}
-              categoryRef={contentItem.category}
-            />
-          </Container>
-        );
-      case "pageLinks":
-        if (contentItem.showImages) {
-          return (
-            <Container size={2} paddingX={3}>
-              <div
-                class:list={[
-                  gapMap[3],
-                  "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3",
-                ]}
-              >
-                {contentItem.links.map((link) => (
-                  <div>
-                    <ResourcePageLinkCard
-                      pageLink={
-                        link as  // todo - we should remove this case if we can
-                          | CategoryPageLinkContentItem
-                          | ResourcePageLinkContentItem
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            </Container>
-          );
-        }
-
-        return (
-          <Container paddingX={3}>
-            <PageLinksRenderer
-              emphasized={contentItem.emphasized}
-              links={contentItem.links}
-            />
-          </Container>
-        );
-      case "person":
-        return <PersonRenderer personRef={contentItem.refId.id} />;
-      case "personGroup":
-        // TODO: Render personGroup here; currently rendered in the team page
-        return;
       default:
-        assertNever(contentItem);
+        return (
+          <Container paddingX={3}>
+            <div class="rounded border border-dashed p-4 text-sm opacity-60">
+              [content type "{contentItem.contentType}" — renderer not yet
+              reimplemented]
+            </div>
+          </Container>
+        );
     }
   })
 }

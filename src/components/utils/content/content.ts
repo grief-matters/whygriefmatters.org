@@ -1,4 +1,4 @@
-import { getEntry, type ReferenceDataEntry } from "astro:content";
+import { getEntry, type CollectionKey } from "astro:content";
 
 import type { Link } from "../link";
 
@@ -65,13 +65,14 @@ export async function makeLabelPartsForPopulationSupportResources(
 /**
  * Get a source link for a Website resource
  *
- * @param websiteRef
+ * @param externalOrgRef
  * @returns source link as `Link` type
  */
-export async function getSourceLinkFromWebsiteRef(
-  websiteRef: ReferenceDataEntry<"websites", string>,
-) {
-  const sourceWebsiteEntry = await getEntry(websiteRef);
+export async function getSourceLinkFromExternalOrgRef(externalOrgRef: {
+  collection: CollectionKey;
+  id: string;
+}) {
+  const sourceWebsiteEntry = await getEntry(externalOrgRef);
   return {
     label: sourceWebsiteEntry.data.title,
     url: sourceWebsiteEntry.data.resourceUrl,

@@ -2,8 +2,10 @@ import { z } from "astro/zod";
 
 import { zBasicInternetResource } from "@content/model/internetResource";
 
-export const zApp = zBasicInternetResource
-  .extend({
+export const zApp = z
+  .object({
+    ...zBasicInternetResource.shape,
+    resourceUrl: z.url().nullable(),
     appleUrl: z.url().nullable(),
     playStoreUrl: z.url().nullable(),
     appleRating: z.number().min(0).max(5).nullable().default(null),

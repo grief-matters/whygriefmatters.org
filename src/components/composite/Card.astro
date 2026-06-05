@@ -1,17 +1,16 @@
 ---
-import type { SanityImage } from "@content/model/image";
-
 import ContentSurface, {
   type ContentSurfaceVariant,
 } from "@ui/base/ContentSurface.astro";
 import SanityImagePrimitive from "@ui/base/SanityImage.astro";
 import Link from "@ui/base/Link.astro";
 import Typography from "@ui/base/Typography.astro";
+import type { ImageAsset } from "@content/model/imageAsset";
 
 interface Props {
   variant?: ContentSurfaceVariant;
   // Content props
-  image?: SanityImage | null;
+  image?: ImageAsset;
   title: string;
   titleHref?: string;
   external?: boolean;
@@ -31,7 +30,7 @@ const colorVariant = variant === "neutral" ? "coolNeutral" : "primary";
 ---
 
 <ContentSurface fullHeight={fullHeight} as="article" variant="featureCard">
-  <SanityImagePrimitive useFallback image={image ?? null} />
+  <SanityImagePrimitive useFallback image={image} />
   <div class="pt-3 px-5 pb-5">
     {
       titleHref ? (
