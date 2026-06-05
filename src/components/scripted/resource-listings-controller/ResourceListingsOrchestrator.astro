@@ -9,11 +9,13 @@ import Stack from "@ui/base/Stack.astro";
 import Container from "@ui/base/Container.astro";
 import ResourceListingRenderer from "@ui/composite/content-linked/internet-resources/ResourceListingRenderer.astro";
 
+import Button from "@ui/base/Button.astro";
 import ContentSurface from "@ui/base/ContentSurface.astro";
 import FilterButton from "@ui/base/FilterButton.astro";
 import Spacer from "@ui/base/Spacer.astro";
 import Typography from "@ui/base/Typography.astro";
 import InternetResourceListingRenderer from "@ui/composite/content-linked/internet-resources/InternetResourceListingRenderer.astro";
+import JumpLinks from "./JumpLinks.astro";
 import { kebabCase, startCase } from "lodash";
 import type { CollectionEntry } from "astro:content";
 import { getResourceIndex } from "@content/utils/resourceIndex";
@@ -41,6 +43,10 @@ interface Props {
 }
 
 const { collection, recommendedResources, mainResources } = Astro.props;
+
+const jumpResourceTypes = Object.keys(
+  mainResources,
+) as Array<InternetResourceCollectionKey>;
 
 const index = await getResourceIndex();
 
@@ -170,46 +176,96 @@ if (mediaTypeOptions.length > 0) {
         </Spacer>
       )
     }
-    <Container>
+    <div
+      class:list={[
+        "md:grid md:grid-cols-[1fr_auto] md:gap-6 lg:grid-cols-[1fr_auto_minmax(150px,1fr)] lg:gap-12",
+      ]}
+    >
       {
-        recommendedResources.length > 0 && (
-          <div data-filter-section>
-            <Spacer marginBottom={6}>
-              <ContentSurface
-                prominence="muted"
-                paddingY={4}
-                paddingX={4}
-                variant="primary"
+        jumpResourceTypes.length > 0 && (
+          <>
+            <nav
+              class="hidden md:block md:order-last"
+              data-jump-nav
+              aria-label="Jump to resource type"
+            >
+              <div class="md:sticky md:top-40 md:mt-12">
+                <JumpLinks resourceTypes={jumpResourceTypes} />
+              </div>
+            </nav>
+            <div class="md:hidden fixed bottom-4 right-4 z-10" data-mobile-jump>
+              <Button
+                as="button"
+                type="button"
+                data-mobile-jump-btn
+                label="Jump To"
+                textVariant="button-2"
+                colorVariant="neutral"
+                styleVariant="outlined"
+              />
+              <div
+                data-mobile-jump-panel
+                hidden
+                class="mt-2 p-3 bg-contentSurface-neutral--muted border border-line-neutral--default rounded-lg shadow-lg"
               >
-                <Stack spacing={4} as="section">
-                  <Typography
-                    as="h2"
-                    variant="title-3"
-                    set:text="Recommended Resources"
-                  />
-                  {recommendedResources.map((resource) => (
-                    <div
-                      data-resource-item
-                      class:list={[
-                        "not-last:pb-6",
-                        "not-last:border-b border-b-line-coolNeutral--default",
-                      ]}
-                    >
-                      <InternetResourceListingRenderer entry={resource} />
-                    </div>
-                  ))}
-                </Stack>
-              </ContentSurface>
-            </Spacer>
-          </div>
+                <div class="flex justify-between gap-3">
+                  <JumpLinks resourceTypes={jumpResourceTypes} />
+                  <button
+                    type="button"
+                    data-mobile-jump-close
+                    aria-label="Close jump menu"
+                    class="self-start text-onSurface-coolNeutral--muted hover:text-onSurface-coolNeutral--default"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="hidden lg:block" />
+          </>
         )
       }
-      {
-        Object.keys(mainResources).length > 0 && (
-          <ResourceListingRenderer internetResources={mainResources} />
-        )
-      }
-    </Container>
+      <Container>
+        {
+          recommendedResources.length > 0 && (
+            <div data-filter-section>
+              <Spacer marginBottom={6}>
+                <ContentSurface
+                  prominence="muted"
+                  paddingY={4}
+                  paddingX={4}
+                  variant="primary"
+                >
+                  <Stack spacing={4} as="section">
+                    <Typography
+                      as="h2"
+                      variant="title-3"
+                      set:text="Recommended Resources"
+                    />
+                    {recommendedResources.map((resource) => (
+                      <div
+                        data-resource-item
+                        class:list={[
+                          "not-last:pb-6",
+                          "not-last:border-b border-b-line-coolNeutral--default",
+                        ]}
+                      >
+                        <InternetResourceListingRenderer entry={resource} />
+                      </div>
+                    ))}
+                  </Stack>
+                </ContentSurface>
+              </Spacer>
+            </div>
+          )
+        }
+        {
+          Object.keys(mainResources).length > 0 && (
+            <ResourceListingRenderer internetResources={mainResources} />
+          )
+        }
+      </Container>
+    </div>
   </Spacer>
 </resource-filter-controller>
 
@@ -266,6 +322,30 @@ if (mediaTypeOptions.length > 0) {
         this.clearAll();
         return;
       }
+
+      const mobileToggle = target.closest<HTMLElement>(
+        "[data-mobile-jump-btn], [data-mobile-jump-close]",
+      );
+      if (mobileToggle) {
+        this.toggleMobilePanel();
+        return;
+      }
+
+      const backToTop = target.closest<HTMLElement>("[data-back-to-top]");
+      if (backToTop) {
+        event.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        if (backToTop.closest("[data-mobile-jump-panel]")) {
+          this.toggleMobilePanel();
+        }
+        return;
+      }
+
+      const jumpLink = target.closest<HTMLElement>("[data-jump-link]");
+      if (jumpLink && jumpLink.closest("[data-mobile-jump-panel]")) {
+        this.toggleMobilePanel();
+        return;
+      }
     };
 
     getActiveFilters(): FilterMap {
@@ -313,6 +393,13 @@ if (mediaTypeOptions.length > 0) {
       this.setActiveFilters(new Map());
     }
 
+    toggleMobilePanel() {
+      const panel = this.querySelector<HTMLElement>("[data-mobile-jump-panel]");
+      const btn = this.querySelector<HTMLElement>("[data-mobile-jump-btn]");
+      panel?.toggleAttribute("hidden");
+      btn?.toggleAttribute("hidden");
+    }
+
     applyFromUrl() {
       const active = this.getActiveFilters();
 
@@ -357,6 +444,16 @@ if (mediaTypeOptions.length > 0) {
           return !target.hidden;
         });
         section.hidden = !anyVisible;
+      });
+
+      this.querySelectorAll<HTMLElement>("[data-jump-link]").forEach((link) => {
+        const type = link.dataset.jumpLink;
+        if (!type) return;
+        const section = this.querySelector<HTMLElement>(
+          `[data-resource-section="${type}"]`,
+        );
+        if (section?.hidden) link.setAttribute("data-filtered", "");
+        else link.removeAttribute("data-filtered");
       });
     }
 
