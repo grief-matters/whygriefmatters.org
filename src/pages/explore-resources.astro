@@ -1,3 +1,11 @@
 ---
+import { getResourceIndex } from "@content/utils/resourceIndex";
+import { buildExplorePageProps } from "@content/utils/buildExplorePageProps";
 
+import ExploreResourcesPage from "@ui/composite/content-linked/page-assemblies/ExploreResourcesPage.astro";
+
+const index = await getResourceIndex();
+const { mainResources } = buildExplorePageProps(index);
 ---
+
+<ExploreResourcesPage mainResources={mainResources} />

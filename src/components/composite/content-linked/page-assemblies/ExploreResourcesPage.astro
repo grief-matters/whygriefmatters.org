@@ -1,0 +1,45 @@
+---
+import type { InternetResourceEntries } from "@content/collections";
+
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+
+import Container from "@ui/base/Container.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Typography from "@ui/base/Typography.astro";
+
+import ResourceListingsOrchestrator from "@ui/scripted/resource-listings-controller/ResourceListingsOrchestrator.astro";
+
+interface Props {
+  mainResources: InternetResourceEntries;
+}
+
+const { mainResources } = Astro.props;
+---
+
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={null}
+  >
+    <Spacer marginBottom={3}>
+      <Typography
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+        set:text="Explore Resources"
+      />
+    </Spacer>
+  </PageHeaderLayout>
+
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <Container size={2}>
+      <ResourceListingsOrchestrator
+        recommendedResources={[]}
+        mainResources={mainResources}
+      />
+    </Container>
+  </LayoutSurface>
+</SitePageLayout>

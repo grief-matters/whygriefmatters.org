@@ -42,7 +42,7 @@ const ENUM_FILTER_CONFIGS = [
 ];
 
 interface Props {
-  collection: TaxonomyPageKey;
+  collection?: TaxonomyPageKey;
   recommendedResources: Array<CollectionEntry<InternetResourceCollectionKey>>;
   mainResources: InternetResourceEntries;
 }
@@ -79,7 +79,7 @@ for (const config of ENUM_FILTER_CONFIGS) {
 }
 
 for (const config of TAXONOMY_FILTER_CONFIGS) {
-  if (config.key === collection) continue;
+  if (collection && config.key === collection) continue;
 
   const referencedIds = new Set<string>();
   for (const resource of displayedResources) {
