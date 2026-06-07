@@ -1,7 +1,11 @@
 import { getCollection, getEntry } from "astro:content";
 import { kebabCase } from "lodash";
 
-import type { InternetResourceType } from "@content/model/internetResource";
+import type {
+  AudienceRole,
+  InternetResourceType,
+  SupportedGriever,
+} from "@content/model/internetResource";
 import type { TaxonomyRefType } from "@content/model/navigationTree";
 
 import { buildCache } from "./cache";
@@ -24,14 +28,23 @@ const taxonomyRefTypeToCollectionKey = {
 export type ResolvedTaxonomyRef = {
   type: TaxonomyRefType;
   slug: string;
+  title: string;
 };
 
 export type NavTreeLeaf = {
   kind: "navItem";
   label: string | null;
-  entryPoint: ResolvedTaxonomyRef;
+  entryPoint: ResolvedTaxonomyRef | null;
   filters: ResolvedTaxonomyRef[];
   mediaTypes: InternetResourceType[] | null;
+  audienceRole: AudienceRole[] | null;
+  supportedGriever: SupportedGriever[] | null;
+};
+
+export type NavTreeStatic = {
+  kind: "staticNavItem";
+  label: string;
+  url: string;
 };
 
 export type NavTreeGroup = {
@@ -40,22 +53,29 @@ export type NavTreeGroup = {
   items: NavTreeNode[];
 };
 
-export type NavTreeNode = NavTreeLeaf | NavTreeGroup;
+export type NavTreeNode = NavTreeLeaf | NavTreeStatic | NavTreeGroup;
 
 type RawTaxonomyRef = { refType: TaxonomyRefType; refId: string };
 type RawNavItem = {
   kind: "navItem";
   label: string | null;
-  entryPoint: RawTaxonomyRef;
+  entryPoint: RawTaxonomyRef | null;
   filters: RawTaxonomyRef[];
   mediaTypes: InternetResourceType[] | null;
+  audienceRole: AudienceRole[] | null;
+  supportedGriever: SupportedGriever[] | null;
+};
+type RawStaticNavItem = {
+  kind: "staticNavItem";
+  label: string;
+  url: string;
 };
 type RawNavItemGroup = {
   kind: "navItemGroup";
   label: string | null;
-  items: Array<RawNavItem | RawNavItemGroup>;
+  items: Array<RawNavItem | RawStaticNavItem | RawNavItemGroup>;
 };
-type RawNavNode = RawNavItem | RawNavItemGroup;
+type RawNavNode = RawNavItem | RawStaticNavItem | RawNavItemGroup;
 
 async function resolveTaxonomyRef(
   ref: RawTaxonomyRef,
@@ -66,15 +86,18 @@ async function resolveTaxonomyRef(
     ref.refId,
   );
   if (!entry) return null;
-  const slug = (entry.data as { slug?: string }).slug;
-  if (!slug) return null;
-  return { type: ref.refType, slug };
+  const data = entry.data as { slug?: string; title?: string };
+  if (!data.slug || !data.title) return null;
+  return { type: ref.refType, slug: data.slug, title: data.title };
 }
 
 async function normalizeNode(node: RawNavNode): Promise<NavTreeNode | null> {
   if (node.kind === "navItem") {
-    const entryPoint = await resolveTaxonomyRef(node.entryPoint);
-    if (!entryPoint) return null;
+    let entryPoint: ResolvedTaxonomyRef | null = null;
+    if (node.entryPoint) {
+      entryPoint = await resolveTaxonomyRef(node.entryPoint);
+      if (!entryPoint) return null;
+    }
 
     const filters: ResolvedTaxonomyRef[] = [];
     for (const f of node.filters) {
@@ -88,6 +111,16 @@ async function normalizeNode(node: RawNavNode): Promise<NavTreeNode | null> {
       entryPoint,
       filters,
       mediaTypes: node.mediaTypes,
+      audienceRole: node.audienceRole,
+      supportedGriever: node.supportedGriever,
+    };
+  }
+
+  if (node.kind === "staticNavItem") {
+    return {
+      kind: "staticNavItem",
+      label: node.label,
+      url: node.url,
     };
   }
 
@@ -111,14 +144,20 @@ async function normalizeNode(node: RawNavNode): Promise<NavTreeNode | null> {
  * Build the entry-point URL (with optional query string) for a `NavTreeLeaf`.
  *
  * Encoding:
+ *  - When an entry point is set, base is `/{kebab-type}/{slug}`. Otherwise the
+ *    leaf is a filter-only search and base is `/explore-resources`.
  *  - One param key per taxonomy filter type, value = comma-joined slugs.
  *  - `media-type` param when present, value = comma-joined resource type names.
+ *  - `audience-role` param when present, value = comma-joined audience roles.
+ *  - `supported-griever` param when present, value = comma-joined griever types.
  *
  * Example:
- *   /cause-of-death/cancer?loss-relationship=parent,sibling&theme=guilt&media-type=podcast,article
+ *   /cause-of-death/cancer?loss-relationship=parent,sibling&theme=guilt&media-type=podcast,article&audience-role=supporter&supported-griever=child
  */
 export function buildNavItemHref(node: NavTreeLeaf): string {
-  const base = `/${kebabCase(node.entryPoint.type)}/${node.entryPoint.slug}`;
+  const base = node.entryPoint
+    ? `/${kebabCase(node.entryPoint.type)}/${node.entryPoint.slug}`
+    : "/explore-resources";
   const params = new URLSearchParams();
 
   const byType = new Map<TaxonomyRefType, string[]>();
@@ -133,6 +172,14 @@ export function buildNavItemHref(node: NavTreeLeaf): string {
 
   if (node.mediaTypes?.length) {
     params.set("media-type", node.mediaTypes.join(","));
+  }
+
+  if (node.audienceRole?.length) {
+    params.set("audience-role", node.audienceRole.join(","));
+  }
+
+  if (node.supportedGriever?.length) {
+    params.set("supported-griever", node.supportedGriever.join(","));
   }
 
   const qs = params.toString();

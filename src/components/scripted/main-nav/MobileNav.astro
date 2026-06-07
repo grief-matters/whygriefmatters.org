@@ -266,7 +266,7 @@ const tier4Sections = tier3Sections.flatMap(({ children }) =>
                   set:text={groupLabel ?? ""}
                 />
                 {items.map((node) =>
-                  node.kind === "navItem" ? (
+                  node.kind !== "navItemGroup" ? (
                     <NavItem
                       node={node}
                       variant="title-5"

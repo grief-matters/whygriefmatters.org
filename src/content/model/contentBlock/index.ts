@@ -1,5 +1,6 @@
 import { z } from "astro/zod";
 
+import { zFeaturedNavItemsContentItem } from "./featuredNavItemsContentItem";
 import { zFeaturedResourceContentItem } from "./featuredResourceContentItem";
 import { zFeaturedResourcesContentItem } from "./featuredResourcesContentItem";
 import { zHeadingTextContentItem } from "./headingTextContentItem";
@@ -16,6 +17,7 @@ import { zStaticNavItemContentItem } from "./staticNavItemContentItem";
 import { zNonEmptyString } from "../utils";
 
 const contentItemSchemas = [
+  zFeaturedNavItemsContentItem,
   zFeaturedResourceContentItem,
   zFeaturedResourcesContentItem,
   zHeadingTextContentItem,

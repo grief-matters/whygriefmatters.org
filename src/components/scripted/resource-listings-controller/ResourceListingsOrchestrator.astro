@@ -31,10 +31,15 @@ interface FilterOption {
 }
 
 interface FilterGroup {
-  key: TaxonomyFilterKey | "mediaType";
+  key: TaxonomyFilterKey | "mediaType" | "audienceRole" | "supportedGriever";
   label: string;
   options: Array<FilterOption>;
 }
+
+const ENUM_FILTER_CONFIGS = [
+  { key: "audienceRole" as const, label: "Audience" },
+  { key: "supportedGriever" as const, label: "Supporting" },
+];
 
 interface Props {
   collection: TaxonomyPageKey;
@@ -55,6 +60,23 @@ const displayedResources: Array<
 > = [...recommendedResources, ...Object.values(mainResources).flat()];
 
 const filterGroups: Array<FilterGroup> = [];
+
+for (const config of ENUM_FILTER_CONFIGS) {
+  const present = new Set<string>();
+  for (const resource of displayedResources) {
+    const values = (
+      resource.data as unknown as Record<string, Array<string> | null>
+    )[config.key];
+    if (!values) continue;
+    for (const v of values) present.add(v);
+  }
+  if (present.size === 0) continue;
+  filterGroups.push({
+    key: config.key,
+    label: config.label,
+    options: [...present].map((v) => ({ value: v, label: startCase(v) })),
+  });
+}
 
 for (const config of TAXONOMY_FILTER_CONFIGS) {
   if (config.key === collection) continue;

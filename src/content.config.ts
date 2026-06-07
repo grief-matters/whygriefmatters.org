@@ -66,9 +66,11 @@ import { fetchAppleStoreMetadata } from "@content/loaders/appleStoreMetadata";
 import { fetchApplePodcastMetadata } from "@content/loaders/applePodcastMetadata";
 import { knownContentTypes } from "@content/model/contentBlock";
 import {
+  zAudienceFields,
   zBasicInternetResource,
   type InternetResourceType,
 } from "@content/model/internetResource";
+import { z } from "astro/zod";
 
 /**
  * Produces a standard content collection definition based any give resource type
@@ -79,14 +81,19 @@ import {
 function getBasicInternetResourceCollectionDef(
   resourceType: InternetResourceType,
 ) {
+  const schema = z.object({
+    ...zBasicInternetResource.shape,
+    ...zAudienceFields.shape,
+  });
+
   return defineCollection({
     loader: async () =>
       loadSanityQuery({
         query: basicInternetResourceQuery,
         queryParams: { resourceType },
-        schema: zBasicInternetResource,
+        schema,
       }),
-    schema: zBasicInternetResource,
+    schema,
   });
 }
 

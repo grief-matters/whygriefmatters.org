@@ -11,7 +11,6 @@
   "registrationRequired": coalesce(registrationRequired, false),
   "skipLinkCheck": coalesce(skipLinkCheck, false),
   skipLinkCheckReason,
-  audienceRole,
   "lossRelationships": coalesce(lossRelationships[]->._id, []),
   "causesOfDeath": coalesce(causesOfDeath[]->._id, []),
   "themes": coalesce(themes[]->._id, []),

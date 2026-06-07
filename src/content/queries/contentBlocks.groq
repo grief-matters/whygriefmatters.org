@@ -46,29 +46,66 @@
     _type == "navItem" => {
       "contentType": _type,
       label,
-      "entryPoint": {
-        "refType": entryPoint->_type,
-        "refId": entryPoint->_id
+      "entryPoint": entryPoint->{
+        "refType": _type,
+        "refId": _id
       },
       "filters": coalesce(filters[]->{
         "refType": _type,
         "refId": _id
       }, []),
-      mediaTypes
+      mediaTypes,
+      audienceRole,
+      supportedGriever
     },
     _type == "navItems" => {
       "contentType": _type,
       "items": coalesce(items[]{
-        label,
-        "entryPoint": {
-          "refType": entryPoint->_type,
-          "refId": entryPoint->_id
+        _type == "navItem" => {
+          "kind": _type,
+          label,
+          "entryPoint": entryPoint->{
+            "refType": _type,
+            "refId": _id
+          },
+          "filters": coalesce(filters[]->{
+            "refType": _type,
+            "refId": _id
+          }, []),
+          mediaTypes,
+          audienceRole,
+          supportedGriever
         },
-        "filters": coalesce(filters[]->{
-          "refType": _type,
-          "refId": _id
-        }, []),
-        mediaTypes
+        _type == "staticNavItem" => {
+          "kind": _type,
+          label,
+          url
+        },
+      }, [])
+    },
+    _type == "featuredNavItems" => {
+      "contentType": _type,
+      "items": coalesce(items[]{
+        _type == "navItem" => {
+          "kind": _type,
+          label,
+          "entryPoint": entryPoint->{
+            "refType": _type,
+            "refId": _id
+          },
+          "filters": coalesce(filters[]->{
+            "refType": _type,
+            "refId": _id
+          }, []),
+          mediaTypes,
+          audienceRole,
+          supportedGriever
+        },
+        _type == "staticNavItem" => {
+          "kind": _type,
+          label,
+          url
+        },
       }, [])
     },
     _type == "resourceLinks" => {

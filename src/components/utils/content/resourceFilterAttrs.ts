@@ -14,6 +14,8 @@ const TAXONOMY_FIELDS = [
   "emotionalStates",
 ] as const;
 
+const ENUM_FIELDS = ["audienceRole", "supportedGriever"] as const;
+
 export async function getResourceFilterAttrs(
   entry: CollectionEntry<InternetResourceCollectionKey>,
 ): Promise<Record<string, string>> {
@@ -39,6 +41,15 @@ export async function getResourceFilterAttrs(
     }
     if (slugs.length === 0) continue;
     attrs[`data-resource-${kebabCase(field)}`] = slugs.join(",");
+  }
+
+  for (const field of ENUM_FIELDS) {
+    if (!(field in entry.data)) continue;
+    const values = (
+      entry.data as unknown as Record<string, Array<string> | null>
+    )[field];
+    if (!values || values.length === 0) continue;
+    attrs[`data-resource-${kebabCase(field)}`] = values.join(",");
   }
 
   return attrs;

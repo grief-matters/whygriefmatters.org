@@ -90,6 +90,19 @@ export const zAudienceRole = z.enum(["bereaved", "supporter", "professional"]);
 export type AudienceRole = z.infer<typeof zAudienceRole>;
 
 /**
+ * Attributes of the bereaved person being supported. Only meaningful when
+ * `audienceRole` includes "supporter" or "professional".
+ */
+export const zSupportedGriever = z.enum(["child", "teen"]);
+export type SupportedGriever = z.infer<typeof zSupportedGriever>;
+
+export const zAudienceFields = z.object({
+  audienceRole: z.array(zAudienceRole).nullable(),
+  supportedGriever: z.array(zSupportedGriever).nullable(),
+});
+export type AudienceFields = z.infer<typeof zAudienceFields>;
+
+/**
  * Available languages enumeration.
  */
 export const zAvailableLanguage = z.enum(["english", "spanish"]);
@@ -112,7 +125,6 @@ export const zBasicInternetResource = z.object({
   registrationRequired: z.boolean(),
   skipLinkCheck: z.boolean(),
   skipLinkCheckReason: z.string().nullable(),
-  audienceRole: z.array(zAudienceRole).nullable(),
   lossRelationships: z.array(reference("lossRelationships")),
   causesOfDeath: z.array(reference("causesOfDeath")),
   themes: z.array(reference("themes")),

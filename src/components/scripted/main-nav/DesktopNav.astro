@@ -183,7 +183,7 @@ const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
               <ul class="space-y-3">
                 {items.map((node) => (
                   <li>
-                    {node.kind === "navItem" ? (
+                    {node.kind !== "navItemGroup" ? (
                       <NavItem
                         node={node}
                         variant="body-2"
@@ -201,7 +201,7 @@ const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
                           <Stack>
                             {node.items.map((child) => (
                               <div>
-                                {child.kind === "navItem" ? (
+                                {child.kind !== "navItemGroup" ? (
                                   <NavItem
                                     node={child}
                                     colorVariant="warmNeutral"

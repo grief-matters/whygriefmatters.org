@@ -6,15 +6,22 @@
     _type == "navItem" => {
       "kind": _type,
       label,
-      "entryPoint": {
-        "refType": entryPoint->_type,
-        "refId": entryPoint->_id
+      "entryPoint": entryPoint->{
+        "refType": _type,
+        "refId": _id
       },
       "filters": coalesce(filters[]->{
         "refType": _type,
         "refId": _id
       }, []),
-      mediaTypes
+      mediaTypes,
+      audienceRole,
+      supportedGriever
+    },
+    _type == "staticNavItem" => {
+      "kind": _type,
+      label,
+      url
     },
     _type == "navItemGroup" => {
       "kind": _type,
@@ -23,15 +30,22 @@
         _type == "navItem" => {
           "kind": _type,
           label,
-          "entryPoint": {
-            "refType": entryPoint->_type,
-            "refId": entryPoint->_id
+          "entryPoint": entryPoint->{
+            "refType": _type,
+            "refId": _id
           },
           "filters": coalesce(filters[]->{
             "refType": _type,
             "refId": _id
           }, []),
-          mediaTypes
+          mediaTypes,
+          audienceRole,
+          supportedGriever
+        },
+        _type == "staticNavItem" => {
+          "kind": _type,
+          label,
+          url
         },
         _type == "navItemGroup" => {
           "kind": _type,
@@ -40,15 +54,22 @@
             _type == "navItem" => {
               "kind": _type,
               label,
-              "entryPoint": {
-                "refType": entryPoint->_type,
-                "refId": entryPoint->_id
+              "entryPoint": entryPoint->{
+                "refType": _type,
+                "refId": _id
               },
               "filters": coalesce(filters[]->{
                 "refType": _type,
                 "refId": _id
               }, []),
-              mediaTypes
+              mediaTypes,
+              audienceRole,
+              supportedGriever
+            },
+            _type == "staticNavItem" => {
+              "kind": _type,
+              label,
+              url
             },
             _type == "navItemGroup" => {
               "kind": _type,
@@ -57,15 +78,22 @@
                 _type == "navItem" => {
                   "kind": _type,
                   label,
-                  "entryPoint": {
-                    "refType": entryPoint->_type,
-                    "refId": entryPoint->_id
+                  "entryPoint": entryPoint->{
+                    "refType": _type,
+                    "refId": _id
                   },
                   "filters": coalesce(filters[]->{
                     "refType": _type,
                     "refId": _id
                   }, []),
-                  mediaTypes
+                  mediaTypes,
+                  audienceRole,
+                  supportedGriever
+                },
+                _type == "staticNavItem" => {
+                  "kind": _type,
+                  label,
+                  url
                 },
               }, [])
             },
