@@ -6,6 +6,7 @@ import { assertNever } from "@ui/utils/ts-utils";
 
 import FeaturedApp from "./FeaturedApp.astro";
 import FeaturedResource from "./FeaturedResource.astro";
+import SafeFeaturedResource from "./SafeFeaturedResource.astro";
 
 interface Props {
   resourceRef: string;
@@ -55,9 +56,9 @@ if (!safeCollectionKey) {
           />
         );
 
+      case "supportGroups":
       case "books":
       case "peerSupports":
-      case "supportGroups":
       case "therapyResources":
       case "listicles":
       case "crisisResources":
@@ -65,7 +66,15 @@ if (!safeCollectionKey) {
       case "externalOrgs":
       case "podcasts":
       case "podcastEpisodes":
-        return <div>[[TODO]]</div>;
+        return (
+          <SafeFeaturedResource
+            fullHeight={props.fullHeight}
+            resourceRef={{
+              collection: safeCollectionKey,
+              id: props.resourceRef,
+            }}
+          />
+        );
       default:
         assertNever(safeCollectionKey);
     }

@@ -56,17 +56,21 @@ function formatDays(days: string[]): string {
 
   const daySet = new Set(days);
 
-  if (allDays.every((d) => daySet.has(d))) return "Every day";
+  if (allDays.every((d) => daySet.has(d))) {
+    return "Every day";
+  }
   if (
     weekdays.every((d) => daySet.has(d)) &&
     !weekend.some((d) => daySet.has(d))
-  )
+  ) {
     return "Weekdays";
+  }
   if (
     weekend.every((d) => daySet.has(d)) &&
     !weekdays.some((d) => daySet.has(d))
-  )
+  ) {
     return "Weekends";
+  }
 
   return days.join(", ");
 }

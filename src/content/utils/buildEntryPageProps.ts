@@ -47,8 +47,12 @@ export function buildEntryPageProps(
   );
 
   const excludeIds = new Set<string>();
-  for (const r of featuredResources) excludeIds.add(r.id);
-  for (const r of secondaryFeaturedResources) excludeIds.add(r.id);
+  for (const r of featuredResources) {
+    excludeIds.add(r.id);
+  }
+  for (const r of secondaryFeaturedResources) {
+    excludeIds.add(r.id);
+  }
 
   const linkedResources =
     index.resourcesByTaxonomyEntry.get(entry.collection)?.get(entry.id) ?? [];
@@ -69,11 +73,17 @@ function resolveCoverImage(
   entry: CollectionEntry<TaxonomyPageKey>,
   index: ResourceIndex,
 ): SanityImage | null {
-  if (!("coverImage" in entry.data)) return null;
+  if (!("coverImage" in entry.data)) {
+    return null;
+  }
   const ref = entry.data.coverImage;
-  if (!ref) return null;
+  if (!ref) {
+    return null;
+  }
   const asset = index.imageAssetsById.get(ref.id);
-  if (!asset) return null;
+  if (!asset) {
+    return null;
+  }
   return { image: asset.data.image, altText: asset.data.alt };
 }
 
@@ -84,7 +94,9 @@ function resolveResourceRefs(
   const result: Array<InternetResourceEntry> = [];
   for (const ref of refs) {
     const resource = index.resourceById.get(ref.refId);
-    if (resource) result.push(resource);
+    if (resource) {
+      result.push(resource);
+    }
   }
   return result;
 }

@@ -77,9 +77,13 @@ async function buildResourceIndex(): Promise<ResourceIndex> {
 
   for (const resource of resourceById.values()) {
     for (const taxonomyKey of TAXONOMY_PAGE_KEYS) {
-      if (!(taxonomyKey in resource.data)) continue;
+      if (!(taxonomyKey in resource.data)) {
+        continue;
+      }
       const refs = (resource.data as Record<string, unknown>)[taxonomyKey];
-      if (!Array.isArray(refs)) continue;
+      if (!Array.isArray(refs)) {
+        continue;
+      }
       const bucket = resourcesByTaxonomyEntry.get(taxonomyKey)!;
       for (const ref of refs as Array<{ id: string }>) {
         let list = bucket.get(ref.id);

@@ -24,31 +24,43 @@ export async function getResourceFilterAttrs(
   };
 
   for (const field of TAXONOMY_FIELDS) {
-    if (!(field in entry.data)) continue;
+    if (!(field in entry.data)) {
+      continue;
+    }
     const refs = (
       entry.data as unknown as Record<
         string,
         Array<{ collection: string; id: string }>
       >
     )[field];
-    if (!refs || refs.length === 0) continue;
+    if (!refs || refs.length === 0) {
+      continue;
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const resolved = await getEntries(refs as any);
     const slugs: string[] = [];
     for (const r of resolved) {
       const data = r?.data as unknown as { slug?: unknown } | undefined;
-      if (data && typeof data.slug === "string") slugs.push(data.slug);
+      if (data && typeof data.slug === "string") {
+        slugs.push(data.slug);
+      }
     }
-    if (slugs.length === 0) continue;
+    if (slugs.length === 0) {
+      continue;
+    }
     attrs[`data-resource-${kebabCase(field)}`] = slugs.join(",");
   }
 
   for (const field of ENUM_FIELDS) {
-    if (!(field in entry.data)) continue;
+    if (!(field in entry.data)) {
+      continue;
+    }
     const values = (
       entry.data as unknown as Record<string, Array<string> | null>
     )[field];
-    if (!values || values.length === 0) continue;
+    if (!values || values.length === 0) {
+      continue;
+    }
     attrs[`data-resource-${kebabCase(field)}`] = values.join(",");
   }
 

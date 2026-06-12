@@ -2,41 +2,39 @@
 import type { OnSurfaceColorVariant } from "@styles/utils/color";
 import type { TextPreset } from "@styles/utils/typography";
 
+import type { StaticNavItem } from "@content/model/staticNavItem";
+
 import Link from "@ui/base/Link.astro";
-import { buildNavItemHref, type ResolvedNavItem } from "@ui/utils/nav-item";
 
 interface Props {
-  navItem: ResolvedNavItem;
+  staticNavItem: StaticNavItem;
   variant?: TextPreset;
   colorVariant?: OnSurfaceColorVariant;
   class?: string;
 }
 
 const {
-  navItem,
+  staticNavItem,
   variant = "body-2",
   colorVariant = "warmNeutral",
   class: className,
 } = Astro.props;
-
-const href = buildNavItemHref(navItem);
-const label = navItem.label ?? navItem.entryPoint?.title ?? "(untitled)";
 ---
 
 {
   className ? (
     <span class={className}>
       <Link
-        to={href}
-        label={label}
+        to={staticNavItem.url}
+        label={staticNavItem.label}
         variant={variant}
         colorVariant={colorVariant}
       />
     </span>
   ) : (
     <Link
-      to={href}
-      label={label}
+      to={staticNavItem.url}
+      label={staticNavItem.label}
       variant={variant}
       colorVariant={colorVariant}
     />

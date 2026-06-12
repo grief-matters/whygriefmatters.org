@@ -29,9 +29,14 @@ const {
 const colorVariant = variant === "neutral" ? "coolNeutral" : "primary";
 ---
 
-<ContentSurface fullHeight={fullHeight} as="article" variant="featureCard">
+<ContentSurface
+  fullHeight={fullHeight}
+  as="article"
+  variant="featureCard"
+  class="flex flex-col"
+>
   <SanityImagePrimitive useFallback image={image} />
-  <div class="pt-3 px-5 pb-5">
+  <div class="pt-3 px-5 pb-5 flex-1">
     {
       titleHref ? (
         <Link

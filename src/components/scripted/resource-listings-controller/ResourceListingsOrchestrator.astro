@@ -24,6 +24,7 @@ import {
   type TaxonomyFilterKey,
   type TaxonomyPageKey,
 } from "@content/utils/taxonomy";
+import { textColorMap } from "@styles/utils/color";
 
 interface FilterOption {
   value: string;
@@ -61,29 +62,16 @@ const displayedResources: Array<
 
 const filterGroups: Array<FilterGroup> = [];
 
-for (const config of ENUM_FILTER_CONFIGS) {
-  const present = new Set<string>();
-  for (const resource of displayedResources) {
-    const values = (
-      resource.data as unknown as Record<string, Array<string> | null>
-    )[config.key];
-    if (!values) continue;
-    for (const v of values) present.add(v);
-  }
-  if (present.size === 0) continue;
-  filterGroups.push({
-    key: config.key,
-    label: config.label,
-    options: [...present].map((v) => ({ value: v, label: startCase(v) })),
-  });
-}
-
 for (const config of TAXONOMY_FILTER_CONFIGS) {
-  if (collection && config.key === collection) continue;
+  if (collection && config.key === collection) {
+    continue;
+  }
 
   const referencedIds = new Set<string>();
   for (const resource of displayedResources) {
-    if (!(config.key in resource.data)) continue;
+    if (!(config.key in resource.data)) {
+      continue;
+    }
     const refs = (
       resource.data as unknown as Record<string, Array<{ id: string }>>
     )[config.key];
@@ -91,18 +79,24 @@ for (const config of TAXONOMY_FILTER_CONFIGS) {
       referencedIds.add(ref.id);
     }
   }
-  if (referencedIds.size === 0) continue;
+  if (referencedIds.size === 0) {
+    continue;
+  }
 
   const options: Array<FilterOption> = [];
   for (const id of referencedIds) {
     const taxonomyEntry = index.taxonomyEntriesById.get(id);
-    if (!taxonomyEntry) continue;
+    if (!taxonomyEntry) {
+      continue;
+    }
     options.push({
       value: taxonomyEntry.data.slug,
       label: taxonomyEntry.data.title,
     });
   }
-  if (options.length === 0) continue;
+  if (options.length === 0) {
+    continue;
+  }
   filterGroups.push({ key: config.key, label: config.label, options });
 }
 
@@ -110,9 +104,34 @@ const presentCollectionKeys = new Set(
   displayedResources.map((r) => r.collection),
 );
 
+for (const config of ENUM_FILTER_CONFIGS) {
+  const present = new Set<string>();
+  for (const resource of displayedResources) {
+    const values = (
+      resource.data as unknown as Record<string, Array<string> | null>
+    )[config.key];
+    if (!values) {
+      continue;
+    }
+    for (const v of values) {
+      present.add(v);
+    }
+  }
+  if (present.size === 0) {
+    continue;
+  }
+  filterGroups.push({
+    key: config.key,
+    label: config.label,
+    options: [...present].map((v) => ({ value: v, label: startCase(v) })),
+  });
+}
+
 const mediaTypeOptions: Array<FilterOption> = [];
 for (const collectionKey of internetResourceCollectionKeys) {
-  if (!presentCollectionKeys.has(collectionKey)) continue;
+  if (!presentCollectionKeys.has(collectionKey)) {
+    continue;
+  }
   mediaTypeOptions.push({
     value: kebabCase(collectionKey),
     label: startCase(collectionKey),
@@ -125,16 +144,50 @@ if (mediaTypeOptions.length > 0) {
     options: mediaTypeOptions,
   });
 }
+
+const CORE_FILTER_KEYS = new Set<FilterGroup["key"]>([
+  "causesOfDeath",
+  "lossRelationships",
+  "themes",
+  "demographics",
+]);
+
+const coreGroups = filterGroups.filter((g) => CORE_FILTER_KEYS.has(g.key));
+const extraGroups = filterGroups.filter((g) => !CORE_FILTER_KEYS.has(g.key));
+
+// If there are no core groups (e.g. a taxonomy detail page whose own
+// taxonomy is one of the core four and gets excluded), promote extras
+// to render inline without the Show More toggle — otherwise the panel
+// would have nothing visible until the user opens it.
+const primaryGroups = coreGroups.length > 0 ? coreGroups : extraGroups;
+const togglableExtras = coreGroups.length > 0 ? extraGroups : [];
+
+const clearButtonClasses = [
+  "bg-contentSurface-neutral--default hover:bg-contentSurface-neutral--prominent",
+  "border border-line-neutral--default",
+  "hover:border-line-neutral--prominent",
+  "text-sm",
+  "font-sans-b",
+  "block",
+  " px-4",
+  "cursor-pointer",
+  "rounded-sm",
+  "transition-colors duration-300",
+  textColorMap.warmNeutral.default,
+];
 ---
 
-<resource-filter-controller data-filter-panel-active="false">
+<resource-filter-controller
+  data-filter-panel-active="false"
+  data-extras-visible="false"
+>
   <Spacer marginBottom={5}>
     {/* Filter Resources */}
     {
       filterGroups.length > 0 && (
         <Spacer marginBottom={4}>
           <ContentSurface prominence="muted" paddingY={4} paddingX={4}>
-            <Stack spacing={3}>
+            <Stack spacing={4}>
               <div class="flex items-start justify-between gap-3">
                 <Stack>
                   <Typography
@@ -151,13 +204,13 @@ if (mediaTypeOptions.length > 0) {
                 <button
                   type="button"
                   data-action="clear-all"
-                  class="shrink-0 text-sm underline"
+                  class:list={["shrink-0 text-sm", ...clearButtonClasses]}
                 >
                   Clear all
                 </button>
               </div>
 
-              {filterGroups.map((group) => {
+              {primaryGroups.map((group) => {
                 const groupKey = kebabCase(group.key);
                 return (
                   <Stack
@@ -167,7 +220,7 @@ if (mediaTypeOptions.length > 0) {
                   >
                     <div class="flex items-center gap-3">
                       <Typography
-                        variant="title-4"
+                        variant="title-5"
                         colorVariant="warmNeutral"
                         set:text={group.label}
                       />
@@ -193,6 +246,74 @@ if (mediaTypeOptions.length > 0) {
                   </Stack>
                 );
               })}
+
+              {togglableExtras.length > 0 && (
+                <>
+                  <div data-extra-filters>
+                    <Stack spacing={3}>
+                      {togglableExtras.map((group) => {
+                        const groupKey = kebabCase(group.key);
+                        return (
+                          <Stack
+                            spacing={2}
+                            data-filter-group-key={groupKey}
+                            data-filter-group-active="false"
+                          >
+                            <div class="flex items-center gap-3">
+                              <Typography
+                                variant="title-5"
+                                colorVariant="warmNeutral"
+                                set:text={group.label}
+                              />
+                              <button
+                                type="button"
+                                data-action="clear-group"
+                                data-filter-group-key={groupKey}
+                                class:list={[
+                                  "bg-contentSurface-neutral--default hover:bg-contentSurface-neutral--prominent",
+                                  "border border-line-neutral--default",
+                                  "hover:border-line-neutral--prominent",
+                                  "text-sm",
+                                  "font-sans-b",
+                                  "block",
+                                  " px-4",
+                                  "cursor-pointer",
+                                  "rounded-sm",
+                                  "transition-colors duration-300",
+                                  textColorMap.warmNeutral.default,
+                                ]}
+                              >
+                                Clear
+                              </button>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                              {group.options.map((option) => (
+                                <FilterButton
+                                  label={option.label}
+                                  data-filter-key={groupKey}
+                                  data-filter-value={option.value}
+                                  data-filter-active="false"
+                                />
+                              ))}
+                            </div>
+                          </Stack>
+                        );
+                      })}
+                    </Stack>
+                  </div>
+                  <button
+                    type="button"
+                    data-action="toggle-extras"
+                    class:list={["self-start text-sm", ...clearButtonClasses]}
+                  >
+                    <span
+                      data-toggle-show
+                      set:text={`Show more filter options`}
+                    />
+                    <span data-toggle-hide>Show fewer filter options</span>
+                  </button>
+                </>
+              )}
             </Stack>
           </ContentSurface>
         </Spacer>
@@ -301,6 +422,177 @@ if (mediaTypeOptions.length > 0) {
     [data-action="clear-group"] {
     display: none;
   }
+
+  /* Show More / Show Fewer disclosure for the non-core filter groups. */
+  resource-filter-controller[data-extras-visible="false"] [data-extra-filters] {
+    display: none;
+  }
+  resource-filter-controller[data-extras-visible="true"] [data-toggle-show],
+  resource-filter-controller[data-extras-visible="false"] [data-toggle-hide] {
+    display: none;
+  }
+
+  /*
+   * Filter button palette + state styling.
+   *
+   * Each filter group wrapper sets a small set of CSS custom properties
+   * (the "palette" for its taxonomy color). Buttons inside inherit them
+   * and switch between three prominence levels based on the group's
+   * data-filter-group-active and the button's own data-filter-active.
+   *
+   * We deliberately bypass the design-system colorVariant/prominence
+   * class-map ceremony here and consume the underlying CSS custom
+   * properties directly, because the prominence has to swap at runtime
+   * based on DOM state attributes — something Tailwind utility classes
+   * baked at build time can't express.
+   */
+
+  /* Neutral fallback first so per-taxonomy rules below override on equal
+     specificity. */
+  resource-filter-controller [data-filter-group-key] {
+    --fb-bg-default: var(--color-contentSurface-neutral--default);
+    --fb-bg-prominent: var(--color-contentSurface-neutral--prominent);
+    --fb-bg-muted: var(--color-contentSurface-neutral--muted);
+    --fb-border-default: var(--color-line-neutral--default);
+    --fb-border-prominent: var(--color-line-neutral--prominent);
+    --fb-border-muted: var(--color-line-neutral--muted);
+    --fb-text: var(--color-onSurface-warmNeutral--default);
+  }
+
+  resource-filter-controller [data-filter-group-key="loss-relationships"] {
+    --fb-bg-default: var(--color-contentSurface-primary--default);
+    --fb-bg-prominent: var(--color-contentSurface-primary--prominent);
+    --fb-bg-muted: var(--color-contentSurface-primary--muted);
+    --fb-border-default: var(--color-line-primary--default);
+    --fb-border-prominent: var(--color-line-primary--prominent);
+    --fb-border-muted: var(--color-line-primary--muted);
+    --fb-text: var(--color-onSurface-primary--default);
+  }
+
+  resource-filter-controller [data-filter-group-key="causes-of-death"] {
+    --fb-bg-default: var(--color-contentSurface-secondary--default);
+    --fb-bg-prominent: var(--color-contentSurface-secondary--prominent);
+    --fb-bg-muted: var(--color-contentSurface-secondary--muted);
+    --fb-border-default: var(--color-line-secondary--default);
+    --fb-border-prominent: var(--color-line-secondary--prominent);
+    --fb-border-muted: var(--color-line-secondary--muted);
+    --fb-text: var(--color-onSurface-secondary--default);
+  }
+
+  resource-filter-controller [data-filter-group-key="themes"] {
+    --fb-bg-default: var(--color-contentSurface-tertiary--default);
+    --fb-bg-prominent: var(--color-contentSurface-tertiary--prominent);
+    --fb-bg-muted: var(--color-contentSurface-tertiary--muted);
+    --fb-border-default: var(--color-line-tertiary--default);
+    --fb-border-prominent: var(--color-line-tertiary--prominent);
+    --fb-border-muted: var(--color-line-tertiary--muted);
+    --fb-text: var(--color-onSurface-tertiary--default);
+  }
+
+  /* Secondary taxonomy palettes — consume primitive --token-color-*
+     values directly. These don't earn a place in the global semantic
+     token layer because they're only used by the filter buttons. Text
+     reuses --color-onSurface-primary--default (a dark blue) since every
+     palette here is a light tint and the dark-blue text contrasts well
+     across all of them. */
+
+  resource-filter-controller [data-filter-group-key="demographics"] {
+    --fb-bg-default: var(--token-color-purple-95);
+    --fb-bg-prominent: var(--token-color-purple-87);
+    --fb-bg-muted: var(--token-color-purple-97);
+    --fb-border-default: var(--token-color-purple-87);
+    --fb-border-prominent: var(--token-color-purple-80);
+    --fb-border-muted: var(--token-color-purple-92);
+    --fb-text: var(--color-onSurface-primary--default);
+  }
+
+  resource-filter-controller [data-filter-group-key="grief-phases"] {
+    --fb-bg-default: var(--token-color-yellow-95);
+    --fb-bg-prominent: var(--token-color-yellow-87);
+    --fb-bg-muted: var(--token-color-yellow-97);
+    --fb-border-default: var(--token-color-yellow-87);
+    --fb-border-prominent: var(--token-color-yellow-80);
+    --fb-border-muted: var(--token-color-yellow-92);
+    --fb-text: var(--color-onSurface-primary--default);
+  }
+
+  resource-filter-controller [data-filter-group-key="grief-types"] {
+    --fb-bg-default: var(--token-color-orange-95);
+    --fb-bg-prominent: var(--token-color-orange-87);
+    --fb-bg-muted: var(--token-color-orange-97);
+    --fb-border-default: var(--token-color-orange-87);
+    --fb-border-prominent: var(--token-color-orange-80);
+    --fb-border-muted: var(--token-color-orange-92);
+    --fb-text: var(--color-onSurface-primary--default);
+  }
+
+  resource-filter-controller [data-filter-group-key="content-functions"] {
+    --fb-bg-default: var(--token-color-indigo-95);
+    --fb-bg-prominent: var(--token-color-indigo-87);
+    --fb-bg-muted: var(--token-color-indigo-97);
+    --fb-border-default: var(--token-color-indigo-87);
+    --fb-border-prominent: var(--token-color-indigo-80);
+    --fb-border-muted: var(--token-color-indigo-92);
+    --fb-text: var(--color-onSurface-primary--default);
+  }
+
+  resource-filter-controller [data-filter-group-key="emotional-states"] {
+    --fb-bg-default: var(--token-color-lime-95);
+    --fb-bg-prominent: var(--token-color-lime-87);
+    --fb-bg-muted: var(--token-color-lime-97);
+    --fb-border-default: var(--token-color-lime-87);
+    --fb-border-prominent: var(--token-color-lime-80);
+    --fb-border-muted: var(--token-color-lime-92);
+    --fb-text: var(--color-onSurface-primary--default);
+  }
+
+  /* Text color is constant per palette — prominence is carried by
+     background and border only, so inactive buttons don't read as
+     disabled. */
+  resource-filter-controller
+    [data-filter-group-key]
+    button[data-filter-active] {
+    color: var(--fb-text);
+  }
+
+  /* No filter active in this group → mid prominence */
+  resource-filter-controller
+    [data-filter-group-active="false"]
+    button[data-filter-active] {
+    background-color: var(--fb-bg-default);
+    border-color: var(--fb-border-default);
+  }
+
+  /* Group has active filters, this button is one of them → prominent */
+  resource-filter-controller
+    [data-filter-group-active="true"]
+    button[data-filter-active="true"] {
+    background-color: var(--fb-bg-prominent);
+    border-color: var(--fb-border-prominent);
+  }
+
+  /* Group has active filters, this button is not one of them → muted */
+  resource-filter-controller
+    [data-filter-group-active="true"]
+    button[data-filter-active="false"] {
+    background-color: var(--fb-bg-muted);
+    border-color: var(--fb-border-muted);
+  }
+
+  /* Hover: bump non-active buttons up one prominence level. */
+  resource-filter-controller
+    [data-filter-group-active="false"]
+    button[data-filter-active]:hover {
+    background-color: var(--fb-bg-prominent);
+    border-color: var(--fb-border-prominent);
+  }
+
+  resource-filter-controller
+    [data-filter-group-active="true"]
+    button[data-filter-active="false"]:hover {
+    background-color: var(--fb-bg-default);
+    border-color: var(--fb-border-default);
+  }
 </style>
 
 <script>
@@ -309,7 +601,23 @@ if (mediaTypeOptions.length > 0) {
   class ResourceFilterController extends HTMLElement {
     connectedCallback() {
       this.addEventListener("click", this.handleClick);
+      this.autoExpandIfActiveExtras();
       this.applyFromUrl();
+    }
+
+    autoExpandIfActiveExtras() {
+      const active = this.getActiveFilters();
+      const extraKeys = new Set(
+        Array.from(
+          this.querySelectorAll<HTMLElement>(
+            "[data-extra-filters] [data-filter-group-key]",
+          ),
+        ).map((el) => el.dataset.filterGroupKey),
+      );
+      const hasActiveExtra = [...active.keys()].some((k) => extraKeys.has(k));
+      if (hasActiveExtra) {
+        this.dataset.extrasVisible = "true";
+      }
     }
 
     disconnectedCallback() {
@@ -318,7 +626,9 @@ if (mediaTypeOptions.length > 0) {
 
     handleClick = (event: Event) => {
       const target = event.target as Element | null;
-      if (!target) return;
+      if (!target) {
+        return;
+      }
 
       const filterBtn = target.closest<HTMLElement>(
         "[data-filter-key][data-filter-value]",
@@ -326,7 +636,9 @@ if (mediaTypeOptions.length > 0) {
       if (filterBtn) {
         const key = filterBtn.dataset.filterKey;
         const value = filterBtn.dataset.filterValue;
-        if (key && value) this.toggleFilter(key, value);
+        if (key && value) {
+          this.toggleFilter(key, value);
+        }
         return;
       }
 
@@ -335,13 +647,24 @@ if (mediaTypeOptions.length > 0) {
       );
       if (clearGroup) {
         const key = clearGroup.dataset.filterGroupKey;
-        if (key) this.clearGroup(key);
+        if (key) {
+          this.clearGroup(key);
+        }
         return;
       }
 
       const clearAll = target.closest<HTMLElement>('[data-action="clear-all"]');
       if (clearAll) {
         this.clearAll();
+        return;
+      }
+
+      const toggleExtras = target.closest<HTMLElement>(
+        '[data-action="toggle-extras"]',
+      );
+      if (toggleExtras) {
+        this.dataset.extrasVisible =
+          this.dataset.extrasVisible === "true" ? "false" : "true";
         return;
       }
 
@@ -375,7 +698,9 @@ if (mediaTypeOptions.length > 0) {
       const map: FilterMap = new Map();
       for (const [k, v] of params) {
         const set = new Set(v.split(",").filter(Boolean));
-        if (set.size > 0) map.set(k, set);
+        if (set.size > 0) {
+          map.set(k, set);
+        }
       }
       return map;
     }
@@ -383,7 +708,9 @@ if (mediaTypeOptions.length > 0) {
     setActiveFilters(map: FilterMap) {
       const parts: string[] = [];
       for (const [k, set] of map) {
-        if (set.size === 0) continue;
+        if (set.size === 0) {
+          continue;
+        }
         const values = [...set].map((v) => encodeURIComponent(v)).join(",");
         parts.push(`${encodeURIComponent(k)}=${values}`);
       }
@@ -398,10 +725,16 @@ if (mediaTypeOptions.length > 0) {
     toggleFilter(group: string, value: string) {
       const map = this.getActiveFilters();
       const set = map.get(group) ?? new Set<string>();
-      if (set.has(value)) set.delete(value);
-      else set.add(value);
-      if (set.size > 0) map.set(group, set);
-      else map.delete(group);
+      if (set.has(value)) {
+        set.delete(value);
+      } else {
+        set.add(value);
+      }
+      if (set.size > 0) {
+        map.set(group, set);
+      } else {
+        map.delete(group);
+      }
       this.setActiveFilters(map);
     }
 
@@ -460,7 +793,9 @@ if (mediaTypeOptions.length > 0) {
         const items = section.querySelectorAll<HTMLElement>(
           "[data-resource-media-type]",
         );
-        if (items.length === 0) return;
+        if (items.length === 0) {
+          return;
+        }
         const anyVisible = Array.from(items).some((r) => {
           const target = r.closest<HTMLElement>("[data-resource-item]") ?? r;
           return !target.hidden;
@@ -470,21 +805,30 @@ if (mediaTypeOptions.length > 0) {
 
       this.querySelectorAll<HTMLElement>("[data-jump-link]").forEach((link) => {
         const type = link.dataset.jumpLink;
-        if (!type) return;
+        if (!type) {
+          return;
+        }
         const section = this.querySelector<HTMLElement>(
           `[data-resource-section="${type}"]`,
         );
-        if (section?.hidden) link.setAttribute("data-filtered", "");
-        else link.removeAttribute("data-filtered");
+        if (section?.hidden) {
+          link.setAttribute("data-filtered", "");
+        } else {
+          link.removeAttribute("data-filtered");
+        }
       });
     }
 
     resourceMatches(el: HTMLElement, active: FilterMap): boolean {
       for (const [groupKey, activeSet] of active) {
-        if (activeSet.size === 0) continue;
+        if (activeSet.size === 0) {
+          continue;
+        }
         const attr = el.getAttribute(`data-resource-${groupKey}`) ?? "";
         const values = attr.split(",").filter(Boolean);
-        if (!values.some((v) => activeSet.has(v))) return false;
+        if (!values.some((v) => activeSet.has(v))) {
+          return false;
+        }
       }
       return true;
     }

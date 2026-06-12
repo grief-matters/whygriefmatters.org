@@ -1,13 +1,13 @@
 ---
 import { paddingXSettingMap, paddingYSettingMap } from "@styles/utils/spacing";
 
-import type { NavTreeNode } from "@ui/utils/main-nav";
+import type { NavTreeNode } from "@ui/utils/navigation-tree";
 
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Button from "@ui/base/Button.astro";
 import Stack from "@ui/base/Stack.astro";
 import Typography from "@ui/base/Typography.astro";
-import NavItem from "@ui/composite/content-linked/NavItem.astro";
+import NavTreeLink from "@ui/composite/content-linked/NavTreeLink.astro";
 
 interface Props {
   navTree: NavTreeNode[];
@@ -25,7 +25,9 @@ const tier1Items = navTree.map((node, i) => ({
 }));
 
 const tier2Sections = tier1Items.flatMap(({ key: tier1Key, node }) => {
-  if (node.kind !== "navItemGroup") return [];
+  if (node.kind !== "navItemGroup") {
+    return [];
+  }
   return [
     {
       tier1Key,
@@ -39,7 +41,9 @@ const tier2Sections = tier1Items.flatMap(({ key: tier1Key, node }) => {
 
 const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
   tier2List.flatMap(({ key: tier2Key, node }) => {
-    if (node.kind !== "navItemGroup") return [];
+    if (node.kind !== "navItemGroup") {
+      return [];
+    }
     return [
       {
         tier2Key,
@@ -88,7 +92,7 @@ const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
                 "bg-contentSurface-primaryContrast--prominent",
               ]}
             >
-              <NavItem
+              <NavTreeLink
                 node={node}
                 variant="button-1"
                 colorVariant="primaryContrast"
@@ -148,7 +152,7 @@ const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
                       "border-l-4 border-transparent",
                     ]}
                   >
-                    <NavItem
+                    <NavTreeLink
                       node={node}
                       variant="title-5"
                       colorVariant="primary"
@@ -184,7 +188,7 @@ const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
                 {items.map((node) => (
                   <li>
                     {node.kind !== "navItemGroup" ? (
-                      <NavItem
+                      <NavTreeLink
                         node={node}
                         variant="body-2"
                         colorVariant="warmNeutral"
@@ -202,7 +206,7 @@ const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
                             {node.items.map((child) => (
                               <div>
                                 {child.kind !== "navItemGroup" ? (
-                                  <NavItem
+                                  <NavTreeLink
                                     node={child}
                                     colorVariant="warmNeutral"
                                   />

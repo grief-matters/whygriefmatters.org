@@ -220,8 +220,12 @@ import Typography from "@ui/base/Typography.astro";
 
       this.debouncedHandleSearch.cancel();
       modal?.setAttribute("hidden", "");
-      if (input) input.value = "";
-      if (resultsContainer) resultsContainer.innerHTML = "";
+      if (input) {
+        input.value = "";
+      }
+      if (resultsContainer) {
+        resultsContainer.innerHTML = "";
+      }
       this.results = [];
       this.selectedIndex = -1;
       this.hideLoading();
@@ -320,7 +324,9 @@ import Typography from "@ui/base/Typography.astro";
 
     renderResults() {
       const container = this.querySelector("[data-search-results]");
-      if (!container) return;
+      if (!container) {
+        return;
+      }
 
       container.innerHTML = this.results
         .map(
@@ -353,14 +359,18 @@ import Typography from "@ui/base/Typography.astro";
 
     clearResults() {
       const container = this.querySelector("[data-search-results]");
-      if (container) container.innerHTML = "";
+      if (container) {
+        container.innerHTML = "";
+      }
       this.results = [];
       this.selectedIndex = -1;
       this.hideEmpty();
     }
 
     handleKeydown(e: KeyboardEvent) {
-      if (this.results.length === 0) return;
+      if (this.results.length === 0) {
+        return;
+      }
 
       switch (e.key) {
         case "ArrowDown":
@@ -388,7 +398,9 @@ import Typography from "@ui/base/Typography.astro";
 
     updateSelection() {
       const container = this.querySelector("[data-search-results]");
-      if (!container) return;
+      if (!container) {
+        return;
+      }
 
       container.querySelectorAll("a").forEach((link, index) => {
         if (index === this.selectedIndex) {

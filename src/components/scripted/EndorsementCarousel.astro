@@ -180,15 +180,21 @@ const fallbackIndex = Math.floor(Math.random() * endorsements.length);
 
       // Pause on hover
       this.addEventListener("mouseenter", () => {
-        if (this.rotating) this.clearTimer();
+        if (this.rotating) {
+          this.clearTimer();
+        }
       });
       this.addEventListener("mouseleave", () => {
-        if (this.rotating) this.setTimer();
+        if (this.rotating) {
+          this.setTimer();
+        }
       });
 
       // Focus entering the carousel stops rotation permanently (APG)
       this.addEventListener("focusin", () => {
-        if (this.rotating) this.stopRotation();
+        if (this.rotating) {
+          this.stopRotation();
+        }
       });
     }
 

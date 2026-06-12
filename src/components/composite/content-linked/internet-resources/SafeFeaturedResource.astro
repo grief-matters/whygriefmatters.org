@@ -1,0 +1,48 @@
+---
+import { getEntry, type ReferenceDataEntry } from "astro:content";
+
+import type { InternetResourceCollectionKey } from "@content/collections";
+
+import { getSourceFromResourceUrl } from "@ui/utils/content/content";
+
+import Typography from "@ui/base/Typography.astro";
+import Card from "@ui/composite/Card.astro";
+import ResourceSource from "./ResourceSource.astro";
+
+interface Props {
+  resourceRef: ReferenceDataEntry<InternetResourceCollectionKey, string>;
+  fullHeight?: boolean;
+}
+
+const { resourceRef, fullHeight } = Astro.props;
+
+const { data } = await getEntry(resourceRef);
+if (!data) {
+  throw new Error(
+    `[BasicFeaturedResource] could not get resource from reference: ${resourceRef.id}`,
+  );
+}
+
+const safeSource = data.resourceUrl
+  ? getSourceFromResourceUrl(data.resourceUrl)
+  : null;
+
+const image = data.imageAssetId ? await getEntry(data.imageAssetId) : null;
+---
+
+{
+  data.resourceUrl ? (
+    <Card
+      external
+      fullHeight={fullHeight}
+      image={image?.data}
+      title={data.title}
+      titleHref={data.resourceUrl}
+    >
+      {safeSource && <ResourceSource source={safeSource} />}
+      {data.description && <Typography>{data.description}</Typography>}
+    </Card>
+  ) : (
+    <div>[[SafeFeaturedResource cannot support]]</div>
+  )
+}

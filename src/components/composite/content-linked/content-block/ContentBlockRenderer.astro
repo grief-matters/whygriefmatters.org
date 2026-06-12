@@ -4,6 +4,11 @@ import { getEntry, type ReferenceDataEntry } from "astro:content";
 import Container from "@ui/base/Container.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
 import Typography from "@ui/base/Typography.astro";
+import FeaturedResourceRenderer from "../internet-resources/FeaturedResourceRenderer.astro";
+import Slider from "@ui/layouts/slider/Slider.astro";
+import Slide from "@ui/layouts/slider/Slide.astro";
+import { assertNever } from "@ui/utils/ts-utils";
+import FeaturedNavListItem from "../FeaturedNavListItem.astro";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
@@ -50,15 +55,56 @@ const contentBlock = await getEntry(contentBlockRef);
             />
           </Container>
         );
-      default:
+      case "featuredResource":
         return (
-          <Container paddingX={3}>
-            <div class="rounded border border-dashed p-4 text-sm opacity-60">
-              [content type "{contentItem.contentType}" — renderer not yet
-              reimplemented]
-            </div>
+          <Container>
+            <FeaturedResourceRenderer
+              resourceRef={contentItem.refId}
+              resourceType={contentItem.refType}
+            />
           </Container>
         );
+      case "featuredNavItems":
+        return (
+          <div class="max-w-6xl xl:mx-auto">
+            <div class="w-full overflow-hidden md:overflow-visible">
+              <div
+                class:list={[
+                  "flex overflow-x-auto snap-x snap-mandatory scroll-smooth",
+                  "md:grid md:grid-cols-3 md:gap-4 md:overflow-visible",
+                ]}
+              >
+                {contentItem.items.map((item) => (
+                  <div
+                    class:list={[
+                      "basis-xs shrink-0 grow snap-center max-w-sm px-1 py-2",
+                      "md:basis-auto md:max-w-none md:p-0",
+                    ]}
+                  >
+                    <FeaturedNavListItem fullHeight item={item} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      case "featuredResources":
+        return (
+          <Slider>
+            {contentItem.resources.map((resource) => (
+              <Slide paddingX={1} paddingY={2}>
+                <FeaturedResourceRenderer
+                  fullHeight
+                  resourceRef={resource.refId}
+                  resourceType={resource.refType}
+                />
+              </Slide>
+            ))}
+          </Slider>
+        );
+      default:
+        // assertNever(contentItem);
+        return <div>todo</div>;
     }
   })
 }

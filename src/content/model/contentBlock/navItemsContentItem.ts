@@ -1,15 +1,11 @@
 import { z } from "astro/zod";
 
-import { zNavItem } from "../navigationTree";
-import { zNonEmptyString } from "../utils";
+import { zNavItem } from "../navItem";
+import { zStaticNavItem } from "../staticNavItem";
 
 export const zNavListItem = z.discriminatedUnion("kind", [
   zNavItem.extend({ kind: z.literal("navItem") }),
-  z.object({
-    kind: z.literal("staticNavItem"),
-    label: zNonEmptyString,
-    url: zNonEmptyString.startsWith("/"),
-  }),
+  zStaticNavItem.extend({ kind: z.literal("staticNavItem") }),
 ]);
 
 export const zNavItemsContentItem = z.object({

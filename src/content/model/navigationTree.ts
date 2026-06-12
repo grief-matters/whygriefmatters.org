@@ -1,50 +1,7 @@
 import { z } from "astro/zod";
 
-import {
-  zAudienceRole,
-  zInternetResourceType,
-  zSupportedGriever,
-} from "./internetResource";
-import { zNonEmptyString } from "./utils";
-
-const taxonomyRefTypes = [
-  "lossRelationship",
-  "causeOfDeath",
-  "theme",
-  "demographic",
-  "griefPhase",
-  "griefType",
-  "emotionalState",
-  "contentFunction",
-] as const;
-export const zTaxonomyRefType = z.enum(taxonomyRefTypes);
-export type TaxonomyRefType = z.infer<typeof zTaxonomyRefType>;
-
-export const zTaxonomyReference = z.object({
-  refType: zTaxonomyRefType,
-  refId: z.string(),
-});
-
-/**
- * Shape of a single `navItem` object — reused by `navigationTree`, the
- * `navItem` ContentBlock item, and the `navItems` ContentBlock item.
- *
- * Does NOT carry the `kind` discriminator; the navigationTree variant adds
- * `kind: "navItem"` when composing the discriminated union below.
- *
- * Cross-field rules (label required when no entryPoint; at least one of
- * entryPoint/filters/mediaTypes/audienceRole must be present) are enforced
- * upstream in the Sanity schema.
- */
-export const zNavItem = z.object({
-  label: z.string().nullable(),
-  entryPoint: zTaxonomyReference.nullable(),
-  filters: z.array(zTaxonomyReference),
-  mediaTypes: z.array(zInternetResourceType).nullable(),
-  audienceRole: z.array(zAudienceRole).nullable(),
-  supportedGriever: z.array(zSupportedGriever).nullable(),
-});
-export type NavItem = z.infer<typeof zNavItem>;
+import { zNavItem } from "./navItem";
+import { zStaticNavItem } from "./staticNavItem";
 
 /**
  * Recursive `navItem | staticNavItem | navItemGroup` discriminated union used
@@ -55,12 +12,8 @@ export type NavItem = z.infer<typeof zNavItem>;
  * types").
  */
 export type NavigationTreeItem =
-  | (NavItem & { kind: "navItem" })
-  | {
-      kind: "staticNavItem";
-      label: string;
-      url: string;
-    }
+  | (z.infer<typeof zNavItem> & { kind: "navItem" })
+  | (z.infer<typeof zStaticNavItem> & { kind: "staticNavItem" })
   | {
       kind: "navItemGroup";
       label: string | null;
@@ -70,11 +23,7 @@ export type NavigationTreeItem =
 export const zNavigationTreeItem: z.ZodType<NavigationTreeItem> =
   z.discriminatedUnion("kind", [
     zNavItem.extend({ kind: z.literal("navItem") }),
-    z.object({
-      kind: z.literal("staticNavItem"),
-      label: zNonEmptyString,
-      url: zNonEmptyString.startsWith("/"),
-    }),
+    zStaticNavItem.extend({ kind: z.literal("staticNavItem") }),
     z.object({
       kind: z.literal("navItemGroup"),
       label: z.string().nullable(),

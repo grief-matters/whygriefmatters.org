@@ -1,9 +1,7 @@
 import { z } from "astro/zod";
 
-import { zNonEmptyString } from "../utils";
+import { zStaticNavItem } from "../staticNavItem";
 
-export const zStaticNavItemContentItem = z.object({
+export const zStaticNavItemContentItem = zStaticNavItem.extend({
   contentType: z.literal("staticNavItem"),
-  label: zNonEmptyString,
-  url: zNonEmptyString.startsWith("/"),
 });
