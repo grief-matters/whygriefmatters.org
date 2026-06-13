@@ -1,0 +1,96 @@
+---
+import { actions } from "astro:actions";
+import Button from "@ui/base/Button.astro";
+import Typography from "@ui/base/Typography.astro";
+import Container from "@ui/base/Container.astro";
+import FormField from "./FormField.astro";
+import type { Form, FieldErrors } from "@lib/forms";
+
+type SubmitFormResult =
+  | { ok: true }
+  | { ok: false; fieldErrors: FieldErrors };
+
+type Props = {
+  form: Form;
+  result?:
+    | {
+        data?: SubmitFormResult | undefined;
+        error?: { message?: string } | undefined | null;
+      }
+    | undefined;
+};
+
+const { form, result } = Astro.props;
+
+const succeeded = result?.data?.ok === true;
+
+const fieldErrors: FieldErrors =
+  result?.data && result.data.ok === false ? result.data.fieldErrors : {};
+
+const submitErrorMessage = result?.error
+  ? "Something went wrong. Please try again in a moment."
+  : undefined;
+---
+
+<Container>
+  <div class="max-w-2xl mx-auto py-12">
+    <Typography as="h1" variant="title-2" marginBottom={3}>
+      {form.title}
+    </Typography>
+
+    {
+      form.description && (
+        <Typography as="p" marginBottom={4}>
+          {form.description}
+        </Typography>
+      )
+    }
+
+    {
+      succeeded ? (
+        <div class="rounded p-6 bg-contentSurface-primary--muted border border-line-primary--default">
+          <Typography as="p">{form.successMessage}</Typography>
+        </div>
+      ) : (
+        <form
+          method="POST"
+          action={actions.submitForm}
+          class="flex flex-col gap-6"
+          novalidate
+        >
+          <input type="hidden" name="formId" value={form.formId} />
+
+          <div aria-hidden="true" class="absolute left-[-9999px] w-px h-px overflow-hidden">
+            <label>
+              Leave this field empty
+              <input
+                type="text"
+                name="website"
+                tabindex="-1"
+                autocomplete="off"
+              />
+            </label>
+          </div>
+
+          {form.fields.map((field) => (
+            <FormField field={field} error={fieldErrors[field.name]} />
+          ))}
+
+          {submitErrorMessage && (
+            <p class="text-sm text-red-700" role="alert">
+              {submitErrorMessage}
+            </p>
+          )}
+
+          <div>
+            <Button as="button" type="submit" colorVariant="primary">
+              <Typography>
+                <strong class="font-serif">{form.submitButtonText}</strong>
+              </Typography>
+            </Button>
+          </div>
+        </form>
+      )
+    }
+  </div>
+</Container>

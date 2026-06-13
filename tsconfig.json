@@ -9,6 +9,7 @@
       "@content/*": ["./src/content/*"],
       "@ui/*": ["src/components/*"],
       "@styles/*": ["src/styles/*"],
+      "@lib/*": ["./src/lib/*"],
       "@sanity-integration/*": ["./src/integrations/sanity/*"]
     }
   }
