@@ -1,16 +1,12 @@
 ---
 import { getEntry, type CollectionEntry } from "astro:content";
 
-import {
-  collectionKeyToResourceTypeMap,
-  type BasicInternetResourceCollectionKey,
-} from "@content/collections";
-
 import { resourceTypeIconConfigMap } from "@ui/utils/icon";
 import { getSourceFromResourceUrl } from "@ui/utils/content/content";
 import { getResourceFilterAttrs } from "@ui/utils/content/resourceFilterAttrs";
 import { getLocaleDateStringFromIsoString } from "@ui/utils/date";
 import { type Link, isLink } from "@ui/utils/link";
+import { collectionKeyToResourceTypeMap } from "@content/collections";
 
 import { gapMap, marginTopMap } from "@styles/utils/spacing";
 
@@ -20,7 +16,9 @@ import LinkComp from "@ui/base/Link.astro";
 import Typography from "@ui/base/Typography.astro";
 
 interface Props {
-  entry: CollectionEntry<BasicInternetResourceCollectionKey>;
+  entry: CollectionEntry<
+    "peerSupports" | "supportGroups" | "therapyResources"
+  >;
 }
 
 const { entry } = Astro.props;
@@ -40,10 +38,25 @@ const processedSource =
   source ?? getSourceFromResourceUrl(entry.data.resourceUrl);
 
 const resourceType = collectionKeyToResourceTypeMap[entry.collection];
-
 const iconConfig = resourceTypeIconConfigMap[resourceType];
 
 const isFacebookPage = entry.data.resourceUrl.includes("facebook.com");
+
+const formatLabels: Record<"in-person" | "remote", string> = {
+  "in-person": "In-person",
+  remote: "Remote",
+};
+
+const formats = entry.data.format ?? [];
+const isBudgetFriendly =
+  "budgetFriendly" in entry.data && entry.data.budgetFriendly === true;
+
+const hasAnyBadge =
+  entry.data.paywalled ||
+  isFacebookPage ||
+  (entry.data.registrationRequired && !isFacebookPage) ||
+  formats.length > 0 ||
+  isBudgetFriendly;
 
 const filterAttrs = await getResourceFilterAttrs(entry);
 ---
@@ -82,7 +95,6 @@ const filterAttrs = await getResourceFilterAttrs(entry);
             <Typography variant="subtitle-1">
               {"From "}
               {isLink(processedSource) ? (
-                // Render a link if we managed to process one
                 <LinkComp
                   external
                   variant="subtitle-1"
@@ -90,7 +102,6 @@ const filterAttrs = await getResourceFilterAttrs(entry);
                   label={processedSource.label}
                 />
               ) : (
-                // Render just text if we fail to get a linkable source
                 <span>{processedSource}</span>
               )}
               {","}
@@ -112,9 +123,7 @@ const filterAttrs = await getResourceFilterAttrs(entry);
     {entry.data.description}
   </Typography>
   {
-    (entry.data.paywalled ||
-      isFacebookPage ||
-      (entry.data.registrationRequired && !isFacebookPage)) && (
+    hasAnyBadge && (
       <div class:list={["flex flex-wrap", gapMap[2], marginTopMap[3]]}>
         {entry.data.paywalled && (
           <Badge label="Payment or Subscription Required" />
@@ -125,6 +134,10 @@ const filterAttrs = await getResourceFilterAttrs(entry);
         {entry.data.registrationRequired && !isFacebookPage && (
           <Badge label="Registration Required" />
         )}
+        {formats.map((f) => (
+          <Badge label={formatLabels[f]} />
+        ))}
+        {isBudgetFriendly && <Badge label="Budget-friendly" />}
       </div>
     )
   }

@@ -1,7 +1,6 @@
 ---
 import type { SurfaceColorVariant } from "@styles/utils/color";
 import type { OnSurfaceColorVariant } from "@styles/utils/color";
-import { standardVariantsClassMap, textColorMap } from "@styles/utils/color";
 import { textPresetClassMap } from "@styles/utils/typography";
 import { paddingXSettingMap } from "@styles/utils/spacing";
 
@@ -31,9 +30,9 @@ const onSurfaceVariant = surfaceToOnSurfaceMap[colorVariant];
 
 <div
   class:list={[
-    standardVariantsClassMap[colorVariant]["muted"],
-    textColorMap[onSurfaceVariant]["default"],
+    "bg-contentSurface-primary--muted",
     textPresetClassMap["subtitle-1"],
+    "text-onSurface-primary--default",
     paddingXSettingMap[2],
     "py-1",
     "rounded-full",
