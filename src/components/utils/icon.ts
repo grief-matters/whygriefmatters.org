@@ -25,6 +25,7 @@ export const iconMap = {
   bookOpen: "book-open",
   chatBubbleLeftEllipsis: "chat-bubble-left-ellipsis",
   chatBubbleLeftRight: "chat-bubble-left-right",
+  check: "check",
   chevronLeft: "chevron-left",
   chevronRight: "chevron-right",
   computerDesktop: "computer-desktop",

@@ -228,7 +228,7 @@ const clearButtonClasses = [
                         type="button"
                         data-action="clear-group"
                         data-filter-group-key={groupKey}
-                        class="text-sm underline"
+                        class:list={clearButtonClasses}
                       >
                         Clear
                       </button>
@@ -269,19 +269,7 @@ const clearButtonClasses = [
                                 type="button"
                                 data-action="clear-group"
                                 data-filter-group-key={groupKey}
-                                class:list={[
-                                  "bg-contentSurface-neutral--default hover:bg-contentSurface-neutral--prominent",
-                                  "border border-line-neutral--default",
-                                  "hover:border-line-neutral--prominent",
-                                  "text-sm",
-                                  "font-sans-b",
-                                  "block",
-                                  " px-4",
-                                  "cursor-pointer",
-                                  "rounded-sm",
-                                  "transition-colors duration-300",
-                                  textColorMap.warmNeutral.default,
-                                ]}
+                                class:list={clearButtonClasses}
                               >
                                 Clear
                               </button>
@@ -452,7 +440,7 @@ const clearButtonClasses = [
   resource-filter-controller [data-filter-group-key] {
     --fb-bg-default: var(--color-contentSurface-neutral--default);
     --fb-bg-prominent: var(--color-contentSurface-neutral--prominent);
-    --fb-bg-muted: var(--color-contentSurface-neutral--muted);
+    --fb-bg-muted: transparent;
     --fb-border-default: var(--color-line-neutral--default);
     --fb-border-prominent: var(--color-line-neutral--prominent);
     --fb-border-muted: var(--color-line-neutral--muted);
@@ -460,9 +448,9 @@ const clearButtonClasses = [
   }
 
   resource-filter-controller [data-filter-group-key="loss-relationships"] {
-    --fb-bg-default: var(--color-contentSurface-primary--default);
-    --fb-bg-prominent: var(--color-contentSurface-primary--prominent);
-    --fb-bg-muted: var(--color-contentSurface-primary--muted);
+    --fb-bg-default: var(--color-contentSurface-primary--muted);
+    --fb-bg-prominent: var(--color-contentSurface-primary--default);
+    --fb-bg-muted: transparent;
     --fb-border-default: var(--color-line-primary--default);
     --fb-border-prominent: var(--color-line-primary--prominent);
     --fb-border-muted: var(--color-line-primary--muted);
@@ -470,80 +458,80 @@ const clearButtonClasses = [
   }
 
   resource-filter-controller [data-filter-group-key="causes-of-death"] {
-    --fb-bg-default: var(--color-contentSurface-secondary--default);
-    --fb-bg-prominent: var(--color-contentSurface-secondary--prominent);
-    --fb-bg-muted: var(--color-contentSurface-secondary--muted);
+    --fb-bg-default: var(--color-contentSurface-secondary--muted);
+    --fb-bg-prominent: var(--color-contentSurface-secondary--default);
+    --fb-bg-muted: transparent;
     --fb-border-default: var(--color-line-secondary--default);
     --fb-border-prominent: var(--color-line-secondary--prominent);
     --fb-border-muted: var(--color-line-secondary--muted);
-    --fb-text: var(--color-onSurface-secondary--default);
+    --fb-text: var(--token-color-pink-30);
   }
 
   resource-filter-controller [data-filter-group-key="themes"] {
-    --fb-bg-default: var(--color-contentSurface-tertiary--default);
-    --fb-bg-prominent: var(--color-contentSurface-tertiary--prominent);
-    --fb-bg-muted: var(--color-contentSurface-tertiary--muted);
+    --fb-bg-default: var(--color-contentSurface-tertiary--muted);
+    --fb-bg-prominent: var(--color-contentSurface-tertiary--default);
+    --fb-bg-muted: transparent;
     --fb-border-default: var(--color-line-tertiary--default);
     --fb-border-prominent: var(--color-line-tertiary--prominent);
     --fb-border-muted: var(--color-line-tertiary--muted);
-    --fb-text: var(--color-onSurface-tertiary--default);
+    --fb-text: var(--token-color-green-30);
   }
 
   /* Secondary taxonomy palettes — consume primitive --token-color-*
      values directly. These don't earn a place in the global semantic
-     token layer because they're only used by the filter buttons. Text
-     reuses --color-onSurface-primary--default (a dark blue) since every
-     palette here is a light tint and the dark-blue text contrasts well
-     across all of them. */
+     token layer because they're only used by the filter buttons. Each
+     palette pairs its light tint with a matching dark companion (the
+     hue's own -30 shade) for the text, so the chip reads as a single
+     coherent color rather than a foreign blue word on a colored chip. */
 
   resource-filter-controller [data-filter-group-key="demographics"] {
     --fb-bg-default: var(--token-color-purple-95);
-    --fb-bg-prominent: var(--token-color-purple-87);
-    --fb-bg-muted: var(--token-color-purple-97);
+    --fb-bg-prominent: var(--token-color-purple-92);
+    --fb-bg-muted: transparent;
     --fb-border-default: var(--token-color-purple-87);
     --fb-border-prominent: var(--token-color-purple-80);
     --fb-border-muted: var(--token-color-purple-92);
-    --fb-text: var(--color-onSurface-primary--default);
+    --fb-text: var(--token-color-purple-30);
   }
 
   resource-filter-controller [data-filter-group-key="grief-phases"] {
     --fb-bg-default: var(--token-color-yellow-95);
-    --fb-bg-prominent: var(--token-color-yellow-87);
-    --fb-bg-muted: var(--token-color-yellow-97);
+    --fb-bg-prominent: var(--token-color-yellow-92);
+    --fb-bg-muted: transparent;
     --fb-border-default: var(--token-color-yellow-87);
     --fb-border-prominent: var(--token-color-yellow-80);
     --fb-border-muted: var(--token-color-yellow-92);
-    --fb-text: var(--color-onSurface-primary--default);
+    --fb-text: var(--token-color-yellow-30);
   }
 
   resource-filter-controller [data-filter-group-key="grief-types"] {
     --fb-bg-default: var(--token-color-orange-95);
-    --fb-bg-prominent: var(--token-color-orange-87);
-    --fb-bg-muted: var(--token-color-orange-97);
+    --fb-bg-prominent: var(--token-color-orange-92);
+    --fb-bg-muted: transparent;
     --fb-border-default: var(--token-color-orange-87);
     --fb-border-prominent: var(--token-color-orange-80);
     --fb-border-muted: var(--token-color-orange-92);
-    --fb-text: var(--color-onSurface-primary--default);
+    --fb-text: var(--token-color-orange-30);
   }
 
   resource-filter-controller [data-filter-group-key="content-functions"] {
     --fb-bg-default: var(--token-color-indigo-95);
-    --fb-bg-prominent: var(--token-color-indigo-87);
-    --fb-bg-muted: var(--token-color-indigo-97);
+    --fb-bg-prominent: var(--token-color-indigo-92);
+    --fb-bg-muted: transparent;
     --fb-border-default: var(--token-color-indigo-87);
     --fb-border-prominent: var(--token-color-indigo-80);
     --fb-border-muted: var(--token-color-indigo-92);
-    --fb-text: var(--color-onSurface-primary--default);
+    --fb-text: var(--token-color-indigo-30);
   }
 
   resource-filter-controller [data-filter-group-key="emotional-states"] {
     --fb-bg-default: var(--token-color-lime-95);
-    --fb-bg-prominent: var(--token-color-lime-87);
-    --fb-bg-muted: var(--token-color-lime-97);
+    --fb-bg-prominent: var(--token-color-lime-92);
+    --fb-bg-muted: transparent;
     --fb-border-default: var(--token-color-lime-87);
     --fb-border-prominent: var(--token-color-lime-80);
     --fb-border-muted: var(--token-color-lime-92);
-    --fb-text: var(--color-onSurface-primary--default);
+    --fb-text: var(--token-color-lime-30);
   }
 
   /* Text color is constant per palette — prominence is carried by
@@ -593,6 +581,10 @@ const clearButtonClasses = [
     background-color: var(--fb-bg-default);
     border-color: var(--fb-border-default);
   }
+
+  /* Selection check icon visibility lives in FilterButton.astro — its
+     scoped cid is the one that's stamped on the [data-icon-check] span,
+     so the rules have to live there to actually match. */
 </style>
 
 <script>

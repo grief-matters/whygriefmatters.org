@@ -1,4 +1,5 @@
 ---
+import Icon from "@ui/base/Icon.astro";
 import { paddingXSettingMap } from "@styles/utils/spacing";
 import { textPresetClassMap } from "@styles/utils/typography";
 import type { HTMLAttributes } from "astro/types";
@@ -23,4 +24,19 @@ const { label, ...attrs } = Astro.props;
   {...attrs}
 >
   {label}
+  <span data-icon-check>
+    <Icon getIcon={(icons) => icons.check} size={1} />
+  </span>
 </button>
+
+<style>
+  /* Hide the check by default; show it whenever this button is active.
+     Hover state intentionally has no rule — once the button is active,
+     the check stays visible during hover as well. */
+  [data-icon-check] {
+    display: none;
+  }
+  button[data-filter-active="true"] [data-icon-check] {
+    display: inline-flex;
+  }
+</style>
