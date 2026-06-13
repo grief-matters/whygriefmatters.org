@@ -64,6 +64,7 @@ import { zWdynrnEntry } from "@content/model/wdynrnEntry";
 import { loadSanityQuery } from "@content/loaders/sanityQueryLoader";
 import { fetchAppleStoreMetadata } from "@content/loaders/appleStoreMetadata";
 import { fetchApplePodcastMetadata } from "@content/loaders/applePodcastMetadata";
+import { fetchBookMetadata } from "@content/loaders/bookMetadata";
 import { knownContentTypes } from "@content/model/contentBlock";
 import {
   zAudienceFields,
@@ -149,7 +150,34 @@ export const collections = {
     schema: zApp,
   }),
   books: defineCollection({
-    loader: async () => loadSanityQuery({ query: booksQuery, schema: zBook }),
+    loader: async () => {
+      const results = await loadSanityQuery({ query: booksQuery });
+
+      const enriched = await Promise.allSettled(
+        results.map(async (book: { isbn: string | null }) => {
+          if (book.isbn) {
+            const metadata = await fetchBookMetadata(book.isbn);
+            if (metadata) {
+              return { ...book, ...metadata };
+            }
+          }
+          return book;
+        }),
+      );
+
+      const books = enriched.map((result, i) =>
+        result.status === "fulfilled" ? result.value : results[i],
+      );
+
+      const parsed = zBook.array().safeParse(books);
+      if (!parsed.success) {
+        throw new Error(
+          `Book collection validation failed: ${parsed.error.message}`,
+        );
+      }
+
+      return books;
+    },
     schema: zBook,
   }),
   crisisResources: defineCollection({

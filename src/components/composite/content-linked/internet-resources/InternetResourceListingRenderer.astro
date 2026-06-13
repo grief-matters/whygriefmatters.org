@@ -7,6 +7,7 @@ import { assertNever } from "@ui/utils/ts-utils";
 
 import AppListing from "./AppListing.astro";
 import BasicInternetResourceListing from "./BasicInternetResourceListing.astro";
+import BookListing from "./BookListing.astro";
 import CrisisResourceListing from "./CrisisResourceListing.astro";
 import PodcastListing from "./PodcastListing.astro";
 import PodcastEpisodeListing from "./PodcastEpisodeListing.astro";
@@ -46,6 +47,7 @@ const { entry } = Astro.props;
         case "crisisResources":
           return <CrisisResourceListing entry={entry} />;
         case "books":
+          return <BookListing entry={entry} />;
         case "essentialServices":
         case "listicles":
         case "peerSupports":
