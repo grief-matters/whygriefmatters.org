@@ -1,0 +1,37 @@
+---
+import { getEntry, type ReferenceDataEntry } from "astro:content";
+
+import Container from "@ui/base/Container.astro";
+import SanityImage from "@ui/base/SanityImage.astro";
+
+interface Props {
+  imageRefs: Array<ReferenceDataEntry<"imageAssets", string>>;
+}
+
+const { imageRefs } = Astro.props;
+
+const MAX_IMAGES = 3;
+
+const images = await Promise.all(
+  imageRefs.slice(0, MAX_IMAGES).map(async (ref) => {
+    const entry = await getEntry(ref);
+    return entry?.data ?? null;
+  }),
+);
+
+const visibilityClass = ["", "hidden md:block", "hidden lg:block"] as const;
+---
+
+<Container size={2} paddingX={3}>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {
+      images.map((image, i) =>
+        image ? (
+          <div class:list={[visibilityClass[i]]}>
+            <SanityImage image={image} useFallback={false} />
+          </div>
+        ) : null,
+      )
+    }
+  </div>
+</Container>

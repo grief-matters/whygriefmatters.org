@@ -9,6 +9,7 @@ import Slider from "@ui/layouts/slider/Slider.astro";
 import Slide from "@ui/layouts/slider/Slide.astro";
 import { assertNever } from "@ui/utils/ts-utils";
 import FeaturedNavListItem from "../FeaturedNavListItem.astro";
+import ImageRowRenderer from "./ImageRowRenderer.astro";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
@@ -102,9 +103,18 @@ const contentBlock = await getEntry(contentBlockRef);
             ))}
           </Slider>
         );
-      default:
-        // assertNever(contentItem);
+      case "imageRow":
+        return <ImageRowRenderer imageRefs={contentItem.images} />;
+      case "navItems":
+      case "navItem":
+      case "person":
+      case "personGroup":
+      case "resourceLinks":
+      case "staticNavItem":
+      case "imageAsset":
         return <div>todo</div>;
+      default:
+        assertNever(contentItem);
     }
   })
 }
