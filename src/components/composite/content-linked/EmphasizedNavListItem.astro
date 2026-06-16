@@ -1,0 +1,42 @@
+---
+import type { NavItem } from "@content/model/navItem";
+import type { StaticNavItem } from "@content/model/staticNavItem";
+
+import {
+  buildNavItemHref,
+  resolveNavItem,
+  type ResolvedNavItem,
+} from "@ui/utils/nav-item";
+import EmphasizedPageLink from "@ui/base/EmphasizedPageLink.astro";
+
+type Item =
+  | (NavItem & { kind: "navItem" })
+  | (StaticNavItem & { kind: "staticNavItem" });
+
+interface Props {
+  item: Item;
+}
+
+const { item } = Astro.props;
+
+let resolvedNavItem: ResolvedNavItem | null = null;
+if (item.kind === "navItem") {
+  const { kind: _kind, ...raw } = item;
+  resolvedNavItem = await resolveNavItem(raw);
+}
+---
+
+{
+  item.kind === "navItem"
+    ? resolvedNavItem && (
+        <EmphasizedPageLink
+          to={buildNavItemHref(resolvedNavItem)}
+          label={
+            resolvedNavItem.label ??
+            resolvedNavItem.entryPoint?.title ??
+            "(untitled)"
+          }
+        />
+      )
+    : <EmphasizedPageLink to={item.url} label={item.label} />
+}
