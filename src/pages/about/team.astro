@@ -24,6 +24,7 @@ import Button from "@ui/base/Button.astro";
 
 import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
 import PersonGroupRenderer from "@ui/composite/content-linked/content-block/PersonGroupRenderer.astro";
+import PersonAvatar from "@ui/base/PersonAvatar.astro";
 
 const contentGroup = await getCollection(
   "contentGroups",
@@ -186,9 +187,10 @@ const socialConfigMap: Record<SocialVal, SocialConfig> = {
             >
               {member.data.avatar && (
                 <div class="flex justify-center md:block">
-                  {/* <PersonAvatar
-                    image={{ image: member.data.avatar, altText: "" }}
-                  /> */}
+                  <PersonAvatar
+                    image={member.data.avatar}
+                    name={member.data.fullName}
+                  />
                 </div>
               )}
               <Stack spacing={2}>

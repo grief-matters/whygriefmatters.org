@@ -32,6 +32,8 @@ const zBaseSanityImage = z.looseObject({
 export const zSanityImage =
   zSchemaForType<SanityImageSource>()(zBaseSanityImage);
 
+export type SanityImageData = z.infer<typeof zSanityImage>;
+
 export const zImage = z.object({
   image: zSanityImage,
   altText: z.string(),

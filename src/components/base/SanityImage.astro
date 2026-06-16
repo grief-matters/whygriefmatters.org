@@ -4,7 +4,7 @@ import { getEntry } from "astro:content";
 import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
 
 import fallbackImg from "../../img/fallback.jpg";
-import type { ImageAsset } from "@content/model/imageAsset";
+import type { SanityImageData } from "@content/model/image";
 
 const aspectMap = {
   default: "aspect-7/5",
@@ -20,8 +20,13 @@ interface ImageSources {
   type: string;
 }
 
+interface ImageProp {
+  image: SanityImageData;
+}
+
 interface Props {
-  image?: ImageAsset;
+  image?: ImageProp | null;
+  alt?: string;
   classList?: Array<string>;
   maxWidth?: number;
   priority?: boolean;
@@ -34,6 +39,7 @@ const {
   maxWidth = 2500,
   useFallback = true,
   objectFit = "cover",
+  alt = "",
   ...props
 } = Astro.props;
 
@@ -57,7 +63,7 @@ const fallbackImages = fallbackImagesEntry?.data.images ?? [];
 
 let sources: ImageSources[] = [];
 
-let sanityImageSource: ImageAsset | null = props.image ?? null;
+let sanityImageSource: ImageProp | null = props.image ?? null;
 
 if (!sanityImageSource && useFallback && fallbackImages.length > 0) {
   const randomFallbackRef =
@@ -123,7 +129,7 @@ const hotspotY = `${(sanityImageSource?.image?.hotspot?.y ?? 0.5) * 100}%`;
       ))}
       <img
         src={optimizedFallbackImgConfig.src}
-        alt={""}
+        alt={alt}
         srcset={optimizedFallbackImgConfig.srcSet}
         sizes={optimizedFallbackImgConfig.sizes}
         loading={props.priority ? "eager" : "lazy"}

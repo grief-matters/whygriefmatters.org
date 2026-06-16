@@ -22,6 +22,7 @@ import Typography from "@ui/base/Typography.astro";
 
 import ExploreLinks from "@ui/composite/ExploreLinks.astro";
 import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
+import PersonAvatar from "@ui/base/PersonAvatar.astro";
 
 const aboutContentGroup = await getCollection(
   "contentGroups",
@@ -129,9 +130,10 @@ const contentGroupData = aboutContentGroup[0].data;
             >
               {member.data.avatar && (
                 <div class="flex justify-center md:block">
-                  {/* <PersonAvatar
-                    image={{ image: member.data.avatar, altText: "" }}
-                  /> */}
+                  <PersonAvatar
+                    image={member.data.avatar}
+                    name={member.data.fullName}
+                  />
                 </div>
               )}
               <Stack spacing={2}>
