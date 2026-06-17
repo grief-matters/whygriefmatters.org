@@ -1,0 +1,49 @@
+---
+import { getEntry } from "astro:content";
+
+import { buildExplorePageProps } from "@content/utils/buildExplorePageProps";
+import { buildFilterGroups } from "@content/utils/buildFilterGroups";
+import { getResourceIndex } from "@content/utils/resourceIndex";
+import {
+  normaliseResourceForSearch,
+  type NormalisedResource,
+} from "@content/utils/normaliseResourceForSearch";
+
+import SearchPage from "@ui/composite/content-linked/page-assemblies/SearchPage.astro";
+
+const contentGroup = await getEntry("contentGroups", "search");
+if (!contentGroup) {
+  throw new Error('Could not get content group "search"');
+}
+
+const index = await getResourceIndex();
+const { mainResources } = buildExplorePageProps(index);
+const allResources = Object.values(mainResources).flat();
+
+const normalisedMaybe = await Promise.all(
+  allResources.map((entry) => normaliseResourceForSearch(entry, index)),
+);
+const resources: Array<NormalisedResource> = normalisedMaybe.filter(
+  (r): r is NormalisedResource => r !== null,
+);
+
+const filterGroups = buildFilterGroups({
+  displayedResources: resources.map((r) => r.entry),
+  index,
+});
+
+const searchDocs = resources.map((r) => ({
+  id: r.id,
+  title: r.title,
+  searchAliases: r.searchAliases,
+  description: r.descriptionPlain.slice(0, 240),
+  source: r.source?.label ?? "",
+}));
+---
+
+<SearchPage
+  contentGroup={contentGroup}
+  filterGroups={filterGroups}
+  resources={resources}
+  searchDocs={searchDocs}
+/>

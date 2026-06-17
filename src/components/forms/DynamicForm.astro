@@ -6,9 +6,7 @@ import Container from "@ui/base/Container.astro";
 import FormField from "./FormField.astro";
 import type { Form, FieldErrors } from "@lib/forms";
 
-type SubmitFormResult =
-  | { ok: true }
-  | { ok: false; fieldErrors: FieldErrors };
+type SubmitFormResult = { ok: true } | { ok: false; fieldErrors: FieldErrors };
 
 type Props = {
   form: Form;
@@ -60,7 +58,10 @@ const submitErrorMessage = result?.error
         >
           <input type="hidden" name="formId" value={form.formId} />
 
-          <div aria-hidden="true" class="absolute left-[-9999px] w-px h-px overflow-hidden">
+          <div
+            aria-hidden="true"
+            class="absolute left-[-9999px] w-px h-px overflow-hidden"
+          >
             <label>
               Leave this field empty
               <input

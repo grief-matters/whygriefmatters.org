@@ -39,6 +39,7 @@
     "astro": "6.4.3",
     "clsx": "2.1.1",
     "lodash": "4.18.1",
+    "minisearch": "^7.2.0",
     "resend": "^4.2.0",
     "sanitize-html": "^2.14.0",
     "tailwindcss": "4.3.0",

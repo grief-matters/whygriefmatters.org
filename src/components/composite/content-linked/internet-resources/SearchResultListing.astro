@@ -1,0 +1,84 @@
+---
+import type { NormalisedResource } from "@content/utils/normaliseResourceForSearch";
+
+import { getResourceFilterAttrs } from "@ui/utils/content/resourceFilterAttrs";
+
+import Badge from "@ui/base/Badge.astro";
+import Icon from "@ui/base/Icon.astro";
+import LinkComp from "@ui/base/Link.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+
+interface Props {
+  resource: NormalisedResource;
+}
+
+const { resource } = Astro.props;
+
+const filterAttrs = await getResourceFilterAttrs(resource.entry);
+
+const excerpt =
+  resource.descriptionPlain.length > 200
+    ? `${resource.descriptionPlain.slice(0, 200).trimEnd()}…`
+    : resource.descriptionPlain;
+---
+
+<article
+  {...filterAttrs}
+  id={`result--${resource.id}`}
+  data-search-card
+  data-result-id={resource.id}
+  data-resource-updated-at={resource.updatedAt}
+  hidden
+  class="border-b border-b-line-coolNeutral--default last:border-b-0 py-5"
+>
+  <div class="flex gap-4">
+    <div class="min-w-0 flex-1">
+      <Stack spacing={2}>
+        <div class="flex items-start justify-between gap-3 flex-wrap">
+          <LinkComp external variant="title-4" to={resource.primaryUrl!}>
+            <h3 id={resource.id} class="inline m-0" set:text={resource.title} />
+            <span class="inline-block">
+              <Icon
+                size={2}
+                colorVariant="primary"
+                getIcon={(icons) => icons.arrowTopRightOnSquare}
+              />
+            </span>
+          </LinkComp>
+          <Badge label={resource.typeLabel} />
+        </div>
+        {
+          resource.source && (
+            <Typography variant="subtitle-1">
+              {resource.source.url ? (
+                <>
+                  {"From "}
+                  <LinkComp
+                    external
+                    variant="subtitle-1"
+                    to={resource.source.url}
+                    label={resource.source.label}
+                  />
+                </>
+              ) : (
+                <span set:text={`by ${resource.source.label}`} />
+              )}
+            </Typography>
+          )
+        }
+        {excerpt && <Typography set:text={excerpt} />}
+      </Stack>
+    </div>
+  </div>
+</article>
+
+<style>
+  article[data-search-card][hidden] {
+    display: none;
+  }
+  article[data-search-card] {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 180px;
+  }
+</style>
