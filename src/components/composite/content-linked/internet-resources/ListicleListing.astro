@@ -82,10 +82,7 @@ const filterAttrs = await getResourceFilterAttrs(entry);
         </span>
       </LinkComp>
     </div>
-    <div
-      data-pagefind-ignore="index"
-      class:list={["space-y-1.5", "md:flex md:gap-1.5"]}
-    >
+    <div class:list={["space-y-1.5", "md:flex md:gap-1.5"]}>
       {
         processedSource !== null && (
           <div class:list={["flex gap-1.5 items-center"]}>
@@ -127,11 +124,7 @@ const filterAttrs = await getResourceFilterAttrs(entry);
   </Typography>
   <div class:list={["flex flex-wrap", gapMap[2], marginTopMap[3]]}>
     <Badge label={listOfLabels[entry.data.listOf]} />
-    {
-      entry.data.paywalled && (
-        <Badge label="Payment or Subscription Required" />
-      )
-    }
+    {entry.data.paywalled && <Badge label="Payment or Subscription Required" />}
     {
       isFacebookPage && (
         <Badge label="Facebook Account Required" colorVariant="primary" />

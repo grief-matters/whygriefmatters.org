@@ -48,7 +48,7 @@ const artworkUrl = entry.data.applePodcastArtworkUrl;
 const filterAttrs = await getResourceFilterAttrs(entry);
 ---
 
-<article {...filterAttrs} id={entry.id} data-pagefind-body>
+<article {...filterAttrs} id={entry.id}>
   <Stack spacing={2}>
     <header class="flex flex-col space-y-1.5">
       <div class="mb-1.5">
@@ -75,10 +75,7 @@ const filterAttrs = await getResourceFilterAttrs(entry);
           )
         }
       </div>
-      <div
-        data-pagefind-ignore="index"
-        class:list={["space-y-1.5", "md:flex md:gap-1.5"]}
-      >
+      <div class:list={["space-y-1.5", "md:flex md:gap-1.5"]}>
         {
           processedSource !== null && (
             <div class:list={["flex gap-1.5 items-center"]}>

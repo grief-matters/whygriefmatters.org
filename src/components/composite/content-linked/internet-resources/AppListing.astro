@@ -17,7 +17,7 @@ const { entry } = Astro.props;
 const filterAttrs = await getResourceFilterAttrs(entry);
 ---
 
-<article {...filterAttrs} id={entry.id} data-pagefind-body>
+<article {...filterAttrs} id={entry.id}>
   <Stack spacing={2}>
     <Typography as="h4" variant="title-4">
       {entry.data.title}
