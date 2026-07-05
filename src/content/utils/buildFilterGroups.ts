@@ -29,10 +29,19 @@ export interface FilterGroup {
   options: Array<FilterOption>;
 }
 
-const ENUM_FILTER_CONFIGS = [
-  { key: "audienceRole" as const, label: "Audience" },
-  { key: "supportedGriever" as const, label: "Supporting" },
-];
+type EnumFilterConfig = {
+  key: Exclude<FilterGroupKey, "mediaType" | TaxonomyFilterKey>;
+  label: string;
+};
+
+const AUDIENCE_FILTER_CONFIG: EnumFilterConfig = {
+  key: "audienceRole",
+  label: "Audience",
+};
+const SUPPORTED_GRIEVER_FILTER_CONFIG: EnumFilterConfig = {
+  key: "supportedGriever",
+  label: "Supporting",
+};
 
 export const CORE_FILTER_KEYS = new Set<FilterGroupKey>([
   "causesOfDeath",
@@ -45,12 +54,20 @@ interface BuildFilterGroupsArgs {
   displayedResources: Array<CollectionEntry<InternetResourceCollectionKey>>;
   index: ResourceIndex;
   excludeCollection?: TaxonomyPageKey;
+  /**
+   * Opt-in: include the Audience filter group. Off everywhere except `/search`
+   * — taxonomy routes express audience through the URL itself (the
+   * `/supporting-the-bereaved/...` split), so an in-page filter would be
+   * redundant.
+   */
+  includeAudience?: boolean;
 }
 
 export function buildFilterGroups({
   displayedResources,
   index,
   excludeCollection,
+  includeAudience = false,
 }: BuildFilterGroupsArgs): Array<FilterGroup> {
   const filterGroups: Array<FilterGroup> = [];
 
@@ -96,7 +113,11 @@ export function buildFilterGroups({
     displayedResources.map((r) => r.collection),
   );
 
-  for (const config of ENUM_FILTER_CONFIGS) {
+  const enumFilterConfigs: Array<EnumFilterConfig> = includeAudience
+    ? [AUDIENCE_FILTER_CONFIG, SUPPORTED_GRIEVER_FILTER_CONFIG]
+    : [SUPPORTED_GRIEVER_FILTER_CONFIG];
+
+  for (const config of enumFilterConfigs) {
     const present = new Set<string>();
     for (const resource of displayedResources) {
       const values = (

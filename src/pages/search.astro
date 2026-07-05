@@ -30,6 +30,7 @@ const resources: Array<NormalisedResource> = normalisedMaybe.filter(
 const filterGroups = buildFilterGroups({
   displayedResources: resources.map((r) => r.entry),
   index,
+  includeAudience: true,
 });
 
 const searchDocs = resources.map((r) => ({

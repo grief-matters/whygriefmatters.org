@@ -1,0 +1,71 @@
+---
+import { getCollection } from "astro:content";
+
+import { getResourceIndex } from "@content/utils/resourceIndex";
+import { buildAggregateEntryPageProps } from "@content/utils/buildEntryPageProps";
+
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+
+import Container from "@ui/base/Container.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Typography from "@ui/base/Typography.astro";
+
+import ResourceListingsOrchestrator from "@ui/scripted/resource-listings-controller/ResourceListingsOrchestrator.astro";
+
+const TARGET_SLUGS = [
+  "loss-from-miscarriage",
+  "loss-relating-to-infertility",
+  "neonatal-loss",
+  "stillbirth-loss",
+  "pregnancy-termination",
+] as const;
+
+const [allEntries, index] = await Promise.all([
+  getCollection("lossRelationships"),
+  getResourceIndex(),
+]);
+
+const entries = TARGET_SLUGS.map((slug) => {
+  const entry = allEntries.find((e) => e.data.slug === slug);
+  if (!entry) {
+    throw new Error(
+      `pregnancy-and-fertility: lossRelationship slug "${slug}" not found`,
+    );
+  }
+  return entry;
+});
+
+const { otherResources } = buildAggregateEntryPageProps(entries, index, {
+  audience: ["supporter", "professional"],
+});
+---
+
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={null}
+  >
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+      >
+        Supporting Pregnancy & Fertility Loss
+      </Typography>
+    </Spacer>
+  </PageHeaderLayout>
+
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <Container size={2}>
+      <ResourceListingsOrchestrator
+        recommendedResources={[]}
+        mainResources={otherResources}
+      />
+    </Container>
+  </LayoutSurface>
+</SitePageLayout>

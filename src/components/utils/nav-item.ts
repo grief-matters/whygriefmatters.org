@@ -62,21 +62,29 @@ export async function resolveNavItem(
  *  - When an entry point is set, base is `/{kebab-type}/{slug}` (singular ref
  *    type, matching the page routes under `src/pages/`). Otherwise the nav
  *    item is a filter-only search and base is `/explore-resources`.
+ *  - Audience is part of the route, not a query param: when `audienceRole`
+ *    does not include `"bereaved"`, the base is prefixed with
+ *    `/supporting-the-bereaved`. The CMS forbids mixing `bereaved` with
+ *    `supporter`/`professional`, so the split is binary.
  *  - One param key per taxonomy filter type, keyed by the kebab-cased plural
  *    collection key (e.g. `grief-types`, `loss-relationships`) to match what
  *    the in-page resource filter controller reads and what each resource's
  *    `data-resource-*` attrs are keyed by. Value = comma-joined slugs.
  *  - `media-type` param when present, value = comma-joined resource type names.
- *  - `audience-role` param when present, value = comma-joined audience roles.
  *  - `supported-griever` param when present, value = comma-joined griever types.
  *
  * Example:
- *   /cause-of-death/cancer?loss-relationships=parent,sibling&themes=guilt&media-type=podcast,article&audience-role=supporter&supported-griever=child
+ *   /supporting-the-bereaved/cause-of-death/cancer?loss-relationships=parent,sibling&themes=guilt&media-type=podcast,article&supported-griever=child
  */
 export function buildNavItemHref(navItem: ResolvedNavItem): string {
-  const base = navItem.entryPoint
+  const entryPath = navItem.entryPoint
     ? `/${kebabCase(navItem.entryPoint.type)}/${navItem.entryPoint.slug}`
     : "/explore-resources";
+  const supporting =
+    navItem.audienceRole !== null &&
+    navItem.audienceRole.length > 0 &&
+    !navItem.audienceRole.includes("bereaved");
+  const base = supporting ? `/supporting-the-bereaved${entryPath}` : entryPath;
   const params = new URLSearchParams();
 
   const byType = new Map<ResolvedTaxonomyRef["type"], string[]>();
@@ -94,10 +102,6 @@ export function buildNavItemHref(navItem: ResolvedNavItem): string {
 
   if (navItem.mediaTypes?.length) {
     params.set("media-type", navItem.mediaTypes.join(","));
-  }
-
-  if (navItem.audienceRole?.length) {
-    params.set("audience-role", navItem.audienceRole.join(","));
   }
 
   if (navItem.supportedGriever?.length) {

@@ -10,12 +10,12 @@ import {
 import TaxonomyEntryPage from "@ui/composite/content-linked/page-assemblies/TaxonomyEntryPage.astro";
 
 interface Props extends TaxonomyEntryPageData {
-  entry: CollectionEntry<"griefTypes">;
+  entry: CollectionEntry<"themes">;
 }
 
 export async function getStaticPaths() {
   const [entries, index] = await Promise.all([
-    getCollection("griefTypes"),
+    getCollection("themes"),
     getResourceIndex(),
   ]);
 
@@ -23,7 +23,9 @@ export async function getStaticPaths() {
     params: { slug: entry.data.slug },
     props: {
       entry,
-      ...buildEntryPageProps(entry, index, { audience: ["bereaved"] }),
+      ...buildEntryPageProps(entry, index, {
+        audience: ["supporter", "professional"],
+      }),
     },
   }));
 }
@@ -43,4 +45,5 @@ const {
   featuredResources={featuredResources}
   secondaryFeaturedResources={secondaryFeaturedResources}
   otherResources={otherResources}
+  showFeatured={false}
 />

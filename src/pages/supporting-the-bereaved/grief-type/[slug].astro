@@ -23,7 +23,9 @@ export async function getStaticPaths() {
     params: { slug: entry.data.slug },
     props: {
       entry,
-      ...buildEntryPageProps(entry, index, { audience: ["bereaved"] }),
+      ...buildEntryPageProps(entry, index, {
+        audience: ["supporter", "professional"],
+      }),
     },
   }));
 }
@@ -43,4 +45,5 @@ const {
   featuredResources={featuredResources}
   secondaryFeaturedResources={secondaryFeaturedResources}
   otherResources={otherResources}
+  showFeatured={false}
 />

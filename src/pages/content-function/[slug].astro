@@ -21,7 +21,10 @@ export async function getStaticPaths() {
 
   return entries.map((entry) => ({
     params: { slug: entry.data.slug },
-    props: { entry, ...buildEntryPageProps(entry, index) },
+    props: {
+      entry,
+      ...buildEntryPageProps(entry, index, { audience: ["bereaved"] }),
+    },
   }));
 }
 
