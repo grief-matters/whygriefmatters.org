@@ -96,12 +96,6 @@ export type AudienceRole = z.infer<typeof zAudienceRole>;
 export const zSupportedGriever = z.enum(["child", "teen"]);
 export type SupportedGriever = z.infer<typeof zSupportedGriever>;
 
-export const zAudienceFields = z.object({
-  audienceRole: z.array(zAudienceRole).nullable(),
-  supportedGriever: z.array(zSupportedGriever).nullable(),
-});
-export type AudienceFields = z.infer<typeof zAudienceFields>;
-
 /**
  * Available languages enumeration.
  */
@@ -110,7 +104,10 @@ export type AvailableLanguage = z.infer<typeof zAvailableLanguage>;
 
 /**
  * The standard Zod schema for a basic Internet Resource — mirrors the field
- * set produced by `createBaseInternetResourceSchema` in the CMS.
+ * set produced by `createBaseInternetResourceSchema` in the CMS. Includes
+ * audience fields so every resource type carries `audienceRole` /
+ * `supportedGriever` (essentialService is the lone exception and is defined
+ * from scratch rather than extending this).
  */
 export const zBasicInternetResource = z.object({
   id: z.string(),
@@ -125,6 +122,8 @@ export const zBasicInternetResource = z.object({
   registrationRequired: z.boolean(),
   skipLinkCheck: z.boolean(),
   skipLinkCheckReason: z.string().nullable(),
+  audienceRole: z.array(zAudienceRole),
+  supportedGriever: z.array(zSupportedGriever),
   lossRelationships: z.array(reference("lossRelationships")),
   causesOfDeath: z.array(reference("causesOfDeath")),
   themes: z.array(reference("themes")),
