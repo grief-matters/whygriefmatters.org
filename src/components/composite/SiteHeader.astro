@@ -35,8 +35,12 @@ const navTree = await getMainNav();
       "space-y-2 flex flex-wrap sm:flex-nowrap items-center gap-x-6 grow",
     ]}
   >
-    <a class="block basis-50" href="/">
+    <a class="block basis-50 relative" href="/">
       <img class:list={["h-16"]} src={logoUrl} alt={`${org.name} logo`} />
+      <span
+        class="block absolute left-0 -bottom-2 px-2 text-sm font-serif text-onSurface-primaryContrast--default bg-contentSurface-primaryContrast--muted rounded"
+        >Beta</span
+      >
     </a>
     <!-- Search Input -->
     <div class="grow min-w-0 max-w-75">
