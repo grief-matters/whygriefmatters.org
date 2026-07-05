@@ -1,5 +1,6 @@
 import { kebabCase } from "lodash";
 
+import { resourceTypeToCollectionKeyMap } from "@content/collections";
 import type {
   AudienceRole,
   InternetResourceType,
@@ -70,11 +71,14 @@ export async function resolveNavItem(
  *    collection key (e.g. `grief-types`, `loss-relationships`) to match what
  *    the in-page resource filter controller reads and what each resource's
  *    `data-resource-*` attrs are keyed by. Value = comma-joined slugs.
- *  - `media-type` param when present, value = comma-joined resource type names.
+ *  - `media-type` param when present, value = comma-joined kebab-cased
+ *    collection keys (e.g. `articles`, `podcast-episodes`), matching the
+ *    `data-resource-media-type` attrs the filter controller reads — not the
+ *    singular InternetResourceType names.
  *  - `supported-griever` param when present, value = comma-joined griever types.
  *
  * Example:
- *   /supporting-the-bereaved/cause-of-death/cancer?loss-relationships=parent,sibling&themes=guilt&media-type=podcast,article&supported-griever=child
+ *   /supporting-the-bereaved/cause-of-death/cancer?loss-relationships=parent,sibling&themes=guilt&media-type=podcasts,articles&supported-griever=child
  */
 export function buildNavItemHref(navItem: ResolvedNavItem): string {
   const entryPath = navItem.entryPoint
@@ -85,7 +89,19 @@ export function buildNavItemHref(navItem: ResolvedNavItem): string {
     navItem.audienceRole.length > 0 &&
     !navItem.audienceRole.includes("bereaved");
   const base = supporting ? `/supporting-the-bereaved${entryPath}` : entryPath;
-  const params = new URLSearchParams();
+
+  // Build the query string by hand rather than via URLSearchParams.toString():
+  // multi-value params are comma-joined, and URLSearchParams would percent-encode
+  // the separators to `%2C`. This mirrors the in-page resource filter controller
+  // (ResourceListingsOrchestrator's setActiveFilters), which keeps commas literal.
+  const parts: string[] = [];
+  const pushParam = (key: string, values: string[]) => {
+    if (values.length === 0) {
+      return;
+    }
+    const encoded = values.map((v) => encodeURIComponent(v)).join(",");
+    parts.push(`${encodeURIComponent(key)}=${encoded}`);
+  };
 
   const byType = new Map<ResolvedTaxonomyRef["type"], string[]>();
   for (const f of navItem.filters) {
@@ -94,20 +110,26 @@ export function buildNavItemHref(navItem: ResolvedNavItem): string {
     byType.set(f.type, list);
   }
   for (const [type, slugs] of byType) {
-    params.set(
-      kebabCase(taxonomyRefTypeToCollectionKey[type]),
-      slugs.join(","),
-    );
+    pushParam(kebabCase(taxonomyRefTypeToCollectionKey[type]), slugs);
   }
 
   if (navItem.mediaTypes?.length) {
-    params.set("media-type", navItem.mediaTypes.join(","));
+    // The resource filter matches on the kebab-cased collection key (e.g.
+    // `articles`, `podcast-episodes`) — see resourceFilterAttrs and
+    // buildFilterGroups — not the singular InternetResourceType. Map through
+    // resourceTypeToCollectionKeyMap so nav-item links match in-page filtering.
+    pushParam(
+      "media-type",
+      navItem.mediaTypes.map((t) =>
+        kebabCase(resourceTypeToCollectionKeyMap[t]),
+      ),
+    );
   }
 
   if (navItem.supportedGriever?.length) {
-    params.set("supported-griever", navItem.supportedGriever.join(","));
+    pushParam("supported-griever", navItem.supportedGriever);
   }
 
-  const qs = params.toString();
+  const qs = parts.join("&");
   return qs ? `${base}?${qs}` : base;
 }

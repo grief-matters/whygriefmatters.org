@@ -3,7 +3,8 @@
   "content": coalesce(content[]{
     _type == 'headingText' => {
       "contentType": _type,
-      text
+      text,
+      "headingLevel": coalesce(headingLevel, "h1")
     },
     _type == "richTextContentBlock" => {
       "contentType": _type,
@@ -13,6 +14,7 @@
     _type == "richTextWithHeading" => {
       "contentType": _type,
       "headingText": heading.text,
+      "headingLevel": coalesce(headingLevel, "h1"),
       portableText
     },
     _type == "imageAssetRef" => {

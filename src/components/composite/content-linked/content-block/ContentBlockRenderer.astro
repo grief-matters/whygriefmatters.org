@@ -3,7 +3,9 @@ import { getEntry, type ReferenceDataEntry } from "astro:content";
 
 import Container from "@ui/base/Container.astro";
 import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
-import Typography from "@ui/base/Typography.astro";
+import Typography, {
+  type TypographyTextElement,
+} from "@ui/base/Typography.astro";
 import FeaturedResourceRenderer from "../internet-resources/FeaturedResourceRenderer.astro";
 import Slider from "@ui/layouts/slider/Slider.astro";
 import Slide from "@ui/layouts/slider/Slide.astro";
@@ -11,6 +13,8 @@ import { assertNever } from "@ui/utils/ts-utils";
 import FeaturedNavListItem from "../FeaturedNavListItem.astro";
 import EmphasizedNavListItem from "../EmphasizedNavListItem.astro";
 import ImageRowRenderer from "./ImageRowRenderer.astro";
+import type { ContentBlockHeadingLevel } from "@content/model/shared/headingLevel";
+import type { TextPreset } from "@styles/utils/typography";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
@@ -20,6 +24,20 @@ interface Props {
 const { contentBlockRef, textAlign = "center" } = Astro.props;
 
 const contentBlock = await getEntry(contentBlockRef);
+
+const headingLevelElMap: Record<
+  ContentBlockHeadingLevel,
+  TypographyTextElement
+> = {
+  h1: "h2",
+  h2: "h3",
+};
+
+const headingLevelTextPresetMap: Record<ContentBlockHeadingLevel, TextPreset> =
+  {
+    h1: "title-2",
+    h2: "title-4",
+  };
 ---
 
 {
@@ -28,7 +46,11 @@ const contentBlock = await getEntry(contentBlockRef);
       case "headingText":
         return (
           <Container paddingX={3}>
-            <Typography as="h2" variant="title-2" textAlign="center">
+            <Typography
+              as={headingLevelElMap[contentItem.headingLevel]}
+              variant={headingLevelTextPresetMap[contentItem.headingLevel]}
+              textAlign="center"
+            >
               {contentItem.text}
             </Typography>
           </Container>
@@ -48,7 +70,11 @@ const contentBlock = await getEntry(contentBlockRef);
       case "richTextWithHeading":
         return (
           <Container paddingX={3}>
-            <Typography as="h3" variant="title-3" textAlign="center">
+            <Typography
+              as={headingLevelElMap[contentItem.headingLevel]}
+              variant="title-3"
+              textAlign="center"
+            >
               {contentItem.headingText}
             </Typography>
             <PortableTextContentBlock
@@ -109,7 +135,7 @@ const contentBlock = await getEntry(contentBlockRef);
       case "navItems":
         return (
           <Container paddingX={3}>
-            <div class="flex flex-wrap justify-center gap-3">
+            <div class="flex flex-wrap justify-center gap-3 pb-4">
               {contentItem.items.map((item) => (
                 <EmphasizedNavListItem item={item} />
               ))}

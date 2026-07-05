@@ -10,7 +10,7 @@ import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 import Stack from "@ui/base/Stack.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
-import Button from "@ui/base/Button.astro";
+import Link from "@ui/base/Link.astro";
 import Typography from "@ui/base/Typography.astro";
 
 const org = await getOrganization();
@@ -80,15 +80,15 @@ const bgVar = `url(${heroImgUrl})`;
     </div>
     <div class:list={["w-full max-w-5xl"]}>
       <div class="w-full flex items-end justify-end pb-4">
-        <Button as="a" href={`/about/endorsements`}>
-          <Typography>
+        <Link to="/about/endorsements" colorVariant="primaryContrast">
+          <Typography colorVariant="primaryContrast">
             {"Read what "}
             <strong class="text-bold">
               {"Experts"}
             </strong>
             {" are saying"}
           </Typography>
-        </Button>
+        </Link>
       </div>
     </div>
   </div>
