@@ -1,5 +1,5 @@
 import { defineAction, ActionError } from "astro:actions";
-import { z } from "astro:schema";
+import { z } from "astro/zod";
 import { Resend } from "resend";
 import {
   RESEND_API_KEY,
@@ -13,9 +13,7 @@ import {
   type FieldErrors,
 } from "@lib/forms";
 
-type SubmitFormResult =
-  | { ok: true }
-  | { ok: false; fieldErrors: FieldErrors };
+type SubmitFormResult = { ok: true } | { ok: false; fieldErrors: FieldErrors };
 
 export const server = {
   submitForm: defineAction({

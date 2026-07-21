@@ -48,6 +48,7 @@ export const iconMap = {
   play: "play",
   phone: "phone",
   star: "star",
+  xMark: "x-mark",
 } as const;
 
 export const resourceTypeIconConfigMap: Record<

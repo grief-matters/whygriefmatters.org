@@ -1,9 +1,8 @@
 ---
 import type { NavTreeNode } from "@ui/utils/navigation-tree";
 
-import BackButton from "@ui/base/BackButton.astro";
-import Button from "@ui/base/Button.astro";
 import Icon from "@ui/base/Icon.astro";
+import IconTextButton from "@ui/base/IconTextButton.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import Typography from "@ui/base/Typography.astro";
 import TextButton from "@ui/base/TextButton.astro";
@@ -116,13 +115,11 @@ const tier4Sections = tier3Sections.flatMap(({ children }) =>
     <!-- Tier 1 Panel -->
     <div data-tier1-panel class:list={[...basePanelClasses]}>
       <div class="flex justify-end p-4">
-        <Button
+        <IconTextButton
           data-mobile-close
-          type="button"
-          styleVariant="outlined"
-          colorVariant="neutral"
-          textVariant="button-1"
+          getIcon={(icons) => icons.xMark}
           label="Close"
+          iconPosition="end"
         />
       </div>
       <div class:list={navContainerClasses}>
@@ -155,14 +152,16 @@ const tier4Sections = tier3Sections.flatMap(({ children }) =>
       class:list={[...basePanelClasses, ...transitionClasses]}
     >
       <header class="flex justify-between items-center p-4">
-        <BackButton data-mobile-back-to-tier1 />
-        <Button
+        <IconTextButton
+          getIcon={(icons) => icons.chevronLeft}
+          label="Back"
+          data-mobile-back-to-tier1
+        />
+        <IconTextButton
           data-mobile-close
-          type="button"
-          styleVariant="outlined"
-          colorVariant="neutral"
-          textVariant="button-1"
+          getIcon={(icons) => icons.xMark}
           label="Close"
+          iconPosition="end"
         />
       </header>
       {
@@ -201,13 +200,16 @@ const tier4Sections = tier3Sections.flatMap(({ children }) =>
         class:list={[...basePanelClasses, ...transitionClasses]}
       >
         <header class="flex justify-between items-center p-4">
-          <BackButton data-mobile-back-to-tier2 />
-          <Button
+          <IconTextButton
+            getIcon={(icons) => icons.chevronLeft}
+            label="Back"
+            data-mobile-back-to-tier2
+          />
+          <IconTextButton
             data-mobile-close
-            styleVariant="outlined"
-            colorVariant="neutral"
-            textVariant="button-1"
+            getIcon={(icons) => icons.xMark}
             label="Close"
+            iconPosition="end"
           />
         </header>
         {
@@ -250,13 +252,16 @@ const tier4Sections = tier3Sections.flatMap(({ children }) =>
           class:list={[...basePanelClasses, ...transitionClasses]}
         >
           <header class="flex justify-between items-center p-4">
-            <BackButton data-mobile-back-to-tier3 />
-            <Button
+            <IconTextButton
+              getIcon={(icons) => icons.chevronLeft}
+              label="Back"
+              data-mobile-back-to-tier3
+            />
+            <IconTextButton
               data-mobile-close
-              styleVariant="outlined"
-              colorVariant="neutral"
-              textVariant="button-1"
+              getIcon={(icons) => icons.xMark}
               label="Close"
+              iconPosition="end"
             />
           </header>
           {

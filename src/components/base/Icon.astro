@@ -296,6 +296,14 @@ const classes = [
               d="M4.5 12.75l6 6 9-13.5"
             />
           );
+        case "x-mark":
+          return (
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18 18 6M6 6l12 12"
+            />
+          );
         default:
           assertNever(icon);
       }

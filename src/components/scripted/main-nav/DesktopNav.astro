@@ -1,13 +1,13 @@
 ---
-import { paddingXSettingMap, paddingYSettingMap } from "@styles/utils/spacing";
+import { paddingXSettingMap } from "@styles/utils/spacing";
 
 import type { NavTreeNode } from "@ui/utils/navigation-tree";
 
+import IconTextButton from "@ui/base/IconTextButton.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
-import Button from "@ui/base/Button.astro";
-import Stack from "@ui/base/Stack.astro";
-import Typography from "@ui/base/Typography.astro";
 import NavTreeLink from "@ui/composite/content-linked/NavTreeLink.astro";
+
+import MegaNavBranch from "./MegaNavBranch.astro";
 
 interface Props {
   navTree: NavTreeNode[];
@@ -17,41 +17,28 @@ const { navTree } = Astro.props;
 
 /**
  * Path-based stable keys for the controller's data attributes.
- * Top-level items are "0", "1", ...; children are "0.0", "0.1", ...
+ * Top-level items are "0", "1", ...
  */
 const tier1Items = navTree.map((node, i) => ({
   key: String(i),
   node,
 }));
 
-const tier2Sections = tier1Items.flatMap(({ key: tier1Key, node }) => {
+/**
+ * One mega-nav panel per tier-1 group. Within a panel the tier-2 items split
+ * into loose "navigation items" (leaves) and groups. Leaves are collected into
+ * the first grid column; groups each occupy their own cell.
+ */
+const megaPanels = tier1Items.flatMap(({ key, node }) => {
   if (node.kind !== "navItemGroup") {
     return [];
   }
-  return [
-    {
-      tier1Key,
-      tier2List: node.items.map((child, j) => ({
-        key: `${tier1Key}.${j}`,
-        node: child,
-      })),
-    },
-  ];
-});
 
-const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
-  tier2List.flatMap(({ key: tier2Key, node }) => {
-    if (node.kind !== "navItemGroup") {
-      return [];
-    }
-    return [
-      {
-        tier2Key,
-        items: node.items,
-      },
-    ];
-  }),
-);
+  const leaves = node.items.filter((item) => item.kind !== "navItemGroup");
+  const groups = node.items.filter((item) => item.kind === "navItemGroup");
+
+  return [{ key, leaves, groups }];
+});
 ---
 
 <desktop-nav-controller>
@@ -104,140 +91,105 @@ const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
     </nav>
   </LayoutSurface>
 
-  <!-- Desktop mega-nav -->
+  <!-- Desktop mega-nav: fixed overlay acting as a modal underlay. It's anchored
+       to the BOTTOM of the nav bar so the nav stays uncovered above it, and the
+       blur/scrim fills the remaining viewport below. Clicking the backdrop
+       closes it. `--mega-nav-top` is set on open (see openMegaNav). -->
   <div
     data-mega-nav
-    hidden
     class:list={[
-      "shadow-lg",
-      "absolute left-0 right-0 z-40",
-      "max-w-7xl mx-auto",
-      "bg-contentSurface-primary--default",
+      "group",
+      // Note: `transition` (not `transition-all`) so the `top` change on open
+      // isn't animated — only the blur + scrim fade.
+      "transition duration-300",
+      "fixed inset-x-0 bottom-0 z-40",
+      "overflow-y-auto",
+      // Closed: transparent + non-interactive so the transition has somewhere
+      // to animate from and the invisible overlay doesn't swallow clicks.
+      "pointer-events-none backdrop-blur-none bg-black/0",
+      // Open: blur + scrim fade in.
+      "data-open:pointer-events-auto data-open:backdrop-blur-xs data-open:bg-black/25",
     ]}
+    style="top: var(--mega-nav-top, 0px);"
   >
-    <nav class="grid grid-cols-[280px_1fr]">
-      <!-- Left pane: Tier 2 items -->
-      <div data-mega-tier2-pane class="py-12">
-        {
-          tier2Sections.map(({ tier1Key, tier2List }) => (
-            <ul data-mega-tier2-list={tier1Key} hidden>
-              {tier2List.map(({ key, node }, i) =>
-                node.kind === "navItemGroup" ? (
-                  <li>
-                    <button
-                      type="button"
-                      data-mega-tier2-btn={key}
-                      data-parent-tier1={tier1Key}
-                      data-first={i === 0 ? "" : undefined}
-                      class:list={[
-                        "font-bold font-serif text-left",
-                        "cursor-pointer",
-                        "w-full",
-                        paddingXSettingMap[4],
-                        paddingYSettingMap[2],
-                        "text-onSurface-primary--default",
-                        "transition-colors",
-                        "hover:bg-layoutSurface-primary--1 data-active:bg-layoutSurface-neutral--1",
-                        "border-l-4 border-transparent data-active:border-line-brand--accent",
-                      ]}
-                    >
-                      {node.label}
-                    </button>
-                  </li>
-                ) : (
-                  <li
-                    class:list={[
-                      paddingXSettingMap[4],
-                      paddingYSettingMap[2],
-                      "border-l-4 border-transparent",
-                    ]}
-                  >
-                    <NavTreeLink
-                      node={node}
-                      variant="title-5"
-                      colorVariant="primary"
-                    />
-                  </li>
-                ),
-              )}
-            </ul>
-          ))
-        }
-      </div>
+    <div
+      data-mega-panels
+      class:list={[
+        "shadow-lg",
+        "bg-layoutSurface-neutral--1",
+        // Clip during the height morph (box-shadow is unaffected by overflow).
+        "overflow-hidden",
+        // Fades in/out with the underlay; `height` is animated from JS when
+        // switching between panels of differing heights.
+        "opacity-0 transition-[opacity,height] duration-300 ease-out",
+        "group-data-[open]:opacity-100",
+      ]}
+    >
+      {
+        megaPanels.map(({ key, leaves, groups }) => {
+          // The leaf column spans the rows the groups occupy across the two
+          // remaining columns; without leaves the groups use all three columns.
+          const groupRows = leaves.length
+            ? Math.max(1, Math.ceil(groups.length / 2))
+            : undefined;
 
-      <!-- Right pane: Tier 3 items -->
-      <div data-mega-tier3-pane class="py-4 px-8 bg-layoutSurface-neutral--1">
-        {
-          tier3Sections.map(({ tier2Key, items }) => (
+          return (
             <div
-              data-mega-tier3-section={tier2Key}
+              data-mega-panel={key}
               hidden
-              class="flex flex-col h-full"
+              class:list={[
+                "max-w-7xl mx-auto px-8 py-6",
+                // Panel content fades independently of the box so it can be
+                // staggered on open and cross-dissolved when switching panels.
+                "opacity-0 transition-opacity duration-200 ease-out",
+                "data-visible:opacity-100",
+              ]}
             >
-              <header class="flex justify-end mt-3 mb-4">
-                <Button
+              <header class="flex justify-end mb-4">
+                <IconTextButton
                   data-mega-close
-                  type="button"
-                  styleVariant="outlined"
-                  colorVariant="neutral"
-                  textVariant="button-1"
+                  getIcon={(icons) => icons.xMark}
                   label="Close"
+                  iconPosition="end"
                 />
               </header>
-              <ul class="space-y-3">
-                {items.map((node) => (
-                  <li>
-                    {node.kind !== "navItemGroup" ? (
-                      <NavTreeLink
-                        node={node}
-                        variant="body-2"
-                        colorVariant="warmNeutral"
-                      />
-                    ) : (
-                      <Fragment>
-                        <Typography
-                          as="span"
-                          variant="body-2"
-                          colorVariant="warmNeutral"
-                          set:text={node.label}
+
+              <div class="grid grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12 mb-16">
+                {leaves.length > 0 && (
+                  <ul
+                    class="space-y-2"
+                    style={`grid-column: 1; grid-row: 1 / span ${groupRows};`}
+                  >
+                    {leaves.map((node) => (
+                      <li>
+                        <NavTreeLink
+                          node={node}
+                          variant="title-5"
+                          colorVariant="primary"
                         />
-                        <div class="ml-4 mt-2 mb-1">
-                          <Stack>
-                            {node.items.map((child) => (
-                              <div>
-                                {child.kind !== "navItemGroup" ? (
-                                  <NavTreeLink
-                                    node={child}
-                                    colorVariant="warmNeutral"
-                                  />
-                                ) : (
-                                  <Typography
-                                    as="span"
-                                    colorVariant="warmNeutral"
-                                    set:text={child.label}
-                                  />
-                                )}
-                              </div>
-                            ))}
-                          </Stack>
-                        </div>
-                      </Fragment>
-                    )}
-                  </li>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {groups.map((node) => (
+                  <div>
+                    <MegaNavBranch node={node} depth={0} />
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
-          ))
-        }
-      </div>
-    </nav>
+          );
+        })
+      }
+    </div>
   </div>
 </desktop-nav-controller>
 
 <script is:inline>
   class DesktopNavController extends HTMLElement {
     selectedTier1Key = null;
-    selectedTier2Key = null;
+    panelTimers = [];
 
     connectedCallback() {
       this.setupHandlers();
@@ -256,20 +208,22 @@ const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
         });
       });
 
-      this.querySelectorAll("[data-mega-tier2-btn]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const tier2Key = btn.getAttribute("data-mega-tier2-btn");
-          this.selectTier2(tier2Key);
-        });
-      });
-
       this.querySelectorAll("[data-mega-close]").forEach((btn) => {
         btn?.addEventListener("click", () => this.closeMegaNav());
       });
 
+      // Clicking the underlay itself (the blurred backdrop / nav region, i.e.
+      // anywhere that isn't the panel content) closes it, like a modal.
+      const megaNav = this.querySelector("[data-mega-nav]");
+      megaNav?.addEventListener("click", (e) => {
+        if (e.target === megaNav) {
+          this.closeMegaNav();
+        }
+      });
+
       document.addEventListener("click", (e) => {
         const megaNav = this.querySelector("[data-mega-nav]");
-        if (megaNav && !megaNav.hasAttribute("hidden")) {
+        if (megaNav && megaNav.hasAttribute("data-open")) {
           const isInsideNav = this.contains(e.target);
           if (!isInsideNav) {
             this.closeMegaNav();
@@ -279,6 +233,10 @@ const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
     }
 
     openMegaNav(tier1Key) {
+      const megaNav = this.querySelector("[data-mega-nav]");
+      // Distinguish a fresh open (blur/box fade in, text staggered) from
+      // switching panels while already open (cross-dissolve the text).
+      const wasOpen = megaNav?.hasAttribute("data-open");
       this.selectedTier1Key = tier1Key;
 
       this.querySelectorAll("[data-tier1-btn]").forEach((btn) => {
@@ -292,73 +250,123 @@ const tier3Sections = tier2Sections.flatMap(({ tier2List }) =>
         }
       });
 
-      this.querySelectorAll("[data-mega-tier2-list]").forEach((list) => {
-        list.hidden = list.dataset.megaTier2List !== tier1Key;
-      });
-
-      const firstTier2Btn = this.querySelector(
-        `[data-mega-tier2-list="${tier1Key}"] [data-first]`,
-      );
-      if (firstTier2Btn) {
-        const firstTier2Key = firstTier2Btn.getAttribute("data-mega-tier2-btn");
-        this.selectTier2(firstTier2Key);
-      } else {
-        this.querySelectorAll("[data-mega-tier3-section]").forEach((s) => {
-          s.hidden = true;
-        });
+      const nav = this.querySelector("[data-desktop-nav]");
+      if (nav) {
+        // Overlay starts at the nav's bottom edge so the nav stays uncovered.
+        const bottom = nav.getBoundingClientRect().bottom;
+        megaNav?.style.setProperty("--mega-nav-top", `${bottom}px`);
       }
+      megaNav?.setAttribute("data-open", "");
+      document.body.style.overflow = "hidden";
 
-      const megaNav = this.querySelector("[data-mega-nav]");
-      megaNav?.removeAttribute("hidden");
+      this.activatePanel(tier1Key, { dissolve: wasOpen });
+    }
+
+    clearPanelTimers() {
+      this.panelTimers.forEach(clearTimeout);
+      this.panelTimers = [];
+    }
+
+    /**
+     * Shows the panel for `key`, mounting/unmounting the others.
+     * - Fresh open: fade the panel's text in after a short delay so it trails
+     *   the box fade.
+     * - Switching (`dissolve`): fade the current panel's text out, morph the
+     *   box height from the old panel's to the new panel's, then fade the new
+     *   text in — so panels of differing heights transition smoothly.
+     */
+    activatePanel(key, { dissolve } = {}) {
+      this.clearPanelTimers();
+
+      const box = this.querySelector("[data-mega-panels]");
+      const panels = Array.from(this.querySelectorAll("[data-mega-panel]"));
+      const next = panels.find((p) => p.dataset.megaPanel === key);
+      if (!next) return;
+
+      const current = panels.find((p) => p !== next && !p.hidden);
+
+      const fadeInNext = () =>
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => next.setAttribute("data-visible", "")),
+        );
+
+      if (dissolve && current) {
+        // 1) Fade the current text out.
+        current.removeAttribute("data-visible");
+
+        // 2) Once it's out, swap content and morph the box height.
+        this.panelTimers.push(
+          setTimeout(() => {
+            const start = box ? box.offsetHeight : 0; // old panel height
+
+            current.hidden = true;
+            current.removeAttribute("data-visible");
+            next.hidden = false;
+
+            if (box) {
+              const end = box.offsetHeight; // new panel's natural height
+              box.style.height = `${start}px`;
+              void box.offsetHeight; // reflow so the start height commits
+              requestAnimationFrame(() => {
+                box.style.height = `${end}px`;
+              });
+              // Release back to auto after the height transition completes.
+              this.panelTimers.push(
+                setTimeout(() => {
+                  box.style.height = "";
+                }, 300),
+              );
+            }
+
+            // 3) Fade the new text in as the box settles.
+            this.panelTimers.push(setTimeout(fadeInNext, 120));
+          }, 200),
+        );
+      } else {
+        // Fresh open: no height morph (box fades in at its natural size);
+        // stagger the text so it trails the box fade.
+        panels.forEach((p) => {
+          p.hidden = p !== next;
+          p.removeAttribute("data-visible");
+        });
+        if (box) box.style.height = "";
+        this.panelTimers.push(
+          setTimeout(() => next.setAttribute("data-visible", ""), 150),
+        );
+      }
     }
 
     closeMegaNav() {
       const megaNav = this.querySelector("[data-mega-nav]");
-      megaNav?.setAttribute("hidden", "");
+      megaNav?.removeAttribute("data-open");
+      document.body.style.overflow = "";
 
       this.querySelectorAll("[data-tier1-btn]").forEach((btn) => {
         btn.removeAttribute("data-active");
         btn.setAttribute("aria-expanded", "false");
       });
 
-      this.querySelectorAll("[data-mega-tier2-list]").forEach((list) => {
-        list.hidden = true;
-      });
-
-      this.querySelectorAll("[data-mega-tier3-section]").forEach((section) => {
-        section.hidden = true;
-      });
-
-      this.querySelectorAll("[data-mega-tier2-btn]").forEach((btn) => {
-        btn.removeAttribute("data-active");
-      });
+      // Let the box (and its text) fade out with the underlay, then unmount.
+      this.clearPanelTimers();
+      const box = this.querySelector("[data-mega-panels]");
+      this.panelTimers.push(
+        setTimeout(() => {
+          if (box) box.style.height = "";
+          this.querySelectorAll("[data-mega-panel]").forEach((panel) => {
+            panel.hidden = true;
+            panel.removeAttribute("data-visible");
+          });
+        }, 300),
+      );
 
       this.selectedTier1Key = null;
-      this.selectedTier2Key = null;
-    }
-
-    selectTier2(tier2Key) {
-      this.selectedTier2Key = tier2Key;
-
-      this.querySelectorAll("[data-mega-tier2-btn]").forEach((btn) => {
-        const btnKey = btn.getAttribute("data-mega-tier2-btn");
-        if (btnKey === tier2Key) {
-          btn.setAttribute("data-active", "");
-        } else {
-          btn.removeAttribute("data-active");
-        }
-      });
-
-      this.querySelectorAll("[data-mega-tier3-section]").forEach((section) => {
-        section.hidden = section.dataset.megaTier3Section !== tier2Key;
-      });
     }
 
     setupKeyboardHandlers() {
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
           const megaNav = this.querySelector("[data-mega-nav]");
-          if (megaNav && !megaNav.hasAttribute("hidden")) {
+          if (megaNav && megaNav.hasAttribute("data-open")) {
             this.closeMegaNav();
           }
         }

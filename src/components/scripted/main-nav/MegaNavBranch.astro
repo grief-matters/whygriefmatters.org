@@ -1,0 +1,52 @@
+---
+import type { TextPreset } from "@styles/utils/typography";
+
+import type { NavTreeNode } from "@ui/utils/navigation-tree";
+
+import Typography from "@ui/base/Typography.astro";
+import NavTreeLink from "@ui/composite/content-linked/NavTreeLink.astro";
+
+interface Props {
+  node: NavTreeNode;
+  depth?: number;
+}
+
+const { node, depth = 0 } = Astro.props;
+
+/**
+ * Text shrinks as we descend into nested tiers. Depth 0 is a tier-2 group
+ * heading; deeper tiers render within the same grid cell at smaller sizes.
+ */
+const headingVariants: TextPreset[] = ["title-5", "body-1", "body-small"];
+const linkVariants: TextPreset[] = ["body-2", "body-1", "body-small"];
+
+const clamp = (variants: TextPreset[]) =>
+  variants[Math.min(depth, variants.length - 1)];
+
+const headingVariant = clamp(headingVariants);
+const linkVariant = clamp(linkVariants);
+---
+
+{
+  node.kind === "navItemGroup" ? (
+    <div class:list={[depth > 0 && "mt-2"]}>
+      {node.label && (
+        <Typography
+          as="span"
+          variant={headingVariant}
+          colorVariant="primary"
+          set:text={node.label}
+        />
+      )}
+      <ul class:list={["mt-1 space-y-2", depth > 0 && "ml-3"]}>
+        {node.items.map((child) => (
+          <li>
+            <Astro.self node={child} depth={depth + 1} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : (
+    <NavTreeLink node={node} variant={linkVariant} colorVariant="primary" />
+  )
+}
