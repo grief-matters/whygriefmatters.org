@@ -1,8 +1,5 @@
 *[_type == "imageCollection"]{
   "id": _id,
   title,
-  "images": images[]{
-    image,
-    "altText": alt
-  }
+  "images": coalesce(imagesRef[]->._id, [])
 }

@@ -1,14 +1,14 @@
 ---
-import type { SanityImage } from "@content/model/image";
-
+import type { SanityImageData } from "@content/model/image";
 import ContentSurface from "./ContentSurface.astro";
 import SanityImageComp from "./SanityImage.astro";
 
 interface Props {
-  image: SanityImage | null;
+  image: SanityImageData | null;
+  name: string;
 }
 
-const { image } = Astro.props;
+const { image, name } = Astro.props;
 ---
 
 <ContentSurface
@@ -17,5 +17,14 @@ const { image } = Astro.props;
   variant="featureCard"
   class:list={["max-w-sm"]}
 >
-  <SanityImageComp useFallback={false} aspect="square" image={image} />
+  {
+    image !== null && (
+      <SanityImageComp
+        useFallback={false}
+        aspect="square"
+        image={{ image }}
+        alt={`Headshot of ${name}`}
+      />
+    )
+  }
 </ContentSurface>

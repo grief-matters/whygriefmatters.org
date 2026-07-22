@@ -1,17 +1,15 @@
-import type { CategoryTreeNode } from "./content/category";
+import type { NavTreeNode } from "./navigation-tree";
 import type { ResourceTypeCounts } from "./content/shared";
 
 type ResourceCountsMap = Map<string, ResourceTypeCounts>;
 type BuildCache = {
-  navTree: CategoryTreeNode[] | undefined;
+  navTrees: Map<string, NavTreeNode[]>;
   resourceTypeCounts: ResourceCountsMap;
   resourceTypeCountsPopulation: ResourceCountsMap;
-  resourceExistence: Set<string> | undefined;
 };
 
 export const buildCache: BuildCache = {
-  navTree: undefined,
+  navTrees: new Map<string, NavTreeNode[]>(),
   resourceTypeCounts: new Map<string, ResourceTypeCounts>(),
   resourceTypeCountsPopulation: new Map<string, ResourceTypeCounts>(),
-  resourceExistence: undefined,
 };

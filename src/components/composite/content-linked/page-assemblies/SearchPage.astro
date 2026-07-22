@@ -1,0 +1,98 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import type { FilterGroup } from "@content/utils/buildFilterGroups";
+import type { NormalisedResource } from "@content/utils/normaliseResourceForSearch";
+
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import Section from "@ui/layouts/Section.astro";
+
+import Container from "@ui/base/Container.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Typography from "@ui/base/Typography.astro";
+
+import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
+import SearchResultListing from "@ui/composite/content-linked/internet-resources/SearchResultListing.astro";
+
+import ResourceSearchController from "@ui/scripted/search-controller/ResourceSearchController.astro";
+import SearchFilterPanel from "@ui/scripted/search-controller/SearchFilterPanel.astro";
+
+interface SearchDoc {
+  id: string;
+  title: string;
+  searchAliases: string[];
+  description: string;
+  source: string;
+}
+
+interface Props {
+  contentGroup: CollectionEntry<"contentGroups">;
+  filterGroups: Array<FilterGroup>;
+  resources: Array<NormalisedResource>;
+  searchDocs: Array<SearchDoc>;
+}
+
+const { contentGroup, filterGroups, resources, searchDocs } = Astro.props;
+---
+
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={null}
+  >
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+      >
+        {contentGroup.data.title ?? contentGroup.data.name}
+      </Typography>
+      {
+        contentGroup.data.description && (
+          <Typography colorVariant="primaryContrast">
+            {contentGroup.data.description}
+          </Typography>
+        )
+      }
+    </Spacer>
+  </PageHeaderLayout>
+
+  {
+    contentGroup.data.contentBlocks.length > 0 && (
+      <Section>
+        {contentGroup.data.contentBlocks.map((block) => (
+          <ContentBlockRenderer textAlign="left" contentBlockRef={block} />
+        ))}
+      </Section>
+    )
+  }
+
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <Container size={2}>
+      <ResourceSearchController>
+        <SearchFilterPanel
+          slot="filter-panel"
+          filterGroups={filterGroups}
+          collapsible
+        />
+        {
+          resources.map((resource) => (
+            <SearchResultListing slot="results" resource={resource} />
+          ))
+        }
+      </ResourceSearchController>
+    </Container>
+  </LayoutSurface>
+
+  <script
+    is:inline
+    type="application/json"
+    id="search-index"
+    set:html={JSON.stringify(searchDocs)}
+  />
+</SitePageLayout>

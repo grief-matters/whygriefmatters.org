@@ -1,10 +1,8 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 
 import { zInternetResourceReference } from "../internetResource";
-import { zContentType } from "./contentType";
 
-export default z
-  .object({
-    contentType: z.literal(zContentType.Enum.featuredResource),
-  })
-  .merge(zInternetResourceReference);
+export const zFeaturedResourceContentItem = z.object({
+  contentType: z.literal("featuredResource"),
+  ...zInternetResourceReference.shape,
+});

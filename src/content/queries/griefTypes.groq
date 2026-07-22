@@ -1,0 +1,7 @@
+*[_type == 'griefType']{
+  "id": _id,
+  "slug": slug.current,
+  title,
+  description,
+  searchAliases,
+}

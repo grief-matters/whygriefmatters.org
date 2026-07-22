@@ -1,0 +1,49 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+
+import { getResourceIndex } from "@content/utils/resourceIndex";
+import {
+  buildEntryPageProps,
+  type TaxonomyEntryPageData,
+} from "@content/utils/buildEntryPageProps";
+
+import TaxonomyEntryPage from "@ui/composite/content-linked/page-assemblies/TaxonomyEntryPage.astro";
+
+interface Props extends TaxonomyEntryPageData {
+  entry: CollectionEntry<"griefPhases">;
+}
+
+export async function getStaticPaths() {
+  const [entries, index] = await Promise.all([
+    getCollection("griefPhases"),
+    getResourceIndex(),
+  ]);
+
+  return entries.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: {
+      entry,
+      ...buildEntryPageProps(entry, index, {
+        audience: ["supporter", "professional"],
+      }),
+    },
+  }));
+}
+
+const {
+  entry,
+  coverImage,
+  featuredResources,
+  secondaryFeaturedResources,
+  otherResources,
+} = Astro.props;
+---
+
+<TaxonomyEntryPage
+  entry={entry}
+  coverImage={coverImage}
+  featuredResources={featuredResources}
+  secondaryFeaturedResources={secondaryFeaturedResources}
+  otherResources={otherResources}
+  showFeatured={false}
+/>

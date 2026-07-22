@@ -24,6 +24,7 @@ export default defineConfig([
           ignoreRestSiblings: true,
         },
       ],
+      curly: "error",
     },
   },
 ]);

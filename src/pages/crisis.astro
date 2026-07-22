@@ -1,0 +1,142 @@
+---
+import { getCollection } from "astro:content";
+
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Container from "@ui/base/Container.astro";
+import ContentSurface from "@ui/base/ContentSurface.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Typography from "@ui/base/Typography.astro";
+
+import DemographicFilter from "@ui/scripted/DemographicFilter.astro";
+import InternetResourceListingRenderer from "@ui/composite/content-linked/internet-resources/InternetResourceListingRenderer.astro";
+import { getResourceFilterAttrs } from "@ui/utils/content/resourceFilterAttrs";
+
+const FEATURED_988_URL = "https://988lifeline.org/";
+
+const crisisResources = await getCollection("crisisResources");
+
+const featured988 = crisisResources.find(
+  (r) => r.data.resourceUrl === FEATURED_988_URL,
+);
+const otherResources = featured988
+  ? crisisResources.filter((r) => r.id !== featured988.id)
+  : crisisResources;
+
+const demographicRefIds = new Set<string>();
+for (const r of otherResources) {
+  for (const ref of r.data.demographics) {
+    demographicRefIds.add(ref.id);
+  }
+}
+
+const demographics = (await getCollection("demographics"))
+  .filter((d) => demographicRefIds.has(d.id))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+
+const resourcesWithAttrs = await Promise.all(
+  otherResources.map(async (entry) => ({
+    entry,
+    attrs: await getResourceFilterAttrs(entry),
+  })),
+);
+---
+
+<SitePageLayout>
+  <LayoutSurface
+    as="header"
+    colorVariant="primaryContrast"
+    colorVariantKey={1}
+    paddingX={2}
+    paddingY={5}
+  >
+    <Container>
+      <Typography
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+        marginBottom={2}
+      >
+        Crisis Resources
+      </Typography>
+      <Typography as="p" colorVariant="primaryContrast">
+        If you or someone you know is in crisis, these helplines and services
+        offer immediate support.
+      </Typography>
+    </Container>
+  </LayoutSurface>
+
+  <LayoutSurface colorVariantKey={2} as="section" paddingX={2} paddingY={5}>
+    <Container>
+      {
+        featured988 && (
+          <Spacer marginBottom={5}>
+            <ContentSurface
+              as="div"
+              variant="featureCard"
+              paddingX={4}
+              paddingY={4}
+            >
+              <InternetResourceListingRenderer entry={featured988} />
+            </ContentSurface>
+          </Spacer>
+        )
+      }
+
+      {
+        demographics.length > 0 && (
+          <Spacer marginBottom={4}>
+            <DemographicFilter
+              title="Filter Crisis Resources by Community"
+              demographics={demographics.map((d) => ({
+                slug: d.data.slug,
+                title: d.data.title,
+              }))}
+            />
+          </Spacer>
+        )
+      }
+    </Container>
+  </LayoutSurface>
+
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <Container>
+      <div data-crisis-list class="flex flex-col gap-6">
+        {
+          resourcesWithAttrs.map(({ entry, attrs }) => (
+            <div
+              data-resource-item
+              {...attrs}
+              class="not-last:border-b border-b-line-coolNeutral--default pb-4"
+            >
+              <InternetResourceListingRenderer entry={entry} />
+            </div>
+          ))
+        }
+      </div>
+    </Container>
+  </LayoutSurface>
+</SitePageLayout>
+
+<script>
+  document.addEventListener("demographicfilter", (event) => {
+    const slugs = (event as CustomEvent<{ slugs: string[] }>).detail.slugs;
+    const active = new Set(slugs);
+    const items = document.querySelectorAll<HTMLElement>(
+      "[data-crisis-list] [data-resource-item]",
+    );
+    items.forEach((item) => {
+      if (active.size === 0) {
+        item.style.display = "";
+        return;
+      }
+      const attr = item.getAttribute("data-resource-demographics") ?? "";
+      const itemDemographics = attr
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const matches = itemDemographics.some((s) => active.has(s));
+      item.style.display = matches ? "" : "none";
+    });
+  });
+</script>

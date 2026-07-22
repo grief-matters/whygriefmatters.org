@@ -1,0 +1,377 @@
+---
+import { kebabCase } from "lodash";
+
+import {
+  CORE_FILTER_KEYS,
+  type FilterGroup,
+} from "@content/utils/buildFilterGroups";
+
+import { textColorMap } from "@styles/utils/color";
+
+import ContentSurface from "@ui/base/ContentSurface.astro";
+import FilterButton from "@ui/base/FilterButton.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+
+interface Props {
+  filterGroups: Array<FilterGroup>;
+  collapsible?: boolean;
+}
+
+const { filterGroups, collapsible = false } = Astro.props;
+
+const coreGroups = filterGroups.filter((g) => CORE_FILTER_KEYS.has(g.key));
+const extraGroups = filterGroups.filter((g) => !CORE_FILTER_KEYS.has(g.key));
+
+const primaryGroups = coreGroups.length > 0 ? coreGroups : extraGroups;
+const togglableExtras = coreGroups.length > 0 ? extraGroups : [];
+
+const clearButtonClasses = [
+  "bg-contentSurface-neutral--default hover:bg-contentSurface-neutral--prominent",
+  "border border-line-neutral--default",
+  "hover:border-line-neutral--prominent",
+  "text-sm",
+  "font-sans-b",
+  "block",
+  " px-4",
+  "cursor-pointer",
+  "rounded-sm",
+  "transition-colors duration-300",
+  textColorMap.warmNeutral.default,
+];
+---
+
+{
+  filterGroups.length > 0 && (
+    <Spacer marginBottom={4}>
+      <div
+        data-filter-panel
+        data-panel-active="false"
+        data-panel-collapsed={collapsible ? "true" : "false"}
+        data-extras-visible="false"
+      >
+        <ContentSurface prominence="muted" paddingX={4}>
+          <Stack spacing={4}>
+            <div class="flex items-center justify-between gap-3 pt-5">
+              <Typography
+                as="h2"
+                colorVariant="warmNeutral"
+                variant="title-3"
+                set:text="Filter Options"
+              />
+              {collapsible && (
+                <button
+                  type="button"
+                  data-action="toggle-panel"
+                  class:list={["shrink-0 text-sm", ...clearButtonClasses]}
+                >
+                  <span data-panel-toggle-show>Show Options</span>
+                  <span data-panel-toggle-hide>Hide Options</span>
+                </button>
+              )}
+            </div>
+
+            <div data-panel-body>
+              <Stack spacing={4}>
+                <div class="flex items-start justify-between gap-3">
+                  <Typography
+                    colorVariant="warmNeutral"
+                    set:text="We understand that searching for the right resources can be overwhelming. Use the filter buttons to include only the resources relevant to you."
+                  />
+                  <button
+                    type="button"
+                    data-action="clear-all"
+                    class:list={["shrink-0 text-sm", ...clearButtonClasses]}
+                  >
+                    Clear all
+                  </button>
+                </div>
+
+                {primaryGroups.map((group) => {
+                  const groupKey = kebabCase(group.key);
+                  return (
+                    <Stack
+                      spacing={2}
+                      data-filter-group-key={groupKey}
+                      data-filter-group-active="false"
+                    >
+                      <div class="flex items-center gap-3">
+                        <Typography
+                          variant="title-5"
+                          colorVariant="warmNeutral"
+                          set:text={group.label}
+                        />
+                        <button
+                          type="button"
+                          data-action="clear-group"
+                          data-filter-group-key={groupKey}
+                          class:list={clearButtonClasses}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                      <div class="flex flex-wrap gap-2">
+                        {group.options.map((option) => (
+                          <FilterButton
+                            label={option.label}
+                            data-filter-key={groupKey}
+                            data-filter-value={option.value}
+                            data-filter-active="false"
+                          />
+                        ))}
+                      </div>
+                    </Stack>
+                  );
+                })}
+
+                {togglableExtras.length > 0 && (
+                  <>
+                    <div data-extra-filters>
+                      <Stack spacing={3}>
+                        {togglableExtras.map((group) => {
+                          const groupKey = kebabCase(group.key);
+                          return (
+                            <Stack
+                              spacing={2}
+                              data-filter-group-key={groupKey}
+                              data-filter-group-active="false"
+                            >
+                              <div class="flex items-center gap-3">
+                                <Typography
+                                  variant="title-5"
+                                  colorVariant="warmNeutral"
+                                  set:text={group.label}
+                                />
+                                <button
+                                  type="button"
+                                  data-action="clear-group"
+                                  data-filter-group-key={groupKey}
+                                  class:list={clearButtonClasses}
+                                >
+                                  Clear
+                                </button>
+                              </div>
+                              <div class="flex flex-wrap gap-2">
+                                {group.options.map((option) => (
+                                  <FilterButton
+                                    label={option.label}
+                                    data-filter-key={groupKey}
+                                    data-filter-value={option.value}
+                                    data-filter-active="false"
+                                  />
+                                ))}
+                              </div>
+                            </Stack>
+                          );
+                        })}
+                      </Stack>
+                    </div>
+                    <div class="mb-5">
+                      <button
+                        type="button"
+                        data-action="toggle-extras"
+                        class:list={[
+                          "self-start text-sm",
+                          ...clearButtonClasses,
+                        ]}
+                      >
+                        <span
+                          data-toggle-show
+                          set:text={`Show more filter options`}
+                        />
+                        <span data-toggle-hide>Show fewer filter options</span>
+                      </button>
+                    </div>
+                  </>
+                )}
+              </Stack>
+            </div>
+          </Stack>
+        </ContentSurface>
+      </div>
+    </Spacer>
+  )
+}
+
+<style>
+  [data-filter-panel][data-panel-active="false"] [data-action="clear-all"] {
+    display: none;
+  }
+
+  /* Collapsible mode: hide body and toggle the show/hide button labels. */
+  [data-filter-panel][data-panel-collapsed="true"] [data-panel-body] {
+    display: none;
+  }
+  [data-filter-panel][data-panel-collapsed="false"] [data-panel-toggle-show],
+  [data-filter-panel][data-panel-collapsed="true"] [data-panel-toggle-hide] {
+    display: none;
+  }
+  [data-filter-panel]
+    [data-filter-group-key][data-filter-group-active="false"]
+    [data-action="clear-group"] {
+    display: none;
+  }
+
+  /* Show More / Show Fewer disclosure for the non-core filter groups. */
+  [data-filter-panel][data-extras-visible="false"] [data-extra-filters] {
+    display: none;
+  }
+  [data-filter-panel][data-extras-visible="true"] [data-toggle-show],
+  [data-filter-panel][data-extras-visible="false"] [data-toggle-hide] {
+    display: none;
+  }
+
+  /*
+   * Filter button palette + state styling.
+   *
+   * Each filter group wrapper sets a small set of CSS custom properties
+   * (the "palette" for its taxonomy color). Buttons inside inherit them
+   * and switch between three prominence levels based on the group's
+   * data-filter-group-active and the button's own data-filter-active.
+   *
+   * We deliberately bypass the design-system colorVariant/prominence
+   * class-map ceremony here and consume the underlying CSS custom
+   * properties directly, because the prominence has to swap at runtime
+   * based on DOM state attributes — something Tailwind utility classes
+   * baked at build time can't express.
+   */
+
+  /* Neutral fallback first so per-taxonomy rules below override on equal
+     specificity. */
+  [data-filter-panel] [data-filter-group-key] {
+    --fb-bg-default: var(--color-contentSurface-neutral--default);
+    --fb-bg-prominent: var(--color-contentSurface-neutral--prominent);
+    --fb-bg-muted: transparent;
+    --fb-border-default: var(--color-line-neutral--default);
+    --fb-border-prominent: var(--color-line-neutral--prominent);
+    --fb-border-muted: var(--color-line-neutral--muted);
+    --fb-text: var(--color-onSurface-warmNeutral--default);
+  }
+
+  [data-filter-panel] [data-filter-group-key="loss-relationships"] {
+    --fb-bg-default: var(--color-contentSurface-primary--muted);
+    --fb-bg-prominent: var(--color-contentSurface-primary--default);
+    --fb-bg-muted: transparent;
+    --fb-border-default: var(--color-line-primary--default);
+    --fb-border-prominent: var(--color-line-primary--prominent);
+    --fb-border-muted: var(--color-line-primary--muted);
+    --fb-text: var(--color-onSurface-primary--default);
+  }
+
+  [data-filter-panel] [data-filter-group-key="causes-of-death"] {
+    --fb-bg-default: var(--color-contentSurface-secondary--muted);
+    --fb-bg-prominent: var(--color-contentSurface-secondary--default);
+    --fb-bg-muted: transparent;
+    --fb-border-default: var(--color-line-secondary--default);
+    --fb-border-prominent: var(--color-line-secondary--prominent);
+    --fb-border-muted: var(--color-line-secondary--muted);
+    --fb-text: var(--token-color-pink-30);
+  }
+
+  [data-filter-panel] [data-filter-group-key="themes"] {
+    --fb-bg-default: var(--color-contentSurface-tertiary--muted);
+    --fb-bg-prominent: var(--color-contentSurface-tertiary--default);
+    --fb-bg-muted: transparent;
+    --fb-border-default: var(--color-line-tertiary--default);
+    --fb-border-prominent: var(--color-line-tertiary--prominent);
+    --fb-border-muted: var(--color-line-tertiary--muted);
+    --fb-text: var(--token-color-green-30);
+  }
+
+  [data-filter-panel] [data-filter-group-key="demographics"] {
+    --fb-bg-default: var(--token-color-purple-95);
+    --fb-bg-prominent: var(--token-color-purple-92);
+    --fb-bg-muted: transparent;
+    --fb-border-default: var(--token-color-purple-87);
+    --fb-border-prominent: var(--token-color-purple-80);
+    --fb-border-muted: var(--token-color-purple-92);
+    --fb-text: var(--token-color-purple-30);
+  }
+
+  [data-filter-panel] [data-filter-group-key="grief-phases"] {
+    --fb-bg-default: var(--token-color-yellow-95);
+    --fb-bg-prominent: var(--token-color-yellow-92);
+    --fb-bg-muted: transparent;
+    --fb-border-default: var(--token-color-yellow-87);
+    --fb-border-prominent: var(--token-color-yellow-80);
+    --fb-border-muted: var(--token-color-yellow-92);
+    --fb-text: var(--token-color-yellow-30);
+  }
+
+  [data-filter-panel] [data-filter-group-key="grief-types"] {
+    --fb-bg-default: var(--token-color-orange-95);
+    --fb-bg-prominent: var(--token-color-orange-92);
+    --fb-bg-muted: transparent;
+    --fb-border-default: var(--token-color-orange-87);
+    --fb-border-prominent: var(--token-color-orange-80);
+    --fb-border-muted: var(--token-color-orange-92);
+    --fb-text: var(--token-color-orange-30);
+  }
+
+  [data-filter-panel] [data-filter-group-key="content-functions"] {
+    --fb-bg-default: var(--token-color-indigo-95);
+    --fb-bg-prominent: var(--token-color-indigo-92);
+    --fb-bg-muted: transparent;
+    --fb-border-default: var(--token-color-indigo-87);
+    --fb-border-prominent: var(--token-color-indigo-80);
+    --fb-border-muted: var(--token-color-indigo-92);
+    --fb-text: var(--token-color-indigo-30);
+  }
+
+  [data-filter-panel] [data-filter-group-key="emotional-states"] {
+    --fb-bg-default: var(--token-color-lime-95);
+    --fb-bg-prominent: var(--token-color-lime-92);
+    --fb-bg-muted: transparent;
+    --fb-border-default: var(--token-color-lime-87);
+    --fb-border-prominent: var(--token-color-lime-80);
+    --fb-border-muted: var(--token-color-lime-92);
+    --fb-text: var(--token-color-lime-30);
+  }
+
+  /* Text color is constant per palette — prominence is carried by
+     background and border only, so inactive buttons don't read as
+     disabled. */
+  [data-filter-panel] [data-filter-group-key] button[data-filter-active] {
+    color: var(--fb-text);
+  }
+
+  /* No filter active in this group → mid prominence */
+  [data-filter-panel]
+    [data-filter-group-active="false"]
+    button[data-filter-active] {
+    background-color: var(--fb-bg-default);
+    border-color: var(--fb-border-default);
+  }
+
+  /* Group has active filters, this button is one of them → prominent */
+  [data-filter-panel]
+    [data-filter-group-active="true"]
+    button[data-filter-active="true"] {
+    background-color: var(--fb-bg-prominent);
+    border-color: var(--fb-border-prominent);
+  }
+
+  /* Group has active filters, this button is not one of them → muted */
+  [data-filter-panel]
+    [data-filter-group-active="true"]
+    button[data-filter-active="false"] {
+    background-color: var(--fb-bg-muted);
+    border-color: var(--fb-border-muted);
+  }
+
+  /* Hover: bump non-active buttons up one prominence level. */
+  [data-filter-panel]
+    [data-filter-group-active="false"]
+    button[data-filter-active]:hover {
+    background-color: var(--fb-bg-prominent);
+    border-color: var(--fb-border-prominent);
+  }
+
+  [data-filter-panel]
+    [data-filter-group-active="true"]
+    button[data-filter-active="false"]:hover {
+    background-color: var(--fb-bg-default);
+    border-color: var(--fb-border-default);
+  }
+</style>

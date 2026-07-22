@@ -1,4 +1,4 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 
 const zFormFieldType = z.enum([
   "text",
@@ -22,6 +22,7 @@ const zFormField = z.object({
 
 export const zForm = z.object({
   id: z.string(),
+  formId: z.string(),
   title: z.string(),
   description: z.string().nullable(),
   fields: z.array(zFormField),

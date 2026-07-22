@@ -1,4 +1,4 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 
 /**
  * Create a Zod schema for a pre-existing Type

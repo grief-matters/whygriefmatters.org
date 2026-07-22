@@ -25,6 +25,7 @@ export const iconMap = {
   bookOpen: "book-open",
   chatBubbleLeftEllipsis: "chat-bubble-left-ellipsis",
   chatBubbleLeftRight: "chat-bubble-left-right",
+  check: "check",
   chevronLeft: "chevron-left",
   chevronRight: "chevron-right",
   computerDesktop: "computer-desktop",
@@ -47,6 +48,7 @@ export const iconMap = {
   play: "play",
   phone: "phone",
   star: "star",
+  xMark: "x-mark",
 } as const;
 
 export const resourceTypeIconConfigMap: Record<
@@ -73,7 +75,7 @@ export const resourceTypeIconConfigMap: Record<
     colorVariant: "secondary",
     icon: iconMap.chatBubbleLeftRight,
   },
-  website: {
+  externalOrg: {
     colorVariant: "tertiary",
     icon: iconMap.globeAlt,
   },
@@ -124,5 +126,17 @@ export const resourceTypeIconConfigMap: Record<
   webinar: {
     colorVariant: "tertiary",
     icon: iconMap.computerDesktop,
+  },
+  crisisResource: {
+    colorVariant: "coolNeutral",
+    icon: "academic-cap",
+  },
+  essentialService: {
+    colorVariant: "coolNeutral",
+    icon: "academic-cap",
+  },
+  listicle: {
+    colorVariant: "coolNeutral",
+    icon: "academic-cap",
   },
 };

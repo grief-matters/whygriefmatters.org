@@ -1,0 +1,42 @@
+---
+import type { OnSurfaceColorVariant } from "@styles/utils/color";
+import type { TextPreset } from "@styles/utils/typography";
+
+import type { StaticNavItem } from "@content/model/staticNavItem";
+
+import Link from "@ui/base/Link.astro";
+
+interface Props {
+  staticNavItem: StaticNavItem;
+  variant?: TextPreset;
+  colorVariant?: OnSurfaceColorVariant;
+  class?: string;
+}
+
+const {
+  staticNavItem,
+  variant = "body-2",
+  colorVariant = "warmNeutral",
+  class: className,
+} = Astro.props;
+---
+
+{
+  className ? (
+    <span class={className}>
+      <Link
+        to={staticNavItem.url}
+        label={staticNavItem.label}
+        variant={variant}
+        colorVariant={colorVariant}
+      />
+    </span>
+  ) : (
+    <Link
+      to={staticNavItem.url}
+      label={staticNavItem.label}
+      variant={variant}
+      colorVariant={colorVariant}
+    />
+  )
+}

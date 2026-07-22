@@ -1,12 +1,15 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
+import { getResourceFilterAttrs } from "@ui/utils/content/resourceFilterAttrs";
+
+import { gapMap, marginTopMap } from "@styles/utils/spacing";
+
+import Badge from "@ui/base/Badge.astro";
 import Icon from "@ui/base/Icon.astro";
 import LinkComp from "@ui/base/Link.astro";
-import Typography from "@ui/base/Typography.astro";
-
-import ResourceMetadataBadges from "./ResourceMetadataBadges.astro";
 import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
 
 interface Props {
   entry: CollectionEntry<"podcastEpisodes">;
@@ -15,9 +18,15 @@ interface Props {
 const { entry } = Astro.props;
 
 const parentPodcast = entry.data.parentPodcast;
+
+const filterAttrs = await getResourceFilterAttrs(entry);
 ---
 
-<article id={`resource--${entry.id}`} data-resource-type={entry.collection}>
+<article
+  {...filterAttrs}
+  id={`resource--${entry.id}`}
+  data-resource-type={entry.collection}
+>
   <Stack>
     <header>
       <div>
@@ -82,10 +91,17 @@ const parentPodcast = entry.data.parentPodcast;
         </div>
       )
     }
-    <ResourceMetadataBadges
-      hasSpanishVersion={entry.data.hasSpanishVersion}
-      registrationRequired={entry.data.registrationRequired}
-      paywalled={entry.data.paywalled}
-    />
+    {
+      (entry.data.paywalled || entry.data.registrationRequired) && (
+        <div class:list={["flex flex-wrap", gapMap[2], marginTopMap[3]]}>
+          {entry.data.paywalled && (
+            <Badge label="Payment or Subscription Required" />
+          )}
+          {entry.data.registrationRequired && (
+            <Badge label="Registration Required" />
+          )}
+        </div>
+      )
+    }
   </Stack>
 </article>

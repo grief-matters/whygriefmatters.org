@@ -1,6 +1,8 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
+import { getResourceFilterAttrs } from "@ui/utils/content/resourceFilterAttrs";
+
 import Badge from "@ui/base/Badge.astro";
 import StarRating from "@ui/base/StarRating.astro";
 import Typography from "@ui/base/Typography.astro";
@@ -11,9 +13,11 @@ interface Props {
 }
 
 const { entry } = Astro.props;
+
+const filterAttrs = await getResourceFilterAttrs(entry);
 ---
 
-<article id={entry.id} data-pagefind-body>
+<article {...filterAttrs} id={entry.id}>
   <Stack spacing={2}>
     <Typography as="h4" variant="title-4">
       {entry.data.title}

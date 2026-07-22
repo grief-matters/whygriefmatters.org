@@ -4,7 +4,7 @@ import { getEntry, type ReferenceDataEntry } from "astro:content";
 import type { BasicInternetResourceCollectionKey } from "@content/collections";
 
 import {
-  getSourceLinkFromWebsiteRef,
+  getSourceLinkFromExternalOrgRef,
   getSourceFromResourceUrl,
 } from "@ui/utils/content/content";
 
@@ -26,19 +26,19 @@ if (!data) {
   );
 }
 
-const source = data.sourceWebsiteId
-  ? await getSourceLinkFromWebsiteRef(data.sourceWebsiteId)
+const source = data.sourceOrgId
+  ? await getSourceLinkFromExternalOrgRef(data.sourceOrgId)
   : null;
 
 const safeSource = source ?? getSourceFromResourceUrl(data.resourceUrl);
 
-const image = data.image ? { image: data.image.image, altText: "" } : null;
+const image = data.imageAssetId ? await getEntry(data.imageAssetId) : null;
 ---
 
 <Card
   external
   fullHeight={fullHeight}
-  image={image}
+  image={image?.data}
   title={data.title}
   titleHref={data.resourceUrl}
 >

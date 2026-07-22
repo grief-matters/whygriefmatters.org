@@ -1,247 +1,384 @@
 ---
-import type {
-  InternetResourceCollectionKey,
-  InternetResourceEntries,
+import {
+  type InternetResourceCollectionKey,
+  type InternetResourceEntries,
 } from "@content/collections";
 
 import Stack from "@ui/base/Stack.astro";
 import Container from "@ui/base/Container.astro";
-import Button from "@ui/base/Button.astro";
 import ResourceListingRenderer from "@ui/composite/content-linked/internet-resources/ResourceListingRenderer.astro";
 
-import { paddingSettingMap, marginBottomMap } from "@styles/utils/spacing";
-
+import Button from "@ui/base/Button.astro";
+import ContentSurface from "@ui/base/ContentSurface.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Typography from "@ui/base/Typography.astro";
+import InternetResourceListingRenderer from "@ui/composite/content-linked/internet-resources/InternetResourceListingRenderer.astro";
 import JumpLinks from "./JumpLinks.astro";
-import ResourcesFilterPanel from "./ResourcesFilterPanel.astro";
+import type { CollectionEntry } from "astro:content";
+import { getResourceIndex } from "@content/utils/resourceIndex";
+import { buildFilterGroups } from "@content/utils/buildFilterGroups";
+import { type TaxonomyPageKey } from "@content/utils/taxonomy";
+import SearchFilterPanel from "@ui/scripted/search-controller/SearchFilterPanel.astro";
 
 interface Props {
-  resourceTypes: Array<InternetResourceCollectionKey>;
-  internetResources: InternetResourceEntries;
+  collection?: TaxonomyPageKey;
+  recommendedResources: Array<CollectionEntry<InternetResourceCollectionKey>>;
+  mainResources: InternetResourceEntries;
 }
 
-const { resourceTypes, internetResources } = Astro.props;
+const { collection, recommendedResources, mainResources } = Astro.props;
+
+const jumpResourceTypes = Object.keys(
+  mainResources,
+) as Array<InternetResourceCollectionKey>;
+
+const index = await getResourceIndex();
+
+const displayedResources: Array<
+  CollectionEntry<InternetResourceCollectionKey>
+> = [...recommendedResources, ...Object.values(mainResources).flat()];
+
+const filterGroups = buildFilterGroups({
+  displayedResources,
+  index,
+  excludeCollection: collection,
+});
 ---
 
 <resource-filter-controller>
-  <!-- Main content column -->
-  <Stack spacing={5}>
-    <Container>
-      <ResourcesFilterPanel resourceTypes={resourceTypes} />
-    </Container>
-    <div
-      class:list={[
-        "md:grid md:grid-cols-[1fr_auto] md:gap-6 lg:gap-12 lg:grid-cols-[1fr_auto_minmax(150px,1fr)]",
-      ]}
-    >
-      <!-- Desktop Jump To Nav (sticky sidebar) -->
-      <nav class="hidden md:block md:order-last" data-jump-nav>
-        <div class="md:sticky md:top-40 md:mt-12">
-          <JumpLinks resourceTypes={resourceTypes} />
-        </div>
-      </nav>
-
-      <!-- Mobile Jump To Button + Panel -->
-      <div class="md:hidden fixed bottom-4 right-4 z-10" data-mobile-jump>
-        <Button
-          data-mobile-jump-btn
-          label="Jump To"
-          textVariant="button-2"
-          colorVariant="neutral"
-          styleVariant="outlined"
-        />
-        <div
-          data-mobile-jump-panel
-          hidden
-          class:list={[
-            paddingSettingMap[3],
-            "bg-contentSurface-neutral--muted border border-line-neutral--default rounded-lg shadow-lg",
-          ]}
-        >
-          <div class:list={[marginBottomMap[2], "flex justify-between"]}>
-            <JumpLinks resourceTypes={resourceTypes} />
-            <button
-              data-mobile-jump-close
-              class="text-onSurface-coolNeutral--muted hover:text-onSurface-coolNeutral--default self-start"
+  <Spacer marginBottom={5}>
+    <SearchFilterPanel filterGroups={filterGroups} />
+    {
+      recommendedResources.length > 0 && (
+        <div data-filter-section>
+          <Spacer marginBottom={6}>
+            <ContentSurface
+              prominence="muted"
+              paddingY={4}
+              paddingX={4}
+              variant="primary"
             >
-              ✕
-            </button>
+              <Stack spacing={4} as="section">
+                <Typography
+                  as="h2"
+                  variant="title-3"
+                  set:text="Recommended Resources"
+                />
+                {recommendedResources.map((resource) => (
+                  <div
+                    data-resource-item
+                    class:list={[
+                      "not-last:pb-6",
+                      "not-last:border-b border-b-line-coolNeutral--default",
+                    ]}
+                  >
+                    <InternetResourceListingRenderer entry={resource} />
+                  </div>
+                ))}
+              </Stack>
+            </ContentSurface>
+          </Spacer>
+        </div>
+      )
+    }
+    <div class:list={["md:grid md:grid-cols-[1fr_auto] md:gap-6 lg:gap-12"]}>
+      <Container>
+        {
+          Object.keys(mainResources).length > 0 && (
+            <ResourceListingRenderer internetResources={mainResources} />
+          )
+        }
+      </Container>
+      {
+        jumpResourceTypes.length > 0 && (
+          <nav
+            class="hidden md:block"
+            data-jump-nav
+            aria-label="Jump to resource type"
+          >
+            <div class="md:sticky md:top-40 md:mt-12">
+              <JumpLinks resourceTypes={jumpResourceTypes} />
+            </div>
+          </nav>
+        )
+      }
+    </div>
+    {
+      jumpResourceTypes.length > 0 && (
+        <div class="md:hidden fixed bottom-4 right-4 z-10" data-mobile-jump>
+          <Button
+            as="button"
+            type="button"
+            data-mobile-jump-btn
+            label="Jump To"
+            textVariant="button-2"
+            colorVariant="neutral"
+            styleVariant="outlined"
+          />
+          <div
+            data-mobile-jump-panel
+            hidden
+            class="mt-2 p-3 bg-contentSurface-neutral--muted border border-line-neutral--default rounded-lg shadow-lg"
+          >
+            <div class="flex justify-between gap-3">
+              <JumpLinks resourceTypes={jumpResourceTypes} />
+              <button
+                type="button"
+                data-mobile-jump-close
+                aria-label="Close jump menu"
+                class="self-start text-onSurface-coolNeutral--muted hover:text-onSurface-coolNeutral--default"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="hidden lg:block"></div>
-      <Container data-pagefind-body>
-        <ResourceListingRenderer internetResources={internetResources} />
-      </Container>
-    </div>
-  </Stack>
+      )
+    }
+  </Spacer>
 </resource-filter-controller>
 
 <script>
+  type FilterMap = Map<string, Set<string>>;
+
   class ResourceFilterController extends HTMLElement {
-    private activeFilters: Set<string> = new Set();
+    private panel: HTMLElement | null = null;
 
     connectedCallback() {
-      const filterBtns = this.querySelectorAll("[data-filter-btn]");
-      const clearBtn = this.querySelector("[data-clear-filters]");
-
-      filterBtns.forEach((btn) => {
-        btn.addEventListener("click", () => this.toggleFilter(btn));
-      });
-
-      clearBtn?.addEventListener("click", () => this.clearFilters());
-
-      // Jump link click handlers
-      const jumpLinks = this.querySelectorAll("[data-jump-link]");
-      jumpLinks.forEach((link) => {
-        link.addEventListener("click", (e) => this.handleJumpClick(e, link));
-      });
-
-      // Back to top handlers
-      const backToTopLinks = this.querySelectorAll("[data-back-to-top]");
-      backToTopLinks.forEach((link) => {
-        link.addEventListener("click", (e) => this.handleBackToTop(e));
-      });
-
-      // Mobile panel toggle
-      const mobileBtn = this.querySelector("[data-mobile-jump-btn]");
-      const mobileCloseBtn = this.querySelector("[data-mobile-jump-close]");
-
-      mobileBtn?.addEventListener("click", () => this.toggleMobilePanel());
-      mobileCloseBtn?.addEventListener("click", () => this.toggleMobilePanel());
-
-      this.loadFiltersFromUrl();
+      this.panel = this.querySelector<HTMLElement>("[data-filter-panel]");
+      this.addEventListener("click", this.handleClick);
+      this.autoExpandIfActiveExtras();
+      this.applyFromUrl();
     }
 
-    toggleFilter(btn: Element) {
-      const resourceType = btn.getAttribute("data-resource-type");
-      if (!resourceType) return;
+    autoExpandIfActiveExtras() {
+      const active = this.getActiveFilters();
+      const extraKeys = new Set(
+        Array.from(
+          this.querySelectorAll<HTMLElement>(
+            "[data-extra-filters] [data-filter-group-key]",
+          ),
+        ).map((el) => el.dataset.filterGroupKey),
+      );
+      const hasActiveExtra = [...active.keys()].some((k) => extraKeys.has(k));
+      if (hasActiveExtra && this.panel) {
+        this.panel.dataset.extrasVisible = "true";
+      }
+    }
 
-      if (this.activeFilters.has(resourceType)) {
-        this.activeFilters.delete(resourceType);
-        btn.removeAttribute("data-active");
+    disconnectedCallback() {
+      this.removeEventListener("click", this.handleClick);
+    }
+
+    handleClick = (event: Event) => {
+      const target = event.target as Element | null;
+      if (!target) {
+        return;
+      }
+
+      const filterBtn = target.closest<HTMLElement>(
+        "[data-filter-key][data-filter-value]",
+      );
+      if (filterBtn) {
+        const key = filterBtn.dataset.filterKey;
+        const value = filterBtn.dataset.filterValue;
+        if (key && value) {
+          this.toggleFilter(key, value);
+        }
+        return;
+      }
+
+      const clearGroup = target.closest<HTMLElement>(
+        '[data-action="clear-group"]',
+      );
+      if (clearGroup) {
+        const key = clearGroup.dataset.filterGroupKey;
+        if (key) {
+          this.clearGroup(key);
+        }
+        return;
+      }
+
+      const clearAll = target.closest<HTMLElement>('[data-action="clear-all"]');
+      if (clearAll) {
+        this.clearAll();
+        return;
+      }
+
+      const toggleExtras = target.closest<HTMLElement>(
+        '[data-action="toggle-extras"]',
+      );
+      if (toggleExtras && this.panel) {
+        this.panel.dataset.extrasVisible =
+          this.panel.dataset.extrasVisible === "true" ? "false" : "true";
+        return;
+      }
+
+      const mobileToggle = target.closest<HTMLElement>(
+        "[data-mobile-jump-btn], [data-mobile-jump-close]",
+      );
+      if (mobileToggle) {
+        this.toggleMobilePanel();
+        return;
+      }
+
+      const backToTop = target.closest<HTMLElement>("[data-back-to-top]");
+      if (backToTop) {
+        event.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        if (backToTop.closest("[data-mobile-jump-panel]")) {
+          this.toggleMobilePanel();
+        }
+        return;
+      }
+
+      const jumpLink = target.closest<HTMLElement>("[data-jump-link]");
+      if (jumpLink && jumpLink.closest("[data-mobile-jump-panel]")) {
+        this.toggleMobilePanel();
+        return;
+      }
+    };
+
+    getActiveFilters(): FilterMap {
+      const params = new URLSearchParams(window.location.search);
+      const map: FilterMap = new Map();
+      for (const [k, v] of params) {
+        const set = new Set(v.split(",").filter(Boolean));
+        if (set.size > 0) {
+          map.set(k, set);
+        }
+      }
+      return map;
+    }
+
+    setActiveFilters(map: FilterMap) {
+      const parts: string[] = [];
+      for (const [k, set] of map) {
+        if (set.size === 0) {
+          continue;
+        }
+        const values = [...set].map((v) => encodeURIComponent(v)).join(",");
+        parts.push(`${encodeURIComponent(k)}=${values}`);
+      }
+      const qs = parts.join("&");
+      const newUrl = qs
+        ? `${window.location.pathname}?${qs}`
+        : window.location.pathname;
+      history.replaceState(null, "", newUrl);
+      this.applyFromUrl();
+    }
+
+    toggleFilter(group: string, value: string) {
+      const map = this.getActiveFilters();
+      const set = map.get(group) ?? new Set<string>();
+      if (set.has(value)) {
+        set.delete(value);
       } else {
-        this.activeFilters.add(resourceType);
-        btn.setAttribute("data-active", "");
+        set.add(value);
       }
-
-      this.applyFilters();
+      if (set.size > 0) {
+        map.set(group, set);
+      } else {
+        map.delete(group);
+      }
+      this.setActiveFilters(map);
     }
 
-    clearFilters() {
-      this.activeFilters.clear();
-      this.querySelectorAll("[data-filter-btn][data-active]").forEach((btn) => {
-        btn.removeAttribute("data-active");
-      });
-      this.applyFilters();
+    clearGroup(group: string) {
+      const map = this.getActiveFilters();
+      map.delete(group);
+      this.setActiveFilters(map);
     }
 
-    applyFilters() {
-      const sections = this.querySelectorAll("[data-resource-section]");
-
-      sections.forEach((section) => {
-        const sectionType = section.getAttribute("data-resource-section");
-        if (!sectionType) return;
-
-        if (
-          this.activeFilters.size === 0 ||
-          this.activeFilters.has(sectionType)
-        ) {
-          section.removeAttribute("hidden");
-        } else {
-          section.setAttribute("hidden", "");
-        }
-      });
-
-      this.updateJumpLinkStates();
-      this.syncFiltersToUrl();
-    }
-
-    handleJumpClick(e: Event, link: Element) {
-      e.preventDefault();
-      const resourceType = link.getAttribute("data-jump-link");
-      if (!resourceType) return;
-
-      const section = this.querySelector(`#${resourceType}`);
-
-      // If section is hidden by filters, add it to active filters
-      if (section?.hasAttribute("hidden")) {
-        const btn = this.querySelector(
-          `[data-filter-btn][data-resource-type="${resourceType}"]`,
-        );
-        if (btn && !this.activeFilters.has(resourceType)) {
-          this.activeFilters.add(resourceType);
-          btn.setAttribute("data-active", "");
-          this.applyFilters();
-        }
-      }
-
-      // Scroll to section and update URL hash
-      section?.scrollIntoView({ behavior: "smooth" });
-      history.pushState(null, "", `#${resourceType}`);
-
-      // Close mobile panel if open
-      const mobilePanel = this.querySelector("[data-mobile-jump-panel]");
-      if (mobilePanel && !mobilePanel.hasAttribute("hidden")) {
-        this.toggleMobilePanel();
-      }
-    }
-
-    handleBackToTop(e: Event) {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-
-      // Close mobile panel if open
-      const mobilePanel = this.querySelector("[data-mobile-jump-panel]");
-      if (mobilePanel && !mobilePanel.hasAttribute("hidden")) {
-        this.toggleMobilePanel();
-      }
+    clearAll() {
+      this.setActiveFilters(new Map());
     }
 
     toggleMobilePanel() {
-      const panel = this.querySelector("[data-mobile-jump-panel]");
-      const btn = this.querySelector("[data-mobile-jump-btn]");
+      const panel = this.querySelector<HTMLElement>("[data-mobile-jump-panel]");
+      const btn = this.querySelector<HTMLElement>("[data-mobile-jump-btn]");
       panel?.toggleAttribute("hidden");
       btn?.toggleAttribute("hidden");
     }
 
-    syncFiltersToUrl() {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("filter");
-      this.activeFilters.forEach((f) => url.searchParams.append("filter", f));
-      history.replaceState(null, "", url);
-    }
+    applyFromUrl() {
+      const active = this.getActiveFilters();
 
-    loadFiltersFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      const filters = params.getAll("filter");
-      if (filters.length === 0) return;
-
-      filters.forEach((filter) => {
-        const btn = this.querySelector(
-          `[data-filter-btn][data-resource-type="${filter}"]`,
-        );
-        if (btn) {
-          this.activeFilters.add(filter);
-          btn.setAttribute("data-active", "");
-        }
+      this.querySelectorAll<HTMLElement>(
+        "[data-filter-key][data-filter-value]",
+      ).forEach((btn) => {
+        const key = btn.dataset.filterKey;
+        const value = btn.dataset.filterValue;
+        const isActive = !!(key && value && active.get(key)?.has(value));
+        btn.dataset.filterActive = isActive ? "true" : "false";
       });
 
-      this.applyFilters();
-    }
+      this.querySelectorAll<HTMLElement>("[data-filter-group-key]").forEach(
+        (group) => {
+          const key = group.dataset.filterGroupKey;
+          const isActive = !!(key && (active.get(key)?.size ?? 0) > 0);
+          group.dataset.filterGroupActive = isActive ? "true" : "false";
+        },
+      );
 
-    updateJumpLinkStates() {
-      const jumpLinks = this.querySelectorAll("[data-jump-link]");
-      jumpLinks.forEach((link) => {
-        const resourceType = link.getAttribute("data-jump-link");
-        if (!resourceType) return;
+      const anyActive = [...active.values()].some((s) => s.size > 0);
+      if (this.panel) {
+        this.panel.dataset.panelActive = anyActive ? "true" : "false";
+      }
 
-        const section = this.querySelector(`#${resourceType}`);
-        if (section?.hasAttribute("hidden")) {
+      this.querySelectorAll<HTMLElement>("[data-resource-media-type]").forEach(
+        (res) => {
+          const matches = this.resourceMatches(res, active);
+          const target =
+            res.closest<HTMLElement>("[data-resource-item]") ?? res;
+          target.hidden = !matches;
+        },
+      );
+
+      this.querySelectorAll<HTMLElement>(
+        "[data-resource-section], [data-filter-section]",
+      ).forEach((section) => {
+        const items = section.querySelectorAll<HTMLElement>(
+          "[data-resource-media-type]",
+        );
+        if (items.length === 0) {
+          return;
+        }
+        const anyVisible = Array.from(items).some((r) => {
+          const target = r.closest<HTMLElement>("[data-resource-item]") ?? r;
+          return !target.hidden;
+        });
+        section.hidden = !anyVisible;
+      });
+
+      this.querySelectorAll<HTMLElement>("[data-jump-link]").forEach((link) => {
+        const type = link.dataset.jumpLink;
+        if (!type) {
+          return;
+        }
+        const section = this.querySelector<HTMLElement>(
+          `[data-resource-section="${type}"]`,
+        );
+        if (section?.hidden) {
           link.setAttribute("data-filtered", "");
         } else {
           link.removeAttribute("data-filtered");
         }
       });
+    }
+
+    resourceMatches(el: HTMLElement, active: FilterMap): boolean {
+      for (const [groupKey, activeSet] of active) {
+        if (activeSet.size === 0) {
+          continue;
+        }
+        const attr = el.getAttribute(`data-resource-${groupKey}`) ?? "";
+        const values = attr.split(",").filter(Boolean);
+        if (!values.some((v) => activeSet.has(v))) {
+          return false;
+        }
+      }
+      return true;
     }
   }
 

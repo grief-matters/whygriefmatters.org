@@ -3,7 +3,8 @@
   "content": coalesce(content[]{
     _type == 'headingText' => {
       "contentType": _type,
-      text
+      text,
+      "headingLevel": coalesce(headingLevel, "h1")
     },
     _type == "richTextContentBlock" => {
       "contentType": _type,
@@ -13,19 +14,16 @@
     _type == "richTextWithHeading" => {
       "contentType": _type,
       "headingText": heading.text,
+      "headingLevel": coalesce(headingLevel, "h1"),
       portableText
     },
-    _type == "accessibleImage" => {
-      "contentType": _type,
-      image,
-      "altText": alt
+    _type == "imageAssetRef" => {
+      "contentType": "imageAsset",
+      "refId": _ref
     },
     _type == "imageRow" => {
       "contentType": _type,
-      images[]{
-        image,
-        "altText": alt
-      }
+      "images": coalesce(imagesRef[]->._id, [])
     },
     _type == "featuredResource" => {
       "contentType": _type,
@@ -40,69 +38,86 @@
           "refId": _id
         },
         []
-      ),
+      )
     },
-    _type == "featuredWebsite" => {
-      "contentType": _type,
-      "refId": resource._ref,
-    },
-    _type == "featuredWebsites" => {
-      "contentType": _type,
-      "websites": coalesce(websites[]->._id, [])
-    },
-    _type == "featuredCrisisResource" => {
-      "contentType": _type,
-    },
-    _type == "resourceLinks" => {
-      "contentType": _type,
-        resources[]->{
-          "title": coalesce(title, name),
-          "url": resourceUrl,
-          "type": _type
-        }
-    },
-    _type == "relativeLink" => {
+    _type == "staticNavItem" => {
       "contentType": _type,
       label,
       url
     },
-    _type == "resourcePageLink" => {
+    _type == "navItem" => {
       "contentType": _type,
-      "category": category._ref,
       label,
-      "resourceTypes": type,
-      "population": population._ref
+      "entryPoint": entryPoint->{
+        "refType": _type,
+        "refId": _id
+      },
+      "filters": coalesce(filters[]->{
+        "refType": _type,
+        "refId": _id
+      }, []),
+      mediaTypes,
+      audienceRole,
+      supportedGriever
     },
-    _type == "categoryPageLink" => {
+    _type == "navItems" => {
       "contentType": _type,
-      "category": category._ref,
-      label
-    },
-    _type == "pageLinks" => {
-      "contentType": _type,
-      "emphasized": coalesce(isProminent, false),
-      "showImages": coalesce(showImages, false),
-      "links": links[]{
-        _type == "relativeLink" => {
-          "contentType": _type,
+      "items": coalesce(items[]{
+        _type == "navItem" => {
+          "kind": _type,
+          label,
+          "entryPoint": entryPoint->{
+            "refType": _type,
+            "refId": _id
+          },
+          "filters": coalesce(filters[]->{
+            "refType": _type,
+            "refId": _id
+          }, []),
+          mediaTypes,
+          audienceRole,
+          supportedGriever
+        },
+        _type == "staticNavItem" => {
+          "kind": _type,
           label,
           url
         },
-        _type == "resourcePageLink" => {
-          "contentType": _type,
-          "category": category._ref,
-          label,
-          "resourceTypes": type,
-          "population": population._ref
-        },
-        _type == "categoryPageLink" => {
-          "contentType": _type,
-          "category": category._ref,
-          label
-        },
-      },
+      }, [])
     },
-    // TODO: Wrap these references like the other content types
+    _type == "featuredNavItems" => {
+      "contentType": _type,
+      "items": coalesce(items[]{
+        _type == "navItem" => {
+          "kind": _type,
+          label,
+          "entryPoint": entryPoint->{
+            "refType": _type,
+            "refId": _id
+          },
+          "filters": coalesce(filters[]->{
+            "refType": _type,
+            "refId": _id
+          }, []),
+          mediaTypes,
+          audienceRole,
+          supportedGriever
+        },
+        _type == "staticNavItem" => {
+          "kind": _type,
+          label,
+          url
+        },
+      }, [])
+    },
+    _type == "resourceLinks" => {
+      "contentType": _type,
+      "resources": coalesce(resources[]->{
+        title,
+        "url": resourceUrl,
+        "type": _type
+      }, [])
+    },
     _type == "person" => {
       "contentType": _type,
       "refId": _ref

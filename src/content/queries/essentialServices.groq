@@ -1,0 +1,31 @@
+*[_type == 'essentialService']{
+  "id": _id,
+  "updatedAt": _updatedAt,
+  title,
+  description,
+  resourceUrl,
+  "sourceOrgId": sourceOrg->._id,
+  "imageAssetId": imageRef->._id,
+  "availableLanguages": coalesce(availableLanguages, []),
+  "paywalled": coalesce(paywalled, false),
+  "registrationRequired": coalesce(registrationRequired, false),
+  "skipLinkCheck": coalesce(skipLinkCheck, false),
+  skipLinkCheckReason,
+  "themes": coalesce(themes[]->._id, []),
+  "demographics": coalesce(demographics[]->._id, []),
+  "searchAliases": coalesce(searchAliases, []),
+  contactMethods[]{
+    contactType,
+    telephoneNumber,
+    smsBody,
+    email,
+    contactForm,
+    liveChatUrl,
+    availabilities[]{
+      days,
+      availableFrom,
+      availableTo,
+      timezone
+    }
+  }
+}

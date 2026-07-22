@@ -1,0 +1,237 @@
+---
+import ContentSurface from "@ui/base/ContentSurface.astro";
+import FilterButton from "@ui/base/FilterButton.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+
+type Props = {
+  title: string;
+  demographics: Array<{ slug: string; title: string }>;
+};
+
+const { title, demographics } = Astro.props;
+
+const clearButtonClasses = [
+  "bg-contentSurface-neutral--default hover:bg-contentSurface-neutral--prominent",
+  "border border-line-neutral--default",
+  "hover:border-line-neutral--prominent",
+  "text-sm",
+  "font-sans-b",
+  "block",
+  "px-4",
+  "cursor-pointer",
+  "rounded-sm",
+  "transition-colors duration-300",
+  "text-onSurface-warmNeutral--default",
+];
+---
+
+<demographic-filter class="block">
+  <ContentSurface as="div" prominence="muted" paddingX={4} paddingY={4}>
+    <Stack spacing={4}>
+      <div class="flex items-start justify-between gap-3">
+        <Typography
+          as="h2"
+          variant="title-4"
+          colorVariant="warmNeutral"
+          set:text={title}
+        />
+        <button
+          type="button"
+          data-action="clear-all"
+          class:list={["shrink-0", ...clearButtonClasses]}
+        >
+          Clear all
+        </button>
+      </div>
+
+      <div
+        data-filter-group-key="demographics"
+        data-filter-group-active="false"
+        class="flex flex-wrap gap-2"
+      >
+        {
+          demographics.map((d) => (
+            <FilterButton
+              label={d.title}
+              data-filter-value={d.slug}
+              data-filter-active="false"
+              type="button"
+            />
+          ))
+        }
+      </div>
+    </Stack>
+  </ContentSurface>
+</demographic-filter>
+
+<style>
+  /*
+   * Demographics filter palette — mirrors the demographics group in
+   * ResourceListingsOrchestrator so chips on this page read the same as on
+   * the taxonomy pages. The wrapper sets a small set of CSS custom
+   * properties (the "palette"); buttons inside switch between three
+   * prominence levels based on the group's data-filter-group-active and
+   * the button's own data-filter-active.
+   */
+  demographic-filter [data-filter-group-key="demographics"] {
+    --fb-bg-default: var(--token-color-purple-95);
+    --fb-bg-prominent: var(--token-color-purple-92);
+    --fb-bg-muted: transparent;
+    --fb-border-default: var(--token-color-purple-87);
+    --fb-border-prominent: var(--token-color-purple-80);
+    --fb-border-muted: var(--token-color-purple-92);
+    --fb-text: var(--token-color-purple-30);
+  }
+
+  demographic-filter
+    [data-filter-group-key="demographics"]
+    button[data-filter-active] {
+    color: var(--fb-text);
+  }
+
+  /* No filter active in this group → mid prominence */
+  demographic-filter
+    [data-filter-group-active="false"]
+    button[data-filter-active] {
+    background-color: var(--fb-bg-default);
+    border-color: var(--fb-border-default);
+  }
+
+  /* Group has active filters, this button is one of them → prominent */
+  demographic-filter
+    [data-filter-group-active="true"]
+    button[data-filter-active="true"] {
+    background-color: var(--fb-bg-prominent);
+    border-color: var(--fb-border-prominent);
+  }
+
+  /* Group has active filters, this button is not one of them → muted */
+  demographic-filter
+    [data-filter-group-active="true"]
+    button[data-filter-active="false"] {
+    background-color: var(--fb-bg-muted);
+    border-color: var(--fb-border-muted);
+  }
+
+  /* Hover: bump non-active buttons up one prominence level. */
+  demographic-filter
+    [data-filter-group-active="false"]
+    button[data-filter-active]:hover {
+    background-color: var(--fb-bg-prominent);
+    border-color: var(--fb-border-prominent);
+  }
+
+  demographic-filter
+    [data-filter-group-active="true"]
+    button[data-filter-active="false"]:hover {
+    background-color: var(--fb-bg-default);
+    border-color: var(--fb-border-default);
+  }
+</style>
+
+<script>
+  const PARAM = "demographics";
+  const EVENT = "demographicfilter";
+
+  class DemographicFilter extends HTMLElement {
+    connectedCallback() {
+      const active = this.readActiveFromUrl();
+
+      this.querySelectorAll<HTMLButtonElement>("[data-filter-value]").forEach(
+        (btn) => {
+          const slug = btn.dataset.filterValue;
+          if (!slug) {
+            return;
+          }
+          btn.addEventListener("click", () => this.toggle(slug));
+        },
+      );
+
+      const clearAll = this.querySelector<HTMLButtonElement>(
+        '[data-action="clear-all"]',
+      );
+      clearAll?.addEventListener("click", () => this.clearAll());
+
+      this.syncButtonStates(active);
+      this.syncGroupState(active);
+      this.emit([...active]);
+    }
+
+    readActiveFromUrl(): Set<string> {
+      const params = new URLSearchParams(window.location.search);
+      const raw = params.get(PARAM) ?? "";
+      return new Set(
+        raw
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+      );
+    }
+
+    writeActiveToUrl(active: Set<string>) {
+      const params = new URLSearchParams(window.location.search);
+      if (active.size === 0) {
+        params.delete(PARAM);
+      } else {
+        params.set(PARAM, [...active].join(","));
+      }
+      const qs = params.toString();
+      const newUrl = `${window.location.pathname}${qs ? `?${qs}` : ""}`;
+      window.history.replaceState({}, "", newUrl);
+    }
+
+    syncButtonStates(active: Set<string>) {
+      this.querySelectorAll<HTMLButtonElement>("[data-filter-value]").forEach(
+        (btn) => {
+          const s = btn.dataset.filterValue;
+          if (!s) {
+            return;
+          }
+          btn.setAttribute(
+            "data-filter-active",
+            active.has(s) ? "true" : "false",
+          );
+        },
+      );
+    }
+
+    syncGroupState(active: Set<string>) {
+      const group = this.querySelector<HTMLElement>(
+        '[data-filter-group-key="demographics"]',
+      );
+      group?.setAttribute(
+        "data-filter-group-active",
+        active.size > 0 ? "true" : "false",
+      );
+    }
+
+    toggle(slug: string) {
+      const active = this.readActiveFromUrl();
+      if (active.has(slug)) {
+        active.delete(slug);
+      } else {
+        active.add(slug);
+      }
+
+      this.writeActiveToUrl(active);
+      this.syncButtonStates(active);
+      this.syncGroupState(active);
+      this.emit([...active]);
+    }
+
+    clearAll() {
+      const active = new Set<string>();
+      this.writeActiveToUrl(active);
+      this.syncButtonStates(active);
+      this.syncGroupState(active);
+      this.emit([]);
+    }
+
+    emit(slugs: string[]) {
+      document.dispatchEvent(new CustomEvent(EVENT, { detail: { slugs } }));
+    }
+  }
+
+  customElements.define("demographic-filter", DemographicFilter);
+</script>

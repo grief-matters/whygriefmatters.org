@@ -1,8 +1,9 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 import { zNonEmptyString } from "../utils";
-import { zContentType } from "./contentType";
+import { zHeadingLevel } from "../shared/headingLevel";
 
-export default z.object({
-  contentType: z.literal(zContentType.Enum.headingText),
+export const zHeadingTextContentItem = z.object({
+  contentType: z.literal("headingText"),
   text: zNonEmptyString,
+  headingLevel: zHeadingLevel,
 });

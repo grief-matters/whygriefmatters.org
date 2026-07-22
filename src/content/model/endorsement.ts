@@ -1,4 +1,5 @@
-import { reference, z } from "astro:content";
+import { reference } from "astro:content";
+import { z } from "astro/zod";
 
 export const zEndorsement = z.object({
   id: z.string(),

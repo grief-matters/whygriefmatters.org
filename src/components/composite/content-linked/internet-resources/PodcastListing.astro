@@ -6,6 +6,7 @@ import Typography from "@ui/base/Typography.astro";
 import Stack from "@ui/base/Stack.astro";
 import Icon from "@ui/base/Icon.astro";
 import { getSourceFromResourceUrl } from "@ui/utils/content/content";
+import { getResourceFilterAttrs } from "@ui/utils/content/resourceFilterAttrs";
 import { getLocaleDateStringFromIsoString } from "@ui/utils/date";
 import { isLink, type Link } from "@ui/utils/link";
 import { resourceTypeIconConfigMap } from "@ui/utils/icon";
@@ -21,8 +22,8 @@ const { entry } = Astro.props;
 const lastReviewedDate = getLocaleDateStringFromIsoString(entry.data.updatedAt);
 
 let source: Link | null = null;
-if (entry.data.sourceWebsiteId) {
-  const sourceWebsiteEntry = await getEntry(entry.data.sourceWebsiteId);
+if (entry.data.sourceOrgId) {
+  const sourceWebsiteEntry = await getEntry(entry.data.sourceOrgId);
   source = {
     label: sourceWebsiteEntry.data.title,
     url: sourceWebsiteEntry.data.resourceUrl,
@@ -43,9 +44,11 @@ if (processedSource === null) {
 
 const iconConfig = resourceTypeIconConfigMap["podcast"];
 const artworkUrl = entry.data.applePodcastArtworkUrl;
+
+const filterAttrs = await getResourceFilterAttrs(entry);
 ---
 
-<article id={entry.id} data-pagefind-body>
+<article {...filterAttrs} id={entry.id}>
   <Stack spacing={2}>
     <header class="flex flex-col space-y-1.5">
       <div class="mb-1.5">
@@ -72,10 +75,7 @@ const artworkUrl = entry.data.applePodcastArtworkUrl;
           )
         }
       </div>
-      <div
-        data-pagefind-ignore="index"
-        class:list={["space-y-1.5", "md:flex md:gap-1.5"]}
-      >
+      <div class:list={["space-y-1.5", "md:flex md:gap-1.5"]}>
         {
           processedSource !== null && (
             <div class:list={["flex gap-1.5 items-center"]}>

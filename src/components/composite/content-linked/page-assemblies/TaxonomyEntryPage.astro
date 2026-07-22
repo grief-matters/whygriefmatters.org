@@ -1,0 +1,140 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import {
+  collectionKeyToResourceTypeMap,
+  type InternetResourceCollectionKey,
+  type InternetResourceEntries,
+} from "@content/collections";
+import type { SanityImage } from "@content/model/image";
+import { type TaxonomyPageKey } from "@content/utils/taxonomy";
+
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+import Slide from "@ui/layouts/slider/Slide.astro";
+import Slider from "@ui/layouts/slider/Slider.astro";
+
+import Container from "@ui/base/Container.astro";
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Typography from "@ui/base/Typography.astro";
+
+import FeaturedResourceRenderer from "@ui/composite/content-linked/internet-resources/FeaturedResourceRenderer.astro";
+import ResourceListingsOrchestrator from "@ui/scripted/resource-listings-controller/ResourceListingsOrchestrator.astro";
+import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
+
+interface Props {
+  entry: CollectionEntry<TaxonomyPageKey>;
+  coverImage?: SanityImage | null;
+  featuredResources?: Array<CollectionEntry<InternetResourceCollectionKey>>;
+  secondaryFeaturedResources?: Array<
+    CollectionEntry<InternetResourceCollectionKey>
+  >;
+  otherResources?: InternetResourceEntries;
+  showFeatured?: boolean;
+}
+
+const {
+  entry,
+  coverImage = null,
+  featuredResources = [],
+  secondaryFeaturedResources = [],
+  otherResources = {},
+  showFeatured = true,
+} = Astro.props;
+
+const title =
+  ("displayTitle" in entry.data ? entry.data.displayTitle : null) ??
+  entry.data.title;
+const shortDescription =
+  "shortDescription" in entry.data ? entry.data.shortDescription : null;
+const rawDescription =
+  "description" in entry.data ? entry.data.description : null;
+const richDescription = Array.isArray(rawDescription) ? rawDescription : null;
+const plainDescription =
+  typeof rawDescription === "string" ? rawDescription : null;
+---
+
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={coverImage}
+  >
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+      >
+        {title}
+      </Typography>
+      {
+        shortDescription && (
+          <Typography as="p" variant="body-2" colorVariant="primaryContrast">
+            {shortDescription}
+          </Typography>
+        )
+      }
+    </Spacer>
+  </PageHeaderLayout>
+
+  {
+    richDescription && (
+      <LayoutSurface as="section" paddingX={2} paddingY={5}>
+        <Container>
+          <PortableTextContentBlock portableText={richDescription} />
+        </Container>
+      </LayoutSurface>
+    )
+  }
+  {
+    plainDescription && (
+      <LayoutSurface as="section" paddingX={2} paddingY={5}>
+        <Container>
+          <Typography variant="body-1">{plainDescription}</Typography>
+        </Container>
+      </LayoutSurface>
+    )
+  }
+
+  {
+    showFeatured && featuredResources.length > 0 && (
+      <LayoutSurface paddingY={6} colorVariantKey={4}>
+        <Container>
+          <Typography
+            textAlign="center"
+            marginBottom={2}
+            as="h2"
+            variant="title-2"
+            set:text="Featured Resources"
+          />
+        </Container>
+        <Slider>
+          {featuredResources.map((resource) => (
+            <Slide paddingX={1} paddingY={4}>
+              <FeaturedResourceRenderer
+                fullHeight
+                resourceRef={resource.id}
+                resourceType={
+                  collectionKeyToResourceTypeMap[resource.collection]
+                }
+              />
+            </Slide>
+          ))}
+        </Slider>
+      </LayoutSurface>
+    )
+  }
+
+  <LayoutSurface as="section" paddingX={2} paddingY={5}>
+    <Container size={2}>
+      <ResourceListingsOrchestrator
+        collection={entry.collection}
+        recommendedResources={showFeatured ? secondaryFeaturedResources : []}
+        mainResources={otherResources}
+      />
+    </Container>
+  </LayoutSurface>
+</SitePageLayout>

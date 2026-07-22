@@ -1,0 +1,178 @@
+---
+import Typography from "@ui/base/Typography.astro";
+import type { FormField } from "@lib/forms";
+
+type Props = {
+  field: FormField;
+  error?: string[] | undefined;
+  defaultValue?: FormDataEntryValue | null;
+};
+
+const { field, error, defaultValue } = Astro.props;
+
+const inputId = `field-${field.name}`;
+const hasError = Boolean(error && error.length > 0);
+
+const baseInputClasses = [
+  "appearance-none",
+  "w-full",
+  "font-serif text-base",
+  "rounded",
+  "bg-contentSurface-neutral--prominent",
+  "text-onSurface-coolNeutral--default",
+  "py-1 px-3",
+  "leading-7",
+  "border",
+  hasError ? "border-red-700" : "border-line-neutral--default",
+];
+
+const defaultString = typeof defaultValue === "string" ? defaultValue : "";
+---
+
+<div class="flex flex-col gap-1">
+  {
+    field.type !== "checkbox" && (
+      <label for={inputId}>
+        <Typography as="span" bold>
+          {field.label}
+          {field.required ? " *" : ""}
+        </Typography>
+      </label>
+    )
+  }
+
+  {
+    field.description && field.type !== "checkbox" && (
+      <Typography as="p" variant="body-2" prominence="muted">
+        {field.description}
+      </Typography>
+    )
+  }
+
+  {
+    field.type === "text" && (
+      <input
+        id={inputId}
+        type="text"
+        name={field.name}
+        placeholder={field.placeholder ?? undefined}
+        required={field.required}
+        value={defaultString}
+        class:list={baseInputClasses}
+      />
+    )
+  }
+
+  {
+    field.type === "email" && (
+      <input
+        id={inputId}
+        type="email"
+        name={field.name}
+        placeholder={field.placeholder ?? undefined}
+        required={field.required}
+        value={defaultString}
+        class:list={baseInputClasses}
+      />
+    )
+  }
+
+  {
+    field.type === "number" && (
+      <input
+        id={inputId}
+        type="number"
+        name={field.name}
+        placeholder={field.placeholder ?? undefined}
+        required={field.required}
+        value={defaultString}
+        class:list={baseInputClasses}
+      />
+    )
+  }
+
+  {
+    field.type === "textarea" && (
+      <textarea
+        id={inputId}
+        name={field.name}
+        placeholder={field.placeholder ?? undefined}
+        required={field.required}
+        rows={5}
+        class:list={baseInputClasses}
+        set:text={defaultString}
+      />
+    )
+  }
+
+  {
+    field.type === "select" && (
+      <select
+        id={inputId}
+        name={field.name}
+        required={field.required}
+        class:list={baseInputClasses}
+      >
+        {!field.required && <option value="">Select an option</option>}
+        {field.inputOptions?.map((option) => (
+          <option value={option} selected={option === defaultString}>
+            {option}
+          </option>
+        ))}
+      </select>
+    )
+  }
+
+  {
+    field.type === "radio" && (
+      <div class="flex flex-col gap-2">
+        {field.inputOptions?.map((option, index) => (
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name={field.name}
+              value={option}
+              required={field.required && index === 0}
+              checked={option === defaultString}
+            />
+            <Typography as="span">{option}</Typography>
+          </label>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    field.type === "checkbox" && (
+      <label class="flex items-start gap-2 cursor-pointer">
+        <input
+          id={inputId}
+          type="checkbox"
+          name={field.name}
+          required={field.required}
+          checked={defaultString === "on" || defaultString === "true"}
+          class="mt-1.5"
+        />
+        <span class="flex flex-col gap-1">
+          <Typography as="span" bold>
+            {field.label}
+            {field.required ? " *" : ""}
+          </Typography>
+          {field.description && (
+            <Typography as="span" variant="body-2" prominence="muted">
+              {field.description}
+            </Typography>
+          )}
+        </span>
+      </label>
+    )
+  }
+
+  {
+    hasError && (
+      <p class="text-sm text-red-700 mt-1" role="alert">
+        {error![0]}
+      </p>
+    )
+  }
+</div>

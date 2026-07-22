@@ -1,0 +1,31 @@
+---
+import { resolveTaxonomyImage } from "@content/utils/taxonomy";
+
+import { buildNavItemHref, type ResolvedNavItem } from "@ui/utils/nav-item";
+
+import Card from "@ui/composite/Card.astro";
+
+interface Props {
+  navItem: ResolvedNavItem;
+  fullHeight?: boolean;
+}
+
+const { navItem, fullHeight } = Astro.props;
+
+const href = buildNavItemHref(navItem);
+const title = navItem.label ?? navItem.entryPoint?.title ?? "(untitled)";
+
+const image = navItem.entryPoint
+  ? await resolveTaxonomyImage({
+      refType: navItem.entryPoint.type,
+      refId: navItem.entryPoint.refId,
+    })
+  : null;
+---
+
+<Card
+  fullHeight={fullHeight}
+  image={image ?? undefined}
+  title={title}
+  titleHref={href}
+/>

@@ -1,0 +1,35 @@
+---
+import type { NavItem } from "@content/model/navItem";
+import type { StaticNavItem } from "@content/model/staticNavItem";
+
+import { resolveNavItem, type ResolvedNavItem } from "@ui/utils/nav-item";
+import Card from "@ui/composite/Card.astro";
+import FeaturedNavItem from "./FeaturedNavItem.astro";
+
+type Item =
+  | (NavItem & { kind: "navItem" })
+  | (StaticNavItem & { kind: "staticNavItem" });
+
+interface Props {
+  item: Item;
+  fullHeight?: boolean;
+}
+
+const { item, fullHeight } = Astro.props;
+
+let resolvedNavItem: ResolvedNavItem | null = null;
+if (item.kind === "navItem") {
+  const { kind: _kind, ...raw } = item;
+  resolvedNavItem = await resolveNavItem(raw);
+}
+---
+
+{
+  item.kind === "navItem" ? (
+    resolvedNavItem && (
+      <FeaturedNavItem fullHeight={fullHeight} navItem={resolvedNavItem} />
+    )
+  ) : (
+    <Card fullHeight={fullHeight} title={item.label} titleHref={item.url} />
+  )
+}

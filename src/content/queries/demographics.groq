@@ -1,0 +1,9 @@
+*[_type == 'demographic']{
+  "id": _id,
+  "slug": slug.current,
+  "title": name,
+  description,
+  "underserved": coalesce(underserved, false),
+  "imageAsset": imageRef->._id,
+  searchAliases,
+}

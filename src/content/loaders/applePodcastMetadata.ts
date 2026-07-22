@@ -1,7 +1,7 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 
 const zMetadata = z.object({
-  artworkUrl100: z.string().url().optional(),
+  artworkUrl100: z.url().optional(),
   artistName: z.string(),
   trackCount: z.number(),
 });

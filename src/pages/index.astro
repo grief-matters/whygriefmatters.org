@@ -10,10 +10,8 @@ import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
 import Stack from "@ui/base/Stack.astro";
 import LayoutSurface from "@ui/base/LayoutSurface.astro";
 import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
-import Button from "@ui/base/Button.astro";
+import Link from "@ui/base/Link.astro";
 import Typography from "@ui/base/Typography.astro";
-// import WdynrnNavigator from "@ui/scripted/WdynrnNavigator.astro";
-// import Container from "@ui/base/Container.astro";
 
 const org = await getOrganization();
 if (!org) {
@@ -25,11 +23,18 @@ if (!homePageEntry) {
   throw new Error('Could not get content entry: ["contentGroups", "home"]');
 }
 
-if (!homePageEntry.data.image) {
-  throw new Error("Essential content missing: [homePageEntry.data.image]");
+if (!homePageEntry.data.imageAssetId) {
+  throw new Error(
+    "Essential content missing: [homePageEntry.data.imageAssetId]",
+  );
 }
 
-const heroImgUrl = getImageUrlBuilder(homePageEntry.data.image?.image).url();
+const heroImageAsset = await getEntry(homePageEntry.data.imageAssetId);
+if (!heroImageAsset) {
+  throw new Error("Essential content missing: [home hero imageAsset entry]");
+}
+
+const heroImgUrl = getImageUrlBuilder(heroImageAsset.data.image).url();
 
 const logoUrl = org.logos.onDark
   ? getImageUrlBuilder(org.logos.onDark).url()
@@ -75,33 +80,18 @@ const bgVar = `url(${heroImgUrl})`;
     </div>
     <div class:list={["w-full max-w-5xl"]}>
       <div class="w-full flex items-end justify-end pb-4">
-        <Button as="a" href={`/about/endorsements`}>
-          <Typography>
+        <Link to="/about/endorsements" colorVariant="primaryContrast">
+          <Typography colorVariant="primaryContrast">
             {"Read what "}
             <strong class="text-bold">
               {"Experts"}
             </strong>
             {" are saying"}
           </Typography>
-        </Button>
+        </Link>
       </div>
     </div>
   </div>
-
-  {
-    /* hidden temporarily
-
-    <LayoutSurface
-      as="section"
-      colorVariant="primaryContrast"
-      colorVariantKey={2}
-      paddingY={3}
-    >
-      <Container paddingX={3}>
-        <WdynrnNavigator />
-      </Container>
-    </LayoutSurface> */
-  }
 
   {
     homePageEntry.data.contentBlocks.map((block, i) => (

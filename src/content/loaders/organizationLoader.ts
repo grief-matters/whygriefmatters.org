@@ -6,7 +6,9 @@ import organizationQuery from "@content/queries/organization.groq?raw";
 let cachedOrganization: Organization | undefined;
 
 export async function getOrganization() {
-  if (cachedOrganization) return cachedOrganization;
+  if (cachedOrganization) {
+    return cachedOrganization;
+  }
 
   const org = await loadSanityQuery({ query: organizationQuery });
   cachedOrganization = zOrganization.parse(org);

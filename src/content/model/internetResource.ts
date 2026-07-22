@@ -1,6 +1,17 @@
-import { reference, z } from "astro:content";
+import { reference } from "astro:content";
+import { z } from "astro/zod";
 
-import { zImage } from "./image";
+import { zPortableText } from "./portableText";
+
+/**
+ * Description shape. The CMS schema overhaul switched description to plain
+ * `text` but legacy records (notably crisis resources and essential services)
+ * still hold portable text. Accept both shapes until the CMS data migration
+ * lands.
+ */
+export const zResourceDescription = z
+  .union([z.string(), zPortableText])
+  .nullable();
 
 /**
  * For ordering and prioritization where needed, these are the most "important" resource types
@@ -11,11 +22,11 @@ export const primaryResourceTypes = [
   "peerSupport",
   "supportGroup",
   "therapyResource",
-  "website",
+  "externalOrg",
 ] as const;
 
 /**
- * For ordering and prioritization where needed, these are the most "important" resource types
+ * Secondary set of Internet Resource types
  */
 export const secondaryResourceTypes = [
   "app",
@@ -23,7 +34,10 @@ export const secondaryResourceTypes = [
   "book",
   "course",
   "community",
+  "crisisResource",
+  "essentialService",
   "forum",
+  "listicle",
   "memorial",
   "podcast",
   "podcastEpisode",
@@ -33,7 +47,8 @@ export const secondaryResourceTypes = [
 ] as const;
 
 /**
- * The complete set of Internet Resource types
+ * The complete set of Internet Resource types — must stay in sync with
+ * the CMS `shared/internet-resource.ts` list.
  */
 export const internetResourceTypes = [
   ...primaryResourceTypes,
@@ -43,28 +58,25 @@ export const zInternetResourceType = z.enum(internetResourceTypes);
 export type InternetResourceType = z.infer<typeof zInternetResourceType>;
 
 /**
- * Internet Resource Types that all share a common basic schema.
- * This should shrink over time as we develop the specifics of each type.
+ * Internet Resource Types that share the base internet resource schema with no extra fields.
+ * These collections can be loaded with the shared basic loader.
  */
 export const basicInternetResourceTypes: Array<InternetResourceType> = [
   "article",
   "blog",
-  "book",
   "community",
   "course",
   "forum",
   "memorial",
-  "peerSupport",
   "printedMaterial",
   "story",
-  "supportGroup",
-  "therapyResource",
   "video",
   "webinar",
 ] as const;
 
 /**
  * Use to create manual references where Astro 'astro:content.reference' cannot be used
+ * (e.g. inside ContentBlock items that point at heterogenous resource collections).
  */
 export const zInternetResourceReference = z.object({
   refType: z.enum(internetResourceTypes),
@@ -72,19 +84,55 @@ export const zInternetResourceReference = z.object({
 });
 
 /**
- * Default export is the standard Zod schema for a basic Internet Resource
+ * Audience role classification — whose lens the resource is produced for.
+ */
+export const zAudienceRole = z.enum(["bereaved", "supporter", "professional"]);
+export type AudienceRole = z.infer<typeof zAudienceRole>;
+
+/**
+ * Attributes of the bereaved person being supported. Only meaningful when
+ * `audienceRole` includes "supporter" or "professional".
+ */
+export const zSupportedGriever = z.enum(["child", "teen"]);
+export type SupportedGriever = z.infer<typeof zSupportedGriever>;
+
+/**
+ * Available languages enumeration.
+ */
+export const zAvailableLanguage = z.enum(["english", "spanish"]);
+export type AvailableLanguage = z.infer<typeof zAvailableLanguage>;
+
+/**
+ * The standard Zod schema for a basic Internet Resource — mirrors the field
+ * set produced by `createBaseInternetResourceSchema` in the CMS. Includes
+ * audience fields so every resource type carries `audienceRole` /
+ * `supportedGriever` (essentialService is the lone exception and is defined
+ * from scratch rather than extending this).
  */
 export const zBasicInternetResource = z.object({
   id: z.string(),
+  updatedAt: z.iso.datetime(),
   title: z.string(),
-  updatedAt: z.string().datetime(),
-  resourceUrl: z.string().url(),
-  description: z.string().nullable(),
-  image: zImage.nullable(),
-  sourceWebsiteId: reference("websites").nullable(),
-  categories: z.array(reference("categories")),
-  populations: z.array(reference("populations")),
-  hasSpanishVersion: z.boolean().optional(),
-  paywalled: z.boolean().optional(),
-  registrationRequired: z.boolean().optional(),
+  description: zResourceDescription,
+  resourceUrl: z.url(),
+  sourceOrgId: reference("externalOrgs").nullable(),
+  imageAssetId: reference("imageAssets").nullable(),
+  availableLanguages: z.array(zAvailableLanguage),
+  paywalled: z.boolean(),
+  registrationRequired: z.boolean(),
+  skipLinkCheck: z.boolean(),
+  skipLinkCheckReason: z.string().nullable(),
+  audienceRole: z.array(zAudienceRole),
+  supportedGriever: z.array(zSupportedGriever),
+  lossRelationships: z.array(reference("lossRelationships")),
+  causesOfDeath: z.array(reference("causesOfDeath")),
+  themes: z.array(reference("themes")),
+  demographics: z.array(reference("demographics")),
+  griefPhases: z.array(reference("griefPhases")),
+  griefTypes: z.array(reference("griefTypes")),
+  contentFunctions: z.array(reference("contentFunctions")),
+  emotionalStates: z.array(reference("emotionalStates")),
+  searchAliases: z.array(z.string()),
 });
+
+export type BasicInternetResource = z.infer<typeof zBasicInternetResource>;

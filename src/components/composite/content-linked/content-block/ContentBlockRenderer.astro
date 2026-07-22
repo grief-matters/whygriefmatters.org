@@ -1,29 +1,20 @@
 ---
 import { getEntry, type ReferenceDataEntry } from "astro:content";
 
-import type {
-  CategoryPageLinkContentItem,
-  ResourcePageLinkContentItem,
-} from "@content/model/contentBlock/pageLinksContentItem";
-
-import { gapMap } from "@styles/utils/spacing";
-import { assertNever } from "@ui/utils/ts-utils";
-
+import Container from "@ui/base/Container.astro";
+import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
+import Typography, {
+  type TypographyTextElement,
+} from "@ui/base/Typography.astro";
+import FeaturedResourceRenderer from "../internet-resources/FeaturedResourceRenderer.astro";
 import Slider from "@ui/layouts/slider/Slider.astro";
 import Slide from "@ui/layouts/slider/Slide.astro";
-
-import Container from "@ui/base/Container.astro";
-import Link from "@ui/base/Link.astro";
-import PortableTextContentBlock from "@ui/base/PortableTextContentBlock.astro";
-import Typography from "@ui/base/Typography.astro";
-import SanityImage from "@ui/base/SanityImage.astro";
-
-import FeaturedResourceRenderer from "../internet-resources/FeaturedResourceRenderer.astro";
-import FeaturedWebsite from "../internet-resources/FeaturedWebsite.astro";
-import ResourcePageLinkCard from "../category/ResourcePageLinkCard.astro";
-import PageLinksRenderer from "../PageLinksRenderer.astro";
-import DynamicPageLink from "../DynamicPageLink.astro";
-import PersonRenderer from "./PersonRenderer.astro";
+import { assertNever } from "@ui/utils/ts-utils";
+import FeaturedNavListItem from "../FeaturedNavListItem.astro";
+import EmphasizedNavListItem from "../EmphasizedNavListItem.astro";
+import ImageRowRenderer from "./ImageRowRenderer.astro";
+import type { ContentBlockHeadingLevel } from "@content/model/shared/headingLevel";
+import type { TextPreset } from "@styles/utils/typography";
 
 interface Props {
   contentBlockRef: ReferenceDataEntry<"contentBlocks", string>;
@@ -33,6 +24,20 @@ interface Props {
 const { contentBlockRef, textAlign = "center" } = Astro.props;
 
 const contentBlock = await getEntry(contentBlockRef);
+
+const headingLevelElMap: Record<
+  ContentBlockHeadingLevel,
+  TypographyTextElement
+> = {
+  h1: "h2",
+  h2: "h3",
+};
+
+const headingLevelTextPresetMap: Record<ContentBlockHeadingLevel, TextPreset> =
+  {
+    h1: "title-2",
+    h2: "title-4",
+  };
 ---
 
 {
@@ -41,7 +46,11 @@ const contentBlock = await getEntry(contentBlockRef);
       case "headingText":
         return (
           <Container paddingX={3}>
-            <Typography as="h2" variant="title-2" textAlign="center">
+            <Typography
+              as={headingLevelElMap[contentItem.headingLevel]}
+              variant={headingLevelTextPresetMap[contentItem.headingLevel]}
+              textAlign="center"
+            >
               {contentItem.text}
             </Typography>
           </Container>
@@ -61,46 +70,17 @@ const contentBlock = await getEntry(contentBlockRef);
       case "richTextWithHeading":
         return (
           <Container paddingX={3}>
-            <Typography as="h3" variant="title-3" textAlign="center">
+            <Typography
+              as={headingLevelElMap[contentItem.headingLevel]}
+              variant="title-3"
+              textAlign="center"
+            >
               {contentItem.headingText}
             </Typography>
             <PortableTextContentBlock
               textAlign={textAlign}
               portableText={contentItem.portableText}
             />
-          </Container>
-        );
-      case "accessibleImage":
-        return (
-          <Container>
-            <SanityImage
-              image={{ image: contentItem.image, altText: contentItem.altText }}
-            />
-          </Container>
-        );
-      case "imageRow":
-        return (
-          <Container size={2}>
-            <div
-              class:list={[
-                gapMap[3],
-                "grid grid-cols-1 md:grid-cols-2 md:px-3 lg:grid-cols-3",
-              ]}
-            >
-              {contentItem.images.map((img, index) => (
-                <div
-                  class={
-                    index === 0
-                      ? ""
-                      : index === 1
-                        ? "hidden md:block"
-                        : "hidden lg:block"
-                  }
-                >
-                  <SanityImage image={img} />
-                </div>
-              ))}
-            </div>
           </Container>
         );
       case "featuredResource":
@@ -111,6 +91,30 @@ const contentBlock = await getEntry(contentBlockRef);
               resourceType={contentItem.refType}
             />
           </Container>
+        );
+      case "featuredNavItems":
+        return (
+          <div class="max-w-6xl xl:mx-auto">
+            <div class="w-full overflow-hidden md:overflow-visible">
+              <div
+                class:list={[
+                  "flex overflow-x-auto snap-x snap-mandatory scroll-smooth",
+                  "md:grid md:grid-cols-3 md:gap-4 md:overflow-visible",
+                ]}
+              >
+                {contentItem.items.map((item) => (
+                  <div
+                    class:list={[
+                      "basis-xs shrink-0 grow snap-center max-w-sm px-1 py-2",
+                      "md:basis-auto md:max-w-none md:p-0",
+                    ]}
+                  >
+                    <FeaturedNavListItem fullHeight item={item} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         );
       case "featuredResources":
         return (
@@ -126,97 +130,34 @@ const contentBlock = await getEntry(contentBlockRef);
             ))}
           </Slider>
         );
-      case "featuredWebsite":
+      case "imageRow":
+        return <ImageRowRenderer imageRefs={contentItem.images} />;
+      case "navItems":
         return (
-          <Container>
-            <FeaturedWebsite websiteRef={contentItem.refId} />
-          </Container>
-        );
-      case "featuredWebsites":
-        return (
-          <Container paddingX={3} size={2}>
-            <div class="grid grid-cols-2 md:grid-cols-3">
-              {contentItem.websites.map((w) => (
-                <FeaturedWebsite websiteRef={w} />
+          <Container paddingX={3}>
+            <div class="flex flex-wrap justify-center gap-3 pb-4">
+              {contentItem.items.map((item) => (
+                <EmphasizedNavListItem item={item} />
               ))}
             </div>
           </Container>
         );
-      case "featuredCrisisResource":
-        return <div>[Still to implement `{contentItem.contentType}`]</div>;
-      case "resourceLinks":
-        return <div>[Still to implement `{contentItem.contentType}`]</div>;
-      case "relativeLink":
+      case "navItem": {
+        const { contentType: _contentType, ...navItem } = contentItem;
         return (
-          <Container>
-            <div class={textAlign === "center" ? "text-center" : ""}>
-              <Link to={contentItem.url} label={contentItem.label} />
+          <Container paddingX={3}>
+            <div class="flex justify-center">
+              <EmphasizedNavListItem item={{ kind: "navItem", ...navItem }} />
             </div>
           </Container>
         );
-      case "resourcePageLink":
-        return (
-          <Container paddingX={3}>
-            <div class={textAlign === "center" ? "text-center" : ""}>
-              <DynamicPageLink
-                linkType={contentItem.contentType}
-                label={contentItem.label}
-                categoryRef={contentItem.category ?? undefined}
-                populationRef={contentItem.population ?? undefined}
-                resourceTypes={contentItem.resourceTypes ?? undefined}
-              />
-            </div>
-          </Container>
-        );
-      case "categoryPageLink":
-        return (
-          <Container paddingX={3}>
-            <DynamicPageLink
-              linkType={contentItem.contentType}
-              label={contentItem.label}
-              categoryRef={contentItem.category}
-            />
-          </Container>
-        );
-      case "pageLinks":
-        if (contentItem.showImages) {
-          return (
-            <Container size={2} paddingX={3}>
-              <div
-                class:list={[
-                  gapMap[3],
-                  "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3",
-                ]}
-              >
-                {contentItem.links.map((link) => (
-                  <div>
-                    <ResourcePageLinkCard
-                      pageLink={
-                        link as  // todo - we should remove this case if we can
-                          | CategoryPageLinkContentItem
-                          | ResourcePageLinkContentItem
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            </Container>
-          );
-        }
-
-        return (
-          <Container paddingX={3}>
-            <PageLinksRenderer
-              emphasized={contentItem.emphasized}
-              links={contentItem.links}
-            />
-          </Container>
-        );
+      }
       case "person":
-        return <PersonRenderer personRef={contentItem.refId.id} />;
       case "personGroup":
-        // TODO: Render personGroup here; currently rendered in the team page
-        return;
+      case "resourceLinks":
+      case "staticNavItem":
+      case "imageAsset":
+        return <div>todo</div>;
       default:
         assertNever(contentItem);
     }

@@ -1,0 +1,36 @@
+---
+import type { OnSurfaceColorVariant } from "@styles/utils/color";
+import type { TextPreset } from "@styles/utils/typography";
+
+import type { NavTreeLeaf, NavTreeStatic } from "@ui/utils/navigation-tree";
+
+import NavItem from "./NavItem.astro";
+import StaticNavItem from "./StaticNavItem.astro";
+
+interface Props {
+  node: NavTreeLeaf | NavTreeStatic;
+  variant?: TextPreset;
+  colorVariant?: OnSurfaceColorVariant;
+  class?: string;
+}
+
+const { node, variant, colorVariant, class: className } = Astro.props;
+---
+
+{
+  node.kind === "navItem" ? (
+    <NavItem
+      navItem={node.navItem}
+      variant={variant}
+      colorVariant={colorVariant}
+      class={className}
+    />
+  ) : (
+    <StaticNavItem
+      staticNavItem={node}
+      variant={variant}
+      colorVariant={colorVariant}
+      class={className}
+    />
+  )
+}

@@ -1,0 +1,7 @@
+*[_type == 'griefPhase']{
+  "id": _id,
+  "slug": slug.current,
+  title,
+  description,
+  searchAliases,
+}

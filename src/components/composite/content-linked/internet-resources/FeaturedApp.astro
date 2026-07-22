@@ -2,7 +2,7 @@
 import { getEntry, type ReferenceDataEntry } from "astro:content";
 
 import {
-  getSourceLinkFromWebsiteRef,
+  getSourceLinkFromExternalOrgRef,
   getSourceFromResourceUrl,
 } from "@ui/utils/content/content";
 
@@ -23,8 +23,8 @@ if (!data) {
   );
 }
 
-const source = data.sourceWebsiteId
-  ? await getSourceLinkFromWebsiteRef(data.sourceWebsiteId)
+const source = data.sourceOrgId
+  ? await getSourceLinkFromExternalOrgRef(data.sourceOrgId)
   : null;
 
 const safeSource =

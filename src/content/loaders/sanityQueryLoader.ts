@@ -1,4 +1,4 @@
-import type { ZodType } from "astro:schema";
+import type { ZodType } from "astro/zod";
 import type { QueryParams } from "@sanity/client";
 
 import { getSanityClient } from "@sanity-integration/sanity-client";

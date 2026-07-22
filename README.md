@@ -113,7 +113,7 @@ The project needs two env files:
 | [Zod](https://zod.dev/)                                          | Runtime validation of CMS data at build time                          |
 | [Clerk](https://clerk.com/)                                      | Authentication                                                        |
 | [Cloudflare Workers](https://workers.cloudflare.com/) / Wrangler | Deployment target and local preview                                   |
-| [Pagefind](https://pagefind.app/)                                | Static search indexing (runs post-build)                              |
+| [MiniSearch](https://lucaong.github.io/minisearch/)              | In-page resource search (BM25, runs client-side)                      |
 
 ### Data Loading & Content Collections
 

@@ -1,4 +1,4 @@
-import { z } from "astro:content";
+import { z } from "astro/zod";
 
 import { zBasicInternetResource } from "@content/model/internetResource";
 
@@ -7,8 +7,8 @@ export const zPodcastEpisode = zBasicInternetResource.extend({
     .object({
       id: z.string(),
       title: z.string(),
-      appleUrl: z.string().url().nullable(),
-      spotifyUrl: z.string().url().nullable(),
+      appleUrl: z.url().nullable(),
+      spotifyUrl: z.url().nullable(),
     })
     .nullable(),
 });

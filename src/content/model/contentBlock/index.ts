@@ -1,57 +1,51 @@
-import { z } from "astro:content";
-import type { ZodDiscriminatedUnionOption } from "astro:schema";
+import { z } from "astro/zod";
 
-import accessibleImage from "./accessibleImageContentItem";
-import categoryPageLink from "./categoryPageLinkContentItem";
-import featuredCrisisResource from "./featuredCrisisResourceContentItem";
-import featuredResource from "./featuredResourceContentItem";
-import featuredResources from "./featuredResourcesContentItem";
-import featuredWebsite from "./featuredWebsiteContentItem";
-import featuredWebsites from "./featuredWebsitesContentItem";
-import headingText from "./headingTextContentItem";
-import imageRow from "./imageRowContentItem";
-import pageLinks from "./pageLinksContentItem";
-import person from "./personContentItem";
-import personGroup from "./personGroupContentItem";
-import relativePageLink from "./relativeLinkContentItem";
-import resourceLinks from "./resourceLinksContentItem";
-import resourcePageLink from "./resourcePageLinkContentItem";
-import richTextContentBlock from "./richTextContentItem";
-import richTextWithHeading from "./richTextWithHeadingContentItem";
+import { zFeaturedNavItemsContentItem } from "./featuredNavItemsContentItem";
+import { zFeaturedResourceContentItem } from "./featuredResourceContentItem";
+import { zFeaturedResourcesContentItem } from "./featuredResourcesContentItem";
+import { zHeadingTextContentItem } from "./headingTextContentItem";
+import { zImageAssetContentItem } from "./imageAssetContentItem";
+import { zImageRowContentItem } from "./imageRowContentItem";
+import { zNavItemContentItem } from "./navItemContentItem";
+import { zNavItemsContentItem } from "./navItemsContentItem";
+import { zPersonContentItem } from "./personContentItem";
+import { zPersonGroupContentItem } from "./personGroupContentItem";
+import { zResourceLinksContentItem } from "./resourceLinksContentItem";
+import { zRichTextContentItem } from "./richTextContentItem";
+import { zRichTextWithHeadingContentItem } from "./richTextWithHeadingContentItem";
+import { zStaticNavItemContentItem } from "./staticNavItemContentItem";
 import { zNonEmptyString } from "../utils";
 
-/**
- * Create a keyed set of schemas to ensure we add new content types correctly
- */
-const contentBlockSchemas = [
-  accessibleImage,
-  categoryPageLink,
-  featuredCrisisResource,
-  featuredResource,
-  featuredResources,
-  featuredWebsite,
-  featuredWebsites,
-  headingText,
-  imageRow,
-  pageLinks,
-  person,
-  personGroup,
-  relativePageLink,
-  resourceLinks,
-  resourcePageLink,
-  richTextWithHeading,
-  richTextContentBlock,
-] as const satisfies readonly [
-  ZodDiscriminatedUnionOption<"contentType">,
-  ...ZodDiscriminatedUnionOption<"contentType">[],
-];
+const contentItemSchemas = [
+  zFeaturedNavItemsContentItem,
+  zFeaturedResourceContentItem,
+  zFeaturedResourcesContentItem,
+  zHeadingTextContentItem,
+  zImageAssetContentItem,
+  zImageRowContentItem,
+  zNavItemContentItem,
+  zNavItemsContentItem,
+  zPersonContentItem,
+  zPersonGroupContentItem,
+  zResourceLinksContentItem,
+  zRichTextContentItem,
+  zRichTextWithHeadingContentItem,
+  zStaticNavItemContentItem,
+] as const;
 
-/**
- * Automatically build our content block schema from our keyed object
- */
-export default z.object({
+export const zContentBlock = z.object({
   id: zNonEmptyString,
-  content: z.array(z.discriminatedUnion("contentType", contentBlockSchemas)),
+  content: z.array(z.discriminatedUnion("contentType", contentItemSchemas)),
 });
 
-export type PageLinks = z.infer<typeof pageLinks>;
+export type ContentBlock = z.infer<typeof zContentBlock>;
+
+/**
+ * Content types the frontend knows how to render — derived from the schemas
+ * above so adding a new content item updates this set automatically. Used to
+ * drop unknown CMS content types before validation, which lets the CMS ship
+ * new types ahead of the frontend without breaking the build.
+ */
+export const knownContentTypes = new Set<string>(
+  contentItemSchemas.map((s) => s.shape.contentType.value),
+);

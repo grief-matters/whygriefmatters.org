@@ -1,0 +1,5 @@
+*[_type == 'imageAsset']{
+  "id": _id,
+  image,
+  alt
+}

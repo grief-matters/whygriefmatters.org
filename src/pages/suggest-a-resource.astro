@@ -1,0 +1,19 @@
+---
+import { actions } from "astro:actions";
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import DynamicForm from "@ui/forms/DynamicForm.astro";
+import { getFormByFormId } from "@lib/forms";
+
+export const prerender = false;
+
+const form = await getFormByFormId("suggest-a-resource");
+if (!form) {
+  throw new Error("Missing form: suggest-a-resource");
+}
+
+const result = Astro.getActionResult(actions.submitForm);
+---
+
+<SitePageLayout>
+  <DynamicForm form={form.data} result={result} />
+</SitePageLayout>

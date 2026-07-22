@@ -24,7 +24,7 @@ const logoUrl = org.logos.onDarkMono
 
 <LayoutSurface colorVariant="primaryContrast" as="footer" paddingX={3}>
   <Container size={2}>
-    <div class:list={["pt-6", "flex gap-6 justify-between items-center"]}>
+    <div class:list={["py-6", "flex gap-6 justify-between items-center"]}>
       <a class="block" href="/">
         <img class:list={["h-18"]} src={logoUrl} alt={`${org.name} logo`} />
       </a>
@@ -41,14 +41,42 @@ const logoUrl = org.logos.onDarkMono
     >
       <div class="md:grid md:grid-cols-2">
         <div class:list={[gapMap[2], marginBottomMap[2], "flex flex-col"]}>
-          <Typography
+          <Typography as="h3" variant="title-4" colorVariant="primaryContrast">
+            {"Help Us Help You"}
+          </Typography>
+          <Link
             colorVariant="primaryContrast"
-            variant="title-4"
-            set:text={"Contact"}
+            to="/suggest-a-resource"
+            label="Suggest a resource you think we should include"
           />
-          <Link colorVariant="primaryContrast" to="/" label="[example]" />
-          <Link colorVariant="primaryContrast" to="/" label="[example]" />
-          <Link colorVariant="primaryContrast" to="/" label="[example]" />
+          <Link
+            colorVariant="primaryContrast"
+            to="/report-a-problem"
+            label="Tell us about a problem you encountered on the site"
+          />
+          <Link
+            colorVariant="primaryContrast"
+            to="/share-what-helped"
+            label="Share what helped you and why"
+          />
+        </div>
+        <div class:list={[gapMap[2], marginBottomMap[2], "flex flex-col"]}>
+          <Link colorVariant="primaryContrast" to="/about" label="About Us" />
+          <Link
+            colorVariant="primaryContrast"
+            to="/about/mission-and-values"
+            label="Our Mission"
+          />
+          <Link
+            colorVariant="primaryContrast"
+            to="/contact"
+            label="Contact Us"
+          />
+          <Link
+            colorVariant="primaryContrast"
+            to="/crisis"
+            label="Crisis Resources"
+          />
         </div>
       </div>
       <div>
@@ -68,7 +96,7 @@ const logoUrl = org.logos.onDarkMono
           bold
           colorVariant="primaryContrast"
           variant="body-small"
-          set:text={`© ${new Date().getFullYear()} ${org.copyrightNotice}`}
+          set:text={`© 2023 - ${new Date().getFullYear()} ${org.copyrightNotice}`}
         />
       </div>
     </div>

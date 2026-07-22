@@ -9,10 +9,10 @@ import {
 import { textColorMap, type OnSurfaceColorVariant } from "@styles/utils/color";
 import type { SpaceSetting } from "@styles/utils/spacing";
 
-type TextElement = "p" | "span" | "h1" | "h2" | "h3" | "h4";
+export type TypographyTextElement = "p" | "span" | "h1" | "h2" | "h3" | "h4";
 
 type TextProps = {
-  as: TextElement;
+  as: TypographyTextElement;
   variant?: TextPreset;
   prominence?: TextProminence;
   colorVariant?: OnSurfaceColorVariant;
