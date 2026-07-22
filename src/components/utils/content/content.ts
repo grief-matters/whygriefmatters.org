@@ -1,4 +1,4 @@
-import { getEntry, type CollectionKey } from "astro:content";
+import { getEntry } from "astro:content";
 
 import type { Link } from "../link";
 
@@ -9,7 +9,7 @@ import type { Link } from "../link";
  * @returns source link as `Link` type
  */
 export async function getSourceLinkFromExternalOrgRef(externalOrgRef: {
-  collection: CollectionKey;
+  collection: "externalOrgs";
   id: string;
 }) {
   const sourceWebsiteEntry = await getEntry(externalOrgRef);
