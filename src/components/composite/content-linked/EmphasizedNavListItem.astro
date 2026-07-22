@@ -27,16 +27,18 @@ if (item.kind === "navItem") {
 ---
 
 {
-  item.kind === "navItem"
-    ? resolvedNavItem && (
-        <EmphasizedPageLink
-          to={buildNavItemHref(resolvedNavItem)}
-          label={
-            resolvedNavItem.label ??
-            resolvedNavItem.entryPoint?.title ??
-            "(untitled)"
-          }
-        />
-      )
-    : <EmphasizedPageLink to={item.url} label={item.label} />
+  item.kind === "navItem" ? (
+    resolvedNavItem && (
+      <EmphasizedPageLink
+        to={buildNavItemHref(resolvedNavItem)}
+        label={
+          resolvedNavItem.label ??
+          resolvedNavItem.entryPoint?.title ??
+          "(untitled)"
+        }
+      />
+    )
+  ) : (
+    <EmphasizedPageLink to={item.url} label={item.label} />
+  )
 }

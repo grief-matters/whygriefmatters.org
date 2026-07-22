@@ -25,15 +25,11 @@ if (item.kind === "navItem") {
 ---
 
 {
-  item.kind === "navItem"
-    ? resolvedNavItem && (
-        <FeaturedNavItem fullHeight={fullHeight} navItem={resolvedNavItem} />
-      )
-    : (
-      <Card
-        fullHeight={fullHeight}
-        title={item.label}
-        titleHref={item.url}
-      />
+  item.kind === "navItem" ? (
+    resolvedNavItem && (
+      <FeaturedNavItem fullHeight={fullHeight} navItem={resolvedNavItem} />
     )
+  ) : (
+    <Card fullHeight={fullHeight} title={item.label} titleHref={item.url} />
+  )
 }

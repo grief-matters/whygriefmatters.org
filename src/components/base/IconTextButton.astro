@@ -23,8 +23,16 @@ const {
 
 <button type="button" color="coolNeutral" {...attrs}>
   <span class="flex items-center gap-1">
-    {iconPosition === "start" && <Icon colorVariant={colorVariant} getIcon={getIcon} />}
+    {
+      iconPosition === "start" && (
+        <Icon colorVariant={colorVariant} getIcon={getIcon} />
+      )
+    }
     <Typography variant="body-2" colorVariant={colorVariant} set:text={label} />
-    {iconPosition === "end" && <Icon colorVariant={colorVariant} getIcon={getIcon} />}
+    {
+      iconPosition === "end" && (
+        <Icon colorVariant={colorVariant} getIcon={getIcon} />
+      )
+    }
   </span>
 </button>
