@@ -5,7 +5,7 @@ import Icon from "@ui/base/Icon.astro";
 <a
   href="/search"
   class:list={[
-    "w-full basis-40 px-3 py-1 border rounded-full border-line-primary--muted",
+    "w-full basis-40 px-3 py-1 border-line-primary--muted",
     "cursor-pointer hover:border-line-primary--default transition-colors",
     "flex items-center gap-1 no-underline",
   ]}
@@ -15,9 +15,7 @@ import Icon from "@ui/base/Icon.astro";
     colorVariant="primary"
     display="inline"
   />
-  <span
-    class:list={["align-middle font-serif text-onSurface-coolNeutral--muted"]}
-  >
+  <span>
     {"Search..."}
   </span>
 </a>

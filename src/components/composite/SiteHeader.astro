@@ -6,7 +6,6 @@ import { getOrganization } from "@content/loaders/organizationLoader";
 import Button from "@ui/base/Button.astro";
 import Link from "@ui/base/Link.astro";
 
-import Search from "@ui/scripted/Search.astro";
 import DesktopNav from "@ui/scripted/main-nav/DesktopNav.astro";
 import MobileNav from "@ui/scripted/main-nav/MobileNav.astro";
 import { getMainNav } from "@ui/utils/main-nav";
@@ -42,12 +41,9 @@ const navTree = await getMainNav();
         >Beta</span
       >
     </a>
-    <!-- Search Input -->
-    <div class="grow min-w-0 max-w-75">
-      <Search />
-    </div>
   </div>
   <div class:list={["flex justify-end items-center gap-3"]}>
+    <Link to={"/search"} variant="button-2">{"Search"}</Link>
     <Link to={"/about"} label="About" variant="button-2" />
     <Link to={"/contact"} label="Contact" variant="button-2" />
     <Button
