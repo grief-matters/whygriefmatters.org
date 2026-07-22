@@ -29,9 +29,7 @@ function buildFieldSchema(field: FormField): z.ZodTypeAny {
   switch (field.type) {
     case "email": {
       const base = z.email(`${field.label} must be a valid email`);
-      return field.required
-        ? base
-        : z.union([z.literal(""), base]).optional();
+      return field.required ? base : z.union([z.literal(""), base]).optional();
     }
     case "number": {
       const base = z.coerce.number({
@@ -64,9 +62,7 @@ function buildFieldSchema(field: FormField): z.ZodTypeAny {
               error: `${field.label} must be one of the available options`,
             })
           : z.string();
-      return field.required
-        ? base
-        : z.union([z.literal(""), base]).optional();
+      return field.required ? base : z.union([z.literal(""), base]).optional();
     }
     case "textarea":
     case "text":
@@ -78,7 +74,10 @@ function buildFieldSchema(field: FormField): z.ZodTypeAny {
   }
 }
 
-export function formatSubmissionEmail(form: Form, data: Record<string, unknown>) {
+export function formatSubmissionEmail(
+  form: Form,
+  data: Record<string, unknown>,
+) {
   const rows = form.fields.map((f) => {
     const raw = data[f.name];
     const display =

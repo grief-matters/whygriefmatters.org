@@ -29,7 +29,9 @@ async function normalizeNode(
   if (node.kind === "navItem") {
     const { kind: _kind, ...raw } = node;
     const navItem = await resolveNavItem(raw);
-    if (!navItem) {return null;}
+    if (!navItem) {
+      return null;
+    }
     return { kind: "navItem", navItem };
   }
 
@@ -46,9 +48,13 @@ async function normalizeNode(
   const items: NavTreeNode[] = [];
   for (const child of node.items) {
     const normalized = await normalizeNode(child);
-    if (normalized) {items.push(normalized);}
+    if (normalized) {
+      items.push(normalized);
+    }
   }
-  if (items.length === 0) {return null;}
+  if (items.length === 0) {
+    return null;
+  }
 
   return {
     kind: "navItemGroup",
@@ -61,11 +67,11 @@ async function normalizeNode(
  * Returns the normalized navigation tree for the given slug. Memoized so all
  * pages share the same result during a build.
  */
-export async function getNavigationTree(
-  slug: string,
-): Promise<NavTreeNode[]> {
+export async function getNavigationTree(slug: string): Promise<NavTreeNode[]> {
   const cached = buildCache.navTrees.get(slug);
-  if (cached) {return cached;}
+  if (cached) {
+    return cached;
+  }
 
   const trees = await getCollection(
     "navigationTrees",
@@ -86,7 +92,9 @@ export async function getNavigationTree(
   const normalized: NavTreeNode[] = [];
   for (const item of rawItems) {
     const node = await normalizeNode(item);
-    if (node) {normalized.push(node);}
+    if (node) {
+      normalized.push(node);
+    }
   }
 
   buildCache.navTrees.set(slug, normalized);
