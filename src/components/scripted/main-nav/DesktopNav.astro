@@ -281,7 +281,9 @@ const megaPanels = tier1Items.flatMap(({ key, node }) => {
       const box = this.querySelector("[data-mega-panels]");
       const panels = Array.from(this.querySelectorAll("[data-mega-panel]"));
       const next = panels.find((p) => p.dataset.megaPanel === key);
-      if (!next) return;
+      if (!next) {
+        return;
+      }
 
       const current = panels.find((p) => p !== next && !p.hidden);
 
@@ -329,7 +331,9 @@ const megaPanels = tier1Items.flatMap(({ key, node }) => {
           p.hidden = p !== next;
           p.removeAttribute("data-visible");
         });
-        if (box) box.style.height = "";
+        if (box) {
+          box.style.height = "";
+        }
         this.panelTimers.push(
           setTimeout(() => next.setAttribute("data-visible", ""), 150),
         );
@@ -351,7 +355,9 @@ const megaPanels = tier1Items.flatMap(({ key, node }) => {
       const box = this.querySelector("[data-mega-panels]");
       this.panelTimers.push(
         setTimeout(() => {
-          if (box) box.style.height = "";
+          if (box) {
+            box.style.height = "";
+          }
           this.querySelectorAll("[data-mega-panel]").forEach((panel) => {
             panel.hidden = true;
             panel.removeAttribute("data-visible");
