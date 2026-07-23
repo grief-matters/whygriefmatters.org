@@ -13,6 +13,7 @@ export default defineConfig({
       enabled: true,
     },
     imageService: "passthrough",
+    prerenderEnvironment: "node",
   }),
   output: "static",
   env: {
