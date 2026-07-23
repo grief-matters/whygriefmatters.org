@@ -1,5 +1,5 @@
 import {
-  SANITY_AUTH_TOKEN,
+  getSecret,
   SANITY_STUDIO_API_VERSION,
   SANITY_STUDIO_DATASET,
   SANITY_STUDIO_PROJECT_ID,
@@ -25,7 +25,7 @@ export function getSanityClient(useCdn: boolean = true): SanityClient {
       projectId: SANITY_STUDIO_PROJECT_ID,
       dataset: SANITY_STUDIO_DATASET,
       apiVersion: SANITY_STUDIO_API_VERSION,
-      token: SANITY_AUTH_TOKEN,
+      token: getSecret("SANITY_AUTH_TOKEN"),
       useCdn,
       perspective: "published",
     });
