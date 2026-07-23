@@ -1,4 +1,4 @@
-import { kebabCase } from "lodash";
+import kebabCase from "lodash/kebabCase";
 
 import { resourceTypeToCollectionKeyMap } from "@content/collections";
 import type {

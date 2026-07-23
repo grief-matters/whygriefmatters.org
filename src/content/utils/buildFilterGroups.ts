@@ -1,5 +1,6 @@
 import type { CollectionEntry } from "astro:content";
-import { kebabCase, startCase } from "lodash";
+import kebabCase from "lodash/kebabCase";
+import startCase from "lodash/startCase";
 
 import {
   internetResourceCollectionKeys,
