@@ -2,6 +2,7 @@
   "id": _id,
   "slug": slug.current,
   "title": name,
+  displayTitle,
   description,
   "underserved": coalesce(underserved, false),
   "imageAsset": imageRef->._id,

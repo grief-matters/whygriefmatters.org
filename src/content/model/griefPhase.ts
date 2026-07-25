@@ -4,6 +4,7 @@ export const zGriefPhase = z.object({
   id: z.string(),
   slug: z.string(),
   title: z.string(),
+  displayTitle: z.string().nullable(),
   description: z.string(),
   searchAliases: z.array(z.string()).nullable(),
 });

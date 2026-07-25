@@ -5,6 +5,7 @@ export const zDemographic = z.object({
   id: z.string(),
   slug: z.string(),
   title: z.string(),
+  displayTitle: z.string().nullable(),
   description: z.string(),
   underserved: z.boolean(),
   imageAsset: reference("imageAssets").nullable(),
