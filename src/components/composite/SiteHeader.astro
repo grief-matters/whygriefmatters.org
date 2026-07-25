@@ -1,6 +1,7 @@
 ---
 import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
 
+import contentConfig from "@content/config";
 import { getOrganization } from "@content/loaders/organizationLoader";
 
 import Button from "@ui/base/Button.astro";
@@ -8,7 +9,8 @@ import Link from "@ui/base/Link.astro";
 
 import DesktopNav from "@ui/scripted/main-nav/DesktopNav.astro";
 import MobileNav from "@ui/scripted/main-nav/MobileNav.astro";
-import { getMainNav } from "@ui/utils/main-nav";
+import TriageNav from "@ui/scripted/triage-nav/TriageNav.astro";
+import { getNavigationTree } from "@ui/utils/navigation-tree";
 
 const org = await getOrganization();
 if (!org) {
@@ -19,7 +21,8 @@ const logoUrl = org.logos.onLight
   ? getImageUrlBuilder(org.logos.onLight).url()
   : null;
 
-const navTree = await getMainNav();
+const mainNavTree = await getNavigationTree(contentConfig.navigation.main);
+const triageNavTree = await getNavigationTree(contentConfig.navigation.triage);
 ---
 
 <div
@@ -31,16 +34,20 @@ const navTree = await getMainNav();
 >
   <div
     class:list={[
-      "space-y-2 flex flex-wrap sm:flex-nowrap items-center gap-x-6 grow",
+      "justify-between space-y-2 flex flex-wrap sm:flex-nowrap items-center gap-x-6 grow",
     ]}
   >
     <a class="block basis-50 relative" href="/">
       <img class:list={["h-16"]} src={logoUrl} alt={`${org.name} logo`} />
       <span
-        class="block absolute left-0 -bottom-2 px-2 text-sm font-serif text-onSurface-primaryContrast--default bg-contentSurface-primaryContrast--muted rounded"
-        >Beta</span
+        class="block absolute left-0 -bottom-1 bg-layoutSurface-primary--1 px-2 text-sm font-serif text-onSurface-primary--default rounded"
       >
+        {"Beta"}
+      </span>
     </a>
+    <div class="md:hidden">
+      <MobileNav navTree={mainNavTree} />
+    </div>
   </div>
   <div class:list={["flex justify-end items-center gap-3"]}>
     <Link to={"/search"} variant="button-2">{"Search"}</Link>
@@ -56,9 +63,9 @@ const navTree = await getMainNav();
     />
   </div>
 </div>
-<div class="md:hidden">
-  <MobileNav navTree={navTree} />
-</div>
+
 <div class="hidden md:block">
-  <DesktopNav navTree={navTree} />
+  <DesktopNav navTree={mainNavTree} />
 </div>
+
+<TriageNav navTree={triageNavTree} />

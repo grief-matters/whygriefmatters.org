@@ -122,7 +122,7 @@ const megaPanels = tier1Items.flatMap(({ key, node }) => {
         // Fades in/out with the underlay; `height` is animated from JS when
         // switching between panels of differing heights.
         "opacity-0 transition-[opacity,height] duration-300 ease-out",
-        "group-data-[open]:opacity-100",
+        "group-data-open:opacity-100",
       ]}
     >
       {

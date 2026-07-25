@@ -2,6 +2,7 @@
 import { getEntry } from "astro:content";
 
 import { getImageUrlBuilder } from "@sanity-integration/sanity-image-builder";
+import config from "@content/config";
 import { getOrganization } from "@content/loaders/organizationLoader";
 
 import type { LayoutSurfaceVariantKey } from "@styles/utils/color";
@@ -18,7 +19,7 @@ if (!org) {
   throw new Error('Failed to [getOrganization] for "src/pages/index.astro"');
 }
 
-const homePageEntry = await getEntry("contentGroups", "home");
+const homePageEntry = await getEntry("contentGroups", config.contentGroup.home);
 if (!homePageEntry) {
   throw new Error('Could not get content entry: ["contentGroups", "home"]');
 }

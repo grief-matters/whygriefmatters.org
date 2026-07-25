@@ -1,0 +1,75 @@
+---
+import { getEntry, type CollectionEntry } from "astro:content";
+
+import type { SanityImage } from "@content/model/image";
+import type { LayoutSurfaceVariantKey } from "@styles/utils/color";
+
+import SitePageLayout from "@ui/layouts/SitePageLayout.astro";
+import PageHeaderLayout from "@ui/layouts/PageHeaderLayout.astro";
+
+import LayoutSurface from "@ui/base/LayoutSurface.astro";
+import Spacer from "@ui/base/Spacer.astro";
+import Stack from "@ui/base/Stack.astro";
+import Typography from "@ui/base/Typography.astro";
+
+import ContentBlockRenderer from "@ui/composite/content-linked/content-block/ContentBlockRenderer.astro";
+
+interface Props {
+  entry: CollectionEntry<"contentGroups">;
+}
+
+const { entry } = Astro.props;
+
+const { title, name, description, imageAssetId, contentBlocks } = entry.data;
+
+const heading = title ?? name;
+
+let coverImage: SanityImage | null = null;
+if (imageAssetId) {
+  const imageAsset = await getEntry(imageAssetId);
+  if (imageAsset) {
+    coverImage = { image: imageAsset.data.image, altText: imageAsset.data.alt };
+  }
+}
+---
+
+<SitePageLayout>
+  <PageHeaderLayout
+    surfaceVariant="primaryContrast"
+    surfaceVariantKey={1}
+    image={coverImage}
+  >
+    <Spacer marginBottom={3}>
+      <Typography
+        marginBottom={2}
+        as="h1"
+        variant="title-1"
+        colorVariant="primaryContrast"
+      >
+        {heading}
+      </Typography>
+      {
+        description && (
+          <Typography as="p" variant="body-2" colorVariant="primaryContrast">
+            {description}
+          </Typography>
+        )
+      }
+    </Spacer>
+  </PageHeaderLayout>
+
+  {
+    contentBlocks.map((block, i) => (
+      <LayoutSurface
+        as="section"
+        colorVariant="neutral"
+        colorVariantKey={((i % 4) + 1) as LayoutSurfaceVariantKey}
+        paddingY={6}
+      >
+        <Stack spacing={3}>
+          <ContentBlockRenderer contentBlockRef={block} />
+        </Stack>
+      </LayoutSurface>
+    ))
+  }
+</SitePageLayout>

@@ -1,0 +1,231 @@
+---
+import type { NavTreeNode } from "@ui/utils/navigation-tree";
+
+import IconTextButton from "@ui/base/IconTextButton.astro";
+import NavTreeLink from "@ui/composite/content-linked/NavTreeLink.astro";
+import Button from "@ui/base/Button.astro";
+import Typography from "@ui/base/Typography.astro";
+import Container from "@ui/base/Container.astro";
+
+interface Props {
+  navTree: NavTreeNode[];
+}
+
+const { navTree } = Astro.props;
+
+/**
+ * The triage tree is intentionally narrow and flat: a single nav-item group
+ * whose items are a flat list of leaves. We render the group as one button that
+ * opens a full-screen overlay on mobile and an anchored panel on desktop — no
+ * hamburger toggle and no grid, unlike the main nav.
+ */
+const group = navTree.find((node) => node.kind === "navItemGroup");
+const label = group?.label ?? "Menu";
+// The tree is flat, so every item is a leaf — filter out any groups to keep the
+// render (and the NavTreeLink types) simple.
+const items =
+  group?.kind === "navItemGroup"
+    ? group.items.filter((item) => item.kind !== "navItemGroup")
+    : [];
+---
+
+<triage-nav-controller>
+  <div class:list={["bg-contentSurface-secondary--prominent"]}>
+    <Container size={2}>
+      <nav data-triage-bar aria-label={label}>
+        <Button
+          as="button"
+          colorVariant="secondary"
+          type="button"
+          data-triage-btn
+          aria-expanded="false"
+          aria-haspopup="true"
+        >
+          <Typography variant="title-5" bold as="span">{label}</Typography>
+        </Button>
+      </nav>
+    </Container>
+  </div>
+
+  <!-- Desktop panel: a fixed overlay anchored to the BOTTOM of the triage bar
+       so the bar stays uncovered above it, with the blur/scrim filling the
+       viewport below. Clicking the backdrop closes it. `--triage-nav-top` is
+       set on open. A single column of items — no grid. -->
+  <div
+    data-triage-desktop
+    class:list={[
+      "hidden md:block",
+      "group",
+      // `transition` (not `transition-all`) so the `top` change on open isn't
+      // animated — only the blur + scrim fade.
+      "transition duration-300",
+      "fixed inset-x-0 bottom-0 z-40",
+      "overflow-y-auto",
+      // Closed: transparent + non-interactive so the invisible overlay doesn't
+      // swallow clicks and the transition has somewhere to animate from.
+      "pointer-events-none backdrop-blur-none bg-black/0",
+      // Open: blur + scrim fade in.
+      "data-open:pointer-events-auto data-open:backdrop-blur-xs data-open:bg-black/25",
+    ]}
+    style="top: var(--triage-nav-top, 0px);"
+  >
+    <div
+      class:list={[
+        "shadow-lg",
+        "bg-layoutSurface-neutral--1",
+        "opacity-0 transition-opacity duration-300 ease-out",
+        "group-data-open:opacity-100",
+      ]}
+    >
+      <div class="max-w-6xl mx-auto px-6 py-6">
+        <header class="flex justify-end mb-4">
+          <IconTextButton
+            data-triage-close
+            getIcon={(icons) => icons.xMark}
+            label="Close"
+            iconPosition="end"
+          />
+        </header>
+        <ul class="space-y-2 mb-16">
+          {
+            items.map((node) => (
+              <li>
+                <NavTreeLink
+                  node={node}
+                  variant="title-5"
+                  colorVariant="primary"
+                />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile overlay: full-screen panel toggled via the `hidden` attribute. -->
+  <nav
+    data-triage-mobile
+    hidden
+    class:list={["md:hidden", "fixed inset-0 z-50"]}
+    aria-label={label}
+  >
+    <div
+      class:list={[
+        "absolute inset-0 bg-layoutSurface-neutral--1 flex flex-col",
+      ]}
+    >
+      <div class="flex justify-end p-4">
+        <IconTextButton
+          data-triage-close
+          getIcon={(icons) => icons.xMark}
+          label="Close"
+          iconPosition="end"
+        />
+      </div>
+      <div class="p-12 space-y-4">
+        {
+          items.map((node) => (
+            <NavTreeLink
+              node={node}
+              variant="title-4"
+              colorVariant="primary"
+              class="w-full text-left block"
+            />
+          ))
+        }
+      </div>
+    </div>
+  </nav>
+
+  <script is:inline>
+    class TriageNavController extends HTMLElement {
+      isOpen = false;
+
+      connectedCallback() {
+        this.setupHandlers();
+        this.setupKeyboardHandlers();
+      }
+
+      setupHandlers() {
+        const trigger = this.querySelector("[data-triage-btn]");
+        trigger?.addEventListener("click", () => this.toggle());
+
+        this.querySelectorAll("[data-triage-close]").forEach((btn) => {
+          btn.addEventListener("click", () => this.close());
+        });
+
+        // Clicking the desktop underlay itself (not the panel) closes it.
+        const desktop = this.querySelector("[data-triage-desktop]");
+        desktop?.addEventListener("click", (e) => {
+          if (e.target === desktop) {
+            this.close();
+          }
+        });
+
+        // Clicking anywhere outside the whole controller closes it.
+        document.addEventListener("click", (e) => {
+          if (this.isOpen && !this.contains(e.target)) {
+            this.close();
+          }
+        });
+      }
+
+      toggle() {
+        if (this.isOpen) {
+          this.close();
+        } else {
+          this.open();
+        }
+      }
+
+      open() {
+        this.isOpen = true;
+
+        const trigger = this.querySelector("[data-triage-btn]");
+        trigger?.setAttribute("data-active", "");
+        trigger?.setAttribute("aria-expanded", "true");
+
+        const bar = this.querySelector("[data-triage-bar]");
+        const desktop = this.querySelector("[data-triage-desktop]");
+        if (bar && desktop) {
+          // Anchor the overlay to the bar's bottom edge so the bar stays
+          // uncovered above it.
+          const bottom = bar.getBoundingClientRect().bottom;
+          desktop.style.setProperty("--triage-nav-top", `${bottom}px`);
+          desktop.setAttribute("data-open", "");
+        }
+
+        const mobile = this.querySelector("[data-triage-mobile]");
+        mobile?.removeAttribute("hidden");
+
+        document.body.style.overflow = "hidden";
+      }
+
+      close() {
+        this.isOpen = false;
+
+        const trigger = this.querySelector("[data-triage-btn]");
+        trigger?.removeAttribute("data-active");
+        trigger?.setAttribute("aria-expanded", "false");
+
+        this.querySelector("[data-triage-desktop]")?.removeAttribute(
+          "data-open",
+        );
+        this.querySelector("[data-triage-mobile]")?.setAttribute("hidden", "");
+
+        document.body.style.overflow = "";
+      }
+
+      setupKeyboardHandlers() {
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && this.isOpen) {
+            this.close();
+          }
+        });
+      }
+    }
+
+    customElements.define("triage-nav-controller", TriageNavController);
+  </script>
+</triage-nav-controller>

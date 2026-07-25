@@ -1,6 +1,7 @@
 ---
 import { getEntry } from "astro:content";
 
+import config from "@content/config";
 import { buildExplorePageProps } from "@content/utils/buildExplorePageProps";
 import { buildFilterGroups } from "@content/utils/buildFilterGroups";
 import { getResourceIndex } from "@content/utils/resourceIndex";
@@ -11,7 +12,10 @@ import {
 
 import SearchPage from "@ui/composite/content-linked/page-assemblies/SearchPage.astro";
 
-const contentGroup = await getEntry("contentGroups", "search");
+const contentGroup = await getEntry(
+  "contentGroups",
+  config.contentGroup.search,
+);
 if (!contentGroup) {
   throw new Error('Could not get content group "search"');
 }
