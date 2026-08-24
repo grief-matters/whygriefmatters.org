@@ -7,5 +7,6 @@ export default {
     home: "home",
     search: "search",
     supportingTheBereaved: "supporting-the-bereaved",
+    typesOfLoss: "types-of-loss",
   },
 } as const;

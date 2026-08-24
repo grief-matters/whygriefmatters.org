@@ -1,0 +1,15 @@
+---
+import { getEntry } from "astro:content";
+import config from "@content/config";
+
+import ContentGroupPage from "@ui/composite/content-linked/page-assemblies/ContentGroupPage.astro";
+
+const entry = await getEntry("contentGroups", config.contentGroup.typesOfLoss);
+if (!entry) {
+  throw new Error(
+    `Could not get content entry: ["contentGroups", "${config.contentGroup.typesOfLoss}"]`,
+  );
+}
+---
+
+<ContentGroupPage entry={entry} />
