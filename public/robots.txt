@@ -1,5 +1,7 @@
-# Example: Allow all bots to scan and index your site.
-# Full syntax: https://developers.google.com/search/docs/advanced/robots/create-robots-txt
+# Site is in development. We keep it out of search indexes via a sitewide
+# `noindex` (X-Robots-Tag header in public/_headers + meta tag in Shell.astro),
+# NOT by disallowing crawling here. Crawlers must be ALLOWED to fetch pages so
+# they can see the noindex directive and drop the URLs; a `Disallow: /` would
+# hide the noindex and let URL-only entries linger in the index.
 User-agent: *
-User-agent: AdsBot-Google
-DisAllow: /
+Allow: /

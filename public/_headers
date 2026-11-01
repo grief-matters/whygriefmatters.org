@@ -1,0 +1,6 @@
+# Site is in development — keep it out of search indexes everywhere.
+# X-Robots-Tag is the strongest signal: honored by Google/Bing, applies to
+# every asset (not just HTML), and actively keeps pages out of the index.
+# Remove this file (and the robots meta tag in Shell.astro) at public launch.
+/*
+  X-Robots-Tag: noindex, nofollow
